@@ -1,0 +1,10 @@
+import json
+
+def run(hash,ump):
+	src = ump.get_page("http://ok.ru/dk?cmd=videoPlayerMetadata&mid="+hash,"utf8")
+	js=json.loads(src)
+	videos=js["videos"]
+	opts={}
+	for video in videos:
+		opts[video["name"]]=video["url"]
+	return opts

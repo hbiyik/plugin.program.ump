@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><addon id="plugin.program.ump" name="Universal Media Provider" provider-name="boogiepop" version="0.0.4">
+    <requires>
+		<import addon="xbmc.python" version="2.1.0"/>
+		<import addon="script.module.unidecode" version="0.4.16"/>
+		<import addon="script.module.dateutil" version="2.4.0"/>
+	</requires>
+	<extension library="addon.py" point="xbmc.python.pluginsource">
+		<provides>video audio image</provides>
+	</extension>
+	<extension name="Boogie's Kodi Repo" point="xbmc.addon.repository">
+		<info compressed="false">http://raw.github.com/huseyinbiyik/repository.boogie.dist/master/addons.xml</info>
+		<checksum>http://raw.github.com/huseyinbiyik/repository.boogie.dist/master/addons.xml.md5</checksum>
+		<datadir zip="true">http://raw.github.com/huseyinbiyik/repository.boogie.dist/master</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Universal Media Provider</summary>
+		<description lang="en">Universal Media Provider</description>
+		<license>GNU General Public License, v2</license>
+		<language/>
+		<forum>https://github.com/huseyinbiyik/plugin.program.ump/issues</forum>
+		<source/>
+		<email>boogiepop</email>
+	</extension>
+</addon>
