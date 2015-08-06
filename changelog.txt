@@ -1,3 +1,6 @@
+2015-08-07: Update video_link_kissanime.py
+2015-08-06: Update README.md
+2015-08-05: 0.0.5 Version Release
 2015-08-05: 0.0.5 Version Release
 2015-08-05: version bump for distro
 2015-08-05: 0.0.1 Version Release
