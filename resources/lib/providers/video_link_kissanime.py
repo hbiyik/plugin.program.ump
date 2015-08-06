@@ -4,7 +4,6 @@ import json
 import re
 import time
 import urlparse
-from third import execjs
 from unidecode import unidecode
 			
 domain="http://kissanime.com"
