@@ -1,3 +1,5 @@
+2015-08-07: fixed wrong repo def, updated primewire regex, updated sharesix due to new page designs
+2015-08-07: 0.0.6 Version Release
 2015-08-07: Update video_link_kissanime.py
 2015-08-06: Update README.md
 2015-08-05: 0.0.5 Version Release
