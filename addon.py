@@ -23,8 +23,8 @@ print "MODULE       : " + str(ump.module)
 print "PAGE         : " + str(ump.page)
 #print "ARGS         : " + str(ump.args)
 print "CONTENT_TYPE : " + str(ump.content_type)
-print "INFO         : " + str(ump.info)
-print "ART          : " + str(ump.art)
+#print "INFO         : " + str(ump.info)
+#print "ART          : " + str(ump.art)
 
 
 indexers=providers.find(ump.content_type,"index")
