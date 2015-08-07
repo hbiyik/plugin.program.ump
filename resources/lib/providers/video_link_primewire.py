@@ -87,7 +87,7 @@ def run(ump):
 		elif len(year)>0 and "year" in i.keys() and str(i["year"])==year[0]:
 			exact=True
 			ump.add_log("Primewire found exact match with in %s for %s" %(str(i["year"]),i["title"]))
-		externals=re.findall('class=quality_(.*?)\>.*?href="(/external.php.*?)" onClick="return',src,re.DOTALL)
+		externals=re.findall('class=quality_(.*?)\>.*?href="(/external.php.*?)"',src,re.DOTALL)
 		for external in externals:
 			page=ump.get_page(domain+"/external.php?"+external[1],encoding)
 			#<frame src="http://www.promptfile.com/l/1857EA2CD0-46AE6395D4"/>
