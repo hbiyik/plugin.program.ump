@@ -166,19 +166,20 @@ class ump():
 			src=unicode(unescape(stream.decode(encoding,"ignore")))
 		return src
 	
-	def notify_error(self,e):
+	def notify_error(self,e,silent=True):
 		frm = inspect.trace()[-1]
 		mod = inspect.getmodule(frm[0])
 		modname = mod.__name__ if mod else frm[1]
 		errtype= e.__class__.__name__
-		self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
+		if not silent:
+			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
 		print traceback.format_exc()
 
 	def add_log(self,line):
 		line=unidecode(line)
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.window.status.setText(line+"\n"+self.window.status.getText())
-		print line
+		#print line
 
 	def add_mirror(self,parts,name):
 		if not self.terminate:

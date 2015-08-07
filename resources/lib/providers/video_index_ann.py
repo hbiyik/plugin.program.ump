@@ -361,7 +361,11 @@ def run(ump):
 	elif ump.page== "show_episodes":
 		episodes=ump.args["episodes"]
 		#json keys are parsed as strings
-		episodes = {float(k):v for k,v in episodes.items()}
+		for k,v in episodes.items():
+			episodes.pop(k)
+			episodes[int(float(k))]=v
+		#below does not work on old versions of python
+		#episodes = {float(k):v for k,v in episodes.iteritems()}
 		for epi in sorted(episodes.keys(),reverse=True):
 			li=xbmcgui.ListItem("%d %s"%(epi,episodes[epi]))
 			li.setArt(ump.art)
