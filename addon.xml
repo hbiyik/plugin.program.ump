@@ -7,11 +7,6 @@
 	<extension library="addon.py" point="xbmc.python.pluginsource">
 		<provides>video audio image</provides>
 	</extension>
-	<extension name="Boogie's Kodi Repo" point="xbmc.addon.repository">
-		<info compressed="false">http://raw.github.com/huseyinbiyik/repository.boogie.dist/master/addons.xml</info>
-		<checksum>http://raw.github.com/huseyinbiyik/repository.boogie.dist/master/addons.xml.md5</checksum>
-		<datadir zip="true">http://raw.github.com/huseyinbiyik/repository.boogie.dist/master</datadir>
-	</extension>
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
 		<summary lang="en">Universal Media Provider</summary>
