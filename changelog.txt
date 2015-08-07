@@ -14,4 +14,4 @@
 2015-08-05: 0.0.5 Version Release
 2015-08-05: version bump for distro
 2015-08-05: 0.0.1 Version Release
-2015-08-05:        *api: cookie states saved        *api: name matching algo improved        *api: improved title comaprison for eastern langs        *ann: episode handling improved        *ann: pagination implemented. faster browsing        *ann: fixed anime/serie definitions        *ann: fixed issues with json keys to be parsed as strings  *kissanime: new link provider for animes
+2015-08-05:        *api: cookie states saved        *api: name matching algo improved        *api: improved title comaprison for eastern langs        *ann: episode handling improved        *ann: pagination implemented. faster browsing        *ann: fixed anime/serie definitions        *ann: fixed issues with json keys to be parsed as strings  *kissanime: new link provider for animes 
