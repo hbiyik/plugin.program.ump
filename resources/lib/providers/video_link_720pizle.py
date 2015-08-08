@@ -60,7 +60,7 @@ def run(ump):
 			matches=[result["url"]]
 			imdbmatch=True
 			break
-	
+
 	for result in results:
 		if not imdbmatch and len(matches)<=max_match and ump.is_same(result["orgfilmadi"],i["title"]):
 			ump.add_log("720pizle matched %s" % i["title"])
@@ -68,7 +68,7 @@ def run(ump):
 	
 	for match in matches:
 		src=ump.get_page(domain+result["url"],encoding)
-		movie_pages=re.findall('href="(/izle/.*?)"',src)
+		movie_pages=re.findall('href="(/izle/.*?)" title=""',src)
 		count=len(movie_pages)
 		for movie_page in movie_pages:
 			movie_page_type=["dub","sub"][movie_page.split("/")[2]=="altyazi"]
