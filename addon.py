@@ -48,7 +48,11 @@ elif ump.page== "urlselect":
 	else:
 		gid=ump.tm.create_gid()
 		for provider in link_providers:
-			provider=providers.load(ump.content_type,"link",provider[2])
+			try:
+				provider=providers.load(ump.content_type,"link",provider[2])
+			except Exception, e:
+				ump.notify_error(e)
+				continue
 			ump.tm.add_queue(provider.run, (ump,),gid=gid)
 		ump.window.doModal()
 		ump.tm.join(gid)

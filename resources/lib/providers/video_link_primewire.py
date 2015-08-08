@@ -11,12 +11,11 @@ matches=[]
 max_match=3
 max_pages=10
 
-
 def codify(prv,path):
 	path=path.replace(" ","")
-	if prv in ["movshare","vodlocker","sharesix","novamov","nowvideo","divxstage","sharerepo","videoweed"]:
+	if prv in ["movshare","vodlocker","sharesix","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","filenuke","vidbull"]:
 		return path.split("/")[-1]
-	elif prv in ["zalaa"]:
+	elif prv in ["zalaa","uploadc","mightyupload"]:
 		return path.split("/")[-2]
 	else:
 		return None
@@ -90,7 +89,6 @@ def run(ump):
 		externals=re.findall('class=quality_(.*?)\>.*?href="(/external.php.*?)"',src,re.DOTALL)
 		for external in externals:
 			page=ump.get_page(domain+"/external.php?"+external[1],encoding)
-			#<frame src="http://www.promptfile.com/l/1857EA2CD0-46AE6395D4"/>
 			link=re.findall('frame src="(http.*?)"',page)
 			if len(link)>0:
 				uri = urlparse.urlparse(link[0])
