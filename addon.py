@@ -31,9 +31,6 @@ indexers=providers.find(ump.content_type,"index")
 url_providers=providers.find(ump.content_type,"url")
 link_providers=providers.find(ump.content_type,"link")
 
-if False:
-	iwin=ui.imagewindow('picture.xml', addon_dir,"Default","720p",playlist=[])
-
 if ump.module == "ump":
 	if ump.page is "root":
 		for provider in indexers:
