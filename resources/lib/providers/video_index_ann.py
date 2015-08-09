@@ -371,6 +371,8 @@ def run(ump):
 			li.setArt(ump.art)
 			ump.info["title"]=episodes[epi]
 			ump.info["episode"]=epi
+			#even though animes dont have season info force it so trakt will scrobble
+			ump.info["season"]=1
 			ump.info["absolute_number"]=epi
 			u=ump.link_to("urlselect")
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)			
