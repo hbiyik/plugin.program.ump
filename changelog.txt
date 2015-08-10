@@ -8,4 +8,4 @@
 2015-08-07: fixed wrong repo def, updated primewire regex, updated sharesix due to new page designs
 2015-08-07: Update video_link_kissanime.py
 2015-08-06: Update README.md
-2015-08-05:        *api: cookie states saved        *api: name matching algo improved        *api: improved title comaprison for eastern langs        *ann: episode handling improved        *ann: pagination implemented. faster browsing        *ann: fixed anime/serie definitions        *ann: fixed issues with json keys to be parsed as strings  *kissanime: new link provider for animes
+2015-08-05:        *api: cookie states saved        *api: name matching algo improved        *api: improved title comaprison for eastern langs        *ann: episode handling improved        *ann: pagination implemented. faster browsing        *ann: fixed anime/serie definitions        *ann: fixed issues with json keys to be parsed as strings  *kissanime: new link provider for animes 
