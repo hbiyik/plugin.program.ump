@@ -1,0 +1,11 @@
+2015-08-11: new selector ui, clean task manager
+2015-08-09: even though animes dont have season info force it so trakt will scrobble
+2015-08-09: improve match algo on 720pizle
+2015-08-08: new link provider: gvcenter
+2015-08-08: fixed regex on 720p izle causes sequel movies to interfere
+2015-08-08: new url provider: filenuke
+2015-08-07: disable notifications, dont spam logfile
+2015-08-07: fixed wrong repo def, updated primewire regex, updated sharesix due to new page designs
+2015-08-07: Update video_link_kissanime.py
+2015-08-06: Update README.md
+2015-08-05:        *api: cookie states saved        *api: name matching algo improved        *api: improved title comaprison for eastern langs        *ann: episode handling improved        *ann: pagination implemented. faster browsing        *ann: fixed anime/serie definitions        *ann: fixed issues with json keys to be parsed as strings  *kissanime: new link provider for animes
