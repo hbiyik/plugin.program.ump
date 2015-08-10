@@ -5,12 +5,14 @@ import uuid
 import time
 import inspect
 import traceback
+import xbmcgui
 
 #simple task manager but quite handy one
 #can monitor different task groups and wait them to finish seperately
 #can also priotrize the tasks  
 #concurrentcy may be set to CPU count however my app heavily uses network stuff so i use more than 10 or more.
-#dont mess with thread names, dont spawn mutiple task managers
+#dont mess with thread names
+
 class killbill(Exception):
 	pass
 	
@@ -19,11 +21,8 @@ class manager(object):
 		self.c = concurrent #concurrency count, runtime changable
 		self.s = threading.Event() #stop flag
 		self.q = [] #queue for the function when concurrency is not available
-#		self.u = threading.Thread(target=self._update,args=())
 		self.p = [] #processed tasks
 		self.g = [] #group ids
-#		self.u.start()
-#		print self.u.name
 
 	def task(self,func,args):
 		try:
@@ -72,26 +71,23 @@ class manager(object):
 		while True:
 			self.join()
 			break
-#			if not self.u.name in [x.name for x in threading.enumerate()]:
-#				break
 				
 
-	def join(self,gid=None):
+	def join(self,gid=None,cnt=0):
+		if cnt>0:
+			dialog = xbmcgui.DialogProgress()
+			dialog.create('UMP', 'Shutting Down Task Manager')
 		while True:
 			q,a,p=self.stats(gid)
-#			curframe = inspect.currentframe()
-#			calframe = inspect.getouterframes(curframe, 2)
-#			print 'caller name:', calframe[1][3]
-#			print "gid:"+str(gid)
-#			print "queue:"+str(q)
-#			print "active:"+str(a)
-#			print "processed:"+str(p)
-#			print "******************"
-#			print self.s.isSet()
+			if cnt>0 and not q+a==0:
+				dialog.update(100-100*(q+a)/cnt,"Shutting Down Tasks %d of %d"%(cnt-q-a,cnt))
 			if (self.s.isSet() or q==0) and a==0:
 				break
 			time.sleep(1)
+		if cnt>0:
+			dialog.close()
 		return q,a,p
+	
 	def	create_gid(self):
 		return uuid.uuid4().hex
 		
@@ -101,7 +97,6 @@ class manager(object):
 		a=0 #active thread
 		ps= self.p
 		qs= self.q
-#		print qs
 		t=[x.name for x in threading.enumerate()] #all active thread names
 		for p1 in ps:
 			if not p1[2].name in t and (gid is None and p1[0] in self.g or gid==p1[0]):
@@ -111,5 +106,4 @@ class manager(object):
 		for q1 in qs:
 			if gid is None and q1[0] in self.g or gid==q1[0]:
 				q+=1
-
 		return q,a,p

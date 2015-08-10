@@ -93,14 +93,7 @@ class imagewindow(xbmcgui.WindowXMLDialog):
 	def onInit(self):
 		self.img=self.getControl(666)
 		res=[(1920,1080),(1280,720),(720,480),(720,480),(720,480),(720,480),(720,576),(720,576),(720,480),(720,480)]
-		#self.ww,self.wh=res[self.getResolution()]
 		self.ww,self.wh=(1280,720)
-#		u="http://a.mfcdn.net/store/manga/8879/02-007.0/compressed/takuhana_02_003.jpg"
-#		u="http://upload.wikimedia.org/wikipedia/commons/f/f7/Melbourne_Docklands_-_Yarras_Edge_-_marina_panorama.jpg"
-#		w=728
-#		w=4789
-#		h=1164
-#		h=1200
 		self.setimage(0)
 
 	def setimage(self,cur):
@@ -173,35 +166,28 @@ class imagewindow(xbmcgui.WindowXMLDialog):
 	
 class listwindow(xbmcgui.WindowXMLDialog):
 	def __init__(self,strXMLname, strFallbackPath, strDefaultName, forceFallback,ump=None):
-		# Changing the three varibles passed won't change, anything
-		# Doing strXMLname = "bah.xml" will not change anything.
-		# don't put GUI sensitive stuff here (as the xml hasn't been read yet
-		# Idea to initialize your variables here
 		self.ump=ump
 		self.isinit=False
 
 	def onInit(self):
-		# Put your List Populating code/ and GUI startup stuff here
 		self.lst=self.getControl(6)
 		self.button= self.getControl(5)
-		self.heading= self.getControl(1)
 		self.button.setLabel("Cancel")
-		self.heading.setLabel("Select Source")
 		self.button.setEnabled(True)
 		self.button.setVisible(True)
 		self.button.controlUp(self.lst)
 		self.button.controlDown(self.lst)
 		self.setFocus(self.button)
-		statush=105
+		statush=100
 		margin=3
-		self.lst.setHeight(self.lst.getHeight()-statush)
-		lstw=self.lst.getWidth()
-		lsth=self.lst.getHeight()
-		lstx,lsty=self.lst.getPosition()
-		self.status=xbmcgui.ControlTextBox(lstx+margin, lsty+lsth, lstw, statush-margin, font="font10_title", textColor='0xCCCCCCCC')
-		self.addControl(self.status)
-		self.status.setEnabled(True)
-		self.status.setVisible(True)
+		#self.lst.setHeight(self.lst.getHeight()-statush)
+		#lstw=self.lst.getWidth()
+		#lsth=self.lst.getHeight()
+		#lstx,lsty=self.lst.getPosition()
+		#self.status=xbmcgui.ControlTextBox(lstx+margin, lsty+lsth, lstw, statush-margin, textColor='0xCCCCCCCC')
+		self.status=self.getControl(8)
+		#self.status.setEnabled(True)
+		#self.status.setVisible(True)
 
 	def onAction(self, action):
 		if action.getId() in [1,2,3,4,107] :
@@ -219,7 +205,6 @@ class listwindow(xbmcgui.WindowXMLDialog):
 				it=self.lst.getSelectedItem()
 				state=self.ump.player.create_list(it)
 				if state:
-					#self.ump.player.play()
 					self.ump.shut(True)
 			except Exception,e:
 				self.ump.notify_error(e)

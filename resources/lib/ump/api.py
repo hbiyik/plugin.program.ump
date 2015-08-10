@@ -58,7 +58,7 @@ def humanres(w,h):
 class ump():
 	def __init__(self,pt=False):
 		self.defs=defs
-		self.window = ui.listwindow('DialogSelect.xml', os.getcwd(), 'LCARS', 'PAL',ump=self)
+		self.window = ui.listwindow('select.xml', addon_dir, 'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', addon_dir,"Default","720p")
 		self.urlval_en=True
 		self.urlval_tout=60
@@ -191,13 +191,13 @@ class ump():
 					return False
 				#check if there is an appropriate url provider
 				if not providers.is_loadable(self.content_type,"url",upname,self.loadable_uprv):
-					self.add_log("%s , %s does not have an appropriate url provider. Skipping..." % (str(self.content_type),str(upname)))
+					self.add_log("no appropriate url provider. Skipping : %s , %s" % (str(self.content_type),str(upname)))
 					return False
 				#check if provider first time. checked ids are dynamic on provider name
 				elif upname in self.checked_uids[self.content_type].keys():
 				#check if already proccesed
 					if uphash in self.checked_uids[self.content_type][upname]:
-						self.add_log("%s , %s, %s has already been processed. Skipping..." % (str(self.content_type),str(upname),str(uphash)))
+						self.add_log("already processed, skipping :%s , %s, %s " % (str(self.content_type),str(upname),str(uphash)))
 						return False
 				else:
 				#if first time, create list dynamically
@@ -213,7 +213,7 @@ class ump():
 		for part in parts:
 			if part["urls"]=={}:
 				#if even 1 part is missing drop the mirror!!
-				self.add_log("%s has missing parts ignoring."%str(parts))
+				self.add_log("mirror ignored, has missing parts: %s"%str(parts))
 				return False
 		#if payer is not yet ready init it.
 		if self.player is None:
@@ -270,7 +270,7 @@ class ump():
 				self.add_log("validating %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
 				part["urls"]=provider.run(part["url_provider_hash"],self)
 			except (timeout,urllib2.URLError,urllib2.HTTPError),e:
-				self.add_log("%s dismissed : Timeout" % part["url_provider_name"])
+				self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
 				part["urls"]={}
 			except Exception,e:
 				self.notify_error(e)
@@ -285,11 +285,11 @@ class ump():
 					part["urls"][key]["meta"]=m
 				except (timeout,urllib2.URLError,urllib2.HTTPError),e:
 					part["urls"].pop(key)
-					self.add_log("%s dismissed : Network Error" % part["url_provider_name"])
+					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
 				except Exception,e:
 					self.notify_error(e)
 					part["urls"].pop(key)
-					self.add_log("%s key in %s removed"%(key,part["url_provider_name"]))
+					self.add_log("key removed : %s, %s"%(key,part["url_provider_name"]))
 			part["uptime"]=time.time()
 		return part
 
@@ -299,7 +299,8 @@ class ump():
 		if hasattr(self,"window"):
 			self.window.close()
 		self.tm.s.set()
-		self.tm.join()
+		q,a,p=self.tm.stats()
+		self.tm.join(cnt=q+a)
 		if play:
 			self.player.play()
 		if hasattr(self,"window"):
