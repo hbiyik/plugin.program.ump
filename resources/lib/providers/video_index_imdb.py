@@ -7,6 +7,7 @@ from urllib import urlencode
 import time
 import re
 import json
+import operator
 recnum=50
 
 def scrape_imdb_search(page):
@@ -120,6 +121,7 @@ def scrape_imdb_search(page):
 			"tagline":"",
 			"write":"",
 			"tvshowtitle":"",
+			"tvshowalias":"",
 			"premiered":"",
 			"status":"",
 			"code":id,
@@ -205,13 +207,73 @@ def run(ump):
 		movies=scrape_imdb_search(page)
 		if len(movies) > 0: 
 			for movie in movies:
-				li=xbmcgui.ListItem(movie["info"]["title"])
+				name=movie["info"]["title"]
+				altnames=movie["info"]["originaltitle"]
+				li=xbmcgui.ListItem(name)
 				li.setInfo("video",movie["info"])
 				li.setArt(movie["art"])
 				ump.art=movie["art"]
 				ump.info=movie["info"]
-				u=ump.link_to("urlselect")
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+				if "tv_series" in ump.args["title_type"]:
+					ump.info["tvshowtitle"]=name
+					ump.info["title"]=""
+					ump.info["tvshowalias"]=altnames
+					ump.info["originaltitle"]=""
+					u=ump.link_to("show_seasons",{"imdbid":ump.info["code"]})
+					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+				else:
+					ump.info["tvshowtitle"]=""
+					ump.info["title"]=name
+					ump.info["tvshowalias"]=""
+					ump.info["originaltitle"]=altnames
+					u=ump.link_to("urlselect")
+					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 		cacheToDisc=False
+
+	elif ump.page=="show_seasons":
+		imdbid=ump.args.get("imdbid",None)
+		if not imdbid :
+			return None
+		res=ump.get_page("http://www.imdb.com/title/%s/episodes"%imdbid,"utf-8")
+		seasons=re.findall('<option.*?value="([0-9]{1,2})">',res)
+		if not len(seasons)>0:
+			return None
+		for season in sorted([int(x) for x in seasons if x.isdecimal()],reverse=True):
+			li=xbmcgui.ListItem("Season %d"%season)
+			ump.info["season"]=season
+			u=ump.link_to("show_episodes",{"imdbid":imdbid,"season":season})
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+	
+	elif ump.page=="show_episodes":
+		print ump.info
+		ump.set_content(ump.defs.CC_EPISODES)
+		imdbid=ump.args.get("imdbid",None)
+		season=ump.args.get("season",None)
+		if not imdbid or not season:
+			return None
+		res=ump.get_page("http://www.imdb.com/title/%s/episodes?season=%d"%(imdbid,season),"utf-8")
+		#episodes=re.findall('<div class="list_item(.*?)<div class="wtw-option-standalone"',res,re.DOTALL)
+		title_img=re.findall('class="zero-z-index" alt="(.*?)" src="(.*?)"',res)
+		episodes=re.findall('<meta itemprop="episodeNumber" content="([0-9]*?)"/>',res)
+		episodes=[int(x) for x in episodes]
+		plots=re.findall('<div class="item_description" itemprop="description">(.*?)</div>',res,re.DOTALL)
+		dates=re.findall('<div class="airdate">\n(.*?)\n',res)
+		episodes=zip(episodes,dates,plots,*zip(*title_img))
+		episodes.sort(key=operator.itemgetter(0), reverse=True)
+		for episode in episodes:
+			epi,dat,plot,title,img=list(episode)
+			li=xbmcgui.ListItem("%d. %s"%(epi,title))
+			ump.info["title"]=title
+			ump.info["episode"]=epi
+			plot=plot.replace("\n","")
+			if not 'href="/updates' in plot:
+				ump.info["plot"]=plot
+				ump.info["plotoutline"]=plot
+			ump.art["thumb"]=img
+			ump.art["poster"]=img
+			li.setInfo("video",ump.info)
+			li.setArt(ump.art)
+			u=ump.link_to("urlselect")
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	xbmcplugin.endOfDirectory(ump.handle,	cacheToDisc=cacheToDisc)

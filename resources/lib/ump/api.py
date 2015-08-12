@@ -9,7 +9,7 @@ import urlparse
 import re
 import time
 import datetime
-from cookielib import LWPCookieJar
+from cookielib import LWPCookieJar, LoadError
 from socket import timeout
 from socket import getdefaulttimeout
 from threading import current_thread
@@ -64,7 +64,7 @@ class ump():
 		self.urlval_tout=60
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
-		self.tm_conc=4
+		self.tm_conc=10
 		self.player=None
 		self.mirrors=[]
 		self.terminate=False
@@ -74,7 +74,10 @@ class ump():
 		self.pt=pt
 		self.cj=LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
 		if os.path.exists(os.path.join( addon_dir, 'resources', 'data', "cookie")):
-			self.cj.load()
+			try:
+				self.cj.load()
+			except LoadError:
+				pass
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
 		self.ua="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"
 		self.opener.addheaders = [('User-agent', self.ua)]
@@ -300,9 +303,11 @@ class ump():
 			self.window.close()
 		self.tm.s.set()
 		q,a,p=self.tm.stats()
-		self.tm.join(cnt=q+a)
 		if play:
+			q=a=0
 			self.player.play()
+		self.tm.join(cnt=q+a)
+
 		if hasattr(self,"window"):
 			if hasattr(self.window,"status"):
 				del(self.window.status)

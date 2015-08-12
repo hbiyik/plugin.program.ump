@@ -55,12 +55,11 @@ elif ump.page== "urlselect":
 		ump.tm.join(gid)
 elif providers.is_loadable(ump.content_type,"index",ump.module,indexers):
 	providers.load(ump.content_type,"index",ump.module).run(ump)
-ump.tm.join()
-ump.tm.stop()
 ump.shut()
 print "CONTENT_CAT  : " + str(ump.content_cat)
 del gc.garbage[:]
-gc.collect()
+print gc.collect()
+print gc.collect()
 while not len(threading.enumerate())==1:
 	print threading.enumerate()
 print "EOF"
