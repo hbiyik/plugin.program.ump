@@ -10,9 +10,11 @@ import json
 from xml.dom import minidom
 import random
 import dateutil.parser as dparser
+import urlparse
 
 mirror="http://thetvdb.com"
-language="en"
+language=xbmc.getLanguage(xbmc.ISO_639_1)
+print language
 encoding="utf-8"
 apikey="C738A0A57D46E2CC"
 recnum=50
@@ -204,7 +206,8 @@ def run(ump):
 		kb.setDefault("")
 		kb.setHiddenInput(False)
 		kb.doModal()
-		q={"seriesname":kb.getText()}
+		what=kb.getText()
+		q={"seriesname":what,"language":"all"}
 		p=ump.get_page("%s/api/GetSeries.php"%mirror,None,query=q)
 		x=minidom.parseString(p)
 		series=x.getElementsByTagName("Series")
@@ -217,11 +220,21 @@ def run(ump):
 			sid=s.getElementsByTagName("seriesid")[0].lastChild.data
 			names[sid]=(sname,salias)
 
+		if len(names)==0:
+			urls=ump.web_search("inurl:thetvdb.com/?tab=series %s"%what)
+			if not urls:
+				return None
+			for u in urls:
+				idx=urlparse.parse_qs(urlparse.urlparse(u).query).get("id",None)
+				if not idx:
+					continue
+				names[idx[0]]=("","")
+		print names
 		data=get_tvdb_info(names.keys())
 
-		for id in names.keys():
+		for id in data.keys():
 			data[id]["info"]["tvshowalias"]=names[id][1]
-			li=xbmcgui.ListItem(names[id][0], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			li=xbmcgui.ListItem(data[id]["info"]["tvshowtitle"], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 			ump.info=data[id]["info"]
 			ump.art=data[id]["art"]
 			li.setArt(ump.art)

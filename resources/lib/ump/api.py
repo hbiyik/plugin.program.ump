@@ -16,6 +16,7 @@ from threading import current_thread
 from StringIO import StringIO
 import gzip
 import string
+import json
 
 import xbmc
 import xbmcaddon
@@ -57,6 +58,7 @@ def humanres(w,h):
 
 class ump():
 	def __init__(self,pt=False):
+		self.ws_limit=False #web search limit
 		self.defs=defs
 		self.window = ui.listwindow('select.xml', addon_dir, 'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', addon_dir,"Default","720p")
@@ -169,6 +171,23 @@ class ump():
 			src=unicode(unescape(stream.decode(encoding,"ignore")))
 		return src
 	
+	def web_search(self,query):
+		if self.ws_limit:
+			return None
+		urls=[]
+		query={"v":"1.0","q":query}
+		j=json.loads(self.get_page("http://ajax.googleapis.com/ajax/services/search/web","utf-8",query=query))
+		status=j.get("responseStatus",0)
+		if not status==200:
+			self.add_log("web search exceeded its limit")
+			self.ws_limit=True
+			return None
+		else:
+			results=j["responseData"]["results"]
+			for result in results:
+				urls.append(result["unescapedUrl"])
+		return urls
+
 	def notify_error(self,e,silent=True):
 		frm = inspect.trace()[-1]
 		mod = inspect.getmodule(frm[0])
