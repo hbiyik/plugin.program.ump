@@ -108,6 +108,7 @@ def get_tvdb_info(ids):
 		genre=get_child_data(serie,"Genre","")
 		genre=genre.replace("|"," ")
 		info["genre"]=genre
+		info["code3"]=id
 		
 		result[id]={"info":info,"art":art}
 
@@ -120,7 +121,7 @@ def get_tvdb_info(ids):
 	ump.tm.join(gid=gid)
 	return result
 
-def get_tvdb_episodes(ids,info,arts):
+def get_tvdb_episodes(ids,arts):
 	def get_id(id):
 		p=ump.get_page("%s/api/%s/series/%s/all/%s.xml"%(mirror,apikey,str(id),language),None)
 		x=minidom.parseString(p)
@@ -152,7 +153,7 @@ def get_tvdb_episodes(ids,info,arts):
 			"filename":("thumb","",None),
 			}
 		for e in episodes:
-			epiinfo=info
+			epiinfo=ump.info.copy()
 			for i in infolabels.keys():
 				epiinfo[infolabels[i][0]]=get_child_data(e,i,infolabels[i][1],infolabels[i][2])
 			epiart=make_art(arts,epiinfo["season"])
@@ -160,13 +161,12 @@ def get_tvdb_episodes(ids,info,arts):
 				epiart[artlabels[a][0]]="%s/banners/%s"%(mirror,get_child_data(e,a,artlabels[a][1],artlabels[a][2]))
 			season=epiinfo["season"]
 			episode=epiinfo["episode"]
-			epis[season]["episode"][episode]={"info":dict(epiinfo),"art":dict(epiart)}
+			epis[season]["episode"][episode]={"info":epiinfo,"art":epiart}
 		result[id]=epis
-
 	result={}
 	gid=ump.tm.create_gid()
-	for id in ids:
-		ump.tm.add_queue(get_id,(id,),gid=gid)
+	for k in range(len(ids)):
+		ump.tm.add_queue(get_id,(ids[k],),gid=gid)
 	
 	ump.tm.join(gid=gid)
 	return result	
@@ -222,40 +222,46 @@ def run(ump):
 		for id in names.keys():
 			data[id]["info"]["tvshowalias"]=names[id][1]
 			li=xbmcgui.ListItem(names[id][0], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			li.setArt(data[id]["art"])
-			li.setInfo(ump.content_type,data[id]["info"])
-			u=ump.link_to("seasons",{"id":id,"info":data[id]["info"],"art":data[id]["art"]})
+			ump.info=data[id]["info"]
+			ump.art=data[id]["art"]
+			li.setArt(ump.art)
+			li.setInfo(ump.content_type,ump.info)
+			u=ump.link_to("seasons",{"tvdbid":id})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	elif ump.page == "seasons":
 		ump.set_content(ump.defs.CC_ALBUMS)
-		id=ump.args["id"]
-		info=ump.args["info"]
+		id=ump.args.get("tvdbid",None)
+		if not id:
+			return None
 		arts=get_tvdb_art([id])[id]
-		epis=get_tvdb_episodes([id],info,arts)[id]
+		epis=get_tvdb_episodes([id],arts)[id]
 
 		for sno in sorted(epis.keys(),reverse=True):
-			li=xbmcgui.ListItem(epis[sno]["info"]["title"], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			li.setArt(epis[sno]["art"])
-			li.setInfo(ump.content_type,epis[sno]["info"])
-			u=ump.link_to("episodes",{"id":id,"episodes":epis[sno]["episode"],"season":sno})
+			li=xbmcgui.ListItem("Season %d"%sno, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			ump.art=epis[sno]["art"]
+			#ump.info=epis[sno]["info"]
+			li.setArt(ump.art)
+			#li.setInfo(ump.content_type,ump.info)
+			u=ump.link_to("episodes",{"tvdbid":id,"season":sno})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 			
 	elif ump.page == "episodes":
 		ump.set_content(ump.defs.CC_EPISODES)
-		epis=ump.args["episodes"]
-		season=ump.args["season"]
-		for epno in sorted([int(x) for  x in epis.keys()],reverse=True):
+		id=ump.args.get("tvdbid",None)
+		season=ump.args.get("season",None)
+		if not id or not season:
+			return None
+		arts=get_tvdb_art([id])[id]
+		epis=get_tvdb_episodes([id],arts)[id][season]
+		for epno in sorted([int(x) for  x in epis["episode"].keys()],reverse=True):
 			#json keys are strings :(
-			epno=str(epno)
-			li=xbmcgui.ListItem("%dx%d %s"%(season,epis[epno]["info"]["episode"],epis[epno]["info"]["title"]), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			info=epis[epno]["info"]
-			art=epis[epno]["art"]
-			li.setArt(art)
-			li.setInfo(ump.content_type,info)
-			ump.art=art
-			ump.info=info
-			u=ump.link_to("urlselect",{"info":info,"art":art})
+			li=xbmcgui.ListItem("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			ump.info=epis["episode"][epno]["info"]
+			ump.art=epis["episode"][epno]["art"]
+			li.setArt(ump.art)
+			li.setInfo(ump.content_type,ump.info)
+			u=ump.link_to("urlselect")
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc)
