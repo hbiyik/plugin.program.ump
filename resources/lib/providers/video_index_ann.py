@@ -29,10 +29,16 @@ def latinise(text):
 		text=text.replace(unichr(char),chars[char])
 	return text
 
-def scrape_ann_search(page,pDialog):
+def scrape_ann_search(animes):
+	print animes
+	pDialog = xbmcgui.DialogProgress()
+	pDialog.create('ANN', 'Retrieving Information')
+	pDialog.update(5, 'Retrieving Information')
+	res=ump.get_page(domain+"/encyclopedia/api.xml?anime="+"/".join(animes),None)
+	pDialog.update(40, 'Retrieving Information')
 	m1=[]
 	#no idea why chr 08 causes xml sructure error :/
-	res=minidom.parseString(page.replace(chr(8),""))
+	res=minidom.parseString(res.replace(chr(8),""))
 	medias=res.getElementsByTagName("anime")
 	pDialog.update(50, 'Retrieving Information')
 	count=0
@@ -172,6 +178,8 @@ def scrape_ann_search(page,pDialog):
 		data["episodes"]=episodes #special only for this indexer
 		m1.append(data)
 		pDialog.update(50+count, 'Retrieving Information')
+
+	pDialog.close()
 	return m1
 
 def grab_searches(link,maxpage=2):
@@ -315,20 +323,11 @@ def run(ump):
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 	
 	elif ump.page == "results_search":
-		medias=[]
 		filters=ump.args["filters"]
 		animes=ump.args["anime"]
 		index=ump.args.get("index",0)
-
-		pDialog = xbmcgui.DialogProgress()
-		pDialog.create('ANN', 'Retrieving Information')
-#		for i in range(len(animes/50+1):
-		pDialog.update(5, 'Retrieving Information')
 		anime=animes[index*50:(index+1)*50]
-		res=ump.get_page(domain+"/encyclopedia/api.xml?anime="+"/".join(anime),None)
-		pDialog.update(40, 'Retrieving Information')
-		medias.extend(scrape_ann_search(res,pDialog))
-		pDialog.close()
+		medias=scrape_ann_search(anime)
 
 		if len(medias) > 0: 
 			if not index==0:
@@ -350,7 +349,7 @@ def run(ump):
 				if len(media["episodes"].keys())==0:
 					u=ump.link_to("urlselect")
 				else:
-					u=ump.link_to("show_episodes",{"episodes":media["episodes"]})
+					u=ump.link_to("show_episodes",{"annid":media["info"]["code"]})
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 			if not index==len(animes)/50:
 				li=xbmcgui.ListItem("Results %d-%d"%((index+1)*50+1,(index+2)*50))
@@ -359,8 +358,14 @@ def run(ump):
 		cacheToDisc=True
 	
 	elif ump.page== "show_episodes":
-		episodes=ump.args["episodes"]
-		#json keys are parsed as strings
+		annid=ump.args.get("annid",None)
+		if not annid or not annid[:5]=="!ann!":
+			return None
+		medias=scrape_ann_search([annid[5:]])
+		if len(medias)<1:
+			return None
+		episodes=medias[0]["episodes"]
+		#keys are parsed as strings
 		for k,v in episodes.items():
 			episodes.pop(k)
 			episodes[int(float(k))]=v
