@@ -147,6 +147,33 @@ def scrape_imdb_search(page):
 	
 	return m1
 
+
+def scrape_name(id):
+	m1={"info":{},"art":{}}
+	m1["info"]["originaltitle"]=""
+	alts=[]
+	res=ump.get_page("http://www.imdb.com/title/%s/releaseinfo"%id,"utf-8")
+	akas=re.findall('<table id="akas"(.*?)</table>',res,re.DOTALL)
+	if len(akas)==1:
+		tds=re.findall("<td>(.*?)</td>",akas[0])
+		for td in range(1,len(tds),2):
+			alts.append(tds[td])
+			m1["info"]["originaltitle"]="|".join(alts)
+	poster=re.findall('<img itemprop="image"\nclass="poster".*?alt="(.*?)".*?src="(.*?)"',res,re.DOTALL)
+	namediv=re.findall('<h3 itemprop="name">.*?itemprop=\'url\'>(.*?)</a>.*?<span class="nobr">(.*?)</span>',res,re.DOTALL)
+	if len(namediv)==1:
+		namestr,datestr=namediv[0]
+		m1["info"]["title"]=namestr
+		m1["info"]["year"]=re.sub("[^0-9]", "", datestr.split("-")[0])
+	if len(poster)==1:
+		namestr,link=poster[0]
+		m1["art"]["poster"]=link.split("._")[0]
+		m1["art"]["thumb"]=m1["art"]["poster"]+"._V1_SX214_AL_.jpg"
+	m1["info"]["code"]=id
+	print m1
+	return m1
+		
+
 def run(ump):
 	globals()['ump'] = ump
 	cacheToDisc=True
@@ -205,11 +232,35 @@ def run(ump):
 		#ump.args[key]=quote_plus(str(ump.args[key]).decode("windows-1254"))
 		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args)
 		movies=scrape_imdb_search(page)
-		if len(movies) > 0: 
+		suggest=""
+		if len(movies) < 1:
+			suggest="[SUGGESTED] "
+			movies=[]
+			ids=[]
+			if "tv_series" in ump.args["title_type"]:
+				suffix='"TV Series"'
+			elif "documentary" in ump.args["title_type"]:
+				suffix='"Documentary"'
+			else:
+				suffix='-"TV Series" -Documentary'
+			urls=ump.web_search('inurl:http://www.imdb.com/title/ inurl:releaseinfo %s %s'%(ump.args["title"],suffix))
+			if len(urls)<1:
+				print 1
+				return None
+			else:
+				for u in urls:
+					idx=u.split("/")[4]
+					if not idx[:2]=="tt":
+						continue
+					ids.append(idx)
+			for id in set(ids):
+				movies.append(scrape_name(id))
+
+		if not len(movies) < 1: 
 			for movie in movies:
 				name=movie["info"]["title"]
 				altnames=movie["info"]["originaltitle"]
-				li=xbmcgui.ListItem(name)
+				li=xbmcgui.ListItem(suggest+name)
 				li.setInfo("video",movie["info"])
 				li.setArt(movie["art"])
 				ump.art=movie["art"]

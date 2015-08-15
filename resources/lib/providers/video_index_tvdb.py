@@ -213,7 +213,7 @@ def run(ump):
 		series=x.getElementsByTagName("Series")
 		ump.set_content(ump.defs.CC_TVSHOWS)
 		names={}
-
+		suggest=""
 		for s in series:
 			sname=s.getElementsByTagName("SeriesName")[0].lastChild.data
 			salias=get_child_data(s,"AliasNames","")
@@ -221,6 +221,7 @@ def run(ump):
 			names[sid]=(sname,salias)
 
 		if len(names)==0:
+			suggest="[SUGGESTED] "
 			urls=ump.web_search("inurl:thetvdb.com/?tab=series %s"%what)
 			if not urls:
 				return None
@@ -229,12 +230,11 @@ def run(ump):
 				if not idx:
 					continue
 				names[idx[0]]=("","")
-		print names
 		data=get_tvdb_info(names.keys())
 
 		for id in data.keys():
 			data[id]["info"]["tvshowalias"]=names[id][1]
-			li=xbmcgui.ListItem(data[id]["info"]["tvshowtitle"], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			li=xbmcgui.ListItem(suggest+data[id]["info"]["tvshowtitle"], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 			ump.info=data[id]["info"]
 			ump.art=data[id]["art"]
 			li.setArt(ump.art)
