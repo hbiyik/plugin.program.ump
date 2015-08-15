@@ -98,6 +98,26 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["N/A"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 
+	def get_vidnames(self):
+		is_serie="tvshowtitle" in self.info.keys() and not self.info["tvshowtitle"].replace(" ","") == ""
+		if is_serie:
+			orgname=self.info["tvshowtitle"]
+			altnames=self.info["tvshowalias"].split("|")
+		else:
+			orgname=self.info["title"]
+			altnames=self.info["originaltitle"].split("|")
+		
+		for k in range(len(altnames)):
+			if altnames[k]=="":
+				altnames.pop(k)
+
+		altnames=list(set(altnames))
+		names=[orgname]
+		for name in altnames:
+			if  not orgname == name:
+				names.append(name)
+
+		return is_serie,names
 
 	def set_content(self,content_cat="N/A"):
 		if content_cat=="N/A":

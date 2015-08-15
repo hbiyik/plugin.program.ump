@@ -17,7 +17,7 @@ apikey="ff9469649c8c7d2120758deca5ffa586"
 recnum=50
 
 def get_img(ops,default="DefaultFolder.png"):
-	im=default
+	im=None
 	for image in reversed(ops):
 		if image["#text"].startswith("http"):
 			im=image["#text"]
@@ -69,6 +69,8 @@ def run(ump):
 				mbid=result["mbid"]
 				title=result["name"]
 				im=get_img(result.get("image",[]))
+				if im is None:
+					continue
 				li=xbmcgui.ListItem(title, iconImage=im, thumbnailImage=im)
 				u=ump.link_to(where,{"mbid":mbid,"name":result["name"],"artim":im})
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
@@ -79,6 +81,8 @@ def run(ump):
 				title=result["name"]
 				artist=result["artist"]
 				im=get_img(result.get("image",[]))
+				if im is None:
+					continue
 				li=xbmcgui.ListItem(artist+ " - "+title, iconImage=im, thumbnailImage=im)
 				u=ump.link_to(where,{"mbid":mbid,"name":result["name"],"artim":im})
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
@@ -89,6 +93,8 @@ def run(ump):
 				title=result["name"]
 				artist=result["artist"]
 				im=get_img(result.get("image",[]))
+				if im is None:
+					continue
 				audio={}
 				audio["info"]={
 				"year":"",
@@ -145,6 +151,7 @@ def run(ump):
 
 		for result in results:
 			audio={}
+			print result
 			mbid=result["mbid"]
 			im=get_img(result.get("image",[]))
 			audio["info"]={
@@ -178,7 +185,7 @@ def run(ump):
 		if alb:
 			album=alb["name"]
 			artist=alb["artist"]
-			release=alb["releasedate"]
+			release=alb.get("releasedate","")
 			alid=alb["mbid"]
 			relyear=2000
 			albumimage=get_img(alb.get("image",[]))
@@ -209,7 +216,7 @@ def run(ump):
 			for result in results:
 				i+=1
 				audio={}
-				mbid=result["mbid"]
+				mbid=result.get("mbid","")
 				audio["info"]={
 				"year":relyear,
 				"tracknumber":i,

@@ -20,6 +20,8 @@ def crawl_search(query):
 		if len(nextpage)>0:
 			i+=1
 			ump.add_log("redmp3 is iterating page: %d"%i)
+			if i==11:
+				break
 			page=ump.get_page(domain+nextpage[0],encoding)
 			results.extend(crawl_single(page))
 			nextpage=re.findall(' <a href="(.*?)" class="button">Next page',page)
