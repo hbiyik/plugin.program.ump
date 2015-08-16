@@ -66,7 +66,7 @@ class ump():
 		self.urlval_tout=60
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
-		self.tm_conc=10
+		self.tm_conc=4
 		self.player=None
 		self.mirrors=[]
 		self.terminate=False
@@ -215,7 +215,8 @@ class ump():
 		errtype= e.__class__.__name__
 		if not silent:
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
-		print traceback.format_exc()
+		if not errtype=="killbill":
+			print traceback.format_exc()
 
 	def add_log(self,line):
 		line=unidecode(line)
@@ -251,7 +252,8 @@ class ump():
 		
 	def _on_new_id(self,parts,name):
 		##validate media providers url first before adding
-		self._validateparts(parts)
+		for part in parts:
+			self._validatepart(part)
 		for part in parts:
 			if part["urls"]=={}:
 				#if even 1 part is missing drop the mirror!!

@@ -16,7 +16,7 @@ def crawl_movie_page(mpage):
 	okru=re.findall('mid\%3D(.*?)"',mpage)
 	if len(okru)>0:
 		return ("okru",okru[0])
-	vkfix=re.findall('iframe.*?src="(.*?vkfix\.com.*?)"',mpage)
+	vkfix=re.findall('iframe.*?src="(http://vkfix.com.*?)"',mpage)
 	if len(vkfix)>0:
 		return ("vkfix",vkfix[0])
 	cloudy=re.findall('iframe.*?src="(.*?cloudy.*?)"',mpage)

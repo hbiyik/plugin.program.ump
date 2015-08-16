@@ -184,7 +184,6 @@ def scrape_name(id,lean=False):
 		m1["art"]["poster"]=link.split("._")[0]
 		m1["art"]["thumb"]=m1["art"]["poster"]+"._V1_SX214_AL_.jpg"
 	m1["info"]["code"]=id
-	print m1
 	return m1
 		
 
@@ -273,7 +272,6 @@ def run(ump):
 				suffix='-"TV Series" -Documentary'
 			urls=ump.web_search('inurl:http://www.imdb.com/title/ inurl:releaseinfo %s %s'%(ump.args["title"],suffix))
 			if len(urls)<1:
-				print 1
 				return None
 			else:
 				for u in urls:
@@ -324,7 +322,6 @@ def run(ump):
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 	
 	elif ump.page=="show_episodes":
-		print ump.info
 		ump.set_content(ump.defs.CC_EPISODES)
 		imdbid=ump.args.get("imdbid",None)
 		season=ump.args.get("season",None)

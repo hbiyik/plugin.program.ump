@@ -43,23 +43,18 @@ elif ump.page== "urlselect":
 	if len(link_providers)==0:
 		ump.dialog.notification("ERROR","There is no available providers for %s"%ump.content_type)
 	else:
-		gid=ump.tm.create_gid()
 		for provider in link_providers:
 			try:
 				provider=providers.load(ump.content_type,"link",provider[2])
 			except Exception, e:
 				ump.notify_error(e)
 				continue
-			ump.tm.add_queue(provider.run, (ump,),gid=gid)
+			ump.tm.add_queue(provider.run, (ump,),pri=10)
 		ump.window.doModal()
-		ump.tm.join(gid)
 elif providers.is_loadable(ump.content_type,"index",ump.module,indexers):
 	providers.load(ump.content_type,"index",ump.module).run(ump)
 ump.shut()
 print "CONTENT_CAT  : " + str(ump.content_cat)
 del gc.garbage[:]
-print gc.collect()
-print gc.collect()
-while not len(threading.enumerate())==1:
-	print threading.enumerate()
+gc.collect()
 print "EOF"

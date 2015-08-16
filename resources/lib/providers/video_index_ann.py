@@ -30,7 +30,6 @@ def latinise(text):
 	return text
 
 def scrape_ann_search(animes):
-	print animes
 	pDialog = xbmcgui.DialogProgress()
 	pDialog.create('ANN', 'Retrieving Information')
 	pDialog.update(5, 'Retrieving Information')

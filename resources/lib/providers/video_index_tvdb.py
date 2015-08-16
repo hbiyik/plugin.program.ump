@@ -14,7 +14,6 @@ import urlparse
 
 mirror="http://thetvdb.com"
 language=xbmc.getLanguage(xbmc.ISO_639_1)
-print language
 encoding="utf-8"
 apikey="C738A0A57D46E2CC"
 recnum=50
