@@ -19,7 +19,6 @@ def run(ump):
 	ump.add_log("dizilab is searching %s"%names[0])
 	page=ump.get_page(domain+"/diziler.xml",None)
 	res=minidom.parseString(page)
-	print time.time()-t2
 	series=res.getElementsByTagName("dizi")
 	for serie in series:
 		if i["code"]==serie.getElementsByTagName("imdb")[0].lastChild.data:

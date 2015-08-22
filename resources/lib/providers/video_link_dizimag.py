@@ -1,6 +1,6 @@
 import re
 import json
-import urllib2
+from urllib2 import HTTPError
 
 encoding="utf-8"
 domain = 'http://dizimag.co'
@@ -23,7 +23,12 @@ def run(ump):
 			t=serie["d"]
 			if ump.is_same(t,i["tvshowtitle"]):
 				url=domain+l+str(i["season"])+"-sezon-"+str(i["episode"])+"-bolum-izle-dizi"
-				epage=ump.get_page(url+".html",encoding)
+				try:
+					epage=ump.get_page(url+".html",encoding)
+				except HTTPError, err:
+					if err.code == 404:
+						ump.add_log("dizigold can't match %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
+						return None
 				ump.add_log("dizimag matched %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
 				sources=re.findall("Change_Source\(([0-9]*?),'(.*?)'\)",epage)
 				for source in sources:
@@ -55,18 +60,20 @@ def run(ump):
 						iframe=re.findall('<iframe src="(.*?)"',script)
 						if len(iframe)>0:
 							vids=re.findall('"file": "(.*?)", "label": "(.*?)"',ump.get_page(iframe[0],encoding))
-					for vid in vids:
-						if method==1:
-							chrs=vid[0].split("\\x")
-							vidurl="".join(chr(int(x,16)) for x in chrs if not x=="")
-							if "//217.20.157.199" in vidurl:
-								upname="okru"
+					if len(vids)>0:
+						for vid in vids:
+							if method==1:
+								chrs=vid[0].split("\\x")
+								vidurl="".join(chr(int(x,16)) for x in chrs if not x=="")
+								if "//217.20.157.199" in vidurl:
+									upname="okru"
+								else:
+									upname="google"
 							else:
 								upname="google"
-						else:
-							vidurl=vid[0]
-						vlink[vid[1]]=vidurl
-					parts=[{"url_provider_name":upname, "url_provider_hash":vlink}]
-					ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))	
+								vidurl=vid[0]
+							vlink[vid[1]]=vidurl
+						parts=[{"url_provider_name":upname, "url_provider_hash":vlink}]
+						ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))	
 				return None
 	ump.add_log("sezonlukdizi can't match %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))

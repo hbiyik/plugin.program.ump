@@ -196,7 +196,8 @@ class listwindow(xbmcgui.WindowXMLDialog):
 		#self.status.setVisible(True)
 	def _update(self):
 		q,a,p=self.ump.tm.stats()
-		self.progress.setPercent(float(p+1-self.p)*100/float(q+a+p-self.p))
+		if not q+a+p-self.p == 0:
+			self.progress.setPercent(float(p+1-self.p)*100/float(q+a+p-self.p))
 
 	def onAction(self, action):
 		self._update()
