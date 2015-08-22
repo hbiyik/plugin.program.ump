@@ -1,9 +1,5 @@
-import urllib2
-import urllib
-import json
 import re
 import urlparse
-from unidecode import unidecode
 import string
 			
 domain="http://afdah.tv"
@@ -115,7 +111,7 @@ def run(ump):
 			if len(urls.keys())>1:
 				prv="google"
 				ump.add_log("afdah decoded %s %s" % (mname,prv))
-				parts=[{"url_provider_name":prv, "url_provider_hash":json.dumps(urls)}]
+				parts=[{"url_provider_name":prv, "url_provider_hash":urls}]
 				ump.add_mirror(parts,mname)
 
 			

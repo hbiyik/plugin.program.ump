@@ -14,14 +14,15 @@ ANDROID_LEVELS = {'22': '5.1', '21': '5.0', '19': '4.4.4', '18': '4.3.0', '17': 
 COUNTRIES = ['US', 'GB', 'CA', 'DK', 'MX', 'ES', 'JP', 'CN', 'DE', 'GR']
 DKEY = base64.b64decode('M2FiYWFkMjE2NDYzYjc0MQ==')
 FKEY = base64.b64decode('MmIyYTNkNTNkYzdiZjQyNw==')
+ua="Apache-HttpClient/UNAVAILABLE (java 1.4)"
+build = random.choice(ANDROID_LEVELS.keys())
+device_id = hashlib.md5(str(random.randint(0, sys.maxint))).hexdigest()
+country = random.choice(COUNTRIES)
 
 #algo borrowed from SALTS
 def querify(query={}):
 	extra=query.copy()		
 	now = str(int(time.time()))
-	build = random.choice(ANDROID_LEVELS.keys())
-	device_id = hashlib.md5(str(random.randint(0, sys.maxint))).hexdigest()
-	country = random.choice(COUNTRIES)
 	extra["os"]="android"
 	extra["version"]="2.0"
 	extra["versioncode"]="205"
@@ -63,12 +64,12 @@ def get_episode_json( sea, epi, js_data):
 def get_sources(catalog_id,is_serie,sea=None,epi=None):
 	sources=[]
 	query={"option":"content","id":catalog_id}
-	js=get_json("%s/gold-server/gapiandroid205/"%domain,encoding,query=query)
+	js=get_json("%s/gold-server/gapiandroid205/"%domain,encoding,query=query,header={"User-Agent":ua})
 	if is_serie:
 		js = get_episode_json(sea,epi,js)
 	for film in js['listvideos']:
 		query={"option":"filmcontent","id":film['film_id'],"cataid":0}
-		film_js=get_json("%s/gold-server/gapiandroid205/"%domain,encoding,query=query)
+		film_js=get_json("%s/gold-server/gapiandroid205/"%domain,encoding,query=query,header={"User-Agent":ua})
 		for film in film_js['videos']:
 			film_link = decrypt(film['film_link'],FKEY)
 			for match in re.finditer('(http.*?(?:#(\d+)#)?)(?=http|$)', film_link):
@@ -102,7 +103,7 @@ def run(ump):
 			break
 		ump.add_log("gvcenter is searching %s"%name)
 		q={"option":"search","q":name,"page":1,"total":0,"block":0}
-		js=get_json("%s/gold-server/gapiandroid205/"%domain,encoding,query=querify(q))
+		js=get_json("%s/gold-server/gapiandroid205/"%domain,encoding,query=q,header={"User-Agent":ua})
 		for item in js['categories']:
 			match = re.search('(.*?)\s+\((\d{4}).?\d{0,4}\s*\)', item['catalog_name'])
 			if match:

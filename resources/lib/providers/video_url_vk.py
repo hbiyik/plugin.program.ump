@@ -1,7 +1,7 @@
 import json
 
 def run(url,ump):
-	src = ump.get_page(url,"utf8")
+	src = ump.get_page(url,"utf-8")
 	js=json.loads(src)
 	videos=js["response"]
 	opts={}

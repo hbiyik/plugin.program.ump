@@ -1,5 +1,3 @@
-import urllib2
-import urllib
 import json
 import re
 			
@@ -22,11 +20,11 @@ def crawl_movie_page(src,url,name):
 		#try plusplayer
 		hash=re.findall("class=\"plusplayer\".*>(.*)<",src)
 		if len(hash) > 0:
-			return [("plusplayer",json.dumps([hash[0],domain+url]))],res,name
+			return [("plusplayer",hash[0])],res,name
 		else:
 			hash=re.findall("(http\://webteizle.org/player/vk\.asp.*?)\"",src)
 			if len(hash) > 0:
-				return [("vkplayer",json.dumps([hash[0],domain+url]))],res,name
+				return [("vkplayer",hash[0])],res,name
 			else:
 				ump.add_log("720pizle Movie page has different encryption: %s" % str(url))
 				return [],None,None

@@ -1,8 +1,4 @@
-import urllib2
-import urllib
-import json
 import re
-import urlparse
 from unidecode import unidecode
 			
 domain="http://www.turkanime.tv/"
@@ -46,7 +42,7 @@ def scrape_moviepage(url,fansub,name):
 				uphash="http://vk.com/video_ext.php?oid="+oid+"&id="+video_id+"&hash="+embed_hash
 			elif up == "turkanime":
 				hash=re.findall("(http\://www.schneizel.net/video/index.php\?vid\=.*?)\"",ump.get_page(domain+u,encoding))[0]
-				uphash=json.dumps({"url":hash,"referer":"http://www.turkanime.tv/bolum/shingeki-no-kyojin-25-bolum-final&fansub=PeaceFansub&giris=OK&video=690863"})
+				uphash={"url":hash,"referer":"http://www.turkanime.tv/bolum/shingeki-no-kyojin-25-bolum-final&fansub=PeaceFansub&giris=OK&video=690863"}
 				up="google"
 			elif up == "dailymotion":
 				#todo prepare a decoder

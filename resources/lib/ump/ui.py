@@ -170,6 +170,9 @@ class listwindow(xbmcgui.WindowXMLDialog):
 		self.isinit=False
 
 	def onInit(self):
+		q,a,p=self.ump.tm.stats()
+		self.p=p
+		self.progress=self.getControl(2)
 		self.lst=self.getControl(6)
 		self.button= self.getControl(5)
 		self.button.setLabel("Cancel")
@@ -186,10 +189,17 @@ class listwindow(xbmcgui.WindowXMLDialog):
 		#lstx,lsty=self.lst.getPosition()
 		#self.status=xbmcgui.ControlTextBox(lstx+margin, lsty+lsth, lstw, statush-margin, textColor='0xCCCCCCCC')
 		self.status=self.getControl(8)
+		if not self.ump.art["fanart"]=="":
+			self.getControl(3).setImage(self.ump.art["fanart"])
+			self.getControl(3).setColorDiffuse('0xFF333333')
 		#self.status.setEnabled(True)
 		#self.status.setVisible(True)
+	def _update(self):
+		q,a,p=self.ump.tm.stats()
+		self.progress.setPercent(float(p+1-self.p)*100/float(q+a+p-self.p))
 
 	def onAction(self, action):
+		self._update()
 		if action.getId() in [1,2,3,4,107] :
 			#user input
 			if threading.active_count()==2:
@@ -198,6 +208,7 @@ class listwindow(xbmcgui.WindowXMLDialog):
 			self.ump.shut()
 
 	def onClick(self, controlID):
+		self._update()
 		if controlID==5:
 			self.ump.shut()
 		else:
@@ -210,9 +221,10 @@ class listwindow(xbmcgui.WindowXMLDialog):
 				self.ump.notify_error(e)
 
 	def onFocus(self, controlID):
-		pass
+		self._update()
 	
 	def addListItem(self,listItem):
+		self._update()
 		self.lst.addItem(listItem)
 		if self.lst.size()==1: 
 			self.setFocus(self.lst)

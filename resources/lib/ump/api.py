@@ -29,6 +29,7 @@ from ump import defs
 from ump import task
 from ump import providers
 from ump import ui
+from ump import cloudfare
 from third.unescape import unescape
 from quality import meta
 addon = xbmcaddon.Addon('plugin.program.ump')
@@ -149,10 +150,10 @@ class ump():
 			query[keep]=json.dumps(getattr(self,keep))
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 
-	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None):
+	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None):
 		if self.terminate:
 			raise task.killbill
-		oldheaders=[]
+
 		#python cant handle unicode urlencoding so needs to get dirty below.
 		if not query is None:
 			query=urllib.urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in query.items())) 
@@ -169,9 +170,12 @@ class ump():
 			headers={'Accept-encoding':'gzip'}
 			if not range is None : headers["Range"]="bytes=%d-%d"%(range)
 			if not referer is None : headers["Referer"]=referer
+			if not header is None :
+				for k,v in header.iteritems():
+					headers[k]=v
 			req=urllib2.Request(url,headers=headers)
 
-		response = self.opener.open(req, data,timeout=tout)
+		response = cloudfare.ddos_open(self.opener, req, data,timeout=tout)
 
 		if head :
 			return response

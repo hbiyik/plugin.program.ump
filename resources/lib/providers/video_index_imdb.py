@@ -235,21 +235,21 @@ def run(ump):
 		mquery=ump.args.copy()
 		mquery["title_type"]="feature,tv_movie,short,tv_special"
 		mquery["content_cat"]=ump.defs.CC_MOVIES
-		li=xbmcgui.ListItem("Show only Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		li=xbmcgui.ListItem("Show Only Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("results_title",mquery)
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 		squery=ump.args.copy()
 		squery["title_type"]="tv_series,mini_series"
 		squery["content_cat"]=ump.defs.CC_TVSHOWS
-		li=xbmcgui.ListItem("Search Only Series", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		li=xbmcgui.ListItem("Show Only Series", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("results_title",squery)
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 		dquery=ump.args.copy()
 		dquery["title_type"]="documentary"
 		dquery["content_cat"]=ump.defs.CC_MOVIES
-		li=xbmcgui.ListItem("Search Only Documentaries", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		li=xbmcgui.ListItem("Show Only Documentaries", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("results_title",dquery)
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 

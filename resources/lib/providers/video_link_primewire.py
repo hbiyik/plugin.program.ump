@@ -1,6 +1,3 @@
-import urllib2
-import urllib
-import json
 import re
 import urlparse
 from unidecode import unidecode

@@ -1,5 +1,3 @@
-import urllib2
-import urllib
 import json
 import re
 import urlparse
@@ -12,7 +10,7 @@ def crawl_movie_page(mpage):
 	#check pub player
 	google=re.findall('(http\://dizipub.com/player/.*?)"',mpage)
 	if len(google)>0:
-		return ("google",json.dumps({"url":google[0],"referer":domain}))
+		return ("google",{"url":google[0],"referer":domain})
 	okru=re.findall('mid\%3D(.*?)"',mpage)
 	if len(okru)>0:
 		return ("okru",okru[0])

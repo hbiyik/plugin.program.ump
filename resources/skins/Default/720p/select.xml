@@ -19,22 +19,36 @@
 	<controls>
 
 		<!-- Background -->
-		<control type="image">
+		<control type="image" id="3">
 			<left>0</left>
 			<top>0</top>
 			<width>1280</width>
 			<height>720</height>
-			<texture border="5" flipy="true" flipx="false" >black.png</texture>
+			<texture border="5">black.png</texture>
 		</control>
 
 		<!-- Heading -->
 		<control type="label" id="1">
-			<left>50</left>
-			<top>50</top>
+			<left>20</left>
+			<top>40</top>
+			<aligny>bottom</aligny>
 			<label>Universal Media Provider: SELECT SOURCE </label>
 			<width>1200</width>
 			<height>10</height>
 		</control>
+
+		<control type="progress" id="2">
+			<left>510</left>
+			<top>45</top>
+			<width>740</width>
+			<height>20</height>
+			<texturebg border="2">progressback.png</texturebg>
+			<lefttexture>-</lefttexture>
+			<midtexture border="2">progressbar.png</midtexture>
+			<righttexture>-</righttexture>
+			<overlaytexture>-</overlaytexture>
+		</control>
+
 
 		<!-- Image -->
 		<control type="image">
@@ -59,9 +73,9 @@
 		<!-- List -->
 		<control type="list" id="6">
 			<left>510</left>
-			<top>40</top>
+			<top>60</top>
 			<width>1230</width>
-			<height>520</height>
+			<height>460</height>
 			<onup>noop</onup>
 			<ondown>5</ondown>
 			<onleft>5</onleft>

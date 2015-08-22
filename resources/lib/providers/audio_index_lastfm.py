@@ -151,7 +151,6 @@ def run(ump):
 
 		for result in results:
 			audio={}
-			print result
 			mbid=result["mbid"]
 			im=get_img(result.get("image",[]))
 			audio["info"]={
