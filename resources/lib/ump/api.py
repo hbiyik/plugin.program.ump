@@ -289,7 +289,7 @@ class ump():
 		item.setProperty("parts",json.dumps(parts))
 		upname=parts[0].get("url_provider_name",None)
 		if not upname is None:
-			item.setIconImage(os.path.join( addon_dir, 'resources', 'images', parts[0]["url_provider_name"]+".png" ))
+			item.setIconImage("https://raw.githubusercontent.com/huseyinbiyik/dataserver/master/ump/images/"+parts[0]["url_provider_name"]+".png")
 		#if there is no more mirrors and media does not require a provider directly play it.
 		q,a,p=self.tm.stats(1)
 		if q==0 and a==1 and upname is None:
