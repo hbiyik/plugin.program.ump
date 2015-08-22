@@ -342,7 +342,13 @@ class ump():
 		return part
 
 	def shut(self,play=False):
-		self.cj.save()
+		try:
+			self.cj.save()
+		except:
+			try:
+				os.remove(os.path.join( addon_dir, 'resources', 'data', "cookie"))
+			except:
+				pass
 		self.terminate=True
 		if hasattr(self,"window"):
 			self.window.close()
