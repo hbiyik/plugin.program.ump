@@ -21,6 +21,7 @@ class xplayer(xbmc.Player):
 			self.playlist=[]
 	
 	def selectmirror(self,part):
+		#in case its multiparted and it has timed out
 		part=self.ump._validatepart(part)
 		if len(part["urls"].keys())>1:
 			slc=self.ump.dialog.select("Select Quality", part["urls"].keys())
@@ -31,7 +32,7 @@ class xplayer(xbmc.Player):
 		k=part["urls"].keys()[slc]
 		url=part["urls"][k]["url"]
 		urlp=urlparse.urlparse(url)
-		urlenc={"Cookie":"","User-Agent":self.ump.ua}
+		urlenc={"Cookie":"","User-Agent":self.ump.ua,"Referer":part["urls"][k]["referer"]}
 		cook=""
 		for cookie in self.ump.cj:
 			if urlp.netloc in cookie.domain or cookie.domain in urlp.netloc:
@@ -197,7 +198,7 @@ class listwindow(xbmcgui.WindowXMLDialog):
 	def _update(self):
 		q,a,p=self.ump.tm.stats()
 		if not q+a+p-self.p == 0:
-			self.progress.setPercent(float(p+1-self.p)*100/float(q+a+p-self.p))
+			self.progress.setPercent(float(p-self.p)*100/float(q+a+p-self.p))
 
 	def onAction(self, action):
 		self._update()

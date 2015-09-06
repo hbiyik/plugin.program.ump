@@ -23,6 +23,7 @@ def latinise(text):
 	# some roman chars are rare on daily usage, and everybody uses latin representatives. Dont know how romaji works in details.
 	chars={
 		333:"ou", #ō
+		215:"x", #instead of × 
 		}
 
 	for char in chars.keys():
@@ -43,6 +44,7 @@ def scrape_ann_search(animes):
 	count=0
 	for media in medias:
 		count+=1
+		relnum=0
 		img=""
 		title=""
 		maintitle=""
@@ -86,19 +88,22 @@ def scrape_ann_search(animes):
 					pass
 			if t=="Premiere date" and type=="movie series":
 				epinum+=1
-				episodes[epinum]=info.lastChild.data
+				episodes[epinum]={"title":info.lastChild.data,"relativenumber":epinum}
 			
 			if t=="Number of episodes":
 				num_of_epis=int(info.lastChild.data)
 
 		for episode in media.getElementsByTagName("episode"):
-			episodes[episode.getAttribute("num")]=episode.lastChild.lastChild.data
+			if not float(episode.getAttribute("num")) == 0:
+				relnum+=1
+							
+			episodes[episode.getAttribute("num")]={"title":episode.lastChild.lastChild.data,"relativenumber":relnum}
 		
 		##special for ovas, i hate the random stuff with ann
 		cur_epis=len(episodes)
 		if num_of_epis>cur_epis and num_of_epis>1:
 			for k in range(num_of_epis-cur_epis):
-				episodes[cur_epis+k+1]="Episode %d"%(cur_epis+k+1)
+				episodes[cur_epis+k+1]={"title":"Episode %d"%(cur_epis+k+1),"relativenumber":cur_epis+k+1}
 		
 		if len(episodes)>0:
 			tvshowtitle=maintitle
@@ -371,10 +376,10 @@ def run(ump):
 		#below does not work on old versions of python
 		#episodes = {float(k):v for k,v in episodes.iteritems()}
 		for epi in sorted(episodes.keys(),reverse=True):
-			li=xbmcgui.ListItem("%d %s"%(epi,episodes[epi]))
+			li=xbmcgui.ListItem("%d %s"%(epi,episodes[epi]["title"]))
 			li.setArt(ump.art)
-			ump.info["title"]=episodes[epi]
-			ump.info["episode"]=epi
+			ump.info["title"]=episodes[epi]["title"]
+			ump.info["episode"]=episodes[epi]["relativenumber"]
 			#even though animes dont have season info force it so trakt will scrobble
 			ump.info["season"]=1
 			ump.info["absolute_number"]=epi

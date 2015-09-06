@@ -1,7 +1,7 @@
 import re
 import time
 
-def run(hash,ump):
+def run(hash,ump,referer=None):
 	src=ump.get_page("http://www.vodlocker.com/"+hash,"utf8")
 	cookies=re.findall("cookie\('(.*?)', '(.*?)'",src)
 	form=re.findall('\<Form method="POST"(.*?)</Form',src,re.DOTALL)

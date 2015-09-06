@@ -2,7 +2,7 @@ import urllib
 import re
 import urlparse
 
-def run(hash,ump):
+def run(hash,ump,referer=None):
 	src=ump.get_page("http://www.movshare.net/video/"+hash,"utf8")
 	[key]=re.findall("flashvars\.filekey=\"(.*?)\"",src)
 	key=urllib.quote_plus(key).replace(".","%2E")

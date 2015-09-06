@@ -1,48 +1,48 @@
 import struct
 import re
 
-def find_atom(u,cur,name):
+def find_atom(url,referer,cur,name):
 	while True:
-		offset,atom=name_atom(u,cur)
+		offset,atom=name_atom(url,referer,cur)
 		if atom==name:
 			return cur,offset
 		else:
 			cur+=offset
 
-def name_atom(u,cur):
-	return struct.unpack(">i4s", dfunc(u,None,range=(cur,cur+7)))
+def name_atom(url,referer,cur):
+	return struct.unpack(">i4s", dfunc(url,None,referer=referer,range=(cur,cur+7)))
 
 
-def vidqual(u,dfunc):
+def vidqual(url,dfunc,referer):
 	globals()['dfunc'] = dfunc
 	ret={}
-	first8=dfunc(u,None,range=(0,7))
+	first8=dfunc(url,None,range=(0,7),referer=referer)
 	offset,atom=struct.unpack(">i4s", first8)
 	if atom=="ftyp":
 		ret["type"]="mp4"
-		cur,offset=find_atom(u,offset,"moov")
+		cur,offset=find_atom(url,referer,offset,"moov")
 		while True:
-			cur,offset=find_atom(u,cur+8,"trak")
+			cur,offset=find_atom(url,referer,cur+8,"trak")
 			##it is possible not to meet first trak as video
-			cur2,offset2=find_atom(u,cur+8,"tkhd")
-			w,h = struct.unpack(">II", dfunc(u,None,range=(cur2+82,cur2+89)))
-			if abs(w) < 4096 and abs(h)< 4096:
+			cur2,offset2=find_atom(url,referer,cur+8,"tkhd")
+			w,h = struct.unpack(">II", dfunc(url,None,referer=referer,range=(cur2+82,cur2+89)))
+			if abs(w) < 5000 and abs(h)< 5000:
 				ret["width"]=w
 				ret["height"]=h
-				resp=dfunc(u,None,head=True)
+				resp=dfunc(url,None,referer=referer,head=True)
 				ret["size"]=int(resp.info().getheader('Content-Length'))
 				break
 	elif first8[:3]=="FLV":
-		b1,b2,b3=struct.unpack("3B",dfunc(u,None,range=(14,16)))
+		b1,b2,b3=struct.unpack("3B",dfunc(url,None,referer=referer,range=(14,16)))
 		size=(b1 << 16) + (b2 << 8) + b3
-		header=dfunc(u,None,range=(27,27+size))
+		header=dfunc(url,None,referer=referer,range=(27,27+size))
 		width=re.findall("width.(........)",header)
 		height=re.findall("height.(........)",header)
 		if len(width)>0:
 			ret["width"]=struct.unpack(">d",width[0])[0]
 		if len(height)>0:
 			ret["height"]=struct.unpack(">d",height[0])[0]
-		resp=dfunc(u,None,head=True)
+		resp=dfunc(url,None,referer=referer,head=True)
 		ret["size"]=int(resp.info().getheader('Content-Length'))
 		ret["type"]="flv"
 	return ret

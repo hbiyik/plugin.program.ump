@@ -1,7 +1,7 @@
 import urlparse
 import re
 
-def run(hash,ump):
+def run(hash,ump,referer=None):
 	src = ump.get_page("https://www.cloudy.ec/embed.php?id="+hash,"utf8")
 	keys={}
 	keys["file"]=re.findall('file: ?"(.*?)"',src)[0]

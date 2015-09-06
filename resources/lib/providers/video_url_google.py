@@ -1,6 +1,6 @@
 import re
 
-def run(hash,ump):
+def run(hash,ump,referer=None):
 	html5=hash.get("html5",False)
 	if html5:
 		hash.pop("html5")

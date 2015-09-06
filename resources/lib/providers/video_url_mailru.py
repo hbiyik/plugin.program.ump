@@ -1,6 +1,6 @@
 import json
 
-def run(hash,ump):
+def run(hash,ump,referer=None):
 	js=json.loads(ump.get_page("http://videoapi.my.mail.ru/videos/"+hash+".json","utf8"))
 	videos=js["videos"]
 	opts={}

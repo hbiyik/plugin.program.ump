@@ -164,15 +164,15 @@ class ump():
 		if tout is None:
 			tout=getdefaulttimeout()
 
+		headers={'Accept-encoding':'gzip'}
+		if not referer is None : headers["Referer"]=referer
+		if not header is None :
+			for k,v in header.iteritems():
+				headers[k]=v
 		if head==True:
-			req=HeadRequest(url)
+			req=HeadRequest(url,headers=headers)
 		else:
-			headers={'Accept-encoding':'gzip'}
 			if not range is None : headers["Range"]="bytes=%d-%d"%(range)
-			if not referer is None : headers["Referer"]=referer
-			if not header is None :
-				for k,v in header.iteritems():
-					headers[k]=v
 			req=urllib2.Request(url,headers=headers)
 
 		response = cloudfare.ddos_open(self.opener, req, data,timeout=tout)
@@ -226,7 +226,7 @@ class ump():
 		line=unidecode(line)
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.window.status.setText(line+"\n"+self.window.status.getText())
-		#print line
+		print line
 
 	def add_mirror(self,parts,name):
 		if not self.terminate:
@@ -316,7 +316,7 @@ class ump():
 			provider=providers.load(self.content_type,"url",part["url_provider_name"])
 			try:
 				self.add_log("validating %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
-				part["urls"]=provider.run(part["url_provider_hash"],self)
+				part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
 			except (timeout,urllib2.URLError,urllib2.HTTPError),e:
 				self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
 				part["urls"]={}
@@ -329,7 +329,8 @@ class ump():
 					u=part["urls"][key]
 					part["urls"][key]={}
 					part["urls"][key]["url"]=u
-					m=metaf("",self.get_page,u)
+					part["urls"][key]["referer"]=part.get("referer","")
+					m=metaf("",self.get_page,u,part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
 				except (timeout,urllib2.URLError,urllib2.HTTPError),e:
 					part["urls"].pop(key)

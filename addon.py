@@ -35,7 +35,8 @@ if ump.module == "ump":
 	if ump.page is "root":
 		for provider in indexers:
 			provider_cat,provider_type,provider_name=provider
-			li=xbmcgui.ListItem(provider_name, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			img="https://raw.githubusercontent.com/huseyinbiyik/dataserver/master/ump/images/"+provider_name+".png"
+			li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
 			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
 		xbmcplugin.endOfDirectory(ump.handle)
 elif ump.page== "urlselect":
