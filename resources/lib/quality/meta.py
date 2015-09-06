@@ -25,5 +25,5 @@ def image(head,dfunc=None,url=None,referer=None):
 	return {"type":t,"width":w,"height":h}
 
 #not yet audio quality check is supported
-def audio(head,dfunc=None,url=None):
+def audio(head,dfunc=None,url=None,referer=None):
 	return {-1:None}
