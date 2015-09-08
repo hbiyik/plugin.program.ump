@@ -190,7 +190,7 @@ class listwindow(xbmcgui.WindowXMLDialog):
 		#lstx,lsty=self.lst.getPosition()
 		#self.status=xbmcgui.ControlTextBox(lstx+margin, lsty+lsth, lstw, statush-margin, textColor='0xCCCCCCCC')
 		self.status=self.getControl(8)
-		if not self.ump.art["fanart"]=="":
+		if not self.ump.art.get("fanart","")=="":
 			self.getControl(3).setImage(self.ump.art["fanart"])
 			self.getControl(3).setColorDiffuse('0xFF333333')
 		#self.status.setEnabled(True)

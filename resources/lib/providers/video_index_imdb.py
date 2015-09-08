@@ -304,8 +304,8 @@ def run(ump):
 					ump.info["tvshowalias"]=""
 					ump.info["originaltitle"]=altnames
 					u=ump.link_to("urlselect")
-					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
-		cacheToDisc=False
+					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		cacheToDisc=True
 
 	elif ump.page=="show_seasons":
 		imdbid=ump.args.get("imdbid",None)

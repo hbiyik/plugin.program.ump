@@ -175,7 +175,7 @@ def run(ump):
 				ump.info["season"]="-1"
 				ump.info["episode"]=chapter
 				u=ump.link_to("urlselect")
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 		cache=[]
 		pre=0

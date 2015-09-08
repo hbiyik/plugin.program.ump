@@ -384,6 +384,6 @@ def run(ump):
 			ump.info["season"]=1
 			ump.info["absolute_number"]=epi
 			u=ump.link_to("urlselect")
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)			
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)			
 
 	xbmcplugin.endOfDirectory(ump.handle,	cacheToDisc=cacheToDisc)

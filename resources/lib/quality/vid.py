@@ -27,8 +27,8 @@ def vidqual(url,dfunc,referer):
 			cur2,offset2=find_atom(url,referer,cur+8,"tkhd")
 			w,h = struct.unpack(">II", dfunc(url,None,referer=referer,range=(cur2+82,cur2+89)))
 			if abs(w) < 5000 and abs(h)< 5000:
-				ret["width"]=w
-				ret["height"]=h
+				ret["width"]=int(w)
+				ret["height"]=int(h)
 				resp=dfunc(url,None,referer=referer,head=True)
 				ret["size"]=int(resp.info().getheader('Content-Length'))
 				break
@@ -39,9 +39,9 @@ def vidqual(url,dfunc,referer):
 		width=re.findall("width.(........)",header)
 		height=re.findall("height.(........)",header)
 		if len(width)>0:
-			ret["width"]=struct.unpack(">d",width[0])[0]
+			ret["width"]=int(struct.unpack(">d",width[0])[0])
 		if len(height)>0:
-			ret["height"]=struct.unpack(">d",height[0])[0]
+			ret["height"]=int(struct.unpack(">d",height[0])[0])
 		resp=dfunc(url,None,referer=referer,head=True)
 		ret["size"]=int(resp.info().getheader('Content-Length'))
 		ret["type"]="flv"

@@ -233,7 +233,7 @@ class ump():
 		line=unidecode(line)
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.window.status.setText(line+"\n"+self.window.status.getText())
-		print line
+		#print line
 
 	def add_mirror(self,parts,name):
 		if not self.terminate:
@@ -276,20 +276,23 @@ class ump():
 
 		#get the highest quality info from each part and mirror
 		q=0
-		prefix=""
+		ss=0
+		prefix_q=""
+		prefix_s=""
 		for part in parts:
 			for mirror in part["urls"].itervalues():
-				if self.content_type == self.defs.CT_VIDEO:
-					if not mirror["meta"] == {}:
-						t=mirror["meta"]["type"]
-						w=int(mirror["meta"]["width"])
-						h=int(mirror["meta"]["height"])
-						s=int(mirror["meta"]["size"])
-						if w*h>=q:
-							prefix="[%s]"%humanres(w,h)
-							q=w*h
-							if s>0:
-								prefix="%s[F:%s]"%(prefix,humanint(s))
+				if not mirror["meta"] == {}:
+					t=mirror["meta"]["type"]
+					w=mirror["meta"]["width"]
+					h=mirror["meta"]["height"]
+					s=mirror["meta"]["size"]
+					if not (w is None or h is None) and w*h>=q:
+						prefix_q="[%s]"%humanres(w,h)
+						q=w*h
+					if not s is None and s>0 and s>ss:
+						prefix_s="[F:%s]"%humanint(s)
+						ss=s
+		prefix=prefix_q+prefix_s
 		item=xbmcgui.ListItem()
 		item.setLabel(prefix+name)
 		item.setLabel2(self.info["title"])
@@ -337,7 +340,8 @@ class ump():
 					part["urls"][key]={}
 					part["urls"][key]["url"]=u
 					part["urls"][key]["referer"]=part.get("referer","")
-					m=metaf("",self.get_page,u,part["urls"][key]["referer"])
+					method=xbmcplugin.getSetting(self.handle,self.content_type+"_val_method")
+					m=metaf("",method,self.get_page,u,part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
 				except (timeout,urllib2.URLError,urllib2.HTTPError),e:
 					part["urls"].pop(key)
