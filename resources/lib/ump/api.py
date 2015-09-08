@@ -12,12 +12,13 @@ import datetime
 from cookielib import LWPCookieJar, LoadError
 from socket import timeout
 from socket import getdefaulttimeout
+import socket
 from threading import current_thread
 from StringIO import StringIO
+
 import gzip
 import string
 import json
-
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -59,6 +60,7 @@ def humanres(w,h):
 
 class ump():
 	def __init__(self,pt=False):
+		self.handle = int(sys.argv[1])
 		self.ws_limit=False #web search limit
 		self.defs=defs
 		self.window = ui.listwindow('select.xml', addon_dir, 'Default', '720p',ump=self)
@@ -75,6 +77,10 @@ class ump():
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
+		if xbmcplugin.getSetting(self.handle,"kodiproxy")=="true":
+			print xbmcplugin.getSetting(self.handle,"kodiproxy")
+			from ump import proxy
+			socket.socket = proxy.socket()
 		self.cj=LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
 		if os.path.exists(os.path.join( addon_dir, 'resources', 'data', "cookie")):
 			try:
@@ -82,10 +88,9 @@ class ump():
 			except LoadError:
 				pass
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
-		self.ua="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"
+		self.ua=xbmcplugin.getSetting(self.handle,"useragent")
 		self.opener.addheaders = [('User-agent', self.ua)]
 		self.dialog=xbmcgui.Dialog()
-		self.handle = int(sys.argv[1])
 		query=sys.argv[2][1:]
 		result=urlparse.parse_qs(query)
 		[self.module]= result.get('module', ["ump"])
@@ -151,6 +156,7 @@ class ump():
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None):
+
 		if self.terminate:
 			raise task.killbill
 
@@ -193,6 +199,7 @@ class ump():
 		else:
 			#unicode data
 			src=unicode(unescape(stream.decode(encoding,"ignore")))
+		
 		return src
 	
 	def web_search(self,query):
