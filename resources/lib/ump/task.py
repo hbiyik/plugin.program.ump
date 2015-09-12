@@ -73,7 +73,7 @@ class manager(object):
 			break
 				
 
-	def join(self,gid=None,cnt=0):
+	def join(self,gid=None,cnt=0,noblock=0):
 		if cnt>0:
 			dialog = xbmcgui.DialogProgress()
 			dialog.create('UMP', 'Shutting Down Task Manager')
@@ -81,7 +81,7 @@ class manager(object):
 			q,a,p=self.stats(gid)
 			if cnt>0 and not q+a==0:
 				dialog.update(100-100*(q+a)/cnt,"Shutting Down Tasks %d of %d"%(cnt-q-a,cnt))
-			if (self.s.isSet() or q==0) and a==0:
+			if (self.s.isSet() or q==0) and a<=noblock:
 				break
 			time.sleep(1)
 		if cnt>0:

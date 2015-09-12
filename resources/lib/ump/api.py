@@ -69,7 +69,7 @@ class ump():
 		self.urlval_tout=60
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
-		self.tm_conc=4
+		self.tm_conc=int(xbmcplugin.getSetting(self.handle,"conc"))
 		self.player=None
 		self.mirrors=[]
 		self.terminate=False
@@ -287,28 +287,57 @@ class ump():
 					h=mirror["meta"]["height"]
 					s=mirror["meta"]["size"]
 					if not (w is None or h is None) and w*h>=q:
-						prefix_q="[%s]"%humanres(w,h)
+						prefix_q="[R:%s]"%humanres(w,h)
 						q=w*h
 					if not s is None and s>0 and s>ss:
 						prefix_s="[F:%s]"%humanint(s)
 						ss=s
-		prefix=prefix_q+prefix_s
+		mname=prefix_q+prefix_s+name
+		
+		autoplay=False
+		if self.content_type==self.defs.CT_VIDEO and xbmcplugin.getSetting(self.handle,"auto_en_video")=="true":
+			if xbmcplugin.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality":
+				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(xbmcplugin.getSetting(self.handle,"min_vid_res")):
+					autoplay=True
+			if xbmcplugin.getSetting(self.handle,"video_val_method")=="Check if Alive Only" or xbmcplugin.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality" and autoplay:
+				tags=re.findall("\[(.*?)\]",name)
+				required=xbmcplugin.getSetting(self.handle,"require_tag").split(",")
+				filtered=xbmcplugin.getSetting(self.handle,"dont_require_tag").split(",")
+				autoplay=True
+				for tag in tags:
+					if not tag=="" and tag.lower().replace(" ","") in [x.lower().replace(" ","") for x in filtered]:
+						autoplay=False
+						break
+				
+				for require in required:
+					if not require=="" and not require.lower().replace(" ","") in [x.lower().replace(" ","") for x in tags]:
+						autoplay=False
+						break
+				
+		if self.content_type==self.defs.CT_AUDIO and xbmcplugin.getSetting(self.handle,"auto_en_audio")=="true" and xbmcplugin.getSetting(self.handle,"audio_val_method")=="Check if Alive Only":
+			autoplay=True
+
+		if self.content_type==self.defs.CT_IMAGE and xbmcplugin.getSetting(self.handle,"auto_en_image")=="true" and xbmcplugin.getSetting(self.handle,"audio_val_method")=="Check if Alive & Quality":
+			autoplay=True
+
 		item=xbmcgui.ListItem()
-		item.setLabel(prefix+name)
+		item.setLabel(mname)
 		item.setLabel2(self.info["title"])
 		item.setProperty("parts",json.dumps(parts))
 		upname=parts[0].get("url_provider_name",None)
 		if not upname is None:
 			item.setIconImage("https://raw.githubusercontent.com/huseyinbiyik/dataserver/master/ump/images/"+parts[0]["url_provider_name"]+".png")
 		#if there is no more mirrors and media does not require a provider directly play it.
-		q,a,p=self.tm.stats(1)
-		if q==0 and a==1 and upname is None:
-			state=self.player.create_list(item)
-			if state:
-				self.player.play()
-		else:
-		#else init selector ui and add item
-			self.window.addListItem(item)
+		if autoplay:
+			try:
+				state=self.player.create_list(item)
+				if state:
+					self.shut(True,3)
+				return None
+			except Exception,e:
+				self.notify_error(e)
+
+		self.window.addListItem(item)
 
 	def _validateparts(self,parts):
 		gid=self.tm.create_gid()
@@ -353,7 +382,7 @@ class ump():
 			part["uptime"]=time.time()
 		return part
 
-	def shut(self,play=False):
+	def shut(self,play=False,noblock=0):
 		try:
 			self.cj.save()
 		except:
@@ -369,7 +398,6 @@ class ump():
 		if play:
 			q=a=0
 			self.player.play()
-		self.tm.join(cnt=q+a)
 
 		if hasattr(self,"window"):
 			if hasattr(self.window,"status"):
@@ -387,3 +415,4 @@ class ump():
 
 		if hasattr(self,"player"):
 			del(self.player)
+		self.tm.join(cnt=q+a,noblock=noblock)
