@@ -3,23 +3,31 @@
     <category label="Validation/Auto Selection">
         <setting label="VIDEO VALIDATION AND AUTO SELECTION" type="lsep"/>
 	   	<setting id="video_val_method" type="select" label="Video Validation Method" values="Disabled|Check if Alive Only|Check if Alive & Quality" default="Check if Alive & Quality"/>
-	    <setting id="auto_en_video" type="bool" label="Enable Automatic Mirror Selection for Videos" visible="eq(-1,Check if Alive & Quality)" default="true"/>
+	    <setting id="auto_en_video" type="bool" label="Enable Automatic Mirror Selection for Videos" visible="!eq(-1,Disabled)" default="false"/>
 		<setting id="min_vid_res" type="select" label="Minimum Video Resolation" values="240|360|480|576|720|1080|2160|4320"  visible="eq(-1,true)+eq(-2,Check if Alive & Quality)" default="720"/>
-		<setting id="require_hs" type="text" label="Require Hard Subtitle Language" visible="eq(-2,true)+eq(-3,Check if Alive & Quality)" default=""/>
-		<setting id="dont_require_hs" type="text" label="Filter Out Hard Subtitle Language" visible="eq(-3,true)+eq(-4,Check if Alive & Quality)" default="tr,jp"/>
-		<setting id="require_dub" type="text" label="Require Dub Language" visible="eq(-4,true)+eq(-5,Check if Alive & Quality)" default=""/>
-		<setting id="dont_require_dub" type="text" label="Filter Out Dub Language" visible="eq(-5,true)+eq(-6,Check if Alive & Quality)" default="tr,jp"/>
-
+		<setting id="require_tag" type="text" label="Require Tag" visible="eq(-2,true)+!eq(-3,Disabled)" default=""/>
+		<setting id="dont_require_tag" type="text" label="Filter Out Tag" visible="eq(-3,true)+!eq(-4,Disabled)" default="hs:tr, hs:jp, d:tr, d:jp, ts, cam"/>
 		<setting label="AUDIO VALIDATION AND AUTO SELECTION" type="lsep"/>
 		<setting id="audio_val_method" type="select" label="Audio Validation Method" values="Disabled|Check if Alive Only" default="Check if Alive Only"/>
-	    <setting id="auto_en_audo" type="bool" label="Enable Automatic Mirror Selection for Audios" visible="eq(-1,Check if Alive Only)" default="true"/>
+	    <setting id="auto_en_audio" type="bool" label="Enable Automatic Mirror Selection for Audios" visible="eq(-1,Check if Alive Only)" default="false"/>
 
         <setting label="IMAGE VALIDATION AND AUTO SELECTION" type="lsep"/>
 		<setting id="image_val_method" type="select" label="Image Validation Method" values="Check if Alive & Quality" default="Check if Alive & Quality"/>
-        <setting id="auto_en_music" type="bool" label="Enable Automatic Mirror Selection for Images" visible="eq(-1,Check if Alive & Quality)" default="true"/>
+        <setting id="auto_en_image" type="bool" label="Enable Automatic Mirror Selection for Images" visible="eq(-1,Check if Alive & Quality)" default="false"/>
     </category>
-    <category label="Geek Settings">
+    <category label="Advanced Settings">
 		<setting id="useragent" type="text" label="Browser User-Agent" default="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"/>
-		<setting id="kodiproxy" type="bool" label="Use Proxy from Kodi Settings" default="False"/>
+		<setting id="kodiproxy" type="bool" label="Use Proxy from Kodi Settings" default="false"/>
+	    <setting id="conc" label="Task Manager Concurrency" type="slider" default="10" range="3,1,20" option="int" />
     </category>
+    <category label="About">
+        <setting label="UNIVERSAL MEDIA PROVIDER:" type="lsep"/>
+        <setting label="This Addon is completely free, you can not sell, rent or make" type="lsep"/>
+        <setting label="profit out of it. Not that anyone will sue you  just because " type="lsep"/>
+        <setting label="it will make you look like a douchebag." type="lsep"/>
+        <setting label="" type="lsep"/>
+        <setting label="To get support about this addon, or read tutorials and docs visit:" type="lsep"/>
+        <setting label="http://forums.tvaddons.ag" type="lsep"/>
+    </category>
+
 </settings>
