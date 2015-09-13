@@ -123,7 +123,7 @@ def run(ump):
 		ambid=ump.args["mbid"]
 		name=ump.args["name"]
 		artim=ump.args["artim"]
-		q={"method":"artist.topalbums","mbid":ambid,"api_key":apikey,"format":"json"}
+		q={"method":"artist.getTopAlbums","mbid":ambid,"api_key":apikey,"format":"json"}
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		results=js.get("topalbums",{"album":[]})["album"]
 
@@ -151,7 +151,7 @@ def run(ump):
 
 		for result in results:
 			audio={}
-			mbid=result["mbid"]
+			mbid=result.get("mbid","")
 			im=get_img(result.get("image",[]))
 			audio["info"]={
 			"year":"",

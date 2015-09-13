@@ -7,8 +7,9 @@
 		<setting id="min_vid_res" type="select" label="Minimum Video Resolation" values="240|360|480|576|720|1080|2160|4320"  visible="eq(-1,true)+eq(-2,Check if Alive & Quality)" default="720"/>
 		<setting id="require_tag" type="text" label="Require Tag" visible="eq(-2,true)+!eq(-3,Disabled)" default=""/>
 		<setting id="dont_require_tag" type="text" label="Filter Out Tag" visible="eq(-3,true)+!eq(-4,Disabled)" default="hs:tr, hs:jp, d:tr, d:jp, ts, cam"/>
+
 		<setting label="AUDIO VALIDATION AND AUTO SELECTION" type="lsep"/>
-		<setting id="audio_val_method" type="select" label="Audio Validation Method" values="Disabled|Check if Alive Only" default="Check if Alive Only"/>
+		<setting id="audio_val_method" type="select" label="Audio Validation Method" values="Disabled|Check if Alive Only" default="Disabled"/>
 	    <setting id="auto_en_audio" type="bool" label="Enable Automatic Mirror Selection for Audios" visible="eq(-1,Check if Alive Only)" default="false"/>
 
         <setting label="IMAGE VALIDATION AND AUTO SELECTION" type="lsep"/>

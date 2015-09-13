@@ -107,6 +107,8 @@ def get_details(matches):
 		else:
 			title=matches[id]
 		info={"title":title,"originaltitle":matches[id],"writer":mangaka,"code":id}
+		if cover=="":
+			cover="DefaultFolder.png"
 		art={"thumb":cover,"poster":cover}
 		res[id]={"info":info,"art":art}
 
@@ -179,11 +181,31 @@ def run(ump):
 
 		cache=[]
 		pre=0
+		suffixes=["end"]
 		for rel in rel_sort:
 			chapter=rel[3]
-			try:
+			#clear suffixes
+			for suffix in suffixes:
+				if " (%s)"%suffix in chapter:
+					chapter=chapter.replace(" (%s)"%suffix,"")
+			#clear versions
+			chapter=re.sub("v[0-9].*","",chapter)
+
+			#clear sequence releases
+			if "-" in chapter:
+				sequences=chapter.split("-")
+				if len(sequences)==2 and sequences[0].isnumeric() and sequences[1].isnumeric():
+					print 1
+					if int(sequences[0])>int(sequences[1]):
+						print 2
+						chapter=sequences[0]
+					else:
+						chapter=sequences[1]
+
+			#fill the missing releases
+			if chapter.isnumeric():
 				chapter=int(chapter)
-			except ValueError:
+			else:
 				create_li(chapter)
 				continue
 			if pre==0:

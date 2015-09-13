@@ -14,15 +14,22 @@ def run(ump):
 	i=ump.info
 	ump.add_log("Mangafox is searching %s" % i["title"])
 	results=json.loads(ump.get_page(domain+"/ajax/search.php",encoding,query={"term":ump.info["title"]}))
+	print results
+	print ump.info["title"]
+	found=False
 	for result in results:
+		print ump.is_same(result[1],ump.info["title"])
 		if ump.is_same(result[1],ump.info["title"]) or ump.is_same(result[1],ump.info["originaltitle"]):
 			matchname=result[1]
 			matchuri=result[2]
 			ump.add_log("Mangafox matched %s"%matchname)
+			found=True
 			break
-		else:
-			ump.add_log("Mangafox cant find any match for %s"%ump.info["title"])
-			return None
+
+	if not found:
+		ump.add_log("Mangafox cant find any match for %s"%ump.info["title"])
+		return None
+	
 
 	res=ump.get_page(domain+"/rss/"+matchuri+".xml",None)
 	res=minidom.parseString(res)
