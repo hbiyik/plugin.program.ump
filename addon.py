@@ -15,7 +15,9 @@ sys.path.append(os.path.join( addon_dir, 'resources', 'lib' ) )
 from ump import providers
 from ump import api
 from ump import ui
+from ump import bookmark
 
+bookmark.resolve()
 ump=api.ump()
 
 print "HANDLE       : " + str(ump.handle)
