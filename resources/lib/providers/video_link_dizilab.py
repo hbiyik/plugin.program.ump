@@ -27,7 +27,7 @@ def run(ump):
 			if "<title>Sayfa Bulunamad" in epage:
 				break
 			ump.add_log("dizilab matched %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
-			links=re.findall('file: "(.*?)",label: "(.*?)",type',epage)
+			links=re.findall('file: "(.*?)",.*?label: "(.*?)",.*?type: "mp4"',epage,re.DOTALL)
 			if len(links)>0:
 				vlinks={"html5":True}
 				for link in links:
