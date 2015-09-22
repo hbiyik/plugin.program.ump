@@ -33,9 +33,19 @@ def run(ump):
 				vurl=domain+"/service/get_video_part"
 				vpage=ump.get_page(vurl,encoding,data={"video_id":video_id,"part_name":part_name,"page":0},header={"X-Requested-With":"XMLHttpRequest"})
 				js=json.loads(vpage)
-				vlink={"url":re.findall('<script src="(.*?)"',js["part"]["code"])[0],"referer":domain}
-				parts=[{"url_provider_name":"google", "url_provider_hash":vlink}]
-				ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))				
+				glink=re.findall('<script src="(.*?)"',js["part"]["code"])
+				uprv=""
+				if len(glink)>0:
+					vlink={"url":glink[0],"referer":domain}
+					uprv="google"
+				oklink=re.findall('<iframe src="(.*?)"',js["part"]["code"])
+				if len(oklink)>0:
+					oksrc=ump.get_page(oklink[0],encoding,referer=domain)
+					vlink=re.findall("id='\+([0-9]*?)\+'",oksrc)[0]
+					uprv="okru"
+				if not uprv=="":
+					parts=[{"url_provider_name":uprv, "url_provider_hash":vlink}]
+					ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))				
 				return None
 				break
 	ump.add_log("sezonlukdizi can't match %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
