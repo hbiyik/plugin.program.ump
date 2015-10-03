@@ -5,7 +5,7 @@ from urllib2 import HTTPError
 encoding="utf-8"
 domain = 'http://www.dizigold.net'
 
-
+#note: i dont really care about the mirros on this site only care about gvideos, mirros are vk which are marked private now and mail.ru most of them rarely works randomly
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
