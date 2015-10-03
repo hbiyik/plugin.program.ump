@@ -41,7 +41,11 @@ def run(ump):
 				oklink=re.findall('<iframe src="(.*?)"',js["part"]["code"])
 				if len(oklink)>0:
 					oksrc=ump.get_page(oklink[0],encoding,referer=domain)
-					vlink=re.findall("id='\+([0-9]*?)\+'",oksrc)[0]
+					#vlink=re.findall("id='\+([0-9]*?)\+'",oksrc)[0]
+					vlink={"html5":True}
+					links=re.findall('file:"(.*?)", label:"(.*?)"',oksrc)
+					for link in links:
+						vlink[link[1]]=link[0]
 					uprv="okru"
 				if not uprv=="":
 					parts=[{"url_provider_name":uprv, "url_provider_hash":vlink}]
