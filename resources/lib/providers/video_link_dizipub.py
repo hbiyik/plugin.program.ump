@@ -21,6 +21,9 @@ def crawl_movie_page(mpage):
 	if len(cloudy)>0:
 		hash=urlparse.parse_qs(urlparse.urlparse(cloudy[0]).query).get("id")[0]
 		return ("cloudy",hash)
+	openload=re.findall('<iframe src="https://openload.co/embed/(.*?)/',mpage)
+	if len(openload)>0:
+		return ("openload",openload[0])
 	return None,None
 
 def return_links(name,mp,h):
@@ -54,7 +57,7 @@ def run(ump):
 	
 	if not found: return
 	src=ump.get_page(result["url"],encoding)
-	epis=re.findall('<h3> <a href="(.*?)">.*?([0-9]*?)\.S.*?([0-9]*?)\.B.*?</a></h3>',src)
+	epis=re.findall('</div><h3> <a href="(.*?)">.*?([0-9]*?)\.S.*?([0-9]*?)\.B.*?</a></h3>',src)
 	if len(epis)==0 and i["season"]==1:
 		epis=re.findall('<h3> ?<a href="(.*?)">.*?([0-9]*?)\..*?</a></h3>',src)
 		epis=[(x[0],1,x[1]) for x in epis]
