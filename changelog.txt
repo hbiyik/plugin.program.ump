@@ -1,3 +1,6 @@
+2015-09-22: sezonlukdizi:site updated
+2015-09-22: dizilab: fix regex
+2015-09-20: 0.0.27 Version Release
 2015-09-20: kissanime:added to index
 2015-09-20: kissanime: online again no change on site
 2015-09-20: addon: bookmark
