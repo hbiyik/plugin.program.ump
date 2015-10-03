@@ -23,7 +23,6 @@ def run(ump):
 			l,t=serie
 			l=l.replace("\\","")
 			t=t.replace("\\","")
-			print t
 			if ump.is_same(t,i["tvshowtitle"]):
 				url=l+"/"+str(i["season"])+"-sezon/"+str(i["episode"])+"-bolum"
 				try:
@@ -43,6 +42,9 @@ def run(ump):
 						mirrors[link[1].replace("\\","")]=link[0].replace("\\","")
 					parts=[{"url_provider_name":"google", "url_provider_hash":mirrors}]
 					ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))				
+					return None
+				else:
+					ump.add_log("dizigold : link is down %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
 					return None
 				break
 	ump.add_log("dizigold can't match %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
