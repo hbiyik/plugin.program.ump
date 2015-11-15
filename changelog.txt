@@ -1,3 +1,13 @@
+2015-11-15: dizigold: fixed lots of stuff dizimag: handle all mirrors with v2 kissanime: new domain and new match algo with new site sezonluk dizi: match proper with alternating names animejolt: disabled since video server is unstable mangahere: new image link/url provider. mangafox now only supports unlicensed mangas. mangahere will take the workload
+2015-11-15: redmp3: fixed url and site changes mangafox: fixed pagination tvdb: fixed localisation issues @issue #22 api: prevent malfunctioning provider to cause ump to malfunction too cloudfare: handle redirections before answering question ui: more contrast colors on selection UI
+2015-10-03: comments
+2015-10-03: sezonluk dizi: fixed ok.ru videos, site changed
+2015-10-03: dizipub: fixed regex, site is updated
+2015-10-03: dizimag: web site is updated, updated video match algo
+2015-10-03: dizigold: stop looping iy all links are dead
+2015-09-22: sezonlukdizi:site updated
+2015-09-22: dizilab: fix regex
+2015-09-20: 0.0.27 Version Release
 2015-09-20: kissanime:added to index
 2015-09-20: kissanime: online again no change on site
 2015-09-20: addon: bookmark
