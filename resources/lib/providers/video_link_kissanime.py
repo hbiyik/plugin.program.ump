@@ -3,7 +3,7 @@ import json
 import re
 import time
 			
-domain="http://kissanime.com"
+domain="http://kissanime.to"
 encoding="utf-8"
 
 def match_uri(results,refnames):
@@ -11,7 +11,7 @@ def match_uri(results,refnames):
 	pages={}
 	for result in results:
 		if matched: break
-		depth=result.replace("http://kissanime.com/Anime/","").split("/")
+		depth=result.replace("%s/Anime/"%domain,"").split("/")
 		if len(depth)>1:
 			continue
 		page=ump.get_page(result,encoding)
@@ -27,7 +27,7 @@ def match_uri(results,refnames):
 			if matched: break
 			for name1 in names:
 				if ump.is_same(name1,name,strict=False):
-					related=re.findall('subdub.png"/>.*<a href="(.*?)"><b>(.*?)</b></a>',page)
+					related=re.findall('subdub.png.*<a href="(.*?)"><b>(.*?)</b></a>',page)
 					if len(related)>0:
 						if "(Sub)" in related[0][1]:
 							pages["[HS:EN]"]=ump.get_page("%s%s"%(domain,related[0][0]),encoding)
@@ -79,7 +79,7 @@ def run(ump):
 	
 	if not found:
 		ump.add_log("kissanime is searching %s on %s"%(names[0],"google"))
-		urls=ump.web_search('site:https://kissanime.com/Anime/* %s "Genres:"'%names[0])
+		urls=ump.web_search('site:%s/Anime/* %s "Genres:"'%(domain,names[0]))
 		if not urls is None:
 			found,res=match_uri(urls,names)
 
@@ -105,15 +105,19 @@ def run(ump):
 	else:
 		found=False
 		for dub,page in sorted(res.iteritems(),reverse=True):
-			epis=re.findall('<a href="(/Anime/.*?)" title="Watch anime (.*?)">',page)
-			for epi in epis:
+			table=re.findall('<table class="listing">(.*?)</table>',page,re.DOTALL)
+			if len(table)<1:
+				continue
+			epis=re.findall('href="(/Anime/.*?)"',table[0])
+			epinames=re.findall('title="Watch anime (.*?)">',table[0])
+			for epi,epiname in zip(epis,epinames):
 				if is_serie:
-					epinum=re.findall("([0-9]*?) online",epi[1])
+					epinum=re.findall("([0-9]*?) online",epiname)
 					if not len(epinum)==1 or epinum[0]=="" or not int(epinum[0])==int(i["absolute_number"]):
 						continue
 				ump.add_log("kissanime is  loading %s"%i["title"])
-				epipage=ump.get_page(domain+epi[0],encoding)
-				fansub=re.findall("\[(.*?)\]",epi[1])
+				epipage=ump.get_page(domain+epi,encoding)
+				fansub=re.findall("\[(.*?)\]",epiname)
 				if len(fansub)==1:
 					prefix="%s[FS:%s]"%(dub,fansub[0])
 				else:

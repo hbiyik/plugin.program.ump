@@ -20,7 +20,7 @@ def run(ump):
 		ump.add_log("sezonlukdizi is searching %s"%name)	
 		for serie in series:
 			l,t,s=serie
-			if ump.is_same(t,i["tvshowtitle"]) and int(i["season"])==int(s):
+			if ump.is_same(t,name) and int(i["season"])==int(s):
 				url=domain+l+str(i["season"])+"-sezon-"+str(i["episode"])+"-bolum"
 				try:
 					epage=ump.get_page(url+".html",encoding)

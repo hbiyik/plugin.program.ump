@@ -15,15 +15,15 @@ def run(ump):
 		return None
 
 	for name in names:
-		ump.add_log("dizigold is searching %s"%name)
-		data={"aranan":name,"tip":"aranans"}
-		page=ump.get_page(domain+"/sistem/ajax.php",encoding,data=data,referer=domain,header={"X-Requested-With":"XMLHttpRequest"})
-		series=re.findall('href\="(.*?)".*?h3\>(.*?)\<',page.decode("string-escape"),re.DOTALL)
+		query={"page":"/dizi/aranan_%s"%name}
+		page=ump.get_page(domain+"/sistem/arsiv.php",encoding,query=query,referer=domain+"/arsiv",header={"X-Requested-With":"XMLHttpRequest"})
+		names=re.findall('<span class="realcuf">(.*?)</span></a>',page)
+		links=re.findall('<div class="detay "><a href="(.*?)"></a>',page)
+		series=zip(links,names)
 		for serie in series:
+			found=False
 			l,t=serie
-			l=l.replace("\\","")
-			t=t.replace("\\","")
-			if ump.is_same(t,i["tvshowtitle"]):
+			if ump.is_same(t,name):
 				url=l+"/"+str(i["season"])+"-sezon/"+str(i["episode"])+"-bolum"
 				try:
 					epage=ump.get_page(url,encoding)
@@ -36,14 +36,24 @@ def run(ump):
 				data={"id":video_id,"tip":"view"}
 				page=ump.get_page(domain+"/sistem/ajax.php",encoding,data=data,referer=domain,header={"X-Requested-With":"XMLHttpRequest"})
 				links=re.findall('"file":"(.*?)", "label":"(.*?)"',page.decode("string-escape"))
+				##new player 
+				vid=re.findall('var view_id="([0-9]*?)"',epage)
 				if len(links)>0:
 					mirrors={"html5":True}
 					for link in links:
 						mirrors[link[1].replace("\\","")]=link[0].replace("\\","")
 					parts=[{"url_provider_name":"google", "url_provider_hash":mirrors}]
 					ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))				
-					return None
-				else:
+					found=True
+				elif len(vid)>0:
+					data={"tip":"view","id":vid[0]}
+					iframe=ump.get_page(domain+"/sistem/ajax.php",encoding,referer=url,header={"X-Requested-With":"XMLHttpRequest"},data=data)
+					vkext=re.findall('\?oid=(.*?)"',iframe)
+					if len(vkext)>0:
+						parts=[{"url_provider_name":"vkext", "url_provider_hash":"https://vk.com/video_ext.php?oid=%s"%vkext[0].replace("\\","")}]
+						ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))
+						found=True
+				if not found:
 					ump.add_log("dizigold : link is down %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
 					return None
 				break

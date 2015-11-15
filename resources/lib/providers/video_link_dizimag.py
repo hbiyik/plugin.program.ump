@@ -23,7 +23,7 @@ def run(ump):
 		for serie in series:
 			l=serie["s"]+"/"
 			t=serie["d"]
-			if ump.is_same(t,i["tvshowtitle"]):
+			if ump.is_same(t,name):
 				url=domain+l+str(i["season"])+"-sezon-"+str(i["episode"])+"-bolum-izle-dizi"
 				try:
 					epage=ump.get_page(url+".html",encoding)
@@ -33,7 +33,7 @@ def run(ump):
 						return None
 				ump.add_log("dizimag matched %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
 				if version==2:
-					ids=re.findall("url:\"/service/part\",data:'id=([0-9]*?)'",epage)
+					ids=re.findall("kaynakdegis\('([0-9]*?)'",epage)
 					for id in set(ids):
 						if id.isnumeric():
 							try:
