@@ -78,7 +78,6 @@ class ump():
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
 		if xbmcplugin.getSetting(self.handle,"kodiproxy")=="true":
-			print xbmcplugin.getSetting(self.handle,"kodiproxy")
 			from ump import proxy
 			socket.socket = proxy.socket()
 		self.cj=LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
@@ -233,10 +232,10 @@ class ump():
 		line=unidecode(line)
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.window.status.setText(line+"\n"+self.window.status.getText())
-		#print line
+		print line
 
 	def add_mirror(self,parts,name):
-		if not self.terminate:
+		if not self.terminate and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				upname=part.get("url_provider_name",None)
 				uphash=part.get("url_provider_hash",None)

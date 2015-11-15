@@ -71,6 +71,7 @@ def get_tvdb_art(ids):
 def get_tvdb_info(ids):
 	def get_id(id):
 		p=ump.get_page("%s/api/%s/series/%s/%s.xml"%(mirror,apikey,str(id),language),None)
+		print "%s/api/%s/series/%s/%s.xml"%(mirror,apikey,str(id),language)
 		x=minidom.parseString(p)
 		serie=x.getElementsByTagName("Series")[0]
 		info={}
@@ -215,9 +216,11 @@ def run(ump):
 		suggest=""
 		for s in series:
 			sname=s.getElementsByTagName("SeriesName")[0].lastChild.data
+			sname=sname.split(" (")[0]
 			salias=get_child_data(s,"AliasNames","")
 			sid=s.getElementsByTagName("seriesid")[0].lastChild.data
-			names[sid]=(sname,salias)
+			names[sid]=[sname,salias]
+			print [sname,salias]
 
 		if len(names)==0:
 			suggest="[SUGGESTED] "
@@ -232,7 +235,10 @@ def run(ump):
 		data=get_tvdb_info(names.keys())
 
 		for id in data.keys():
-			data[id]["info"]["tvshowalias"]=names[id][1]
+			aliases=names[id]
+			if ump.is_same(names[id][0],data[id]["info"]["tvshowtitle"]):
+				aliases.pop(0)
+			data[id]["info"]["tvshowalias"]="|".join(aliases)
 			li=xbmcgui.ListItem(suggest+data[id]["info"]["tvshowtitle"], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 			ump.info=data[id]["info"]
 			ump.art=data[id]["art"]

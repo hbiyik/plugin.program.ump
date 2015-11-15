@@ -89,7 +89,7 @@
 					<top>0</top>
 					<width>1030</width>
 					<height>26</height>
-					<textcolor>0xCCCCCCCC</textcolor>
+					<textcolor>0xFFFFFFFF</textcolor>
 					<label>$INFO[ListItem.Label]</label>
 					<animation effect="slide" end="0,18" condition="IsEmpty(ListItem.Property(Addon.Summary))">Conditional</animation>
 				</control>
@@ -101,7 +101,7 @@
 					<top>0</top>
 					<width>1030</width>
 					<height>36</height>
-					<textcolor>0xFFFFFFFF</textcolor>
+					<textcolor>0xFFFFFF00</textcolor>
 					<label>$INFO[ListItem.Label]</label>
 					<animation effect="slide" end="0,18" condition="IsEmpty(ListItem.Property(Addon.Summary))">Conditional</animation>
 				</control>

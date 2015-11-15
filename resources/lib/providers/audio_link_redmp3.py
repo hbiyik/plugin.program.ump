@@ -5,7 +5,7 @@ import json
 import re
 import urlparse
 			
-domain="http://redmp3.me"
+domain="http://redmp3.cc"
 encoding="utf-8"
 
 
@@ -77,7 +77,7 @@ def run(ump):
 			id,artist,title,album=result
 			if ump.is_same(artist,i["artist"]) and ump.is_same(title,i["title"]):
 				ump.add_log("redmp3 found track: %s - %s"%(i["artist"],i["title"]))
-				parts=[{"url_provider_name":"redmp3", "url_provider_hash":id}]
+				parts=[{"url_provider_name":"redmp3", "url_provider_hash":id,"referer":domain}]
 				mname="%s - %s" %(artist,title)
 				ump.add_mirror(parts,mname)
 			else:
