@@ -1,3 +1,9 @@
+2015-11-19: redmp3: fix album/artist referers, prevent multiple part injection
+2015-11-19: animeram: new link provider, animejolt:activated again, yourupload: new url provider, auengine:new url provider, m4upload: new url provider, videonest: new url provider
+2015-11-19: Merge pull request #24 from DxCx/master
+2015-11-19: Added couple of sources support for animebam
+2015-11-17: Added support for Animeram video link provider
+2015-11-15: 0.0.31 Version Release
 2015-11-15: dizigold: fixed lots of stuff dizimag: handle all mirrors with v2 kissanime: new domain and new match algo with new site sezonluk dizi: match proper with alternating names animejolt: disabled since video server is unstable mangahere: new image link/url provider. mangafox now only supports unlicensed mangas. mangahere will take the workload
 2015-11-15: redmp3: fixed url and site changes mangafox: fixed pagination tvdb: fixed localisation issues @issue #22 api: prevent malfunctioning provider to cause ump to malfunction too cloudfare: handle redirections before answering question ui: more contrast colors on selection UI
 2015-10-03: comments
