@@ -10,7 +10,7 @@
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
 		<summary lang="en">Universal Media Provider</summary>
-		<description lang="en">Universal Media Provider</description>
+		<description lang="en">Universal Media Provider is a framework designed to provide MOVIES, SERIES, ANIMES, MUSIC, ALBUMS, DISCOGRAPHIES, COMICS, MANGA and all various internet media in one addon from various blackholes of the internet</description>
 		<license>GNU General Public License, v2</license>
 		<language/>
 		<forum>https://github.com/huseyinbiyik/plugin.program.ump/issues</forum>
