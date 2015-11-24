@@ -3,6 +3,7 @@
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.unidecode" version="0.4.16"/>
 		<import addon="script.module.dateutil" version="2.4.0"/>
+		<import addon="service.subtitles.opensubtitles" version="0.0.0"/>
 	</requires>
 	<extension library="addon.py" point="xbmc.python.pluginsource">
 		<provides>video audio image</provides>
