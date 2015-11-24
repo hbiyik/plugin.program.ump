@@ -15,7 +15,7 @@
 2015-10-03: dizipub: fixed regex, site is updated
 2015-10-03: dizimag: web site is updated, updated video match algo
 2015-10-03: dizigold: stop looping iy all links are dead
-2015-09-22: sezonlukdizi:site updated
+2015-09-22: sezonlukdizi:site updated 
 2015-09-22: dizilab: fix regex
 2015-09-20: 0.0.27 Version Release
 2015-09-20: kissanime:added to index
