@@ -1,3 +1,7 @@
+2015-11-24: require opensubtitles
+2015-11-23: add description
+2015-11-23: new icon
+2015-11-19: 0.0.32 Version Release
 2015-11-19: redmp3: fix album/artist referers, prevent multiple part injection
 2015-11-19: animeram: new link provider, animejolt:activated again, yourupload: new url provider, auengine:new url provider, m4upload: new url provider, videonest: new url provider
 2015-11-19: Merge pull request #24 from DxCx/master
