@@ -3,7 +3,7 @@ import json
 import re
 import time
 			
-domain="http://kissanime.to"
+domain="https://kissanime.to"
 encoding="utf-8"
 
 def match_uri(results,refnames):
