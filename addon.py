@@ -28,13 +28,18 @@ print "CONTENT_TYPE : " + str(ump.content_type)
 #print "INFO         : " + str(ump.info)
 #print "ART          : " + str(ump.art)
 
-
+contents=[ump.defs.CT_AUDIO, ump.defs.CT_IMAGE, ump.defs.CT_VIDEO]
 indexers=providers.find(ump.content_type,"index")
 url_providers=providers.find(ump.content_type,"url")
 link_providers=providers.find(ump.content_type,"link")
 
 if ump.module == "ump":
-	if ump.page is "root":
+	if ump.page == "root":
+		if ump.content_type not in contents :
+			for content in contents:
+				setattr(ump,"content_type",content)
+				li=xbmcgui.ListItem(content, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module="ump"),li,True)
 		for provider in indexers:
 			provider_cat,provider_type,provider_name=provider
 			img="https://raw.githubusercontent.com/huseyinbiyik/dataserver/master/ump/images/"+provider_name+".png"

@@ -8,14 +8,23 @@ matches=[]
 max_match=3
 max_pages=10
 
-def codify(prv,path):
+def codify(prv,path,query=""):
 	path=path.replace(" ","")
-	if prv in ["movshare","vodlocker","sharesix","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","filenuke","vidbull"]:
-		return path.split("/")[-1]
-	elif prv in ["zalaa","uploadc","mightyupload"]:
+	if prv in ["movshare","vodlocker","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","vidbull","ishared","vidup","thevideo","vid","vidto","vidzi","promptfile"]:
+		hash=path.split("/")[-1]
+		hash=hash.replace(".html","")
+		if hash not in ["embed.php"]:
+			return hash
+	if prv in ["zalaa","uploadc","mightyupload","vidlockers"]:
 		return path.split("/")[-2]
-	else:
-		return None
+
+	if prv in ["filenuke","sharesix"]:
+		return path.split("/")[2]	
+
+	if prv in ["movshare"]:
+		return query.split("=")[1].replace("&","")
+	
+	return None
 
 def match_results(results,names):
 	exact,page,result=False,None,None
@@ -96,7 +105,7 @@ def run(ump):
 			else:
 				mname="[%s] %s" % (external[0].upper(),i["title"])
 			prv=uri.hostname.split(".")[-2]
-			hash=codify(prv,uri.path)
+			hash=codify(prv,uri.path, uri.query)
 			if hash is None: 
 				continue
 			ump.add_log("Primewire decoded %s %s" % (mname,prv))
