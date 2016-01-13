@@ -11,7 +11,6 @@ import time
 import datetime
 from cookielib import LWPCookieJar, LoadError
 from socket import timeout
-from socket import getdefaulttimeout
 import socket
 from threading import current_thread
 from StringIO import StringIO
@@ -142,8 +141,7 @@ class ump():
 				name1=name1.replace("%s "%word,"")
 				name2=name2.replace("%s "%word,"")
 			return filter(predicate,unidecode(name1))==filter(predicate,unidecode(name2))
-
-
+	
 	def link_to(self,page=None,args={},module=None):
 		query={}
 		query["module"]=[module,self.module][module is None]
@@ -167,7 +165,7 @@ class ump():
 			data=urllib.urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
 		#change timeout
 		if tout is None:
-			tout=getdefaulttimeout()
+			tout=int(xbmcplugin.getSetting(self.handle,"tout"))
 
 		headers={'Accept-encoding':'gzip'}
 		if not referer is None : headers["Referer"]=referer
@@ -365,15 +363,17 @@ class ump():
 			for key in part["urls"].keys():
 				try:
 					u=part["urls"][key]
-					part["urls"][key]={}
-					part["urls"][key]["url"]=u
-					part["urls"][key]["referer"]=part.get("referer","")
+					#overide the referer from url provider when it sends dict mirrors
+					if not isinstance(u,dict):
+						part["urls"][key]={}
+						part["urls"][key]["referer"]=part.get("referer","")
+						part["urls"][key]["url"]=u
 					method=xbmcplugin.getSetting(self.handle,self.content_type+"_val_method")
-					m=metaf("",method,self.get_page,u,part["urls"][key]["referer"])
+					m=metaf("",method,self.get_page,part["urls"][key]["url"],part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
-				except (timeout,urllib2.URLError,urllib2.HTTPError),e:
-					part["urls"].pop(key)
-					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
+#				except (timeout,urllib2.URLError,urllib2.HTTPError),e:
+#					part["urls"].pop(key)
+#					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
 				except Exception,e:
 					self.notify_error(e)
 					part["urls"].pop(key)
