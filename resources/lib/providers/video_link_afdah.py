@@ -8,14 +8,28 @@ matches=[]
 max_match=3
 max_pages=10
 
+def tor2(txt):
+	def offset(str,off):
+		buf=""
+		for i in range(len(str)):
+			buf+=str[(i+off)%len(str)]
+		return buf
+	txt=txt.translate(string.maketrans(string.ascii_lowercase,offset(string.ascii_lowercase,13)))
+	txt=txt.translate(string.maketrans(string.ascii_uppercase,offset(string.ascii_uppercase,13)))
+	return txt
+
 def codify(prv,path,query=""):
 	path=path.replace(" ","")
-	if prv in ["movshare","vodlocker","sharesix","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","filenuke","vidbull","ishared"]:
+	if prv in ["movshare","vodlocker","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","vidbull","ishared","vidup","thevideo","vid","vidto","vidzi","promptfile"]:
 		hash=path.split("/")[-1]
+		hash=hash.replace(".html","")
 		if hash not in ["embed.php"]:
 			return hash
-	if prv in ["zalaa","uploadc","mightyupload"]:
+	if prv in ["zalaa","uploadc","mightyupload","vidlockers"]:
 		return path.split("/")[-2]
+
+	if prv in ["filenuke","sharesix"]:
+		return path.split("/")[2]	
 
 	if prv in ["movshare"]:
 		return query.split("=")[1].replace("&","")
@@ -52,7 +66,7 @@ def caesar(plaintext, shift):
 	lower_trans = lower[shift:] + lower[:shift]
 	alphabet = lower + lower.upper()
 	shifted = lower_trans + lower_trans.upper()
-	return str(plaintext).translate(string.maketrans(alphabet, shifted)).encode(encoding)
+	return unicode(str(plaintext).translate(string.maketrans(alphabet, shifted)).encode(encoding))
 
 def run(ump):
 	globals()['ump'] = ump
@@ -87,12 +101,12 @@ def run(ump):
 		src=ump.get_page(embed,encoding)
 		encoded=re.findall('write\("(.*?)"\)\;',src)
 		if len(encoded)<1:
-			continue
-		plaintext = caesar(encoded[0], 13).decode('base-64')
+			pass
+		plaintext = caesar(encoded[0].decode('base-64'), 13)
 		if 'http' not in plaintext:
 			plaintext = caesar(encoded[0].decode('base-64'), 13).decode('base-64')
 		iframe=re.findall("\<iframe.*?src='(.*?)'",plaintext)
-		glinks=re.findall('file: "(.*?)", label: "(.*?)" }',plaintext)
+		glinks=re.findall('file: "(.*?)", label: "(.*?)"',plaintext)
 		videomega=re.findall("http://videomega.tv/validatehash.php\?hashkey\=([0-9]*?)'",plaintext)
 
 		if len(videomega)>0:
@@ -106,7 +120,7 @@ def run(ump):
 		elif len(glinks)>0:
 			urls={"html5":True}
 			for glink in glinks:
-				if not glink[0][-6:] == "sd.mp4":
+				if not glink[0][-6:] == "sd.mp4" or True:
 					urls[glink[1]]=glink[0]
 			if len(urls.keys())>1:
 				prv="google"

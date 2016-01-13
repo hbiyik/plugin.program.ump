@@ -6,5 +6,4 @@ def run(hash,ump,referer=None):
 	src = ump.get_page(url, "utf-8")
 	js=re.findall("setup\(({.*?logo\:)",src,re.DOTALL)
 	link=re.findall("file: '(.*?)'",js[0])
-	print link[0]
 	return {"url": link[0]}

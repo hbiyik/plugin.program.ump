@@ -18,7 +18,6 @@ def run(ump):
 	print ump.info["title"]
 	found=False
 	for result in results:
-		print ump.is_same(result[1],ump.info["title"])
 		if ump.is_same(result[1],ump.info["title"]) or ump.is_same(result[1],ump.info["originaltitle"]):
 			matchname=result[1]
 			matchuri=result[2]

@@ -17,5 +17,4 @@ def run(hash,ump,referer=None):
 			dic.pop(key)
 		else:
 			dic[key]=dic[key][0]
-	print dic
 	return dic

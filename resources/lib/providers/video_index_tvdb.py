@@ -71,7 +71,6 @@ def get_tvdb_art(ids):
 def get_tvdb_info(ids):
 	def get_id(id):
 		p=ump.get_page("%s/api/%s/series/%s/%s.xml"%(mirror,apikey,str(id),language),None)
-		print "%s/api/%s/series/%s/%s.xml"%(mirror,apikey,str(id),language)
 		x=minidom.parseString(p)
 		serie=x.getElementsByTagName("Series")[0]
 		info={}
@@ -220,7 +219,6 @@ def run(ump):
 			salias=get_child_data(s,"AliasNames","")
 			sid=s.getElementsByTagName("seriesid")[0].lastChild.data
 			names[sid]=[sname,salias]
-			print [sname,salias]
 
 		if len(names)==0:
 			suggest="[SUGGESTED] "

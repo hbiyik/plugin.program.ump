@@ -8,5 +8,4 @@ def run(hash,ump,referer=None):
 	data={"chash":re.findall('name="chash" value="(.*?)"',src)[0]}
 	src = ump.get_page(domain+"l/"+hash,"utf8",data=data,referer=domain+"l/"+hash)
 	files=re.findall("url: '(.*?)'.*?canvas\: \{",src,re.DOTALL)
-	print files
 	return {"video":{"url":files[0],"referer":domain+"l/"+hash}}
