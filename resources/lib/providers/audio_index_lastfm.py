@@ -9,7 +9,6 @@ import re
 import json
 from xml.dom import minidom
 import random
-import dateutil.parser as dparser
 
 mirror="http://ws.audioscrobbler.com/2.0/"
 encoding="utf-8"

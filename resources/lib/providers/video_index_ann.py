@@ -10,8 +10,7 @@ import re
 import json
 import urlparse
 from xml.dom import minidom
-import dateutil.parser as dparser
-import dateutil
+from third.dateutil import parser
 import httplib
 from xml.parsers import expat
 from unidecode import unidecode

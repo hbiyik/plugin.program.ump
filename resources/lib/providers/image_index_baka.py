@@ -10,7 +10,6 @@ import json
 import urlparse
 recnum=50
 from xml.dom import minidom
-import dateutil.parser as dparser
 import httplib
 import datetime
 

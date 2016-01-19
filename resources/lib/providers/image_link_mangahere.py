@@ -3,7 +3,6 @@ import urllib
 import json
 import re
 import json
-import dateutil.parser as dparser
 from xml.dom import minidom
 			
 domain="http://mangahere.co"

@@ -9,7 +9,6 @@ import re
 import json
 from xml.dom import minidom
 import random
-import dateutil.parser as dparser
 import urlparse
 
 mirror="http://thetvdb.com"
