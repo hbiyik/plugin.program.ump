@@ -193,7 +193,11 @@ def run(ump):
 			for media in medias:
 				li=xbmcgui.ListItem(media["info"]["title"])
 				li.setInfo(ump.defs.CT_IMAGE,media["info"])
-				li.setArt(media["art"])
+				try:
+					li.setArt(media["art"])
+				except AttributeError:
+					#backwards compatability
+					pass
 				ump.art=media["art"]
 				ump.info=media["info"]
 				u=ump.link_to("show_volumes",{"volumes":media["volumes"]})

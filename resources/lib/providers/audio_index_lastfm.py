@@ -16,7 +16,7 @@ apikey="ff9469649c8c7d2120758deca5ffa586"
 recnum=50
 
 def get_img(ops,default="DefaultFolder.png"):
-	im=None
+	im=""
 	for image in reversed(ops):
 		if image["#text"].startswith("http"):
 			im=image["#text"]
@@ -68,7 +68,7 @@ def run(ump):
 				mbid=result["mbid"]
 				title=result["name"]
 				im=get_img(result.get("image",[]))
-				if im is None:
+				if im=="":
 					continue
 				li=xbmcgui.ListItem(title, iconImage=im, thumbnailImage=im)
 				u=ump.link_to(where,{"mbid":mbid,"name":result["name"],"artim":im})
@@ -80,7 +80,7 @@ def run(ump):
 				title=result["name"]
 				artist=result["artist"]
 				im=get_img(result.get("image",[]))
-				if im is None:
+				if im == "":
 					continue
 				li=xbmcgui.ListItem(artist+ " - "+title, iconImage=im, thumbnailImage=im)
 				u=ump.link_to(where,{"mbid":mbid,"name":result["name"],"artim":im})
@@ -92,7 +92,7 @@ def run(ump):
 				title=result["name"]
 				artist=result["artist"]
 				im=get_img(result.get("image",[]))
-				if im is None:
+				if im == "":
 					continue
 				audio={}
 				audio["info"]={
@@ -112,7 +112,7 @@ def run(ump):
 				ump.art=audio["art"]
 				ump.info=audio["info"]
 				u=ump.link_to("urlselect")
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 		
 
 		
@@ -142,11 +142,15 @@ def run(ump):
 		}
 		li=xbmcgui.ListItem("Play Artist: %s"%name, iconImage=artim, thumbnailImage=artim)
 		li.setInfo("audio",audio["info"])
-		li.setArt(audio["art"])
+		try:
+			li.setArt(audio["art"])
+		except AttributeError:
+			#backwards compatability
+			pass
 		ump.art=audio["art"]
 		ump.info=audio["info"]
 		u=ump.link_to("urlselect")
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 		for result in results:
 			audio={}
@@ -167,7 +171,11 @@ def run(ump):
 			}
 			li=xbmcgui.ListItem(name + " - " +result["name"], iconImage=im, thumbnailImage=im)
 			li.setInfo("audio",audio["info"])
-			li.setArt(audio["art"])
+			try:
+				li.setArt(audio["art"])
+			except AttributeError:
+				#backwards compatability
+				pass
 			u=ump.link_to("album",{"mbid":mbid,"name":result["name"]})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 		
@@ -205,11 +213,15 @@ def run(ump):
 			}
 			li=xbmcgui.ListItem("Play Album: %s"%alb["name"], iconImage=albumimage, thumbnailImage=albumimage)
 			li.setInfo("audio",audio["info"])
-			li.setArt(audio["art"])
+			try:
+				li.setArt(audio["art"])
+			except AttributeError:
+				#backwards compatability
+				pass
 			ump.art=audio["art"]
 			ump.info=audio["info"]
 			u=ump.link_to("urlselect")
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 			for result in results:
 				i+=1
@@ -230,11 +242,15 @@ def run(ump):
 				}
 				li=xbmcgui.ListItem(album+" - "+result["name"], iconImage=albumimage, thumbnailImage=albumimage)
 				li.setInfo("audio",audio["info"])
-				li.setArt(audio["art"])
+				try:
+					li.setArt(audio["art"])
+				except AttributeError:
+					#backwards compatability
+					pass
 				ump.art=audio["art"]
 				ump.info=audio["info"]
 				u=ump.link_to("urlselect")
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 
 	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc)

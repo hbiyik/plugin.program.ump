@@ -288,7 +288,11 @@ def run(ump):
 				altnames=movie["info"]["originaltitle"]
 				li=xbmcgui.ListItem(suggest+name)
 				li.setInfo("video",movie["info"])
-				li.setArt(movie["art"])
+				try:
+					li.setArt(movie["art"])
+				except AttributeError:
+					#backwards compatability
+					pass
 				ump.art=movie["art"]
 				ump.info=movie["info"]
 				if "tv_series" in ump.args["title_type"]:
@@ -304,7 +308,7 @@ def run(ump):
 					ump.info["tvshowalias"]=""
 					ump.info["originaltitle"]=altnames
 					u=ump.link_to("urlselect")
-					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 		cacheToDisc=True
 
 	elif ump.page=="show_seasons":
@@ -348,8 +352,12 @@ def run(ump):
 			ump.art["thumb"]=img
 			ump.art["poster"]=img
 			li.setInfo("video",ump.info)
-			li.setArt(ump.art)
+			try:
+				li.setArt(ump.art)
+			except AttributeError:
+				#backwards compatability
+				pass
 			u=ump.link_to("urlselect")
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 	xbmcplugin.endOfDirectory(ump.handle,	cacheToDisc=cacheToDisc)

@@ -346,14 +346,19 @@ def run(ump):
 				else:
 					li=xbmcgui.ListItem("%s (%s)"%(media["info"]["tvshowtitle"],media["info"]["type"]))
 				li.setInfo(ump.defs.CT_VIDEO,media["info"])
-				li.setArt(media["art"])
+				try:
+					li.setArt(media["art"])
+				except AttributeError:
+					#backwards compatability
+					pass
 				ump.art=media["art"]
 				ump.info=media["info"]
 				if len(media["episodes"].keys())==0:
 					u=ump.link_to("urlselect")
+					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 				else:
 					u=ump.link_to("show_episodes",{"annid":media["info"]["code"]})
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 			if not index==len(animes)/50:
 				li=xbmcgui.ListItem("Results %d-%d"%((index+1)*50+1,(index+2)*50))
 				u=ump.link_to("results_search",{"anime":animes,"filters":filters,"index":index+1})
@@ -376,13 +381,17 @@ def run(ump):
 		#episodes = {float(k):v for k,v in episodes.iteritems()}
 		for epi in sorted(episodes.keys(),reverse=True):
 			li=xbmcgui.ListItem("%d %s"%(epi,episodes[epi]["title"]))
-			li.setArt(ump.art)
+			try:
+				li.setArt(ump.art)
+			except AttributeError:
+				#backwards compatability
+				pass
 			ump.info["title"]=episodes[epi]["title"]
 			ump.info["episode"]=episodes[epi]["relativenumber"]
 			#even though animes dont have season info force it so trakt will scrobble
 			ump.info["season"]=1
 			ump.info["absolute_number"]=epi
 			u=ump.link_to("urlselect")
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)			
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 	xbmcplugin.endOfDirectory(ump.handle,	cacheToDisc=cacheToDisc)

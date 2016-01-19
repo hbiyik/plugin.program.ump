@@ -2,9 +2,9 @@
 <settings>
     <category label="Validation/Auto Selection">
         <setting label="VIDEO VALIDATION AND AUTO SELECTION" type="lsep"/>
-	   	<setting id="video_val_method" type="select" label="Video Validation Method" values="Disabled|Check if Alive Only|Check if Alive & Quality" default="Check if Alive & Quality"/>
+	   	<setting id="video_val_method" type="select" label="Video Validation Method" values="Disabled|Check if Alive Only|Check if Alive + Quality" default="Check if Alive + Quality"/>
 	    <setting id="auto_en_video" type="bool" label="Enable Automatic Mirror Selection for Videos" visible="!eq(-1,Disabled)" default="false"/>
-		<setting id="min_vid_res" type="select" label="Minimum Video Resolation" values="240|360|480|576|720|1080|2160|4320"  visible="eq(-1,true)+eq(-2,Check if Alive & Quality)" default="720"/>
+		<setting id="min_vid_res" type="select" label="Minimum Video Resolation" values="240|360|480|576|720|1080|2160|4320"  visible="eq(-1,true)+eq(-2,Check if Alive + Quality)" default="720"/>
 		<setting id="require_tag" type="text" label="Require Tag" visible="eq(-2,true)+!eq(-3,Disabled)" default=""/>
 		<setting id="dont_require_tag" type="text" label="Filter Out Tag" visible="eq(-3,true)+!eq(-4,Disabled)" default="hs:tr, hs:jp, d:tr, d:jp, ts, cam"/>
 
@@ -13,8 +13,8 @@
 	    <setting id="auto_en_audio" type="bool" label="Enable Automatic Mirror Selection for Audios" visible="eq(-1,Check if Alive Only)" default="false"/>
 
         <setting label="IMAGE VALIDATION AND AUTO SELECTION" type="lsep"/>
-		<setting id="image_val_method" type="select" label="Image Validation Method" values="Check if Alive & Quality" default="Check if Alive & Quality"/>
-        <setting id="auto_en_image" type="bool" label="Enable Automatic Mirror Selection for Images" visible="eq(-1,Check if Alive & Quality)" default="false"/>
+		<setting id="image_val_method" type="select" label="Image Validation Method" values="Check if Alive + Quality" default="Check if Alive + Quality"/>
+        <setting id="auto_en_image" type="bool" label="Enable Automatic Mirror Selection for Images" visible="eq(-1,Check if Alive + Quality)" default="false"/>
     </category>
     <category label="Advanced Settings">
 		<setting id="useragent" type="text" label="Browser User-Agent" default="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"/>
@@ -31,5 +31,4 @@
         <setting label="To get support about this addon, or read tutorials and docs visit:" type="lsep"/>
         <setting label="http://boogie.us.to" type="lsep"/>
     </category>
-
 </settings>

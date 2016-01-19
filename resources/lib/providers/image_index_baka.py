@@ -121,7 +121,7 @@ def run(ump):
 	globals()['ump'] = ump
 	cacheToDisc=True
 	if ump.page == "root":
-		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		li=xbmcgui.ListItem("Search")
 		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search"),li,True)
 
 	elif ump.page == "search":
@@ -150,7 +150,11 @@ def run(ump):
 		for k in matches.keys():
 			li=xbmcgui.ListItem("%s , %s"% (matches[k]["info"]["title"],matches[k]["info"]["writer"]))
 			li.setInfo(ump.defs.CT_IMAGE,matches[k]["info"])
-			li.setArt(matches[k]["art"])
+			try:
+				li.setArt(matches[k]["art"])
+			except AttributeError:
+				#backwards compatability
+				pass
 			u=ump.link_to("show_chapters",matches[k])
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 	
@@ -172,11 +176,15 @@ def run(ump):
 				cache.append(chapter)
 				li=xbmcgui.ListItem("Chapter %s"%chapter)
 				li.setInfo(ump.defs.CT_IMAGE,info)
-				li.setArt(art)
+				try:
+					li.setArt(art)
+				except AttributeError:
+					#backwards compatability
+					pass
 				ump.info["season"]="-1"
 				ump.info["episode"]=chapter
 				u=ump.link_to("urlselect")
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 		cache=[]
 		pre=0
@@ -194,9 +202,7 @@ def run(ump):
 			if "-" in chapter:
 				sequences=chapter.split("-")
 				if len(sequences)==2 and sequences[0].isnumeric() and sequences[1].isnumeric():
-					print 1
 					if int(sequences[0])>int(sequences[1]):
-						print 2
 						chapter=sequences[0]
 					else:
 						chapter=sequences[1]

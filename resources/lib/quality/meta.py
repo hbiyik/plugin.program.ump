@@ -11,7 +11,7 @@ def video(head,method,dfunc=None,url=None,referer=None):
 		resp=dfunc(url,None,referer=referer,head=True)
 		size=int(resp.info().getheader('Content-Length'))
 		q={"type":-1,"width":None,"height":None,"size":size}
-	elif method=="Check if Alive & Quality":
+	elif method=="Check if Alive + Quality":
 		q=vid.vidqual(url,dfunc,referer)
 
 	if not q=={}:

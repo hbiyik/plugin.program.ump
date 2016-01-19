@@ -12,7 +12,13 @@ import random
 import urlparse
 
 mirror="http://thetvdb.com"
-language=xbmc.getLanguage(xbmc.ISO_639_1)
+try:
+	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
+except AttributeError:
+	#backwards compatability
+	language="en"
+if not language in ["en","sv","no","da","fi","nl","de","it","es","fr","pl","hu","el","tr","ru","he","ja","pt","zh","cs","sl","hr","ko"]:
+	language="en"
 encoding="utf-8"
 apikey="C738A0A57D46E2CC"
 recnum=50
@@ -239,7 +245,11 @@ def run(ump):
 			li=xbmcgui.ListItem(suggest+data[id]["info"]["tvshowtitle"], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 			ump.info=data[id]["info"]
 			ump.art=data[id]["art"]
-			li.setArt(ump.art)
+			try:
+				li.setArt(ump.art)
+			except AttributeError:
+				#backwards compatability
+				pass
 			li.setInfo(ump.content_type,ump.info)
 			u=ump.link_to("seasons",{"tvdbid":id})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
@@ -256,7 +266,11 @@ def run(ump):
 			li=xbmcgui.ListItem("Season %d"%sno, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 			ump.art=epis[sno]["art"]
 			#ump.info=epis[sno]["info"]
-			li.setArt(ump.art)
+			try:
+				li.setArt(ump.art)
+			except AttributeError:
+				#backwards compatability
+				pass
 			#li.setInfo(ump.content_type,ump.info)
 			u=ump.link_to("episodes",{"tvdbid":id,"season":sno})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
@@ -274,9 +288,13 @@ def run(ump):
 			li=xbmcgui.ListItem("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 			ump.info=epis["episode"][epno]["info"]
 			ump.art=epis["episode"][epno]["art"]
-			li.setArt(ump.art)
+			try:
+				li.setArt(ump.art)
+			except AttributeError:
+				#backwards compatability
+				pass
 			li.setInfo(ump.content_type,ump.info)
 			u=ump.link_to("urlselect")
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc)

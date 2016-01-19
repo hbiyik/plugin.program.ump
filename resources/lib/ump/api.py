@@ -58,6 +58,8 @@ def humanres(w,h):
 
 class ump():
 	def __init__(self,pt=False):
+		self.settings={}
+		self.log=""
 		self.handle = int(sys.argv[1])
 		self.ws_limit=False #web search limit
 		self.defs=defs
@@ -67,7 +69,7 @@ class ump():
 		self.urlval_tout=60
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
-		self.tm_conc=int(xbmcplugin.getSetting(self.handle,"conc"))
+		self.tm_conc=int(float(self.getSetting(self.handle,"conc")))
 		self.player=None
 		self.mirrors=[]
 		self.terminate=False
@@ -75,7 +77,7 @@ class ump():
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
-		if xbmcplugin.getSetting(self.handle,"kodiproxy")=="true":
+		if self.getSetting(self.handle,"kodiproxy")=="true":
 			from ump import proxy
 			socket.socket = proxy.socket()
 		self.cj=LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
@@ -85,7 +87,7 @@ class ump():
 			except LoadError:
 				pass
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
-		self.ua=xbmcplugin.getSetting(self.handle,"useragent")
+		self.ua=self.getSetting(self.handle,"useragent")
 		self.opener.addheaders = [('User-agent', self.ua)]
 		self.dialog=xbmcgui.Dialog()
 		query=sys.argv[2][1:]
@@ -101,6 +103,23 @@ class ump():
 		[self.content_type]= result.get('content_type', ["index"])
 		[self.content_cat]= result.get('content_cat', ["N/A"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
+	
+	def getSetting(self,handle,id):
+		from ump.proxy import get_set
+		if not int(handle)>0:
+			if len(self.settings.keys())==0:
+				attr="value"
+				spath=xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump/settings.xml')
+				if not os.path.exists(spath):
+					attr="default"
+					spath=os.path.join(addon_dir,"resources","settings.xml")
+				from xml.dom import minidom
+				domx=minidom.parse(spath)
+				for nod in domx.getElementsByTagName("setting"):
+					self.settings[nod.getAttribute("id")]=nod.getAttribute(attr)
+			return self.settings[id]
+		else:
+			return xbmcplugin.getSetting(self.handle,id)		
 
 	def get_vidnames(self):
 		is_serie="tvshowtitle" in self.info.keys() and not self.info["tvshowtitle"].replace(" ","") == ""
@@ -165,7 +184,7 @@ class ump():
 			data=urllib.urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
 		#change timeout
 		if tout is None:
-			tout=int(xbmcplugin.getSetting(self.handle,"tout"))
+			tout=int(float(self.getSetting(self.handle,"tout")))
 
 		headers={'Accept-encoding':'gzip'}
 		if not referer is None : headers["Referer"]=referer
@@ -229,7 +248,8 @@ class ump():
 	def add_log(self,line):
 		line=unidecode(line)
 		if hasattr(self,"window") and hasattr(self.window,"status"):
-			self.window.status.setText(line+"\n"+self.window.status.getText())
+			self.log=line+"\n"+self.log
+			self.window.status.setText(self.log)
 		print line
 
 	def add_mirror(self,parts,name):
@@ -292,14 +312,14 @@ class ump():
 		mname=prefix_q+prefix_s+name
 		
 		autoplay=False
-		if self.content_type==self.defs.CT_VIDEO and xbmcplugin.getSetting(self.handle,"auto_en_video")=="true":
-			if xbmcplugin.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality":
-				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(xbmcplugin.getSetting(self.handle,"min_vid_res")):
+		if self.content_type==self.defs.CT_VIDEO and self.getSetting(self.handle,"auto_en_video")=="true":
+			if self.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality":
+				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(float(self.getSetting(self.handle,"min_vid_res"))):
 					autoplay=True
-			if xbmcplugin.getSetting(self.handle,"video_val_method")=="Check if Alive Only" or xbmcplugin.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality" and autoplay:
+			if self.getSetting(self.handle,"video_val_method")=="Check if Alive Only" or self.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality" and autoplay:
 				tags=re.findall("\[(.*?)\]",name)
-				required=xbmcplugin.getSetting(self.handle,"require_tag").split(",")
-				filtered=xbmcplugin.getSetting(self.handle,"dont_require_tag").split(",")
+				required=self.getSetting(self.handle,"require_tag").split(",")
+				filtered=self.getSetting(self.handle,"dont_require_tag").split(",")
 				autoplay=True
 				for tag in tags:
 					if not tag=="" and tag.lower().replace(" ","") in [x.lower().replace(" ","") for x in filtered]:
@@ -311,10 +331,10 @@ class ump():
 						autoplay=False
 						break
 				
-		if self.content_type==self.defs.CT_AUDIO and xbmcplugin.getSetting(self.handle,"auto_en_audio")=="true" and xbmcplugin.getSetting(self.handle,"audio_val_method")=="Check if Alive Only":
+		if self.content_type==self.defs.CT_AUDIO and self.getSetting(self.handle,"auto_en_audio")=="true" and self.getSetting(self.handle,"audio_val_method")=="Check if Alive Only":
 			autoplay=True
 
-		if self.content_type==self.defs.CT_IMAGE and xbmcplugin.getSetting(self.handle,"auto_en_image")=="true" and xbmcplugin.getSetting(self.handle,"audio_val_method")=="Check if Alive & Quality":
+		if self.content_type==self.defs.CT_IMAGE and self.getSetting(self.handle,"auto_en_image")=="true" and self.getSetting(self.handle,"audio_val_method")=="Check if Alive & Quality":
 			autoplay=True
 
 		item=xbmcgui.ListItem()
@@ -368,7 +388,7 @@ class ump():
 						part["urls"][key]={}
 						part["urls"][key]["referer"]=part.get("referer","")
 						part["urls"][key]["url"]=u
-					method=xbmcplugin.getSetting(self.handle,self.content_type+"_val_method")
+					method=self.getSetting(self.handle,self.content_type+"_val_method")
 					m=metaf("",method,self.get_page,part["urls"][key]["url"],part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
 #				except (timeout,urllib2.URLError,urllib2.HTTPError),e:

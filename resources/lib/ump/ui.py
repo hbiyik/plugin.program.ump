@@ -52,7 +52,11 @@ class xplayer(xbmc.Player):
 				if key in parts[i].keys():
 					listitem.setProperty(key,json.dumps(parts[i][key]))
 			listitem.setInfo(self.ump.content_type,self.ump.info)
-			listitem.setArt(self.ump.art)
+			try:
+				listitem.setArt(self.ump.art)
+			except AttributeError:
+				#backwards compatability
+				pass
 			if "partname" in parts[i].keys():
 				listitem.setLabel(parts[i]["partname"])
 			else:
