@@ -13,7 +13,7 @@ from xml.dom import minidom
 from third.dateutil import parser
 import httplib
 from xml.parsers import expat
-from unidecode import unidecode
+from third.unidecode import unidecode
 
 domain="http://www.animenewsnetwork.com"
 encoding="utf-8"

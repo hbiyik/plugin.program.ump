@@ -3,7 +3,7 @@ import urllib
 import json
 import re
 import urlparse
-from unidecode import unidecode
+from third.unidecode import unidecode
 			
 domain="http://www.solarmovie.la"
 encoding="utf-8"

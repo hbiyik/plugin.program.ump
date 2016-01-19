@@ -1,5 +1,5 @@
 import re
-from unidecode import unidecode
+from third.unidecode import unidecode
 			
 domain="http://www.turkanime.tv/"
 encoding="utf-8"

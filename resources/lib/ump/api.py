@@ -23,14 +23,13 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
-from unidecode import unidecode
-
 from ump import defs
 from ump import task
 from ump import providers
 from ump import ui
 from ump import cloudfare
 from third.unescape import unescape
+from third.unidecode import unidecode
 from quality import meta
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
