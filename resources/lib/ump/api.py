@@ -98,6 +98,7 @@ class ump():
 		for keep in ["info","art"]:
 			[lst]=result.get(keep, ["{}"])
 			setattr(self,keep,json.loads(lst))
+
 		[self.content_type]= result.get('content_type', ["index"])
 		[self.content_cat]= result.get('content_cat', ["N/A"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
@@ -323,7 +324,7 @@ class ump():
 		item.setProperty("parts",json.dumps(parts))
 		upname=parts[0].get("url_provider_name",None)
 		if not upname is None:
-			item.setIconImage("https://raw.githubusercontent.com/huseyinbiyik/dataserver/master/ump/images/"+parts[0]["url_provider_name"]+".png")
+			item.setIconImage("http://boogie.us.to/dataserver/ump/images/"+parts[0]["url_provider_name"]+".png")
 		#if there is no more mirrors and media does not require a provider directly play it.
 		if autoplay:
 			try:

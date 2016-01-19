@@ -42,7 +42,7 @@ if ump.module == "ump":
 				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module="ump"),li,True)
 		for provider in indexers:
 			provider_cat,provider_type,provider_name=provider
-			img="https://raw.githubusercontent.com/huseyinbiyik/dataserver/master/ump/images/"+provider_name+".png"
+			img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
 			li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
 			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
 		xbmcplugin.endOfDirectory(ump.handle)
