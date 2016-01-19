@@ -108,15 +108,13 @@ class ump():
 		from ump.proxy import get_set
 		if not int(handle)>0:
 			if len(self.settings.keys())==0:
-				attr="value"
-				spath=xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump/settings.xml')
-				if not os.path.exists(spath):
-					attr="default"
-					spath=os.path.join(addon_dir,"resources","settings.xml")
 				from xml.dom import minidom
-				domx=minidom.parse(spath)
-				for nod in domx.getElementsByTagName("setting"):
-					self.settings[nod.getAttribute("id")]=nod.getAttribute(attr)
+				paths=[(os.path.join(addon_dir,"resources","settings.xml"),"default"),(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump/settings.xml'),"value")]
+				for spath,attr in paths:
+					if os.path.exists(spath):
+						domx=minidom.parse(spath)
+						for nod in domx.getElementsByTagName("setting"):
+							self.settings[nod.getAttribute("id")]=nod.getAttribute(attr)
 			return self.settings[id]
 		else:
 			return xbmcplugin.getSetting(self.handle,id)		
