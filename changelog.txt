@@ -1,3 +1,22 @@
+2016-01-19: api: a more proper implementation of getsettings
+2016-01-19: addons.xml: add UMP tag in front of name
+2016-01-19: meta: backwards compataiblity for & char in settings.xml
+2016-01-19: backwards: li.setart function exception handled, api: getsetting function implemeted to read setting node even without plugin handle, disable forced isFolder True which causes crashes in frodo, gettext function backwards compatible fix, tvdb: fix supported languages, settings: change & char to +
+2016-01-19: unidecode: removed dependency from official repo, added as third party
+2016-01-19: dateutil: removed dependency from official repo, made third party, settings: updated site information, addon.xml: removed opensubtitles/dateutil dependency, updated site information
+2016-01-19: addon: move data server to new httpp server
+2016-01-13: addon: list content types when not provided, primewire: add new url providers
+2016-01-13: vidlockers: wip, too slow server causes player to timout, novamov: wip
+2016-01-13: afdah: added new url providers
+2016-01-13: promptfile: new url provider, vid.ag: new url provider, vidto: new url provider, vidzi: new url provider
+2016-01-13: api: override default timeout from settings. This is useful when cuncerrency is too high and cause for http timeouts, api: allow url provider to override referer, filenuke: fix new urls sharesix: fix new urls videomega: fix hls streaming thevideo.me: new url provider vidup: new url provider unpack: third party code to unpack packed js code settings.xml: set default http timeout to 30s
+2015-12-21: kissanime: update to ssl url
+2015-12-21: novamov: remove provider since it is serving HLS
+2015-12-21: moshare: updated to wholecloud new server okru: dont load disallowed mirrors plusplayer: fix new player address 720pizle: fix some regexes, and fix referer
+2015-11-24: require opensubtitles
+2015-11-23: add description
+2015-11-23: new icon
+2015-11-19: 0.0.32 Version Release
 2015-11-19: redmp3: fix album/artist referers, prevent multiple part injection
 2015-11-19: animeram: new link provider, animejolt:activated again, yourupload: new url provider, auengine:new url provider, m4upload: new url provider, videonest: new url provider
 2015-11-19: Merge pull request #24 from DxCx/master
