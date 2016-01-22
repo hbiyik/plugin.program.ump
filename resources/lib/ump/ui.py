@@ -8,6 +8,7 @@ import urlparse
 import urllib
 import time
 import xbmcaddon
+from operator import itemgetter
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
@@ -173,49 +174,42 @@ class listwindow(xbmcgui.WindowXMLDialog):
 	def __init__(self,strXMLname, strFallbackPath, strDefaultName, forceFallback,ump=None):
 		self.ump=ump
 		self.isinit=False
+		self.items=[]
+		self.itempos=0
 
 	def onInit(self):
 		q,a,p=self.ump.tm.stats()
-		self.p=p
+		self.percent=0
 		self.progress=self.getControl(2)
+		self.ump.tm.add_queue(target=self._update, args=(p,),pri=0)
 		self.lst=self.getControl(6)
-		self.button= self.getControl(5)
-		self.button.setLabel("Cancel")
-		self.button.setEnabled(True)
-		self.button.setVisible(True)
-		self.button.controlUp(self.lst)
-		self.button.controlDown(self.lst)
-		self.setFocus(self.button)
-		statush=100
-		margin=3
-		#self.lst.setHeight(self.lst.getHeight()-statush)
-		#lstw=self.lst.getWidth()
-		#lsth=self.lst.getHeight()
-		#lstx,lsty=self.lst.getPosition()
-		#self.status=xbmcgui.ControlTextBox(lstx+margin, lsty+lsth, lstw, statush-margin, textColor='0xCCCCCCCC')
 		self.status=self.getControl(8)
+		self.setFocus(self.lst)
+		self.lst.setNavigation(self.lst,self.lst,self.lst,self.lst)
 		if not self.ump.art.get("fanart","")=="":
 			self.getControl(3).setImage(self.ump.art["fanart"])
 			self.getControl(3).setColorDiffuse('0xFF333333')
-		#self.status.setEnabled(True)
-		#self.status.setVisible(True)
-	def _update(self):
-		q,a,p=self.ump.tm.stats()
-		if not q+a+p-self.p == 0:
-			self.progress.setPercent(float(p-self.p)*100/float(q+a+p-self.p))
+
+	def _update(self,current):
+		while True:
+			if self.ump.terminate:
+				break
+			q,a,p=self.ump.tm.stats()
+			if not q+a+p-current == 0:
+				self.percent=float(p-current+1)*100/float(q+a+p-current)
+				self.progress.setPercent(self.percent)
+			time.sleep(0.15)
 
 	def onAction(self, action):
-		self._update()
 		if action.getId() in [1,2,3,4,107] :
 			#user input
-			if threading.active_count()==2:
-				self.button.setLabel("Close")
+			pass
+
 		if action.getId() in [10,92] :
 			self.ump.shut()
 
 	def onClick(self, controlID):
-		self._update()
-		if controlID==5:
+		if controlID==5 and self.percent>95:
 			self.ump.shut()
 		else:
 			try:
@@ -227,17 +221,27 @@ class listwindow(xbmcgui.WindowXMLDialog):
 				self.ump.notify_error(e)
 
 	def onFocus(self, controlID):
-		self._update()
+		pass
 	
 	def addListItem(self,listItem):
-		self._update()
-		self.lst.addItem(listItem)
-		if self.lst.size()==1: 
-			self.setFocus(self.lst)
+		listItem.setProperty("sortid",str(len(self.items)+1))
+		selected=self.lst.getSelectedItem()
+		if not selected is None:
+			selectedid=int(selected.getProperty("sortid"))
 		else:
-			focusid=self.getFocusId()
-			sid=self.lst.getSelectedPosition()
-			if focusid==6:
-				self.lst.selectItem(sid)
-			else:
-				self.setFocusId(focusid)
+			selectedid=0
+
+		w,h,s=self.ump.max_meta(json.loads(listItem.getProperty("parts")))
+		self.items.append((listItem,w*h,s))
+		self.items=sorted(self.items, key=itemgetter(2),reverse=True)
+		
+		index=0
+		for item,res,s in self.items:
+			itemid=int(item.getProperty("sortid"))
+			if itemid == selectedid:
+				break
+			index+=1
+		self.lst.reset()
+		self.lst.addItems(zip(*self.items)[0])
+		self.lst.selectItem(index)
+		self.setFocus(self.lst)

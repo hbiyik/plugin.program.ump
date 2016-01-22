@@ -66,7 +66,7 @@ class ump():
 		self.window = ui.listwindow('select.xml', addon_dir, 'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', addon_dir,"Default","720p")
 		self.urlval_en=True
-		self.urlval_tout=60
+		self.urlval_tout=20
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
 		self.tm_conc=int(float(self.getSetting(self.handle,"conc")))
@@ -275,7 +275,30 @@ class ump():
 			self.tm.add_queue(target=self._on_new_id, args=(parts,name),pri=5)
 		else:
 			return False
-		
+
+	def max_meta(self,parts):
+		#get the highest quality info from each part and mirror
+		q=0
+		ss=0
+		max_w=0
+		max_h=0
+		max_s=0
+		for part in parts:
+			for mirror in part["urls"].itervalues():
+				if not mirror["meta"] == {}:
+					t=mirror["meta"]["type"]
+					w=mirror["meta"]["width"]
+					h=mirror["meta"]["height"]
+					s=mirror["meta"]["size"]
+					if not (w is None or h is None) and w*h>=q:
+						max_w=w
+						max_h=h
+						q=w*h
+					if not s is None and s>0 and s>ss:
+						max_s=s
+						ss=s
+		return max_w,max_h,max_s
+
 	def _on_new_id(self,parts,name):
 		##validate media providers url first before adding
 		for part in parts:
@@ -289,24 +312,14 @@ class ump():
 		if self.player is None:
 			self.player=ui.xplayer(ump=self)
 
-		#get the highest quality info from each part and mirror
-		q=0
-		ss=0
-		prefix_q=""
-		prefix_s=""
-		for part in parts:
-			for mirror in part["urls"].itervalues():
-				if not mirror["meta"] == {}:
-					t=mirror["meta"]["type"]
-					w=mirror["meta"]["width"]
-					h=mirror["meta"]["height"]
-					s=mirror["meta"]["size"]
-					if not (w is None or h is None) and w*h>=q:
-						prefix_q="[R:%s]"%humanres(w,h)
-						q=w*h
-					if not s is None and s>0 and s>ss:
-						prefix_s="[F:%s]"%humanint(s)
-						ss=s
+		max_w,max_h,max_s=self.max_meta(parts)
+		prefix_q=prefix_s=""
+
+		if max_w*max_h>0:
+			prefix_q="[R:%s]"%humanres(max_w,max_h)
+
+		if max_s>0: 
+			prefix_s="[F:%s]"%humanint(max_s)
 		mname=prefix_q+prefix_s+name
 		
 		autoplay=False
