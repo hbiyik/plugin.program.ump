@@ -1,12 +1,11 @@
 import re
 
 def run(hash,ump,referer=None):
-	html5=hash.get("html5",False)
-	if html5:
+	if isinstance(hash,dict) and hash["html5"]:
 		hash.pop("html5")
 		return hash
 	else:
-		src = ump.get_page(hash["url"],"utf8",referer=hash["referer"])
+		src = ump.get_page(hash,"utf8",referer=referer)
 		videos=re.findall('"?file"?: "(.*?)",\r?\n?\s*?"?label"?: "(.*?)",\r?\n?\s*?"?type',src)
 		opts={}
 		for video in videos:

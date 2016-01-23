@@ -5,8 +5,8 @@ domain="http://www.turkanime.tv/"
 encoding="utf-8"
 
 
-def return_links(name,mp,h,fs):
-	parts=[{"url_provider_name":mp, "url_provider_hash":h}]
+def return_links(name,mp,h,url):
+	parts=[{"url_provider_name":mp, "url_provider_hash":h,"referer":url}]
 	prefix=""
 	if not fs == "Varsayilan":
 		prefix="[FS:%s]"%fs
@@ -42,7 +42,7 @@ def scrape_moviepage(url,fansub,name):
 				uphash="http://vk.com/video_ext.php?oid="+oid+"&id="+video_id+"&hash="+embed_hash
 			elif up == "turkanime":
 				hash=re.findall("(http\://www.schneizel.net/video/index.php\?vid\=.*?)\"",ump.get_page(domain+u,encoding))[0]
-				uphash={"url":hash,"referer":"http://www.turkanime.tv/bolum/shingeki-no-kyojin-25-bolum-final&fansub=PeaceFansub&giris=OK&video=690863"}
+				uphash=hash
 				up="google"
 			elif up == "dailymotion":
 				#todo prepare a decoder
@@ -60,7 +60,7 @@ def scrape_moviepage(url,fansub,name):
 		except IndexError:
 			print "Turkanimetv changed regex for : %s, skipping"%up
 			continue
-		return_links(name,up,uphash,fansub)	
+		return_links(name,up,uphash,fansub,url)	
 		
 def run(ump):
 	globals()['ump'] = ump

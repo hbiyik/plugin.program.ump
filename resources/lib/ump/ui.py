@@ -17,6 +17,7 @@ class xplayer(xbmc.Player):
 	def __init__(self,ump=None,*args,**kwargs):
 		self.ump=ump
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
+			xbmc.Player.__init__(self,xbmc.PLAYER_CORE_MPLAYER)
 			self.playlist=xbmc.PlayList(self.ump.content_type==self.ump.defs.CT_VIDEO)
 		else:
 			self.playlist=[]
@@ -73,13 +74,13 @@ class xplayer(xbmc.Player):
 				self.ump.add_log("Part Vanished!!!")
 		return True
 		
-	def play(self):
+	def xplay(self):
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
-			xbmc.Player(xbmc.PLAYER_CORE_MPLAYER).play(self.playlist)
+			self.play(self.playlist)
 		else:
 			self.ump.iwindow.playlist=self.playlist
 			self.ump.iwindow.doModal()
-	
+
 	def decode_hash(self,part):
 		if not part["url"]=="#":
 			return part["url"]
@@ -173,9 +174,7 @@ class imagewindow(xbmcgui.WindowXMLDialog):
 class listwindow(xbmcgui.WindowXMLDialog):
 	def __init__(self,strXMLname, strFallbackPath, strDefaultName, forceFallback,ump=None):
 		self.ump=ump
-		self.isinit=False
 		self.items=[]
-		self.itempos=0
 
 	def onInit(self):
 		q,a,p=self.ump.tm.stats()

@@ -34,6 +34,7 @@ from quality import meta
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
+
 class HeadRequest(urllib2.Request):
 	def get_method(self):
 		return "HEAD"
@@ -69,7 +70,7 @@ class ump():
 		self.urlval_tout=20
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
-		self.tm_conc=int(float(self.getSetting(self.handle,"conc")))
+		self.tm_conc=int(float(addon.getSetting("conc")))
 		self.player=None
 		self.mirrors=[]
 		self.terminate=False
@@ -77,7 +78,7 @@ class ump():
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
-		if self.getSetting(self.handle,"kodiproxy")=="true":
+		if addon.getSetting("kodiproxy")=="true":
 			from ump import proxy
 			socket.socket = proxy.socket()
 		self.cj=LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
@@ -87,7 +88,7 @@ class ump():
 			except LoadError:
 				pass
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
-		self.ua=self.getSetting(self.handle,"useragent")
+		self.ua=addon.getSetting("useragent")
 		self.opener.addheaders = [('User-agent', self.ua)]
 		self.dialog=xbmcgui.Dialog()
 		query=sys.argv[2][1:]
@@ -104,21 +105,6 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["N/A"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 	
-	def getSetting(self,handle,id):
-		from ump.proxy import get_set
-		if not int(handle)>0:
-			if len(self.settings.keys())==0:
-				from xml.dom import minidom
-				paths=[(os.path.join(addon_dir,"resources","settings.xml"),"default"),(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump/settings.xml'),"value")]
-				for spath,attr in paths:
-					if os.path.exists(spath):
-						domx=minidom.parse(spath)
-						for nod in domx.getElementsByTagName("setting"):
-							self.settings[nod.getAttribute("id")]=nod.getAttribute(attr)
-			return self.settings[id]
-		else:
-			return xbmcplugin.getSetting(self.handle,id)		
-
 	def get_vidnames(self):
 		is_serie="tvshowtitle" in self.info.keys() and not self.info["tvshowtitle"].replace(" ","") == ""
 		if is_serie:
@@ -182,7 +168,7 @@ class ump():
 			data=urllib.urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
 		#change timeout
 		if tout is None:
-			tout=int(float(self.getSetting(self.handle,"tout")))
+			tout=int(float(addon.getSetting("tout")))
 
 		headers={'Accept-encoding':'gzip'}
 		if not referer is None : headers["Referer"]=referer
@@ -279,11 +265,13 @@ class ump():
 	def max_meta(self,parts):
 		#get the highest quality info from each part and mirror
 		q=0
-		ss=0
 		max_w=0
 		max_h=0
 		max_s=0
+		part_s=0
 		for part in parts:
+			ss=0
+			part_s=0
 			for mirror in part["urls"].itervalues():
 				if not mirror["meta"] == {}:
 					t=mirror["meta"]["type"]
@@ -294,9 +282,10 @@ class ump():
 						max_w=w
 						max_h=h
 						q=w*h
-					if not s is None and s>0 and s>ss:
-						max_s=s
+					if not s is None and s>ss:
+						part_s=s
 						ss=s
+			max_s+=part_s
 		return max_w,max_h,max_s
 
 	def _on_new_id(self,parts,name):
@@ -323,14 +312,14 @@ class ump():
 		mname=prefix_q+prefix_s+name
 		
 		autoplay=False
-		if self.content_type==self.defs.CT_VIDEO and self.getSetting(self.handle,"auto_en_video")=="true":
-			if self.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality":
-				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(float(self.getSetting(self.handle,"min_vid_res"))):
+		if self.content_type==self.defs.CT_VIDEO and addon.getSetting("auto_en_video")=="true":
+			if addon.getSetting("video_val_method")=="Check if Alive & Quality":
+				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(float(addon.getSetting("min_vid_res"))):
 					autoplay=True
-			if self.getSetting(self.handle,"video_val_method")=="Check if Alive Only" or self.getSetting(self.handle,"video_val_method")=="Check if Alive & Quality" and autoplay:
+			if addon.getSetting("video_val_method")=="Check if Alive Only" or addon.getSetting("video_val_method")=="Check if Alive & Quality" and autoplay:
 				tags=re.findall("\[(.*?)\]",name)
-				required=self.getSetting(self.handle,"require_tag").split(",")
-				filtered=self.getSetting(self.handle,"dont_require_tag").split(",")
+				required=addon.getSetting("require_tag").split(",")
+				filtered=addon.getSetting("dont_require_tag").split(",")
 				autoplay=True
 				for tag in tags:
 					if not tag=="" and tag.lower().replace(" ","") in [x.lower().replace(" ","") for x in filtered]:
@@ -342,10 +331,10 @@ class ump():
 						autoplay=False
 						break
 				
-		if self.content_type==self.defs.CT_AUDIO and self.getSetting(self.handle,"auto_en_audio")=="true" and self.getSetting(self.handle,"audio_val_method")=="Check if Alive Only":
+		if self.content_type==self.defs.CT_AUDIO and addon.getSetting("auto_en_audio")=="true" and addon.getSetting("audio_val_method")=="Check if Alive Only":
 			autoplay=True
 
-		if self.content_type==self.defs.CT_IMAGE and self.getSetting(self.handle,"auto_en_image")=="true" and self.getSetting(self.handle,"audio_val_method")=="Check if Alive & Quality":
+		if self.content_type==self.defs.CT_IMAGE and addon.getSetting("auto_en_image")=="true" and addon.getSetting("audio_val_method")=="Check if Alive & Quality":
 			autoplay=True
 
 		item=xbmcgui.ListItem()
@@ -399,7 +388,7 @@ class ump():
 						part["urls"][key]={}
 						part["urls"][key]["referer"]=part.get("referer","")
 						part["urls"][key]["url"]=u
-					method=self.getSetting(self.handle,self.content_type+"_val_method")
+					method=addon.getSetting(self.content_type+"_val_method")
 					m=metaf("",method,self.get_page,part["urls"][key]["url"],part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
 #				except (timeout,urllib2.URLError,urllib2.HTTPError),e:
@@ -427,8 +416,7 @@ class ump():
 		q,a,p=self.tm.stats()
 		if play:
 			q=a=0
-			self.player.play()
-
+			self.player.xplay()
 		if hasattr(self,"window"):
 			if hasattr(self.window,"status"):
 				del(self.window.status)

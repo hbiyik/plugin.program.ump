@@ -36,7 +36,7 @@ def run(ump):
 				glink=re.findall('<script src="(.*?)"',js["part"]["code"])
 				uprv=""
 				if len(glink)>0:
-					vlink={"url":glink[0],"referer":domain}
+					vlink=glink[0]
 					uprv="google"
 				oklink=re.findall('<iframe src="(.*?)"',js["part"]["code"])
 				if len(oklink)>0:
@@ -48,7 +48,7 @@ def run(ump):
 						vlink[link[1]]=link[0]
 					uprv="okru"
 				if not uprv=="":
-					parts=[{"url_provider_name":uprv, "url_provider_hash":vlink}]
+					parts=[{"url_provider_name":uprv, "url_provider_hash":vlink,"referer":domain}]
 					ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))				
 				return None
 				break

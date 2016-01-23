@@ -16,23 +16,25 @@ def crawl_movie_page(src,url,name):
 	else:
 		res="HD"
 	if len(movie_function) > 0:
-		return movie_function,res,name
+		(prv,hash)=movie_function[0]
+		if prv == "vidag":
+			prv="vid"
+		return prv,hash,res,name
 	else:
 		#try plusplayer
 		hash=re.findall("class=\"plusplayer\".*?>(.*)</div",src)
 		if len(hash) > 0:
-			return [("plusplayer",hash[0])],res,name
+			return "plusplayer",hash[0],res,name
 		else:
 			hash=re.findall("(http\://webteizle.org/player/vk\.asp.*?)\"",src)
 			if len(hash) > 0:
-				return [("vkplayer",hash[0])],res,name
+				return "vkplayer",hash[0],res,name
 			else:
 				ump.add_log("720pizle Movie page has different encryption: %s" % str(url))
-				return [],None,None
+				return None,None,None,None
 
-def return_links(name,type,movie_link,res,referer):
-	if len(movie_link)> 0:
-		upname,uphash=movie_link[0]
+def return_links(name,type,upname,uphash,res,referer):
+	if not upname is None:
 		dub=["","[D:TR]"][type=="dub"]
 		sub=["","[HS:TR]"][type=="sub"]
 		mname="%s%s%s" % (dub,sub,name)
@@ -73,8 +75,8 @@ def run(ump):
 		for movie_page in movie_pages:
 			movie_page_type=["dub","sub"][movie_page.split("/")[2]=="altyazi"]
 			src=ump.get_page(domain+movie_page,encoding)
-			movie_link,res,name2=crawl_movie_page(src,movie_page,i["title"])
-			return_links(name2,movie_page_type,movie_link,res,domain+movie_page)
+			prv,hash,res,name2=crawl_movie_page(src,movie_page,i["title"])
+			return_links(name2,movie_page_type,prv,hash,res,domain+movie_page)
 			alts=[]
 			urls = re.findall('href="(/izle/.*?)" rel="nofollow"(.*?)</a>',src)
 			alts=[x[0] for x in urls if not "tlb_isik" in x[1] ]
@@ -83,8 +85,8 @@ def run(ump):
 			for alt in alts:
 				src=ump.get_page(domain+alt,encoding)
 				#ump.add_log("720pizle is crawling %s" % alt)
-				movie_link,res,name2=crawl_movie_page(src,alt,i["title"])
-				return_links(name2,movie_page_type,movie_link,res,domain+alt)
+				prv,hash,res,name2=crawl_movie_page(src,alt,i["title"])
+				return_links(name2,movie_page_type,prv,hash,res,domain+alt)
 		ump.add_log("720pizle finished crawling %d mirrors"%count)
 		return None
 	

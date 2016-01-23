@@ -110,10 +110,8 @@ def run(ump):
 		videomega=re.findall("http://videomega.tv/validatehash.php\?hashkey\=([0-9]*?)'",plaintext)
 
 		if len(videomega)>0:
-			urls={"referer":domain,"key":videomega[0]}
-			prv="videomega"
-			ump.add_log("afdah decoded %s %s" % (mname,prv))
-			parts=[{"url_provider_name":prv, "url_provider_hash":urls}]
+			ump.add_log("afdah decoded %s %s:%s" % (mname,"videomega",videomega[0]))
+			parts=[{"url_provider_name":"videomega", "url_provider_hash":videomega[0], "referer":domain}]
 			ump.add_mirror(parts,mname)
 
 

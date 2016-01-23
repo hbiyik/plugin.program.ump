@@ -10,7 +10,7 @@ def crawl_movie_page(mpage):
 	#check pub player
 	google=re.findall('(http\://dizipub.com/player/.*?)"',mpage)
 	if len(google)>0:
-		return ("google",{"url":google[0],"referer":domain})
+		return ("google",google[0])
 	okru=re.findall('mid\%3D(.*?)"',mpage)
 	if len(okru)>0:
 		return ("okru",okru[0])
@@ -30,7 +30,7 @@ def crawl_movie_page(mpage):
 	return None,None
 
 def return_links(name,mp,h):
-	parts=[{"url_provider_name":mp, "url_provider_hash":h}]
+	parts=[{"url_provider_name":mp, "url_provider_hash":h,"referer":domain}]
 	mname="[HS:TR]%s" % (name,)
 	ump.add_mirror(parts,mname)
 
