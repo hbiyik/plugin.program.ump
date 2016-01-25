@@ -51,7 +51,6 @@ def run(ump):
 
 	ump.add_log("UnutulmazFilmler is searching %s" % names[0])
 	query={"arama":filtertext(names[0],False," ")}
-	print filtertext(names[0],False," ")
 	page=ump.get_page(domain+"/arama.php",encoding,query=query)
 	match_name,match_cast,link=match_results(page,names)
 	if not match_cast:
@@ -66,7 +65,6 @@ def run(ump):
 		return None
 	page=ump.get_page(link,encoding)
 	params=re.findall('webscripti\("(.*?)", "(.*?)", "(.*?)"\)\;',page)
-	print params
 	if not len(params)>0:
 		ump.add_log("UntulmazFilmler can't find any links for %s"%names[0])
 		return None
@@ -79,7 +77,6 @@ def run(ump):
 		return None
 	mails=re.findall('href=".*?smailru\.html"',boot)
 	parts={"gplus":googles,"mailru":mails}
-	print parts
 	for ptype,parts in parts.iteritems():
 		k=0
 		plinks=[]
@@ -89,10 +86,8 @@ def run(ump):
 			if ptype=="gplus":
 				plinks.extend(re.findall('src="(http://unutulmazfilmler.co/player/.*?)"',src))
 		umpparts=[]
-		print plinks
 		if ptype=="gplus":
 			for plink in plinks:
-				print plink
 				umpparts.append({"url_provider_name":"google", "url_provider_hash":plink,"referer":domain})
 			if len(umpparts)>0:
 				ump.add_mirror(umpparts,"[HS:TR]%s" % names[0])	

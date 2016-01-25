@@ -41,7 +41,7 @@ def filtertext(text,space=True,rep=""):
 	return text.lower()
 
 def match_results(page,names):
-	match_name,match_cast,subpage=False,False,""
+	match_name,match_cast,subpage,camrip=False,False,"",""
 	results=re.findall('data-rel=".*?" href="(http://www.moviesub.net/watch/.*?)" title="(.*?)">(.*?)</div',page,re.DOTALL)
 	for result in results:
 		if match_cast:

@@ -61,11 +61,14 @@ def run(ump):
 			break
 		ump.add_log("Primewire is searching %s" % name)
 		keypage=ump.get_page(domain+"/index.php?search",encoding)
-		query={"search_section":int(is_serie)+1,"search_keywords":name}
+		key=re.findall('name="key" value="(.*?)"',keypage)
+		if not len(key)>0:
+			ump.add_log("PRIMEWIRE is stuck with CAPTCHA check, you need to wait or change the User-Agent in settings")
+			return None
+		query={"search_section":int(is_serie)+1,"search_keywords":name,"key":key[0]}
 		#if not is_serie:query["year"]=ump.info["year"]
 		page1=ump.get_page(domain+"/index.php",encoding,query=query)
 		results=re.findall('\<div class="index_item index_item_ie"\>\<a href="(.*?)"',page1)
-		
 		exact,page,result=match_results(results,names)
 
 		pagination=re.findall("class=current(.*?)\<div",page1,re.DOTALL)

@@ -50,21 +50,9 @@ def run(ump):
 	if not i["code"][:5]=="!ann!":
 		return None
 
-	is_serie="tvshowtitle" in i.keys() and not i["tvshowtitle"].replace(" ","") == ""
-	if is_serie:
-		orgname=i["tvshowtitle"]
-		altnames=i["tvshowalias"].split("|")
-	else:
-		orgname=i["title"]
-		altnames=i["originaltitle"].split("|")
-	
-	for k in range(len(altnames)):
-		if altnames[k]=="":
-			altnames.pop(k)
+	is_serie,names=ump.get_vidnames()
 
 	urls=[]	
-	names=[orgname]
-	names.extend(altnames)
 	jq_limit=False
 	found=False
 	ump.get_page(domain,encoding)
