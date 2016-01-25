@@ -47,6 +47,7 @@ def scrape_ann_search(animes):
 		img=""
 		title=""
 		maintitle=""
+		titlealias=""
 		alttitle=[]
 		originaltitle=""
 		tvshowtitle=""
@@ -109,7 +110,7 @@ def scrape_ann_search(animes):
 			tvshowalias="|".join(alttitle)
 		else:
 			title=maintitle
-			originaltitle="|".join(alttitle)
+			titlealias="|".join(alttitle)
 		
 		for rate in media.getElementsByTagName("ratings"):
 			rating=float(rate.getAttribute("weighted_score"))
@@ -148,7 +149,8 @@ def scrape_ann_search(animes):
 			"plot":outline,
 			"plotoutline":outline,
 			"title":title,
-			"originaltitle":originaltitle,
+			"originaltitle":"",
+			"titlealiases":titlealias,
 			"tvshowtitle":tvshowtitle,
 			"tvshowalias":tvshowalias,
 			"sorttitle":"",
@@ -394,4 +396,4 @@ def run(ump):
 			u=ump.link_to("urlselect")
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
-	xbmcplugin.endOfDirectory(ump.handle,	cacheToDisc=cacheToDisc)
+	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc,updateListing=False,succeeded=True)

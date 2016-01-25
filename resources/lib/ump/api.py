@@ -34,7 +34,6 @@ from quality import meta
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
-
 class HeadRequest(urllib2.Request):
 	def get_method(self):
 		return "HEAD"
@@ -67,7 +66,7 @@ class ump():
 		self.window = ui.listwindow('select.xml', addon_dir, 'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', addon_dir,"Default","720p")
 		self.urlval_en=True
-		self.urlval_tout=20
+		self.urlval_tout=30
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
 		self.tm_conc=int(float(addon.getSetting("conc")))
@@ -112,7 +111,7 @@ class ump():
 			altnames=self.info["tvshowalias"].split("|")
 		else:
 			orgname=self.info["title"]
-			altnames=self.info["originaltitle"].split("|")
+			altnames=self.info["titlealiases"].split("|")
 		
 		for k in range(len(altnames)):
 			if altnames[k]=="":

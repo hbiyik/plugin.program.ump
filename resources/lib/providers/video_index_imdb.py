@@ -3,12 +3,21 @@ import xbmcgui
 import xbmcplugin
 from datetime import date
 from urllib import quote_plus
-from urllib import urlencode
 import time
 import re
-import json
 import operator
-recnum=50
+
+try:
+	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
+except AttributeError:
+	#backwards compatability
+	language="en"
+
+def get_localtitle(alts):
+	for country in countries.all:
+		if language == country[2] and country[0].lower() in alts.keys():
+			return alts[country[0].lower()]
+	return ""
 
 def scrape_imdb_search(page):
 	m1=[]
@@ -146,8 +155,9 @@ def scrape_imdb_search(page):
 		m1.append(movie)
 	
 	def alternate(key,id):
-		cd=scrape_name(id,True)
-		m1[key]["info"]["originaltitle"]=cd
+		alts,aliases=scrape_name(id,True)
+		m1[key]["info"]["originaltitle"]=get_localtitle(alts)
+		m1[key]["info"]["titlealiases"]=aliases
 
 	gid=ump.tm.create_gid()
 	for m in range(len(m1)):
@@ -157,22 +167,29 @@ def scrape_imdb_search(page):
 	return m1
 
 
+			
+
 def scrape_name(id,lean=False):
 	m1={"info":{},"art":{}}
 	m1["info"]["originaltitle"]=""
-	alts=[]
+	names=[]
+	alts={}
 	res=ump.get_page("http://www.imdb.com/title/%s/releaseinfo"%id,"utf-8")
 	akas=re.findall('<table id="akas"(.*?)</table>',res,re.DOTALL)
 	if len(akas)==1:
 		tds=re.findall("<td>(.*?)</td>",akas[0])
 		for td in range(1,len(tds),2):
-			alts.append(tds[td])
+			country=re.sub("\s\(.*\)","",tds[td-1]).lower()
+			cname=tds[td]
+			alts[country]=cname
+			names.append(cname)
 		if lean:
-			return "|".join(alts)
+			return alts,"|".join(names)
 		else:
-			m1["info"]["originaltitle"]="|".join(alts)
+			m1["info"]["originaltitle"]=get_localtitle(alts)
+			m1["info"]["titlealiases"]="|".join(names)
 	elif lean:
-		return ""
+		return alts,""
 	poster=re.findall('<img itemprop="image"\nclass="poster".*?alt="(.*?)".*?src="(.*?)"',res,re.DOTALL)
 	namediv=re.findall('<h3 itemprop="name">.*?itemprop=\'url\'>(.*?)</a>.*?<span class="nobr">(.*?)</span>',res,re.DOTALL)
 	if len(namediv)==1:
@@ -260,7 +277,7 @@ def run(ump):
 		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args)
 		movies=scrape_imdb_search(page)
 		suggest=""
-		if len(movies) < 1 and "title" in ump.args:
+		if len(movies) < 1 or ump.args.get("google",False) and "title" in ump.args.keys():
 			suggest="[SUGGESTED] "
 			movies=[]
 			ids=[]
@@ -269,7 +286,7 @@ def run(ump):
 			elif "documentary" in ump.args["title_type"]:
 				suffix='"Documentary"'
 			else:
-				suffix='-"TV Series" -Documentary'
+				suffix=''
 			urls=ump.web_search('inurl:http://www.imdb.com/title/ inurl:releaseinfo %s %s'%(ump.args["title"],suffix))
 			if len(urls)<1:
 				return None
@@ -285,8 +302,12 @@ def run(ump):
 		if not len(movies) < 1: 
 			for movie in movies:
 				name=movie["info"]["title"]
-				altnames=movie["info"]["originaltitle"]
-				li=xbmcgui.ListItem(suggest+name)
+				if movie["info"]["originaltitle"]:
+					localname=movie["info"]["originaltitle"]
+				else:
+					localname=movie["info"]["title"]
+				altnames=movie["info"]["titlealiases"]
+				li=xbmcgui.ListItem(suggest+localname)
 				li.setInfo("video",movie["info"])
 				try:
 					li.setArt(movie["art"])
@@ -299,16 +320,21 @@ def run(ump):
 					ump.info["tvshowtitle"]=name
 					ump.info["title"]=""
 					ump.info["tvshowalias"]=altnames
-					ump.info["originaltitle"]=""
+					ump.info["titlealias"]=""
 					u=ump.link_to("show_seasons",{"imdbid":ump.info["code"]})
 					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 				else:
 					ump.info["tvshowtitle"]=""
 					ump.info["title"]=name
 					ump.info["tvshowalias"]=""
-					ump.info["originaltitle"]=altnames
+					ump.info["titlealias"]=altnames
 					u=ump.link_to("urlselect")
 					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+			if not ump.args.get("google",False) and "title" in ump.args.keys():
+				ump.args["google"]=True
+				u=ump.link_to("results_title",ump.args)
+				li=xbmcgui.ListItem("Search \"%s\" in Google"%ump.args["title"])
+				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 		cacheToDisc=True
 
 	elif ump.page=="show_seasons":
@@ -360,4 +386,4 @@ def run(ump):
 			u=ump.link_to("urlselect")
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
-	xbmcplugin.endOfDirectory(ump.handle,	cacheToDisc=cacheToDisc)
+	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc,updateListing=False,succeeded=True)

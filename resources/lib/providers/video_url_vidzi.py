@@ -10,4 +10,4 @@ def run(hash,ump,referer=None):
 	packed=re.findall("script type='text/javascript'\>(eval\(function\(p.*?)\n</script>",src)
 	data= unpack.unpack(packed[0]).encode("ascii","ignore").replace("\\","")
 	files=re.findall('file:"([^,]*?)"}',data)
-	return {"vid":files[0]}
+	return {"vid":{"url":files[0],"referer":domain+hash}}
