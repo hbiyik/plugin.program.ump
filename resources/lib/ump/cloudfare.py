@@ -2,16 +2,28 @@ import urllib2
 import re
 import time
 import urlparse
+from StringIO import StringIO
+import gzip
+import json
 
 def dec(s):
 	offset=1 if s[0]=='+' else 0
 	return int(eval(s.replace('!+[]','1').replace('!![]','1').replace('[]','0').replace('(','str(')[offset:]))
 
+def readzip(err):
+	if err.info().get('Content-Encoding') == 'gzip':
+		buf = StringIO(err.read())
+		f = gzip.GzipFile(fileobj=buf)
+		stream = f.read()
+	else:
+		stream=err.read()
+	return stream
+
 def ddos_open(opener,req,data,timeout):
 	try:
 		response=opener.open(req,data,timeout)
 	except urllib2.HTTPError, err:
-		body=err.read()
+		body=readzip(err)
 		if err.code == 503 and "/cdn-cgi/l/chk_jschl" in body:
 			try:
 				challenge = re.search(r'name="jschl_vc" value="(\w+)"', body).group(1)
@@ -38,6 +50,13 @@ def ddos_open(opener,req,data,timeout):
 			new_req=urllib2.Request(new_url,headers=new_headers,data=req.get_data())
 			del req
 			response=opener.open(new_req,data,timeout)
+		elif err.code == 403 and "/cdn-cgi/l/chk_captcha" in body:
+			hash=re.findall('noscript\?k\=(.*?)"',body)[0]
+			url="https://www.google.com/recaptcha/api/challenge?k="+hash+"&ajax=1"
+			script=opener.open(urllib2.Request(url,headers={"Referer":err.url})).read()
+			challenge=re.findall("challenge : '(.*?)'",script)
+			url="https://www.google.com/recaptcha/api/image?c=%s"%(challenge[0])
+			raise Exception("Cloudfare Recaptcha")
 		else:
 			response=opener.open(req,data,timeout)
 	return response

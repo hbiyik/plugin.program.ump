@@ -1,23 +1,20 @@
 import os
 import json
-import urllib
 import urllib2
 import inspect
 import traceback
 import sys
-import urlparse
 import re
 import time
-import datetime
-from cookielib import LWPCookieJar, LoadError
-from socket import timeout
 import socket
-from threading import current_thread
-from StringIO import StringIO
 
-import gzip
-import string
-import json
+from cookielib import LWPCookieJar, LoadError
+from urllib import urlencode
+from urlparse import parse_qs
+from random import choice
+from threading import current_thread
+from string import punctuation
+
 import xbmc
 import xbmcaddon
 import xbmcgui
@@ -28,9 +25,11 @@ from ump import task
 from ump import providers
 from ump import ui
 from ump import cloudfare
+from ump import proxy
+from quality import meta
 from third.unescape import unescape
 from third.unidecode import unidecode
-from quality import meta
+
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
@@ -77,9 +76,7 @@ class ump():
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
-		if addon.getSetting("kodiproxy")=="true":
-			from ump import proxy
-			socket.socket = proxy.socket()
+		socket.socket = proxy.getsocket()
 		self.cj=LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
 		if os.path.exists(os.path.join( addon_dir, 'resources', 'data', "cookie")):
 			try:
@@ -87,11 +84,15 @@ class ump():
 			except LoadError:
 				pass
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
-		self.ua=addon.getSetting("useragent")
+		if addon.getSetting("overrideua")=="true":
+			self.ua=addon.getSetting("useragent")
+		else:
+			from ump import useragents
+			self.ua=choice(useragents.all)
 		self.opener.addheaders = [('User-agent', self.ua)]
 		self.dialog=xbmcgui.Dialog()
 		query=sys.argv[2][1:]
-		result=urlparse.parse_qs(query)
+		result=parse_qs(query)
 		[self.module]= result.get('module', ["ump"])
 		[self.page]= result.get('page', ["root"])
 		[args]= result.get('args', ["{}"])
@@ -145,7 +146,7 @@ class ump():
 		xbmcplugin.setContent(self.handle, content_cat)
 
 	def is_same(self,name1,name2,strict=False):
-		predicate = lambda x:x not in string.punctuation+" "
+		predicate = lambda x:x not in punctuation+" "
 		if strict:
 			return filter(predicate,name1.lower())==filter(predicate,name2.lower())
 		else:
@@ -164,7 +165,7 @@ class ump():
 		query["content_type"]=self.content_type
 		for keep in ["info","art"]:
 			query[keep]=json.dumps(getattr(self,keep))
-		return sys.argv[0] + '?' + urllib.urlencode(query)
+		return sys.argv[0] + '?' + urlencode(query)
 
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None):
 
@@ -173,10 +174,10 @@ class ump():
 
 		#python cant handle unicode urlencoding so needs to get dirty below.
 		if not query is None:
-			query=urllib.urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in query.items())) 
+			query=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in query.items())) 
 			url=url+"?"+query
 		if not data is None:
-			data=urllib.urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
+			data=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
 		#change timeout
 		if tout is None:
 			tout=int(float(addon.getSetting("tout")))
@@ -197,12 +198,7 @@ class ump():
 		if head :
 			return response
 		
-		if response.info().get('Content-Encoding') == 'gzip':
-			buf = StringIO(response.read())
-			f = gzip.GzipFile(fileobj=buf)
-			stream = f.read()
-		else:
-			stream=response.read()
+		stream=cloudfare.readzip(response)
 
 		if encoding is None:
 			#binary data
@@ -384,7 +380,7 @@ class ump():
 			try:
 				self.add_log("validating %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
 				part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
-			except (timeout,urllib2.URLError,urllib2.HTTPError),e:
+			except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
 				self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
 				part["urls"]={}
 			except Exception,e:

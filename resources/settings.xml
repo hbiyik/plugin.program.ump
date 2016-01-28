@@ -17,8 +17,8 @@
         <setting id="auto_en_image" type="bool" label="Enable Automatic Mirror Selection for Images" visible="eq(-1,Check if Alive + Quality)" default="false"/>
     </category>
     <category label="Advanced Settings">
+		<setting id="overrideua" type="bool" label="Don't use random User-Agent string and use below" default="false"/>
 		<setting id="useragent" type="text" label="Browser User-Agent" default="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"/>
-		<setting id="kodiproxy" type="bool" label="Use Proxy from Kodi Settings" default="false"/>
 	    <setting id="conc" label="Task Manager Concurrency" type="slider" default="10" range="3,1,20" option="int" />
 		<setting id="tout" label="Http Timeout" type="slider" default="30" range="10,1,60" option="int" />
     </category>

@@ -14,6 +14,7 @@ from third.dateutil import parser
 import httplib
 from xml.parsers import expat
 from third.unidecode import unidecode
+import operator
 
 domain="http://www.animenewsnetwork.com"
 encoding="utf-8"
@@ -82,7 +83,7 @@ def scrape_ann_search(animes):
 				gen+=info.lastChild.data+"/"
 			if t=="Vintage":
 				try:
-					pdate=dparser.parse(info.lastChild.data,fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
+					pdate=parser.parse(info.lastChild.data,fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
 					dates.append(pdate)
 				except:
 					pass
@@ -150,7 +151,7 @@ def scrape_ann_search(animes):
 			"plotoutline":outline,
 			"title":title,
 			"originaltitle":"",
-			"titlealiases":titlealias,
+			"titlealias":titlealias,
 			"tvshowtitle":tvshowtitle,
 			"tvshowalias":tvshowalias,
 			"sorttitle":"",
@@ -200,9 +201,16 @@ def grab_searches(link,maxpage=2):
 			break
 	return pages
 
+def getgenres(filter):
+	ids=[]
+	pages=grab_searches("%s/encyclopedia/search/genreresults?w=series&w=movies&o=rating&%s"%(domain,filter))
+	for page in pages:
+		ids.extend(re.findall("anime.php\?id=([0-9]*?)\"(.*?)</a>",page))
+	return [x[0] for x in ids]
+
 def run(ump):
 	globals()['ump'] = ump
-	cacheToDisc=True
+	cacheToDisc=False
 	if ump.page == "root":
 		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search"),li,True)
@@ -215,6 +223,9 @@ def run(ump):
 
 		li=xbmcgui.ListItem("Animes by Genre", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("bygenre"),li,True)
+
+		li=xbmcgui.ListItem("Animes by Themes", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("bytheme"),li,True)
 
 	elif ump.page == "bygenre":
 		genres={
@@ -237,41 +248,34 @@ def run(ump):
 			
 		for genre in sorted(genres.keys()):
 			li=xbmcgui.ListItem(genre, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("selectgenre",{"genre":genres[genre]}),li,True)
+			args={"anime":"getgenres('%s')"%urlencode({"g":genres[genre]}),"filters":["numvotes"]}
+			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_search",args),li,True)
 	
-	elif ump.page == "selectgenre":
-		ids=[]
-		pages=grab_searches("%s/encyclopedia/search/genreresults?w=series&w=movies&from=&to=&lic=&a=AA&a=OC&a=TA&a=MA&a=AO&g=%s&o=rating"%(domain,ump.args["genre"]))
-				
-		for page in pages:
-			ids.extend(re.findall("anime.php\?id=([0-9]*?)\"(.*?)</a>",page))
-
-		li=xbmcgui.ListItem("Show Both", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("results_search",{"anime":[x[0] for x in ids],"filters":["numvotes"]})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-		
-		li=xbmcgui.ListItem("Show only series", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("results_search",{"anime":[x[0] for x in ids if not "(movie)" in x[1]],"filters":["numvotes"]})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("Show only movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("results_search",{"anime":[x[0] for x in ids if "(movie)" in x[1]],"filters":["numvotes"]})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
+	elif ump.page == "bytheme":
+		themes=re.findall('name="th" type="checkbox" value="(.*?)".*?\(([0-9]*?)\)',ump.get_page("%s/encyclopedia/search/genre"%domain,None))
+		addthemes=[]
+		for theme,count in sorted([(x[0],int(x[1])) for x in themes], key=operator.itemgetter(1),reverse=True):
+			if not theme in addthemes:
+				addthemes.append(theme)
+				li=xbmcgui.ListItem("%s (%d)"%(theme.title().replace("|"," / "),count), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+				args={"anime":"getgenres('%s')"%urlencode({"th":theme}),"filters":["numvotes"]}
+				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_search",args),li,True)
+	
 	elif ump.page == "newest":
 		ids=[]
 		dates=[]
 		months=[]
-		pages=grab_searches("%s/encyclopedia/search/genreresults?w=series&w=movies&from=%d&to=%d&lic=&a=AA&a=OC&a=TA&a=MA&a=AO&o=date"%(domain, datetime.datetime.now().year, datetime.datetime.now().year))
+		pages=grab_searches("%s/encyclopedia/search/genreresults?w=series&w=movies&from=%d&to=%d&lic=&a=AA&a=OC&a=TA&a=MA&a=AO&o=rating"%(domain, datetime.datetime.now().year, datetime.datetime.now().year))
 		for page in pages:
 			ids.extend(re.findall("anime.php\?id=([0-9]*?)\"",page))
 			dates.extend(re.findall("class=\"de\-emphasized\">(.*?)<",page))
-
+		
 		for i in range(len(dates)):
-			if datetime.datetime.now().month == dparser.parse(dates[i],fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0)).month:
+			since=(datetime.datetime.now() - parser.parse(dates[i],fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))).days
+			if  since<= 15 and since >=0:
 				months.append(ids[i])
 
-		li=xbmcgui.ListItem("This Month", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		li=xbmcgui.ListItem("Last 15 Days", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("results_search",{"anime":months,"filters":[]})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 		
@@ -281,14 +285,14 @@ def run(ump):
 				
 
 	elif ump.page == "select_year":
-		ump.args["year"]=""
 		li=xbmcgui.ListItem("All Time", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("toprated",ump.args)
+		args={"anime":"getgenres('')","filters":["numvotes"]}
+		u=ump.link_to("results_search",args)
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 		for year in reversed(range(datetime.date.today().year-50,datetime.date.today().year+1)):
-			ump.args["year"]=str(year)
+			args={"anime":"getgenres('%s')"%urlencode({"from":year,"to":year}),"filters":["numvotes"]}
 			li=xbmcgui.ListItem(str(year), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			u=ump.link_to("toprated",ump.args)
+			u=ump.link_to("results_search",args)
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	elif ump.page == "toprated":
@@ -330,10 +334,13 @@ def run(ump):
 	elif ump.page == "results_search":
 		filters=ump.args["filters"]
 		animes=ump.args["anime"]
+		if isinstance(animes,unicode):
+			animes=eval(animes)
 		index=ump.args.get("index",0)
 		anime=animes[index*50:(index+1)*50]
 		medias=scrape_ann_search(anime)
-
+		
+		itemcount=0
 		if len(medias) > 0: 
 			if not index==0:
 				li=xbmcgui.ListItem("Results %d-%d"%((index-1)*50+1,index*50))
@@ -353,6 +360,7 @@ def run(ump):
 				except AttributeError:
 					#backwards compatability
 					pass
+				itemcount+=1
 				ump.art=media["art"]
 				ump.info=media["info"]
 				if len(media["episodes"].keys())==0:
@@ -361,7 +369,7 @@ def run(ump):
 				else:
 					u=ump.link_to("show_episodes",{"annid":media["info"]["code"]})
 					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-			if not index==len(animes)/50:
+			if (index+1)*50 < len(animes) and not itemcount==0:
 				li=xbmcgui.ListItem("Results %d-%d"%((index+1)*50+1,(index+2)*50))
 				u=ump.link_to("results_search",{"anime":animes,"filters":filters,"index":index+1})
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)

@@ -10,10 +10,10 @@ def get_set(genset,n):
 	else:
 		return nd.lastChild.data
 
-def socket():
+def getsocket():
 	try:
 		gen_set=minidom.parse(xbmc.translatePath('special://home/userdata/guisettings.xml'))
-		if bool(get_set(gen_set,"usehttpproxy")):
+		if not get_set(gen_set,"usehttpproxy").lower() == "false":
 			s=[3,1,1,2,2][int(get_set(gen_set,"httpproxytype"))]
 			socks.setdefaultproxy(s, get_set(gen_set,"httpproxyserver"), int(get_set(gen_set,"httpproxyport")),int(get_set(gen_set,"httpproxytype"))==4,get_set(gen_set,"httpproxyusername"),get_set(gen_set,"httpproxypassword"))
 			return socks.socksocket
