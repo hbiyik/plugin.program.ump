@@ -7,7 +7,7 @@ import socket
 domain="http://movie.pubfilmno1.com"
 encoding="utf-8"
 
-def match_results(link,inf):
+def match_results(link,inf,names):
 	prefix=""
 	submatch=False
 	subpage=ump.get_page(link,encoding,referer=domain)
@@ -19,17 +19,16 @@ def match_results(link,inf):
 		imdbid=imdbid.split("/")[-1]
 		if imdbid==inf["code"]:
 			submatch=True
+			ump.add_log("pubfilm matched %s with imdbid: %s"%(names[0],imdbid))
 	else:
-		casting=re.findall('<a class="fl ellip _Wqb".*?>(.*?)</a>',subpage)
-		infocasting=ump.info["cast"]
-		cast_found=0
-		for cast in casting:
-			for icast in infocasting:
-				if ump.is_same(cast,icast):
-					cast_found+=1
-					continue
-		if len(casting)==cast_found or (len(infocasting)==cast_found and len(casting)>len(infocasting)) or (len(casting)==cast_found and len(casting)<len(infocasting)):
-			submatch=True
+		mname=re.findall('<span style\="font-size\: large\;">(.*?)<',subpage)
+		if len(mname)>0:
+			for name in names:
+				if submatch: break
+				if ump.is_same(name,mname[0]):
+					year=re.findall('\>([0-9]{4})\s',subpage)
+					if len(year)>0:
+						submatch=ump.is_same(inf["year"],year[0])
 	prefix0=re.findall("itemprop='title'>.*?\((.*?)\)</span>",subpage)
 	if len(prefix0)>0:
 		prefix=prefix0[0].upper()
@@ -43,19 +42,17 @@ def match_results(link,inf):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["code"][:2]=="tt":
-		return None
-	
 	is_serie,names=ump.get_vidnames()
 	match=False
+
 	mlink=""
 	prefix=""
+
 	if is_serie:
 		return None
-	kk=0
+
 	try:
 		for name in names:
-			if match: break
 			ump.add_log("pubfilm is searching %s" % name)
 			data={"alt":"json-in-script","max-results":9999,"callback":"showResult","q":name}
 			page=ump.get_page(domain+"/feeds/posts/summary",encoding,data=data,referer=domain)
@@ -68,22 +65,21 @@ def run(ump):
 						for link in feed["link"]:
 							if match: break
 							if link["rel"]=="alternate":
-								prefix,match,page=match_results(link["href"],i)
+								prefix,match,page=match_results(link["href"],i,names)
 								mlink=link["href"]
 				else:
 					time.sleep(1)
 					continue
+			if match: break
 	except socket.timeout:
 		ump.add_log("pubfilm sitesearch is down, trying google")
-		for u in ump.web_search("site:movie.pubfilmno1.com \"%s\""%names[0]):
+		for u in ump.web_search("site:movie.pubfilmno1.com \"%s\""%name):
 			if match: break
-			prefix,match,page=match_results(link["href"],i)
+			prefix,match,page=match_results(link["href"],i,names)
 
 	if not match:
-		ump.add_log("pubfilm can't match %s"%names[0])
+		ump.add_log("pubfilm can't match %s"%name)
 		return None
-	else:
-		ump.add_log("pubfilm matched %s with imdbid: %s"%(names[0],i["code"]))
 
 	link1=re.findall('src="(http://player.pubfilm.com/.*?)"',page)
 	if len(link1)>0:
@@ -99,6 +95,6 @@ def run(ump):
 				for link in links["link"]:
 					mparts[link["label"]]=link["link"]
 			parts=[{"url_provider_name":"google", "url_provider_hash":mparts,"referer":link1}]
-			ump.add_mirror(parts,"%s %s"%(prefix,i["title"]))
-			ump.add_log("pubfilm decoded google : %s"%names[0])
+			ump.add_mirror(parts,"%s %s"%(prefix,name))
+			ump.add_log("pubfilm decoded google : %s"%name)
 			

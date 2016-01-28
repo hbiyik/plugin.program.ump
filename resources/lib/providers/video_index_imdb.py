@@ -6,6 +6,7 @@ from urllib import quote_plus
 import time
 import re
 import operator
+from ump import countries
 
 try:
 	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
@@ -13,11 +14,22 @@ except AttributeError:
 	#backwards compatability
 	language="en"
 
-def get_localtitle(alts):
+def get_localtitle(alts,original):
+	local=original
+	ww=original
 	for country in countries.all:
 		if language == country[2] and country[0].lower() in alts.keys():
-			return alts[country[0].lower()]
-	return ""
+			local=alts[country[0].lower()]
+	for key in alts.keys():
+		if ump.is_same("USA",key):
+			ww=alts[key]		
+			break
+	if ww == original:
+		for key in alts.keys():
+			if ump.is_same("World-wide",key):
+				ww=alts[key]		
+				break
+	return local,ww
 
 def scrape_imdb_search(page):
 	m1=[]
@@ -72,9 +84,9 @@ def scrape_imdb_search(page):
 				gen+=genre
 				
 		#year
-		year=re.findall('class="year_type"\>\(([0-9]*?)\)',tr)
+		year=re.findall('class="year_type"\>\(([0-9]{4})',tr)
 		if len(year)>0:
-			year=str(year[0])
+			year=int(year[0])
 		else:
 			year=""
 		
@@ -104,6 +116,8 @@ def scrape_imdb_search(page):
 
 		movie={}
 		movie["info"]={
+			"localtitle":title,
+			"alternates":[],
 			"count":1,
 			"size":0, 
 			#"date":"01-01-1970",
@@ -155,9 +169,9 @@ def scrape_imdb_search(page):
 		m1.append(movie)
 	
 	def alternate(key,id):
-		alts,aliases=scrape_name(id,True)
-		m1[key]["info"]["originaltitle"]=get_localtitle(alts)
-		m1[key]["info"]["titlealiases"]=aliases
+		alts=scrape_name(id,True)
+		m1[key]["info"]["alternates"]= zip(*alts.items())[1]
+		m1[key]["info"]["localtitle"],m1[key]["info"]["title"]=get_localtitle(alts,m1[key]["info"]["originaltitle"])
 
 	gid=ump.tm.create_gid()
 	for m in range(len(m1)):
@@ -172,37 +186,42 @@ def scrape_imdb_search(page):
 def scrape_name(id,lean=False):
 	m1={"info":{},"art":{}}
 	m1["info"]["originaltitle"]=""
-	names=[]
 	alts={}
 	res=ump.get_page("http://www.imdb.com/title/%s/releaseinfo"%id,"utf-8")
 	akas=re.findall('<table id="akas"(.*?)</table>',res,re.DOTALL)
 	if len(akas)==1:
 		tds=re.findall("<td>(.*?)</td>",akas[0])
+		pcountry=[]
 		for td in range(1,len(tds),2):
+			country=tds[td-1]
+			if any(word in country for word in ["fake","informal","version","literal","promotional","short"]):
+				continue
 			country=re.sub("\s\(.*\)","",tds[td-1]).lower()
+			if country in pcountry:
+				continue
+			pcountry.append(country)
 			cname=tds[td]
 			alts[country]=cname
-			names.append(cname)
 		if lean:
-			return alts,"|".join(names)
+			return alts
 		else:
-			m1["info"]["originaltitle"]=get_localtitle(alts)
-			m1["info"]["titlealiases"]="|".join(names)
+			poster=re.findall('<img itemprop="image"\nclass="poster".*?alt="(.*?)".*?src="(.*?)"',res,re.DOTALL)
+			namediv=re.findall('<h3 itemprop="name">.*?itemprop=\'url\'>(.*?)</a>.*?<span class="nobr">(.*?)</span>',res,re.DOTALL)
+			if len(namediv)==1:
+				namestr,datestr=namediv[0]
+				m1["info"]["originaltitle"]=namestr
+				m1["info"]["year"]=int(re.sub("[^0-9]", "", datestr.split("-")[0]))
+				m1["info"]["localtitle"],m1["info"]["title"]=get_localtitle(alts,namestr)
+				m1["info"]["alternates"]= zip(*alts.items())[1]
+			if len(poster)==1:
+				namestr,link=poster[0]
+				m1["art"]["poster"]=link.split("._")[0]
+				m1["art"]["thumb"]=m1["art"]["poster"]+"._V1_SX214_AL_.jpg"
+			m1["info"]["code"]=id
+			return m1
 	elif lean:
-		return alts,""
-	poster=re.findall('<img itemprop="image"\nclass="poster".*?alt="(.*?)".*?src="(.*?)"',res,re.DOTALL)
-	namediv=re.findall('<h3 itemprop="name">.*?itemprop=\'url\'>(.*?)</a>.*?<span class="nobr">(.*?)</span>',res,re.DOTALL)
-	if len(namediv)==1:
-		namestr,datestr=namediv[0]
-		m1["info"]["title"]=namestr
-		m1["info"]["year"]=re.sub("[^0-9]", "", datestr.split("-")[0])
-	if len(poster)==1:
-		namestr,link=poster[0]
-		m1["art"]["poster"]=link.split("._")[0]
-		m1["art"]["thumb"]=m1["art"]["poster"]+"._V1_SX214_AL_.jpg"
-	m1["info"]["code"]=id
-	return m1
-		
+		return alts
+	
 
 def run(ump):
 	globals()['ump'] = ump
@@ -273,8 +292,7 @@ def run(ump):
 
 	elif ump.page == "results_title":
 		ump.set_content(ump.args["content_cat"])
-		#ump.args[key]=quote_plus(str(ump.args[key]).decode("windows-1254"))
-		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args)
+		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args,header={"Accept-Language":"tr"})#hack imdb to give me original title with my unstandart language header
 		movies=scrape_imdb_search(page)
 		suggest=""
 		if len(movies) < 1 or ump.args.get("google",False) and "title" in ump.args.keys():
@@ -302,12 +320,7 @@ def run(ump):
 		if not len(movies) < 1: 
 			for movie in movies:
 				name=movie["info"]["title"]
-				if movie["info"]["originaltitle"]:
-					localname=movie["info"]["originaltitle"]
-				else:
-					localname=movie["info"]["title"]
-				altnames=movie["info"]["titlealiases"]
-				li=xbmcgui.ListItem(suggest+localname)
+				li=xbmcgui.ListItem(suggest+movie["info"]["localtitle"])
 				li.setInfo("video",movie["info"])
 				try:
 					li.setArt(movie["art"])
@@ -317,17 +330,10 @@ def run(ump):
 				ump.art=movie["art"]
 				ump.info=movie["info"]
 				if "tv_series" in ump.args["title_type"]:
-					ump.info["tvshowtitle"]=name
-					ump.info["title"]=""
-					ump.info["tvshowalias"]=altnames
-					ump.info["titlealias"]=""
+					ump.info["tvshowtitle"]=movie["info"]["title"]
 					u=ump.link_to("show_seasons",{"imdbid":ump.info["code"]})
 					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 				else:
-					ump.info["tvshowtitle"]=""
-					ump.info["title"]=name
-					ump.info["tvshowalias"]=""
-					ump.info["titlealias"]=altnames
 					u=ump.link_to("urlselect")
 					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 			if not ump.args.get("google",False) and "title" in ump.args.keys():

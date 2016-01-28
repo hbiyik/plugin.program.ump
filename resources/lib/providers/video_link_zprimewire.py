@@ -31,17 +31,18 @@ def match_results(results,names):
 	for result in results:
 		page=ump.get_page(domain+result,encoding)
 		imdb=re.findall('imdb\.com/title/(.*?)"',page)
-		name_year=re.findall('\<title\>Watch "(.*?)" \((.*?)\).*?</title>',page)
+		name_year=re.findall('<title>Watch (.*?) \(([0-9]{4})\)',page)
 		director=re.findall('strong>Director:</strong></td>(.*?</td>)',page,re.DOTALL)
 		if len(director)>0:	director=re.findall('">(.*?)</td>',director[0])
 		if len(imdb)>0  and "code" in ump.info.keys() and ump.info["code"]==imdb[0]:
 			exact=True
 			ump.add_log("Primewire found exact matched imdbid %s" %(ump.info["code"]))
-		elif len(imdb)==0 and len(name_year)>0 and len(director)>0 and name_year[0][0]==ump.info["year"] and ump.is_same(director[0],ump.info["director"]):
+		elif int(name_year[0][1])==ump.info["year"]:
+			if exact: break
 			for name in names:
 				if ump.is_same(name,name_year[0][1]):
 					exact=True
-					ump.add_log("Primewire found exact match with %s/%s/%s" %(name,ump.info["director"],ump.info["year"]))
+					ump.add_log("Primewire found exact match for %s (%s)" %(name,ump.info["year"]))
 					break
 		if exact:
 			break
@@ -51,8 +52,6 @@ def match_results(results,names):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["code"][:2]=="tt":
-		return None
 	exact=False
 	max_pages=3
 	is_serie,names=ump.get_vidnames()
@@ -89,7 +88,7 @@ def run(ump):
 						break
 
 	if not exact:
-		ump.add_log("Primewire can't match %s"%names[0])
+		ump.add_log("Primewire can't match %s"%name)
 		return None
 
 	if is_serie:
@@ -106,7 +105,7 @@ def run(ump):
 			if is_serie:
 				mname="[%s] %s S%dxE%d %s" % (external[0].upper(),i["tvshowtitle"],i["season"],i["episode"],i["title"])
 			else:
-				mname="[%s] %s" % (external[0].upper(),i["title"])
+				mname="[%s] %s" % (external[0].upper(),name)
 			prv=uri.hostname.split(".")[-2]
 			hash=codify(prv,uri.path, uri.query)
 			if hash is None: 

@@ -3,6 +3,7 @@ import string
 import time
 from third import unidecode
 import json
+import urllib
 			
 domain="http://www.moviesub.net"
 encoding="utf-8"
@@ -27,6 +28,10 @@ def decode_link(prv,link):
 		hash=re.findall('vid\.ag/(.*?)"',page)
 		if len(hash)>0:
 			return [{"url_provider_name":prv,"url_provider_hash":hash[0],"referer":link}]
+	elif prv=="openload":
+		hash=re.findall("openload\.co\/embed\/(.*?)\/",page)
+		if len(hash)>0:
+			return [{"url_provider_name":prv,"url_provider_hash":hash[0]}]
 	elif prv=="vodlocker":
 		hash=re.findall('vodlocker\.com/embed\-(.*?)\-',page)
 		if len(hash)>0:
@@ -40,11 +45,11 @@ def filtertext(text,space=True,rep=""):
 		text=text.replace(c,rep)
 	return text.lower()
 
-def match_results(page,names):
-	match_name,match_cast,subpage,camrip=False,False,"",""
+def match_results(page,names,info):
+	match_name,match_year,subpage,camrip=False,False,"",""
 	results=re.findall('data-rel=".*?" href="(http://www.moviesub.net/watch/.*?)" title="(.*?)">(.*?)</div',page,re.DOTALL)
 	for result in results:
-		if match_cast:
+		if match_year:
 			break
 		link,title,rest=result
 		if "mark-8" in rest:
@@ -56,44 +61,34 @@ def match_results(page,names):
 				match_name=True
 				break
 		if match_name:
-			subpage=ump.get_page(link,encoding)
-			casting=re.findall('href="actor/.*?">(.*?)</a>',subpage)
-			infocasting=ump.info["cast"]
-			cast_found=0
-			for cast in casting:
-				for icast in infocasting:
-					if ump.is_same(cast,icast):
-						cast_found+=1
-						continue
-			if len(casting)==cast_found or (len(infocasting)==cast_found and len(casting)>len(infocasting)):
-				match_cast=True
-	return camrip,match_name,match_cast,subpage
+			subpage=ump.get_page(link,encoding,referer=domain)
+			year=re.findall('Release\sYear\:(.*?)\<\/p',subpage)[0]
+			year=str(int(re.sub("\<.*?\>","",year)))
+			match_year=ump.is_same(info["year"],year)
+	return camrip,match_year,subpage
 
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["code"][:2]=="tt":
-		return None
 	
 	is_serie,names=ump.get_vidnames()
 
 	if is_serie:
 		return None
 
+	for name in names:
+		ump.add_log("moviesub is searching %s" % unidecode.unidecode(name))
+		page=ump.get_page(domain+"/search/%s.html"%unidecode.unidecode(name),encoding)
+		camrip,match_year,page=match_results(page,names,i)
+		if match_year:
+			ump.add_log("moviesub matched %s in %s"%(unidecode.unidecode(name),i["year"]))
+			break
+		else:
+			ump.add_log("moviesub can't match %s"%unidecode.unidecode(name))
 
-	ump.add_log("moviesub is searching %s" % filtertext(names[0],False," "))
-	page=ump.get_page(domain+"/search/%s.html"%unidecode.unidecode(names[0]),encoding)
-	camrip,match_name,match_cast,page=match_results(page,names)
-#	if not match_cast:
-#		paginations=re.findall('<a href="(.*?unutulmazfilmler.co/arama\.php.*?)">[0-9]*?</a>',page)
-#		for pagination in paginations:
-#			match_name,match_cast,link=match_results(ump.get_page(pagination,encoding),names)
-#			if match_cast:
-#				break
-
-	if not match_cast:
-		ump.add_log("moviesub can't match %s"%names[0])
+	if not match_year:
 		return None
+		
 	links={}
 	trs=re.findall('<tr>(.*?)</tr>',page)
 	for tr in trs:

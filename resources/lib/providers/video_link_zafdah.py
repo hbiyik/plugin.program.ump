@@ -77,13 +77,12 @@ def run(ump):
 		return None
 
 	for name in names:
-		if exact:
-			break
 		ump.add_log("afdah is searching %s" % name)
 		query={"search":name,"type":"title"}
 		page1=ump.get_page(domain+"/wp-content/themes/afdah/ajax-search.php",encoding,data=query,referer=domain)
 		results=re.findall('href="(.*?)"',page1)
 		exact,page,result=match_results(results,names)
+		if exact:break
 
 	if not exact:
 		ump.add_log("afdah can't match %s"%names[0])
@@ -93,9 +92,9 @@ def run(ump):
 
 
 	if "This movie is of poor quality" in page:
-		mname="[TS]%s" % i["title"]
+		mname="[TS]%s" % name
 	else:
-		mname=i["title"]
+		mname=name
 
 	for embed in embeds:
 		src=ump.get_page(embed,encoding)

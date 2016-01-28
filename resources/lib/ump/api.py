@@ -104,26 +104,38 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["N/A"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 	
-	def get_vidnames(self):
+	def match_cast(self,casting):
+		match_cast=False
+		if len(casting)>0:
+			infocasting=self.info["cast"]
+			cast_found=0
+			for cast in casting:
+				for icast in infocasting:
+					if self.is_same(cast,icast):
+						cast_found+=1
+						continue
+			print cast_found
+			if len(casting)==cast_found or (len(infocasting)==cast_found and len(casting)>len(infocasting)) or (len(casting)==cast_found and len(casting)<len(infocasting)):
+				match_cast=True
+		return match_cast
+
+	def get_vidnames(self,max=5):
 		is_serie="tvshowtitle" in self.info.keys() and not self.info["tvshowtitle"].replace(" ","") == ""
+		names=[]
 		if is_serie:
-			orgname=self.info["tvshowtitle"]
-			altnames=self.info["tvshowalias"].split("|")
+			ww=self.info["tvshowtitle"]
 		else:
-			orgname=self.info["title"]
-			altnames=self.info["titlealiases"].split("|")
-		
-		for k in range(len(altnames)):
-			if altnames[k]=="":
-				altnames.pop(k)
-
-		altnames=list(set(altnames))
-		names=[orgname]
-		for name in altnames:
-			if  not orgname == name:
-				names.append(name)
-
-		return is_serie,names
+			ww=self.info["title"]		
+		names.append(self.info["originaltitle"])
+		names.append(ww)
+		names.append(self.info["localtitle"])
+		names=list(set(names))
+		for alt in set(self.info["alternates"]):
+			names.append(alt)
+		if max==0:
+			return is_serie,names
+		else:
+			return is_serie,names[:max]
 
 	def set_content(self,content_cat="N/A"):
 		if content_cat=="N/A":

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import json
 from urllib2 import HTTPError
@@ -32,29 +33,54 @@ def run(ump):
 						ump.add_log("dizigold can't match %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
 						return None
 				ump.add_log("dizigold matched %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
-				video_id = re.findall('view_id="([0-9]*?)"',epage)[0]
-				data={"id":video_id,"tip":"view"}
-				page=ump.get_page(domain+"/sistem/ajax.php",encoding,data=data,referer=domain,header={"X-Requested-With":"XMLHttpRequest"})
-				links=re.findall('"file":"(.*?)", "label":"(.*?)"',page.decode("string-escape"))
-				##new player 
-				vid=re.findall('var view_id="([0-9]*?)"',epage)
-				if len(links)>0:
-					mirrors={"html5":True}
-					for link in links:
-						mirrors[link[1].replace("\\","")]=link[0].replace("\\","")
-					parts=[{"url_provider_name":"google", "url_provider_hash":mirrors}]
-					ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))				
-					found=True
-				elif len(vid)>0:
-					data={"tip":"view","id":vid[0]}
-					iframe=ump.get_page(domain+"/sistem/ajax.php",encoding,referer=url,header={"X-Requested-With":"XMLHttpRequest"},data=data)
-					vkext=re.findall('\?oid=(.*?)"',iframe)
-					if len(vkext)>0:
-						parts=[{"url_provider_name":"vkext", "url_provider_hash":"https://vk.com/video_ext.php?oid=%s"%vkext[0].replace("\\","")}]
-						ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))
-						found=True
-				if not found:
-					ump.add_log("dizigold : link is down %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
-					return None
-				break
-	ump.add_log("dizigold can't match %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
+				vid = re.findall('view_id="([0-9]*?)"',epage)
+				lselects=re.findall('<small class="realcuf">(.*?)<',epage)
+				langs=[]
+				for lselect in lselects:
+					if ump.is_same(lselect,"Türkçe"):
+						langs.append("tr")
+					elif ump.is_same(lselect,"Altyazısız"):
+						langs.append("or")
+					else:
+						langs.append("en")
+				if len(vid)>0:
+					for lang in langs:
+						data={"tip":"view","id":vid[0],"dil":lang}
+						jsdata1=json.loads(ump.get_page(domain+"/sistem/ajax.php",encoding,referer=url,header={"X-Requested-With":"XMLHttpRequest"},data=data))
+						alts=re.findall('trigger\="(.*?)"',jsdata1["alternative"])
+						for alt in alts:
+							if lang=="tr":
+								prefix="[HS:TR]"
+							else:
+								prefix=""
+							data={"id":vid[0],"tip":"view","s":alt,"dil":lang}
+							jsdata2=json.loads(ump.get_page(domain+"/sistem/ajax.php",encoding,referer=url,header={"X-Requested-With":"XMLHttpRequest"},data=data))
+							player=re.findall('iframe src="(.*?)"',jsdata2["data"])
+							if len(player)>0:
+								mname="%s%s %dx%d %s" % (prefix,i["tvshowtitle"],i["season"],i["episode"],i["title"])
+								pdata=ump.get_page(player[0],encoding,referer=url)
+								vkext=re.findall('"(.*?video\_ext\.php.*?)"',pdata)
+								if len(vkext)>0:
+									parts=[{"url_provider_name":"vkext", "url_provider_hash":vkext[0].replace("\\","")}]
+									ump.add_mirror(parts,mname)
+									found=True
+									continue
+								veterok=re.findall('veterok\.tv\/v\/(.*?)"',pdata)
+								if len(veterok)>0:
+									ump.add_mirror([{"url_provider_name":"veterok","url_provider_hash":veterok[0]}],mname)
+									continue
+								cloudy=re.findall('cloudy.*?embed\.php\?id\=(.*?)"',pdata)
+								if len(cloudy)>0:
+									ump.add_mirror([{"url_provider_name":"cloudy","url_provider_hash":cloudy[0]}],mname)
+									continue
+								googles=re.findall('"file":"(.*?)", "label":"(.*?)"',pdata)
+								if len(googles)>0:
+									softsub=re.findall("file: '.*?\.vtt'",pdata)
+									if len(softsub)>0 and prefix=="[HS:TR]":
+										prefix=""
+									mname="%s%s %dx%d %s" % (prefix,i["tvshowtitle"],i["season"],i["episode"],i["title"])
+									parts={"html5":True}
+									for google in googles:
+										parts[google[1]]=google[0]
+									ump.add_mirror([{"url_provider_name":"google","url_provider_hash":parts}],mname)
+									continue	
