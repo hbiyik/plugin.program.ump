@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
+    <category label="About">
+        <setting label="UNIVERSAL MEDIA PROVIDER:" type="lsep"/>
+        <setting label="This Addon is completely free, you can not sell, rent or make" type="lsep"/>
+        <setting label="profit out of it. Not that anyone will sue you  just because " type="lsep"/>
+        <setting label="it will make you look like a douchebag." type="lsep"/>
+        <setting label="" type="lsep"/>
+        <setting label="To get support about this addon, or read tutorials and docs visit:" type="lsep"/>
+        <setting label="http://ump.us.to" type="lsep"/>
+    </category>
     <category label="Validation/Auto Selection">
         <setting label="VIDEO VALIDATION AND AUTO SELECTION" type="lsep"/>
 	   	<setting id="video_val_method" type="select" label="Video Validation Method" values="Disabled|Check if Alive Only|Check if Alive + Quality" default="Check if Alive + Quality"/>
@@ -21,14 +30,5 @@
 		<setting id="useragent" type="text" label="Browser User-Agent" default="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36"/>
 	    <setting id="conc" label="Task Manager Concurrency" type="slider" default="10" range="3,1,20" option="int" />
 		<setting id="tout" label="Http Timeout" type="slider" default="30" range="10,1,60" option="int" />
-    </category>
-    <category label="About">
-        <setting label="UNIVERSAL MEDIA PROVIDER:" type="lsep"/>
-        <setting label="This Addon is completely free, you can not sell, rent or make" type="lsep"/>
-        <setting label="profit out of it. Not that anyone will sue you  just because " type="lsep"/>
-        <setting label="it will make you look like a douchebag." type="lsep"/>
-        <setting label="" type="lsep"/>
-        <setting label="To get support about this addon, or read tutorials and docs visit:" type="lsep"/>
-        <setting label="http://boogie.us.to" type="lsep"/>
     </category>
 </settings>
