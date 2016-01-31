@@ -30,6 +30,7 @@ def latinise(text):
 	chars={
 		333:"ou", #ō
 		215:"x", #instead of × 
+		8211:"-", # - instead of –
 		}
 
 	for char in chars.keys():
@@ -134,7 +135,7 @@ def scrape_ann_search(animes):
 					alts.append(a)
 		
 		if originaltitle is None:
-			orginaltitle=maintitle
+			originaltitle=maintitle
 
 		if localtitle is None:
 			localtitle=maintitle
@@ -325,7 +326,7 @@ def run(ump):
 			if not theme in addthemes:
 				addthemes.append(theme)
 				li=xbmcgui.ListItem("%s (%d)"%(theme.title().replace("|"," / "),count), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-				args={"anime":"getgenres('%s')"%urlencode({"th":theme}),"filters":["numvotes"]}
+				args={"anime":"getgenres('%s')"%urlencode({"th":theme}),"filters":[]}
 				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_search",args),li,True)
 	
 	elif ump.page == "newest":
