@@ -1,10 +1,8 @@
 import urllib2
 import re
 import time
-import urlparse
 from StringIO import StringIO
 import gzip
-import json
 
 def dec(s):
 	offset=1 if s[0]=='+' else 0
@@ -38,15 +36,18 @@ def ddos_open(opener,req,data,timeout):
 			res=dec(m)
 			for op in ops:
 				res=eval("res"+op[0]+"dec('"+op[1]+"')")
-			domainp=urlparse.urlparse(err.url)
-			domain=domainp.netloc.replace("www.","")
-			answer = str(res + len(domain))
-			waittime=6
-			print "%s has been stalled for %d seconds due to cloudfare protection"%(domain,waittime)
+			u=re.sub("https?://","",err.url)
+			u=u.split("/")[0]
+			answer= str(res+len(u))
+			waittime=float(re.findall("\}\,\s([0-9]*?)\)\;",body)[0])/1000
+			print "%s has been stalled for %d seconds due to cloudfare protection"%(err.url,waittime)
 			time.sleep(waittime)
 			new_headers=dict(req.header_items())
-			new_headers["referrer"]=req.get_full_url()
-			new_url="%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&pass=%s&jschl_answer=%s"%(req.get_type(),domainp.netloc,challenge,challenge_pass,answer)
+			new_headers["referer"]=req.get_full_url()
+			new_url="%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&pass=%s&jschl_answer=%s"%(req.get_type(),u,challenge,challenge_pass,answer)
+			for key in ["Host","Cookie"]:
+				if key in new_headers.keys():
+					new_headers.pop(key)
 			new_req=urllib2.Request(new_url,headers=new_headers,data=req.get_data())
 			del req
 			response=opener.open(new_req,data,timeout)

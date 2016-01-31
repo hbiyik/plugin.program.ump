@@ -109,7 +109,7 @@ def get_tvdb_info(ids,force_lang=False):
 			"FirstAired":("aired","",None),
 			"IMDB_ID":("code","",None),
 			"id":("code2","",None),
-			"zap2it_id":("code3","",None),
+			"zap2it_id":("code10","",None),
 			"Network":("studio","",None),
 			"Overview":("plotoutline","",None),
 			"Overview":("plot","",None),
@@ -141,7 +141,7 @@ def get_tvdb_info(ids,force_lang=False):
 		genre=get_child_data(serie,"Genre","")
 		genre=genre.replace("|"," ")
 		info["genre"]=genre
-		info["code3"]=id
+		info["code2"]=id
 		
 		result[id]={"info":info,"art":art}
 

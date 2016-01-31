@@ -31,16 +31,20 @@ def match_results(results,names):
 	for result in results:
 		page=ump.get_page(domain+result,encoding)
 		imdb=re.findall('imdb\.com/title/(.*?)"',page)
-		name_year=re.findall('<title>Watch (.*?) \(([0-9]{4})\)',page)
+		try:
+			[(rname,ryear)]=re.findall('<title>Watch (.*?) \(([0-9]{4})\)',page)
+		except ValueError:
+			continue
+		rname=re.sub("\(.*?\)","",rname)
 		director=re.findall('strong>Director:</strong></td>(.*?</td>)',page,re.DOTALL)
 		if len(director)>0:	director=re.findall('">(.*?)</td>',director[0])
 		if len(imdb)>0  and "code" in ump.info.keys() and ump.info["code"]==imdb[0]:
 			exact=True
 			ump.add_log("Primewire found exact matched imdbid %s" %(ump.info["code"]))
-		elif int(name_year[0][1])==ump.info["year"]:
+		elif int(ryear)==ump.info["year"]:
 			if exact: break
 			for name in names:
-				if ump.is_same(name,name_year[0][1]):
+				if ump.is_same(name,rname):
 					exact=True
 					ump.add_log("Primewire found exact match for %s (%s)" %(name,ump.info["year"]))
 					break
@@ -54,10 +58,8 @@ def run(ump):
 	i=ump.info
 	exact=False
 	max_pages=3
-	is_serie,names=ump.get_vidnames()
+	is_serie,names=ump.get_vidnames(org_first = not ump.check_codes([3,4]))
 	for name in names:
-		if exact:
-			break
 		ump.add_log("Primewire is searching %s" % name)
 		keypage=ump.get_page(domain+"/index.php?search",encoding)
 		key=re.findall('name="key" value="(.*?)"',keypage)
@@ -86,6 +88,8 @@ def run(ump):
 						exact,page,result=match_results(re.findall('\<div class="index_item index_item_ie"\>\<a href="(.*?)"',page1),names)
 					if exact:
 						break
+		if exact:
+			break
 
 	if not exact:
 		ump.add_log("Primewire can't match %s"%name)
@@ -103,7 +107,7 @@ def run(ump):
 		if len(link)>0:
 			uri = urlparse.urlparse(link[0])
 			if is_serie:
-				mname="[%s] %s S%dxE%d %s" % (external[0].upper(),i["tvshowtitle"],i["season"],i["episode"],i["title"])
+				mname="[%s] %s S%dxE%d %s" % (external[0].upper(),name,i["season"],i["episode"],i["title"])
 			else:
 				mname="[%s] %s" % (external[0].upper(),name)
 			prv=uri.hostname.split(".")[-2]

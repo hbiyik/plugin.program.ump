@@ -170,7 +170,11 @@ def scrape_imdb_search(page):
 	
 	def alternate(key,id):
 		alts=scrape_name(id,True)
-		m1[key]["info"]["alternates"]= zip(*alts.items())[1]
+		altl=zip(*alts.items())
+		if len(altl):
+			m1[key]["info"]["alternates"]= altl[1]
+		else:
+			m1[key]["info"]["alternates"]= []
 		m1[key]["info"]["localtitle"],m1[key]["info"]["title"]=get_localtitle(alts,m1[key]["info"]["originaltitle"])
 
 	gid=ump.tm.create_gid()
@@ -253,7 +257,7 @@ def run(ump):
 		u=ump.link_to("search",ump.args)
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 		for year in reversed(range(date.today().year-50,date.today().year+1)):
-			ump.args["year"]=str(year)
+			ump.args["year"]=year
 			li=xbmcgui.ListItem(str(year), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 			u=ump.link_to("search",ump.args)
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)

@@ -17,7 +17,7 @@ class xplayer(xbmc.Player):
 	def __init__(self,ump=None,*args,**kwargs):
 		self.ump=ump
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
-			xbmc.Player.__init__(self,xbmc.PLAYER_CORE_MPLAYER)
+			xbmc.Player.__init__(self,xbmc.PLAYER_CORE_MPLAYER )
 			self.playlist=xbmc.PlayList(self.ump.content_type==self.ump.defs.CT_VIDEO)
 		else:
 			self.playlist=[]
@@ -77,6 +77,7 @@ class xplayer(xbmc.Player):
 	def xplay(self):
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
 			self.play(self.playlist)
+			xbmcgui.Window(10000).setProperty('script.trakt.ids', json.dumps({u'imdb': self.ump.info["code"]}))
 		else:
 			self.ump.iwindow.playlist=self.playlist
 			self.ump.iwindow.doModal()

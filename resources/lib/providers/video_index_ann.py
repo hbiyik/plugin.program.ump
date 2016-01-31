@@ -19,6 +19,12 @@ import operator
 domain="http://www.animenewsnetwork.com"
 encoding="utf-8"
 
+try:
+	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
+except AttributeError:
+	#backwards compatability
+	language="en"
+
 def latinise(text):
 	# some roman chars are rare on daily usage, and everybody uses latin representatives. Dont know how romaji works in details.
 	chars={
@@ -49,13 +55,14 @@ def scrape_ann_search(animes):
 		title=""
 		maintitle=""
 		titlealias=""
-		alttitle=[]
-		originaltitle=""
+		originaltitle=None
 		tvshowtitle=""
-		tvshowalias=""
+		localtitle=None
+		alts=[]
+		alttitle=[]
 		outline=""
 		gen=""
-		year=""
+		year=1900
 		dates=[]
 		votes="0"
 		episodes={}
@@ -64,7 +71,7 @@ def scrape_ann_search(animes):
 		mpaa=""
 		runtime=""
 		rating=float(0)
-		id="!ann!"+str(media.getAttribute("id"))
+		id=str(media.getAttribute("id"))
 		type=str(media.getAttribute("precision"))
 		epinum=0
 		num_of_epis=0
@@ -76,14 +83,15 @@ def scrape_ann_search(animes):
 			if t=="Main title":
 				maintitle=latinise(info.lastChild.data)
 			if t=="Alternative title":
-				alttitle.append(latinise(info.lastChild.data))
+				alt=latinise(info.lastChild.data)
+				alttitle.append((info.getAttribute("lang"),alt))
 			if t=="Plot Summary":
 				outline+=info.lastChild.data
 			if t=="Genres" or t=="Themes":
 				gen+=info.lastChild.data+"/"
 			if t=="Vintage":
 				try:
-					pdate=parser.parse(info.lastChild.data,fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
+					pdate=parser.parse(info.lastChild.data.split(" to ")[0],fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
 					dates.append(pdate)
 				except:
 					pass
@@ -108,11 +116,29 @@ def scrape_ann_search(animes):
 		
 		if len(episodes)>0:
 			tvshowtitle=maintitle
-			tvshowalias="|".join(alttitle)
-		else:
-			title=maintitle
-			titlealias="|".join(alttitle)
+		title=maintitle
 		
+		palts=[]
+		for alt in alttitle:
+			l,a=alt
+			if not a in palts:
+				l=l.lower()
+				palts.append(a)
+				if a == "" or a==" ":
+					continue
+				if l=="ja" and originaltitle is None:
+					originaltitle=a
+				if l==language and localtitle is None:
+					localtitle=a
+				if not a == localtitle and not a ==originaltitle:
+					alts.append(a)
+		
+		if originaltitle is None:
+			orginaltitle=maintitle
+
+		if localtitle is None:
+			localtitle=maintitle
+
 		for rate in media.getElementsByTagName("ratings"):
 			rating=float(rate.getAttribute("weighted_score"))
 			votes=rate.getAttribute("nb_votes")
@@ -126,7 +152,7 @@ def scrape_ann_search(animes):
 			if dates[0].year > y or dates[0].year == y and dates[0].month > m:
 				#print "TOO SOON FOR : " + tvshowtitle.encode("ascii","ignore")
 				continue
-			year=str(dates[0].year)
+			year=int(dates[0].year)
 
 	
 		data={}
@@ -150,10 +176,10 @@ def scrape_ann_search(animes):
 			"plot":outline,
 			"plotoutline":outline,
 			"title":title,
-			"originaltitle":"",
-			"titlealias":titlealias,
+			"originaltitle":originaltitle,
 			"tvshowtitle":tvshowtitle,
-			"tvshowalias":tvshowalias,
+			"localtitle":localtitle,
+			"alternates":alts,
 			"sorttitle":"",
 			"duration":runtime,
 			"studio":"",
@@ -161,7 +187,7 @@ def scrape_ann_search(animes):
 			"write":"",
 			"premiered":"",
 			"status":"",
-			"code":id,
+			"code3":id,
 			"aired":"",
 			"credits":"",
 			"lastplayed":"",
@@ -207,6 +233,47 @@ def getgenres(filter):
 	for page in pages:
 		ids.extend(re.findall("anime.php\?id=([0-9]*?)\"(.*?)</a>",page))
 	return [x[0] for x in ids]
+
+def results_search(animes=None,filters=None):
+	if filters is None: filters=ump.args["filters"]
+	if animes is None: animes=ump.args["anime"]
+	if isinstance(animes,unicode): animes=eval(animes)
+	index=ump.args.get("index",0)
+	anime=animes[index*50:(index+1)*50]
+	medias=scrape_ann_search(anime)
+	
+	itemcount=0
+	if len(medias) > 0: 
+		if not index==0:
+			li=xbmcgui.ListItem("Results %d-%d"%((index-1)*50+1,index*50))
+			u=ump.link_to("results_search",{"anime":animes,"filters":filters,"index":index-1})
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		for media in medias:
+			if "numvotes" in filters and int(media["info"]["votes"])<100:
+				#print "TOO FEW VOTES FOR : "+ media["info"]["tvshowtitle"].encode("ascii","ignore")
+				continue
+			li=xbmcgui.ListItem("%s (%s)"%(media["info"]["localtitle"],media["info"]["type"]))
+			li.setInfo(ump.defs.CT_VIDEO,media["info"])
+			ump.set_content(ump.defs.CC_MOVIES)
+			try:
+				li.setArt(media["art"])
+			except AttributeError:
+				#backwards compatability
+				pass
+			itemcount+=1
+			ump.art=media["art"]
+			ump.info=media["info"]
+			if len(media["episodes"].keys())==0:
+				u=ump.link_to("urlselect")
+				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+			else:
+				u=ump.link_to("show_episodes",{"annid":media["info"]["code3"]})
+				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		if (index+1)*50 < len(animes) and not itemcount==0:
+			li=xbmcgui.ListItem("Results %d-%d"%((index+1)*50+1,(index+2)*50))
+			u=ump.link_to("results_search",{"anime":animes,"filters":filters,"index":index+1})
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+	cacheToDisc=False
 
 def run(ump):
 	globals()['ump'] = ump
@@ -326,69 +393,29 @@ def run(ump):
 		ids=[]
 		for item in items:
 			ids.append(item.getElementsByTagName("id")[0].firstChild.data)
-
-		li=xbmcgui.ListItem("Found %d %s(s) for %s" % (len(items),"anime",what), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("results_search",{"anime":ids,"filters":[]})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		
+		if len(ids):
+			results_search(ids,[])
 	
 	elif ump.page == "results_search":
-		filters=ump.args["filters"]
-		animes=ump.args["anime"]
-		if isinstance(animes,unicode):
-			animes=eval(animes)
-		index=ump.args.get("index",0)
-		anime=animes[index*50:(index+1)*50]
-		medias=scrape_ann_search(anime)
-		
-		itemcount=0
-		if len(medias) > 0: 
-			if not index==0:
-				li=xbmcgui.ListItem("Results %d-%d"%((index-1)*50+1,index*50))
-				u=ump.link_to("results_search",{"anime":animes,"filters":filters,"index":index-1})
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-			for media in medias:
-				if "numvotes" in filters and int(media["info"]["votes"])<100:
-					#print "TOO FEW VOTES FOR : "+ media["info"]["tvshowtitle"].encode("ascii","ignore")
-					continue
-				if len(media["episodes"].keys())==0:
-					li=xbmcgui.ListItem("%s (%s)"%(media["info"]["title"],media["info"]["type"]))
-				else:
-					li=xbmcgui.ListItem("%s (%s)"%(media["info"]["tvshowtitle"],media["info"]["type"]))
-				li.setInfo(ump.defs.CT_VIDEO,media["info"])
-				try:
-					li.setArt(media["art"])
-				except AttributeError:
-					#backwards compatability
-					pass
-				itemcount+=1
-				ump.art=media["art"]
-				ump.info=media["info"]
-				if len(media["episodes"].keys())==0:
-					u=ump.link_to("urlselect")
-					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
-				else:
-					u=ump.link_to("show_episodes",{"annid":media["info"]["code"]})
-					xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-			if (index+1)*50 < len(animes) and not itemcount==0:
-				li=xbmcgui.ListItem("Results %d-%d"%((index+1)*50+1,(index+2)*50))
-				u=ump.link_to("results_search",{"anime":animes,"filters":filters,"index":index+1})
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-		cacheToDisc=True
+		results_search()
 	
 	elif ump.page== "show_episodes":
 		annid=ump.args.get("annid",None)
-		if not annid or not annid[:5]=="!ann!":
+		if annid is None:
 			return None
-		medias=scrape_ann_search([annid[5:]])
+		medias=scrape_ann_search([annid])
 		if len(medias)<1:
 			return None
 		episodes=medias[0]["episodes"]
+		ump.info=medias[0]["info"]
 		#keys are parsed as strings
 		for k,v in episodes.items():
 			episodes.pop(k)
 			episodes[int(float(k))]=v
 		#below does not work on old versions of python
 		#episodes = {float(k):v for k,v in episodes.iteritems()}
+		ump.set_content(ump.defs.CC_EPISODES)
 		for epi in sorted(episodes.keys(),reverse=True):
 			li=xbmcgui.ListItem("%d %s"%(epi,episodes[epi]["title"]))
 			try:
@@ -402,6 +429,7 @@ def run(ump):
 			ump.info["season"]=1
 			ump.info["absolute_number"]=epi
 			u=ump.link_to("urlselect")
+			li.setInfo(ump.defs.CT_VIDEO,ump.info)
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 
 	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc,updateListing=False,succeeded=True)

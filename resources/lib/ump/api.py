@@ -8,7 +8,7 @@ import re
 import time
 import socket
 
-from cookielib import LWPCookieJar, LoadError
+import cookielib
 from urllib import urlencode
 from urlparse import parse_qs
 from random import choice
@@ -77,11 +77,13 @@ class ump():
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
 		socket.socket = proxy.getsocket()
-		self.cj=LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
+		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True)   
+		self.cj=cookielib.LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
+		self.cj.set_policy(policy)
 		if os.path.exists(os.path.join( addon_dir, 'resources', 'data', "cookie")):
 			try:
 				self.cj.load()
-			except LoadError:
+			except cookielib.LoadError:
 				pass
 		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
 		if addon.getSetting("overrideua")=="true":
@@ -115,28 +117,44 @@ class ump():
 					if self.is_same(cast,icast):
 						cast_found+=1
 						continue
-			print cast_found
+
 			if len(casting)==cast_found or (len(infocasting)==cast_found and len(casting)>len(infocasting)) or (len(casting)==cast_found and len(casting)<len(infocasting)):
 				match_cast=True
 		return match_cast
 
-	def get_vidnames(self,max=5):
+	def check_codes(self,codes):
+		have=False
+		for cnum in codes:
+			if "code%d"%cnum in self.info.keys() and not (self.info["code%d"%cnum ] == "" or self.info["code%d"%cnum ]== " " ):
+				have=True
+				break
+
+		return have
+
+	def get_vidnames(self,max=5,org_first=True):
 		is_serie="tvshowtitle" in self.info.keys() and not self.info["tvshowtitle"].replace(" ","") == ""
 		names=[]
 		if is_serie:
 			ww=self.info["tvshowtitle"]
 		else:
-			ww=self.info["title"]		
-		names.append(self.info["originaltitle"])
-		names.append(ww)
-		names.append(self.info["localtitle"])
-		names=list(set(names))
-		for alt in set(self.info["alternates"]):
-			names.append(alt)
-		if max==0:
-			return is_serie,names
+			ww=self.info["title"]
+		if org_first:
+			names.append(self.info["originaltitle"])
+			names.append(ww)
 		else:
-			return is_serie,names[:max]
+			names.append(ww)
+			names.append(self.info["originaltitle"])
+		names.append(self.info["localtitle"])
+		names.extend(self.info["alternates"])
+		names2=[]
+		for name in names:
+			if not name in names2:
+				names2.append(name)
+
+		if max==0:
+			return is_serie,names2
+		else:
+			return is_serie,names2[:max]
 
 	def set_content(self,content_cat="N/A"):
 		if content_cat=="N/A":
@@ -168,7 +186,6 @@ class ump():
 		return sys.argv[0] + '?' + urlencode(query)
 
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None):
-
 		if self.terminate:
 			raise task.killbill
 
