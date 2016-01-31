@@ -25,7 +25,7 @@ def match_results(page,names,info):
 				match_name=True
 				break
 		if match_name:
-			match_year=ump.is_same(info["year"],year)
+			match_year=info["year"]==int(year)
 	return match_name,match_year,link
 
 def run(ump):

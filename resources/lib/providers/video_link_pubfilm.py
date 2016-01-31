@@ -28,7 +28,7 @@ def match_results(link,inf,names):
 				if ump.is_same(name,mname[0]):
 					year=re.findall('\>([0-9]{4})\s',subpage)
 					if len(year)>0:
-						submatch=ump.is_same(inf["year"],year[0])
+						submatch=inf["year"]==int(year[0])
 	prefix0=re.findall("itemprop='title'>.*?\((.*?)\)</span>",subpage)
 	if len(prefix0)>0:
 		prefix=prefix0[0].upper()

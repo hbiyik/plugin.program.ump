@@ -41,10 +41,16 @@ def run(ump):
 	found=False
 	if not is_serie:
 		return
+	ump.get_page(domain,encoding)
+	flink=None
 	for name in names:
 		ump.add_log("dizipub is searching %s" % name)
 		page=ump.get_page(domain,encoding,query={"s":name})
 		results=re.findall('<h3 class="archive-name">(.*?)</h3>.*?<a href="(.*?)"',page)
+		directm=re.findall("</th><td>([0-9]{4})</td>",page)
+		if len(directm) and int(directm[0])==i["year"]:
+			found=True
+			break
 		if len(results)==0 or len(results)==1 and "Arama kriterlerinize" in results[0]: 
 			ump.add_log("dizipub can't find any links for %s"%name)
 			continue
@@ -57,17 +63,17 @@ def run(ump):
 		if found:break
 	
 	if not found: return None
-	src=ump.get_page(flink,encoding)
-	epis=re.findall('</div><h3> <a href="(.*?)">.*?([0-9]*?)\.S.*?([0-9]*?)\.B.*?</a></h3>',src)
+	if not flink is None:page=ump.get_page(flink,encoding)
+	epis=re.findall('</div><h3> <a href="(.*?)">.*?([0-9]*?)\.S.*?([0-9]*?)\.B.*?</a></h3>',page)
 	if len(epis)==0 and i["season"]==1:
-		epis=re.findall('<h3> ?<a href="(.*?)">.*?([0-9]*?)\..*?</a></h3>',src)
+		epis=re.findall('<h3> ?<a href="(.*?)">.*?([0-9]*?)\..*?</a></h3>',page)
 		epis=[(x[0],1,x[1]) for x in epis]
 	for epi in epis:
 		u,s,e = epi
 		s=int(s)
 		e=int(e)
 		if s==i["season"] and e==i["episode"]:
-			ename="%s %dx%d %s" % (fname,s,e,i["title"])
+			ename="%s %dx%d %s" % (name,s,e,i["title"])
 			ump.add_log("dizipub matched %s " % (ename,))
 			mpage=ump.get_page(u,encoding)
 			mp,h=crawl_movie_page(mpage)

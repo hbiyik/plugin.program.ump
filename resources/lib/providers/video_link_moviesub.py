@@ -64,7 +64,7 @@ def match_results(page,names,info):
 			subpage=ump.get_page(link,encoding,referer=domain)
 			year=re.findall('Release\sYear\:(.*?)\<\/p',subpage)[0]
 			year=str(int(re.sub("\<.*?\>","",year)))
-			match_year=ump.is_same(info["year"],year)
+			match_year=info["year"]==int(year)
 	return camrip,match_year,subpage
 
 def run(ump):

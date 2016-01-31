@@ -45,8 +45,8 @@ def ddos_open(opener,req,data,timeout):
 			new_headers=dict(req.header_items())
 			new_headers["referer"]=req.get_full_url()
 			new_url="%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&pass=%s&jschl_answer=%s"%(req.get_type(),u,challenge,challenge_pass,answer)
-			for key in ["Host","Cookie"]:
-				if key in new_headers.keys():
+			for key in new_headers.keys():
+				if key in ["Cookie","Host"]:
 					new_headers.pop(key)
 			new_req=urllib2.Request(new_url,headers=new_headers,data=req.get_data())
 			del req

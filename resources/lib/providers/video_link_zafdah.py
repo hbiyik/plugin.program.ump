@@ -39,6 +39,7 @@ def codify(prv,path,query=""):
 def match_results(results,names):
 	exact,page,result=False,None,None
 	for result in results:
+		print result
 		page=ump.get_page(domain+result,encoding)
 		imdb=re.findall('"http://www.imdb.com/title/(tt.*?)/?"',page)
 		title=re.findall('Title: </font>(.*?)<br>',page)
@@ -76,10 +77,12 @@ def run(ump):
 	if not i["code"][:2]=="tt" or is_serie:
 		return None
 
+	ump.get_page(domain,encoding)
 	for name in names:
 		ump.add_log("afdah is searching %s" % name)
 		query={"search":name,"type":"title"}
 		page1=ump.get_page(domain+"/wp-content/themes/afdah/ajax-search.php",encoding,data=query,referer=domain)
+		print page1
 		results=re.findall('href="(.*?)"',page1)
 		exact,page,result=match_results(results,names)
 		if exact:break
