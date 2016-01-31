@@ -115,7 +115,7 @@ def run(ump):
 
 
 		elif len(glinks)>0:
-			urls={"html5":True}
+			urls={}
 			for glink in glinks:
 				if not glink[0][-6:] == "sd.mp4" or True:
 					urls[glink[1]]=glink[0]

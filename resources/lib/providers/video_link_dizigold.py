@@ -79,7 +79,7 @@ def run(ump):
 									if len(softsub)>0 and prefix=="[HS:TR]":
 										prefix=""
 									mname="%s%s %dx%d %s" % (prefix,i["tvshowtitle"],i["season"],i["episode"],i["title"])
-									parts={"html5":True}
+									parts={}
 									for google in googles:
 										parts[google[1]]=google[0]
 									ump.add_mirror([{"url_provider_name":"google","url_provider_hash":parts}],mname)

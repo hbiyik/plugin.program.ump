@@ -46,11 +46,11 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 
-	#lock this provider with ann for the time being. This fucntion will be handled on api later on
-	if not i["code"][:5]=="!ann!":
+	is_anime=ump.check_codes([3,4])
+	if not is_anime:
 		return None
 
-	is_serie,names=ump.get_vidnames()
+	is_serie,names=ump.get_vidnames(org_first = not is_anime)
 
 	urls=[]	
 	jq_limit=False
@@ -117,7 +117,7 @@ def run(ump):
 						url=quality.decode("base-64")
 						if "googlevideo.com" in url or "blogspot.com" in url:
 							found=True
-							parts=[{"url_provider_name":"google", "url_provider_hash":{"html5":True,"url":url}}]
+							parts=[{"url_provider_name":"google", "url_provider_hash":{"url":url}}]
 							ump.add_mirror(parts,"%s %s"%(prefix,i["title"]))
 		if not found:
 			ump.add_log("kissanime can't find any links for %s"%i["title"])

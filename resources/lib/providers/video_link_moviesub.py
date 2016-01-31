@@ -15,7 +15,7 @@ def decode_link(prv,link):
 		if len(hash)>0:
 			links=json.loads(ump.get_page("%s/Htplugins/Loader.php"%domain,encoding,data={"data":hash[0]}))
 			if len(links["l"])>0:
-				vlinks={"html5":True}
+				vlinks={}
 				for i in range(len(links["l"])):
 					vlinks[links["q"][i]]=links["l"][i]
 				parts=[{"url_provider_name":"google", "url_provider_hash":vlinks,"referer":link}]

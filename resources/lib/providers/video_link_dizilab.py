@@ -29,7 +29,7 @@ def run(ump):
 			ump.add_log("dizilab matched %s %dx%d %s"%(i["tvshowtitle"],i["season"],i["episode"],i["title"]))
 			links=re.findall('file: "(.*?)",.*?label: "(.*?)",.*?type: "mp4"',epage,re.DOTALL)
 			if len(links)>0:
-				vlinks={"html5":True}
+				vlinks={}
 				for link in links:
 					vlinks[link[1]]=link[0]
 				parts=[{"url_provider_name":"google", "url_provider_hash":vlinks}]

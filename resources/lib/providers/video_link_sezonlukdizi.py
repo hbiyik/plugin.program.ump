@@ -42,7 +42,7 @@ def run(ump):
 				if len(oklink)>0:
 					oksrc=ump.get_page(oklink[0],encoding,referer=domain)
 					#vlink=re.findall("id='\+([0-9]*?)\+'",oksrc)[0]
-					vlink={"html5":True}
+					vlink={}
 					links=re.findall('file:"(.*?)", label:"(.*?)"',oksrc)
 					for link in links:
 						vlink[link[1]]=link[0]

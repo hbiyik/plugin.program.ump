@@ -5,7 +5,7 @@ domain="http://www.turkanime.tv/"
 encoding="utf-8"
 
 
-def return_links(name,mp,h,url):
+def return_links(name,mp,h,fs,url):
 	parts=[{"url_provider_name":mp, "url_provider_hash":h,"referer":url}]
 	prefix=""
 	if not fs == "Varsayilan":
@@ -14,11 +14,16 @@ def return_links(name,mp,h,url):
 	ump.add_mirror(parts,name)
 
 def scrape_moviepage(url,fansub,name):
-	pg=ump.get_page(domain+url,encoding)
-	videos=re.findall("'#video','(.*?)','#video'.*?icon-play\"></i>(.*?)</a>",pg)
+	if not fansub is None:
+		url=url+"&fansub="+fansub+"&giris=OK"
+		pg=ump.get_page(domain+url,encoding)
+	else:
+		pg=url
+	videos=re.findall('<a class\="btn".*?onclick\="sayfa\(\'#video\',\'(.*?)\',\'#video\'\)\;"><i class\="icon-play"></i>(.*?)</a>',pg)
 	for video in videos:
 		up=unidecode(video[1].replace(" ","").lower())
 		u=video[0]
+
 		try:
 			if up=="mail": 
 				up="mailru"
@@ -41,8 +46,21 @@ def scrape_moviepage(url,fansub,name):
 				oid,video_id,embed_hash=hash.split("_")
 				uphash="http://vk.com/video_ext.php?oid="+oid+"&id="+video_id+"&hash="+embed_hash
 			elif up == "turkanime":
-				hash=re.findall("(http\://www.schneizel.net/video/index.php\?vid\=.*?)\"",ump.get_page(domain+u,encoding))[0]
-				uphash=hash
+				type1=re.findall('index\.php\?vid=(.*?)"',ump.get_page(domain+u,encoding))
+				type2=re.findall('plusv3\.php\?vid=(.*?)"',ump.get_page(domain+u,encoding))
+				if len(type1):
+					hash1="http://www.schneizel.net/video/index.php?vid="+type1[0]
+					hash2=re.findall('<iframe.*?src="(.*?)"',ump.get_page(hash1,encoding,referer=domain+u))[0]
+					uphash={}
+					labels={"22":"720p","59":"480p1","18":"360p1","43":"360p2","35":"480p2","34":"360p3"}
+					for mirror in re.findall('"fmt_stream_map","(.*?)"',ump.get_page(hash2,encoding,referer=hash1))[0].split(","):
+						label,link=mirror.split("|")
+						if label in labels.keys():label=labels[label]
+						uphash[label.decode("unicode-escape")]=link.decode("unicode-escape")
+				elif len(type2):
+					uphash="http://www.schneizel.net/video/plusv3.php?vid="+type2[0]
+				else:
+					continue
 				up="google"
 			elif up == "dailymotion":
 				#todo prepare a decoder
@@ -60,35 +78,46 @@ def scrape_moviepage(url,fansub,name):
 		except IndexError:
 			print "Turkanimetv changed regex for : %s, skipping"%up
 			continue
-		return_links(name,up,uphash,fansub,url)	
+
+		fansub2=re.findall("fansub\=(.*?)\&",u)
+		if len(fansub2):
+			fansub = fansub2[0]
+		elif fansub is None:
+			fansub="Varsayilan"
+
+		return_links(name,up,uphash,fansub,domain+u)	
 		
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	names=[i["tvshowtitle"]]
-	if "tvshowalias" in i.keys():
-		names.extend(i["tvshowalias"].split("|"))
-	if "title" in i.keys() and not i["title"]=="":
-		names.append(i["title"])
-	is_movie=False
-	url=None
+
+	is_anime=ump.check_codes([3,4])
+	if not is_anime:
+		return None
+
+	is_serie,names=ump.get_vidnames(max=0,org_first = not is_anime)
+
+	page=None
 	animes=re.findall('<a href="(.*?)" class="btn".*?title="(.*?)">',ump.get_page(domain+"/icerik/tamliste",encoding))
 	for name in names:
 		ump.add_log("turkanimetv is searching %s" % name)
 		for anime in animes:
 			if ump.is_same(anime[1],name):
-				url=anime[0]
-				break
-		if not url is None:
-			break
+				page=ump.get_page(domain+anime[0],encoding)
+				myear=re.findall('<a href="anime-yili/([0-9]{4})"',page)
+				if not (len(myear) and int(myear[0])==i["year"]):
+					page=None
+				else:
+					break
+		if page: break
 
-	if url is None:	
+	if page is None:	
 		ump.add_log("turkanimetv can't find any links for %s"%name)
 		return None
 	
-	url=re.findall('"(icerik/bolumler.*?)"',ump.get_page(domain+url,encoding))[0]
+	url=re.findall('"(icerik/bolumler.*?)"',page)[0]
 
-	if not is_movie:
+	if is_serie:
 		bolumler=re.findall('<a href="(.*?)" class="btn".*?title=".*?([0-9]*?)\..*?">',ump.get_page(domain+url,encoding))
 		url=None
 		for bolum in bolumler:
@@ -111,11 +140,15 @@ def run(ump):
 	if url is None:	
 		ump.add_log("turkanimetv can't find any links for %s"%name)
 		return None
-
-	fansubs=re.findall("'#video','(.*?)fansub=(.*?)&giris=OK','#video'",ump.get_page(domain+url,encoding))
+	if is_serie:
+		mname="%s %sx%s %s "%(i["tvshowtitle"],i["season"],i["absolute_number"],i["title"])
+	else:
+		mname=i["title"]
+	spage=ump.get_page(domain+url,encoding)
+	fansubs=re.findall("'#video','(.*?)\&fansub=(.*?)&giris\=",spage)
+	if not len(fansubs):
+		fansubs=[(spage,None)]
 	for fansub in fansubs:
-		f=fansub[1]
-		u=fansub[0]+"fansub="+fansub[1]+"&giris=OK"
-		scrape_moviepage(u,f,name)
+		scrape_moviepage(fansub[0],fansub[1],mname)
 	if len(fansubs)==0:
-		scrape_moviepage(url,"Varsayilan",name)
+		scrape_moviepage(url,"Varsayilan",mname)

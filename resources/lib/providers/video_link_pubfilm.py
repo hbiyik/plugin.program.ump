@@ -88,7 +88,7 @@ def run(ump):
 		if len(link2)>0:
 			page=ump.get_page("http://player.pubfilm.com/smplayer/plugins/gkphp/plugins/gkpluginsphp.php",encoding,data={"link":link2[0]},referer=link1)
 			links=json.loads(page)
-			mparts={"html5":True}
+			mparts={}
 			if not isinstance(links["link"],list):
 				mparts["video"]=links["link"]
 			else:

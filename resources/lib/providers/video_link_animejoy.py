@@ -3,7 +3,7 @@ import json
 import re
 import time
 			
-domain="http://animejoy.tv"
+domain="http://anime-joy.tv"
 encoding="utf-8"
 
 slower=0
@@ -36,11 +36,11 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 
-	#lock this provider with ann for the time being. This fucntion will be handled on api later on
-	if not i["code"][:5]=="!ann!":
+	is_anime=ump.check_codes([3,4])
+	if not is_anime:
 		return None
 
-	is_serie,names=ump.get_vidnames()
+	is_serie,names=ump.get_vidnames(org_first = not is_anime)
 
 	urls=[]	
 	found=False
@@ -71,7 +71,7 @@ def run(ump):
 
 	if not found:
 		ump.add_log("animejoy is searching %s on %s"%(names[0],"google"))
-		urls=ump.web_search('site:http://animejoy.tv/watch %s "Alternative Name:"'%names[0])
+		urls=ump.web_search('site'+domain+'/watch %s "Alternative Name:"'%names[0])
 		if not urls is None:
 			found=match_uri(urls,names)
 		
@@ -85,20 +85,22 @@ def run(ump):
 		else:
 			epinum=1
 		time.sleep(slower)
-		epipage=ump.get_page(found+"/%d"%epinum,encoding)
+		epilink=found+"/%d"%epinum
+		epipage=ump.get_page(epilink,encoding)
 		if epipage.endswith("No Anime"):
 			if is_serie:
 				time.sleep(slower)
-				epipage=ump.get_page(found+"/%d"%i["episode"],encoding)
+				epilink=found+"/%d"%i["episode"]
+				epipage=ump.get_page(epilink,encoding)
 				if epipage.endswith("No Anime"):
 					ump.add_log("animejoy can't find episode %d of %s"%(epinum,name))
 					return None
 		ump.add_log("animejoy is  loading %s"%i["title"])
-		iframes=re.findall('src="(http://animejoy.tv/embed/.*?)"',epipage)
+		iframes=re.findall('src="(.*?/embed/.*?)"',epipage)
 		time.sleep(slower)
 		iframe=ump.get_page(iframes[0],encoding)
 		link=re.findall('<source src="(.*?)" type=',iframe)[0]
-		parts=[{"url_provider_name":"transparent", "url_provider_hash":{"video":link}}]
+		parts=[{"url_provider_name":"transparent", "url_provider_hash":{"video":link},"referer":epilink}]
 		ump.add_mirror(parts,"%s %s"%("[HS:EN]",i["title"]))
 
 	if not found:

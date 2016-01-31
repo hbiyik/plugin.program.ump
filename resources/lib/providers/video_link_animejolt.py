@@ -10,11 +10,11 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 
-	#lock this provider with ann for the time being. This fucntion will be handled on api later on
-	if not i["code"][:5]=="!ann!":
+	is_anime=ump.check_codes([3,4])
+	if not is_anime:
 		return None
 
-	is_serie,names=ump.get_vidnames()
+	is_serie,names=ump.get_vidnames(org_first = not is_anime)
 	urls=[]	
 	found=False
 	for name in names:

@@ -44,7 +44,7 @@ def run(ump):
 						else:
 							continue
 						videos=json.loads(data)
-						vlink={"html5":True}
+						vlink={}
 						for k in range(1,7):
 							if "videolink%d"%k in videos.keys():
 								vlink[videos["videokalite%d"%k]]=videos["videolink%d"%k]
@@ -75,7 +75,7 @@ def run(ump):
 							script=ump.get_page(domain+'/service/idmg',encoding,query=query)
 							#print script.encode("ascii","ignore")
 						vids=re.findall('file:"(.*?)",label: "(.*?)"',script)
-						vlink={"html5":True}
+						vlink={}
 						if len(vids)>0:
 							method=1
 						else:
