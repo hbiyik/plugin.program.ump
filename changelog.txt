@@ -1,3 +1,33 @@
+2016-01-31: cloudfare: fix cookie imposition, request domain before sending post data
+2016-01-31: addonxml: update website info http://ump.us.to
+2016-01-31: korenaturk: removed from provider list
+2016-01-31: openload: new url provider, veterok: new url provider, api: randomize user agents each time on each session, koreanturk: removed since i dont wanna deal with it :), animeram: totally new siteü totally new link provider, turkanimetv: too many changes too many updates,
+2016-01-31: ui: push imdb id for script.trakt, ann: localisation, remove useless avigations steps make it leaner, code3-> annid tvdb: code10->zap2it id, code2: tvdbid, primewire: cover up animes as well, unidecode: fix import error, url_google: remove html5 key, ok.ru: remove html5 key, cloudfare: fix new validation js, fix cookie imposing error,
+2016-01-29: cloudfare: recaptcha protection  warnning, api: randomize user agent, ann: animes by themes, settings: override user agent=false
+2016-01-28: imdb: localisation, tvdb:localisation, 720pizle: new match algo, dizigold: new match algo, new site design, dizipub: new match algo, new page design, moviesub: new match algo, pubfilm: new match algo unutlmaz filmler: new match algo, afdah: fix titles, primewire: new match algo, okru: referer update, transparent: lean, api: match_cast function to match movie from casting, get_vidnames is updated
+2016-01-25: kissanime: use get_names, primewire: botcheck notification, pubfilm: new link provider
+2016-01-25: imdb: localnames suport, nowvideo: fix for new design, promptfile: fix for different page design with old cookies,
+2016-01-23: unutulmaz filmer: new video link provider, url_google: use hash only without referer, url_videomega: use iframe.php, api: use addon.getsetting(). much way conveinent :/ stupid me, On multiple parted media sum the filezie on max_meta, ui: player.xplay() instead of play. dont override default method, moviesub: new video link provider
+2016-01-22: api: decrease  validation timeout 20sec., functionize meta lister ui: fix pressing enter too soon causes dialog to close, update progress bar on each 150ms, mirrors are sorted by filesize then resolation now
+2016-01-19: api: a more proper implementation of getsettings
+2016-01-19: addons.xml: add UMP tag in front of name
+2016-01-19: meta: backwards compataiblity for & char in settings.xml
+2016-01-19: backwards: li.setart function exception handled, api: getsetting function implemeted to read setting node even without plugin handle, disable forced isFolder True which causes crashes in frodo, gettext function backwards compatible fix, tvdb: fix supported languages, settings: change & char to +
+2016-01-19: unidecode: removed dependency from official repo, added as third party
+2016-01-19: dateutil: removed dependency from official repo, made third party, settings: updated site information, addon.xml: removed opensubtitles/dateutil dependency, updated site information
+2016-01-19: addon: move data server to new httpp server
+2016-01-13: addon: list content types when not provided, primewire: add new url providers
+2016-01-13: vidlockers: wip, too slow server causes player to timout, novamov: wip
+2016-01-13: afdah: added new url providers
+2016-01-13: promptfile: new url provider, vid.ag: new url provider, vidto: new url provider, vidzi: new url provider
+2016-01-13: api: override default timeout from settings. This is useful when cuncerrency is too high and cause for http timeouts, api: allow url provider to override referer, filenuke: fix new urls sharesix: fix new urls videomega: fix hls streaming thevideo.me: new url provider vidup: new url provider unpack: third party code to unpack packed js code settings.xml: set default http timeout to 30s
+2015-12-21: kissanime: update to ssl url
+2015-12-21: novamov: remove provider since it is serving HLS
+2015-12-21: moshare: updated to wholecloud new server okru: dont load disallowed mirrors plusplayer: fix new player address 720pizle: fix some regexes, and fix referer
+2015-11-24: require opensubtitles
+2015-11-23: add description
+2015-11-23: new icon
+2015-11-19: 0.0.32 Version Release
 2015-11-19: redmp3: fix album/artist referers, prevent multiple part injection
 2015-11-19: animeram: new link provider, animejolt:activated again, yourupload: new url provider, auengine:new url provider, m4upload: new url provider, videonest: new url provider
 2015-11-19: Merge pull request #24 from DxCx/master
