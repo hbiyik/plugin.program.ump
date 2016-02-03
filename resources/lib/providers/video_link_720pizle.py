@@ -46,6 +46,8 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	is_serie,names=ump.get_vidnames()
+	if is_serie:
+		return
 	match=False
 	for name in names:
 		if match:break
@@ -57,7 +59,7 @@ def run(ump):
 		imdbmatch=False
 
 		for result in results:
-			if ump.is_same(result["imdbid"],i["code"]):
+			if int(result["imdbid"])==i["code"]:
 				ump.add_log("720pizle matched %s with imdb:%s" % (i["title"],result["imdbid"]))
 				match=result["url"]
 				break
