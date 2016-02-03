@@ -50,11 +50,11 @@ def match_results(results,names):
 		if len(imdb)>0  and "code" in ump.info.keys() and ump.info["code"]==imdb[0]:
 			exact=True
 			ump.add_log("afdah found exact matched imdbid %s" %(ump.info["code"]))
-		elif len(imdb)==0 and len(title)>0 and len(year)>0 and len(director)>0 and year[0]==ump.info["year"] and ump.is_same(director[0],ump.info["director"]):
+		elif len(imdb)==0 and len(title)>0 and len(year)>0 and len(director)>0 and int(year[0])==ump.info["year"] and ump.is_same(director[0],ump.info["director"]):
 			for name in names:
 				if ump.is_same(name,title[0]):
 					exact=True
-					ump.add_log("afdah found exact match with %s/%s/%s" %(name,ump.info["director"],ump.info["year"]))
+					ump.add_log("afdah found exact match with %s/%s/%d" %(name,ump.info["director"],ump.info["year"]))
 					break
 		if exact:
 			break

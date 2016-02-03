@@ -46,7 +46,7 @@ def match_results(results,names):
 			for name in names:
 				if ump.is_same(name,rname):
 					exact=True
-					ump.add_log("Primewire found exact match for %s (%s)" %(name,ump.info["year"]))
+					ump.add_log("Primewire found exact match for %s (%d)" %(name,ump.info["year"]))
 					break
 		if exact:
 			break

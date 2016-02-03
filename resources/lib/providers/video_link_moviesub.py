@@ -81,7 +81,7 @@ def run(ump):
 		page=ump.get_page(domain+"/search/%s.html"%unidecode.unidecode(name),encoding)
 		camrip,match_year,page=match_results(page,names,i)
 		if match_year:
-			ump.add_log("moviesub matched %s in %s"%(unidecode.unidecode(name),i["year"]))
+			ump.add_log("moviesub matched %s in %d"%(unidecode.unidecode(name),i["year"]))
 			break
 		else:
 			ump.add_log("moviesub can't match %s"%unidecode.unidecode(name))
