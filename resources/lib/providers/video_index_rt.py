@@ -82,7 +82,6 @@ def run(ump):
 		if ptype=="list":
 			pnum=ump.args.get("pnum","1")
 			plink=ump.args.get("plink","")
-			print plink
 			page=ump.get_page("http://editorial.rottentomatoes.com/%s/%s"%(etype,plink),"utf-8")
 			content=re.findall('<div class="panel panel-rt(.*?)form autocomplete="off"',page,re.DOTALL)
 			actp=re.findall('selected="selected">([0-9])</option>',page,re.DOTALL)
@@ -115,7 +114,6 @@ def run(ump):
 			pgn=re.findall('<a href="(.*?)">([0-9])</a>',pages[0])
 			for pg in pgn:
 				if not pg[1]=="1":
-					print pg
 					pages.append(ump.get_page(pg[0],"utf-8"))
 			
 			for page in pages:

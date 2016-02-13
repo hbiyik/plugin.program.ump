@@ -232,7 +232,7 @@ def run(ump):
 	cacheToDisc=True
 	if ump.page == "root":
 		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"title":" "}),li,True)
+		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"title":""}),li,True)
 
 		li=xbmcgui.ListItem("Top 50 User Rated", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("select_year",{"at":"0","num_votes":"60000,","sort":"user_rating"})
@@ -263,8 +263,8 @@ def run(ump):
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	elif ump.page == "search":
-		title=ump.args.get("title",None)
-		if not title:
+		title=ump.args.get("title","")
+		if title=="":
 			kb = xbmc.Keyboard('default', 'heading', True)
 			kb.setDefault("")
 			kb.setHiddenInput(False)
