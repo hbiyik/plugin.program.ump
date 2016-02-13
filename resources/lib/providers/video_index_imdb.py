@@ -264,7 +264,7 @@ def run(ump):
 
 	elif ump.page == "search":
 		title=ump.args.get("title",None)
-		if title:
+		if not title:
 			kb = xbmc.Keyboard('default', 'heading', True)
 			kb.setDefault("")
 			kb.setHiddenInput(False)
