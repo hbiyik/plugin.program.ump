@@ -232,7 +232,7 @@ def run(ump):
 	cacheToDisc=True
 	if ump.page == "root":
 		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"title":""}),li,True)
+		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"title":" "}),li,True)
 
 		li=xbmcgui.ListItem("Top 50 User Rated", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("select_year",{"at":"0","num_votes":"60000,","sort":"user_rating"})
@@ -264,7 +264,7 @@ def run(ump):
 
 	elif ump.page == "search":
 		title=ump.args.get("title","")
-		if title=="":
+		if title==" ":
 			kb = xbmc.Keyboard('default', 'heading', True)
 			kb.setDefault("")
 			kb.setHiddenInput(False)
@@ -299,7 +299,7 @@ def run(ump):
 		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args,header={"Accept-Language":"tr"})#hack imdb to give me original title with my unstandart language header
 		movies=scrape_imdb_search(page)
 		suggest=""
-		if len(movies) < 1 or ump.args.get("google",False) and "title" in ump.args.keys():
+		if (len(movies) < 1 or ump.args.get("google",False)) and "title" in ump.args.keys():
 			suggest="[SUGGESTED] "
 			movies=[]
 			ids=[]
