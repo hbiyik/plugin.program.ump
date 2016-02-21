@@ -17,7 +17,7 @@ Dowload Boogie's repo below
 [Boogie's Kodi Repo](https://raw.githubusercontent.com/huseyinbiyik/repository.boogie.dist/master/repository.boogie/repository.boogie-0.0.2.zip) 
 
 and navigate to:
-System > Settings > Add-ons > Install from Zip File on kodi and select the zip file you downloaded. When the menu pops up select install from the options.
+System > Settings > Add-ons > Install from Zip File on kodi and select the zip file you downloaded. When the menu pops up select install from the options. 
 
 Once the Boogie's repo is installed navigate to:
 
