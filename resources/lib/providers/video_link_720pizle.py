@@ -59,7 +59,7 @@ def run(ump):
 		imdbmatch=False
 
 		for result in results:
-			if int(result["imdbid"])==i["code"]:
+			if result["imdbid"]==i["code"]:
 				ump.add_log("720pizle matched %s with imdb:%s" % (i["title"],result["imdbid"]))
 				match=result["url"]
 				break
