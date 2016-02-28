@@ -19,17 +19,8 @@ def run(ump):
 	globals()['ump'] = ump
 	cacheToDisc=True
 	if ump.page == "root":
-
-		li=xbmcgui.ListItem("Openning This Week", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("browse",{"type":"opening","sortBy":"popularity"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
 		li=xbmcgui.ListItem("Top Box Office", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("browse",{"type":"in-theaters","sortBy":"popularity"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("Coming Soon", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("browse",{"type":"upcoming","sortBy":"release"})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 		li=xbmcgui.ListItem("Certified Fresh Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")

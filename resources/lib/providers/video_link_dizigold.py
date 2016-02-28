@@ -37,9 +37,9 @@ def run(ump):
 				lselects=re.findall('<small class="realcuf">(.*?)<',epage)
 				langs=[]
 				for lselect in lselects:
-					if ump.is_same(lselect,"Türkçe"):
+					if lselect[0]=="T":
 						langs.append("tr")
-					elif ump.is_same(lselect,"Altyazısız"):
+					elif lselect[0]=="A":
 						langs.append("or")
 					else:
 						langs.append("en")

@@ -293,24 +293,26 @@ class ump():
 		max_h=0
 		max_s=0
 		part_s=0
+		max_key=""
 		for part in parts:
 			ss=0
 			part_s=0
-			for mirror in part["urls"].itervalues():
-				if not mirror["meta"] == {}:
-					t=mirror["meta"]["type"]
-					w=mirror["meta"]["width"]
-					h=mirror["meta"]["height"]
-					s=mirror["meta"]["size"]
+			for key,mirror in part["urls"].iteritems():
+				if not part["urls"][key]["meta"] == {}:
+					t=part["urls"][key]["meta"]["type"]
+					w=part["urls"][key]["meta"]["width"]
+					h=part["urls"][key]["meta"]["height"]
+					s=part["urls"][key]["meta"]["size"]
 					if not (w is None or h is None) and w*h>=q:
 						max_w=w
 						max_h=h
+						max_key=key
 						q=w*h
 					if not s is None and s>ss:
 						part_s=s
 						ss=s
 			max_s+=part_s
-		return max_w,max_h,max_s
+		return max_key,max_w,max_h,max_s
 
 	def _on_new_id(self,parts,name):
 		##validate media providers url first before adding
@@ -325,7 +327,7 @@ class ump():
 		if self.player is None:
 			self.player=ui.xplayer(ump=self)
 
-		max_w,max_h,max_s=self.max_meta(parts)
+		max_k,max_w,max_h,max_s=self.max_meta(parts)
 		prefix_q=prefix_s=""
 
 		if max_w*max_h>0:
@@ -337,10 +339,10 @@ class ump():
 		
 		autoplay=False
 		if self.content_type==self.defs.CT_VIDEO and addon.getSetting("auto_en_video")=="true":
-			if addon.getSetting("video_val_method")=="Check if Alive & Quality":
+			if addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"]:
 				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(float(addon.getSetting("min_vid_res"))):
 					autoplay=True
-			if addon.getSetting("video_val_method")=="Check if Alive Only" or addon.getSetting("video_val_method")=="Check if Alive & Quality" and autoplay:
+			if addon.getSetting("video_val_method")=="Check if Alive Only" or addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"] and autoplay:
 				tags=re.findall("\[(.*?)\]",name)
 				required=addon.getSetting("require_tag").split(",")
 				filtered=addon.getSetting("dont_require_tag").split(",")
@@ -358,7 +360,7 @@ class ump():
 		if self.content_type==self.defs.CT_AUDIO and addon.getSetting("auto_en_audio")=="true" and addon.getSetting("audio_val_method")=="Check if Alive Only":
 			autoplay=True
 
-		if self.content_type==self.defs.CT_IMAGE and addon.getSetting("auto_en_image")=="true" and addon.getSetting("audio_val_method")=="Check if Alive & Quality":
+		if self.content_type==self.defs.CT_IMAGE and addon.getSetting("auto_en_image")=="true" and addon.getSetting("audio_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"]:
 			autoplay=True
 
 		item=xbmcgui.ListItem()
@@ -379,6 +381,15 @@ class ump():
 				self.notify_error(e)
 
 		self.window.addListItem(item)
+		if False and self.content_type==self.defs.CT_VIDEO and addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"] and len(parts)==1:
+			from ump import globaldb
+			tags=re.findall("\[(.*?)\]",mname)
+			hs=fs=d=""
+			for tag in tags:
+				if tag.startswith("HS:"): hs=tag.split("HS:")[1]
+				if tag.startswith("FS:"): fs=tag.split("FS:")[1]
+				if tag.startswith("D:"): d=tag.split("D:")[1]
+			globaldb.sync(self,parts[0]["url_provider_name"],parts[0]["url_provider_hash"],parts[0]["urls"][max_k]["url"],humanres(max_w,max_h),max_w,max_h,hs,fs,d,float(max_s)/1000000)
 
 	def _validateparts(self,parts):
 		gid=self.tm.create_gid()
@@ -404,6 +415,8 @@ class ump():
 				self.notify_error(e)
 				part["urls"]={}
 			#validate url by downloading header (and check quality)
+			if not isinstance(part["urls"],dict):
+				part["urls"]={}
 			for key in part["urls"].keys():
 				try:
 					u=part["urls"][key]

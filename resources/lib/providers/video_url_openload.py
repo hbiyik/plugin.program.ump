@@ -37,7 +37,7 @@ def run(hash,ump,referer=None):
 			content = jj.JJDecoder(unpacked).decode()
 
 	if content:
-		patron = r'window\.vr\s*=\s*"(.*?)\?'
+		patron = r"window\.vr='(.*?)'\;"
 		matches = re.compile(patron, re.IGNORECASE).findall(content.replace('\\', ''))
 		if len(matches) > 0:
 			headers = { 'User-Agent' : ump.ua }

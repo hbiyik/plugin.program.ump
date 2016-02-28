@@ -19,21 +19,24 @@ def tor2(txt):
 	return txt
 
 def codify(prv,path,query=""):
-	path=path.replace(" ","")
-	if prv in ["movshare","vodlocker","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","vidbull","ishared","vidup","thevideo","vid","vidto","vidzi","promptfile"]:
-		hash=path.split("/")[-1]
-		hash=hash.replace(".html","")
-		if hash not in ["embed.php"]:
-			return hash
-	if prv in ["zalaa","uploadc","mightyupload","vidlockers"]:
-		return path.split("/")[-2]
+	try:
+		path=path.replace(" ","")
+		if prv in ["movshare","vodlocker","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","vidbull","ishared","vidup","thevideo","vid","vidto","vidzi","promptfile","sharesix"]:
+			hash=path.split("/")[-1]
+			hash=hash.replace(".html","")
+			if hash not in ["embed.php"]:
+				return hash
+		if prv in ["zalaa","uploadc","mightyupload","vidlockers"]:
+			return path.split("/")[-2]
 
-	if prv in ["filenuke","sharesix"]:
-		return path.split("/")[2]	
+		if prv in ["filenuke"]:
+			return path.split("/")[2]	
 
-	if prv in ["movshare"]:
-		return query.split("=")[1].replace("&","")
-	
+		if prv in ["movshare"]:
+			return query.split("=")[1].replace("&","")
+	except:
+		return None
+		
 	return None
 
 def match_results(results,names):
@@ -99,12 +102,18 @@ def run(ump):
 
 	for embed in embeds:
 		src=ump.get_page(embed,encoding)
-		encoded=re.findall('write\("(.*?)"\)\;',src)
+		encoded=re.findall('draw\("(.*?)"\)\;',src)
 		if len(encoded)<1:
 			pass
-		plaintext = caesar(encoded[0].decode('base-64'), 13)
+		try:
+			plaintext = caesar(encoded[0].decode('base-64'), 13)
+		except:
+			plaintext = encoded[0].decode('base-64')
 		if 'http' not in plaintext:
 			plaintext = caesar(encoded[0].decode('base-64'), 13).decode('base-64')
+		if 'http' not in plaintext:
+			ump.add_log("afdah cant decode embed")
+			continue
 		iframe=re.findall("\<iframe.*?src='(.*?)'",plaintext)
 		glinks=re.findall('file: "(.*?)", label: "(.*?)"',plaintext)
 		videomega=re.findall("http://videomega.tv/validatehash.php\?hashkey\=([0-9]*?)'",plaintext)
@@ -132,6 +141,7 @@ def run(ump):
 			prv=uri.hostname.split(".")[-2]
 			hash=codify(prv,uri.path,uri.query)
 			if hash is None: 
+				ump.add_log("afdah cant codify %s"%iframe[0][:20])
 				continue
 			ump.add_log("afdah decoded %s %s" % (mname,prv))
 			parts=[{"url_provider_name":prv, "url_provider_hash":hash}]
@@ -142,6 +152,7 @@ def run(ump):
 		prv=uri.hostname.split(".")[-2]
 		hash=codify(prv,uri.path)
 		if hash is None: 
+			ump.add_log("afdah cant codify %s"%mirror[:20])
 			continue
 		ump.add_log("afdah decoded %s %s" % (mname,prv))
 		parts=[{"url_provider_name":prv, "url_provider_hash":hash}]

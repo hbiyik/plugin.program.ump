@@ -231,7 +231,7 @@ class listwindow(xbmcgui.WindowXMLDialog):
 		else:
 			selectedid=0
 
-		w,h,s=self.ump.max_meta(json.loads(listItem.getProperty("parts")))
+		k,w,h,s=self.ump.max_meta(json.loads(listItem.getProperty("parts")))
 		self.items.append((listItem,w*h,s))
 		self.items=sorted(self.items, key=itemgetter(2),reverse=True)
 		

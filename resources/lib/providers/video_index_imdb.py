@@ -8,6 +8,9 @@ import re
 import operator
 from ump import countries
 
+m="feature,tv_movie,short,tv_special,documentary"
+s="tv_series,mini_series"
+
 try:
 	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
 except AttributeError:
@@ -251,6 +254,42 @@ def run(ump):
 		u=ump.link_to("select_year",{"at":"0","sort":"boxoffice_gross_us,desc"})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
+		li=xbmcgui.ListItem("Genres", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("genres")
+		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+
+		li=xbmcgui.ListItem("Awards", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("awards")
+		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+
+		li=xbmcgui.ListItem("World Cinema", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("languages")
+		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+	
+	elif ump.page == "genres":
+		genres=("Action","Adventure","Animation","Biography","Comedy","Crime","Drama","Family","Fantasy","Film-Noir","Game-Show","History","Horror","Music","Musical","Mystery","News","Reality-TV","Romance","Sci-Fi","Sport","Talk-Show","Thriller","War","Western")
+		for genre in genres:
+			li=xbmcgui.ListItem(genre, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			u=ump.link_to("select_year",{"at":"0","sort":"moviemeter,asc","num_votes":"1000,","genres":genre.lower().replace("-","_")})
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+
+	elif ump.page == "awards":
+		awards=(("oscar_best_picture_winners","Oscar Best Picture-Winning",m),("oscar_best_director_winners","Oscar Best Director-Winning",m),("oscar_winners","Oscar-Winning (ALL)",m),("oscar_nominees", "Oscar-Nominated",m),("emmy_winners","Emmy Award-Winning",s),("emmy_nominees Emmy","Emmy Award-Nominated",s),("golden_globe_winners","Golden Globe-Winning",m),("golden_globe_nominees","Golden Globe-Nominated",m),("razzie_winners","Razzie-Winning",m),("razzie_nominees","Razzie-Nominated",m),("national_film_registry","National Film Board Preserved",m))
+		for award in awards:
+			key,val,tt=award
+			li=xbmcgui.ListItem(val, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			u=ump.link_to("results_title",{"at":"0","sort":"release_date_us,desc","groups":key,"title_type":tt})
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+
+	elif ump.page == "languages":		
+		langs=("ar","Arabic"),("bg","Bulgarian"),("zh","Chinese"),("hr","Croatian"),("nl","Dutch"),("fi","Finnish"),("fr","French"),("de","German"),("el","Greek"),("he","Hebrew"),("hi","Hindi"),("hu","Hungarian"),("is","Icelandic"),("it","Italian"),("ja","Japanese"),("ko","Korean"),("no","Norwegian"),("fa","Persian"),("pl","Polish"),("pt","Portuguese"),("pa","Punjabi"),("ro","Romanian"),("ru","Russian"),("es","Spanish"),("sv","Swedish"),("tr","Turkish"),("uk","Ukrainian")
+
+		for lang in langs:
+			key,val=lang
+			li=xbmcgui.ListItem(val, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+			u=ump.link_to("select_year",{"at":"0","sort":"moviemeter,asc","num_votes":"1000,","languages":key})
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+
 	elif ump.page == "select_year":
 		ump.args["year"]=""
 		li=xbmcgui.ListItem("All Time", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
@@ -295,7 +334,7 @@ def run(ump):
 
 
 	elif ump.page == "results_title":
-		ump.set_content(ump.args["content_cat"])
+		ump.set_content(ump.args.get("content_cat",ump.defs.CC_MOVIES))
 		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args,header={"Accept-Language":"tr"})#hack imdb to give me original title with my unstandart language header
 		movies=scrape_imdb_search(page)
 		suggest=""
