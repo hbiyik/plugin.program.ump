@@ -7,10 +7,11 @@ import time
 import re
 import operator
 from ump import countries
+import json
+import random
 
-m="feature,tv_movie,short,tv_special,documentary"
-s="tv_series,mini_series"
-
+tmdbk="3b672de17b90fb71d393cf367b793d89"
+tmdbu="http://image.tmdb.org/t/p/"
 try:
 	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
 except AttributeError:
@@ -34,6 +35,51 @@ def get_localtitle(alts,original):
 				break
 	return local,ww
 
+def tmdb_art(id):
+	try:
+		arts=json.loads(ump.get_page("http://api.themoviedb.org/3/movie/%s/images?api_key=%s"%(id,tmdbk),"utf-8"))
+		fanarts=[]
+		localposters=[]
+		posters=[]
+		for f in arts.get("backdrops",[]):
+			fanarts.append("%soriginal%s"%(tmdbu,f["file_path"]))
+		for p in arts.get("posters",[]):
+			if p["iso_639_1"]==language:
+				print p["iso_639_1"]
+				localposters.append("%sw342%s"%(tmdbu,p["file_path"]))
+			elif p["iso_639_1"] == "en" or p["iso_639_1"] is None:
+				posters.append("%sw342%s"%(tmdbu,p["file_path"]))
+		if len(fanarts):
+			fanart=random.choice(fanarts)
+		else:
+			fanart=None
+		
+		print localposters
+		if len(localposters):
+			poster=random.choice(localposters)
+		elif len(posters):
+			poster=random.choice(posters)
+		else:
+			poster=None
+	except:
+		return None,None
+
+	return fanart,poster
+
+def scrape_imdb_names(page):
+	trs=re.findall('detailed"\>(.*?)\</tr\>',page,re.DOTALL)
+	people=[]
+	for tr in trs:
+		#image
+		main=re.findall('a href="/name/(nm[0-9]*?)/" title="(.*?)"><img src="(.*?)"',tr)
+		print main
+		person={}
+		person["id"]=main[0][0]
+		person["name"]=main[0][1]
+		person["poster"]=main[0][2].split("._")[0]
+		people.append(person)
+	return people
+
 def scrape_imdb_search(page):
 	m1=[]
 	t1=time.time()
@@ -41,6 +87,7 @@ def scrape_imdb_search(page):
 	t2=time.time()
 	for tr in trs:
 		#image
+		position=re.findall('td class="number">([0-9]*?)\.</td',tr)
 		poster=re.findall('img src="(.*?)"',tr)
 		if len(poster)>0:
 			poster=poster[0].split("._")[0]
@@ -160,6 +207,8 @@ def scrape_imdb_search(page):
 			"trailer":"",
 			"dateadded":""
 			}
+
+
 		movie["art"]={
 			"thumb":poster+"._V1_SX214_AL_.jpg",
 			"poster":poster,
@@ -169,6 +218,7 @@ def scrape_imdb_search(page):
 			"clearlogo":"",
 			"landscape":""
 			}
+
 		m1.append(movie)
 	
 	def alternate(key,id):
@@ -179,13 +229,23 @@ def scrape_imdb_search(page):
 		else:
 			m1[key]["info"]["alternates"]= []
 		m1[key]["info"]["localtitle"],m1[key]["info"]["title"]=get_localtitle(alts,m1[key]["info"]["originaltitle"])
+		fanart,poster=tmdb_art(id)
+		if fanart: m1[key]["art"]["fanart"]=fanart
+		if poster: m1[key]["art"]["poster"]=poster
+	try:
+		start,end,total=re.findall('<div id="left">\n(.*?)\-(.*?) of (.*?)\n',page)[0]
+		start=int(start.replace(",",""))
+		end=int(end.replace(",",""))
+		total=int(total.replace(",",""))
+	except:
+		start=end=total=0
 
 	gid=ump.tm.create_gid()
 	for m in range(len(m1)):
 		ump.tm.add_queue(alternate,(m,m1[m]["info"]["code"]),gid=gid)
 	ump.tm.join(gid=gid)
 
-	return m1
+	return start,end,total,m1
 
 
 			
@@ -234,24 +294,50 @@ def run(ump):
 	globals()['ump'] = ump
 	cacheToDisc=True
 	if ump.page == "root":
-		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"title":" "}),li,True)
+		ump.content_cat="N/A"
+		li=xbmcgui.ListItem("Search Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_title",{"title":"?","title_type":"feature,tv_movie,short","sort":"moviemeter,asc"}),li,True)
 
-		li=xbmcgui.ListItem("Top 50 User Rated", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("select_year",{"at":"0","num_votes":"60000,","sort":"user_rating"})
+		li=xbmcgui.ListItem("Search Series", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_title",{"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc"}),li,True)
+
+		li=xbmcgui.ListItem("Search Documentaries", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_title",{"title":"?","title_type":"documentary","sort":"moviemeter,asc"}),li,True)
+
+		li=xbmcgui.ListItem("Search People", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_name",{"name":"?"}),li,True)
+
+		li=xbmcgui.ListItem("Top Rated Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("select_year",{"at":"0","num_votes":"60000,","sort":"user_rating","title_type":"feature,tv_movie,short","next_page":"results_title"})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 		
-		li=xbmcgui.ListItem("Top 50 IMDB Rated", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("select_year",{"at":"0","num_votes":"60000,","sort":"moviemeter,asc"})
+#		li=xbmcgui.ListItem("Top 50 IMDB Rated", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+#		u=ump.link_to("select_year",{"at":"0","num_votes":"60000,","sort":"moviemeter,asc"})
+#		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+
+
+		li=xbmcgui.ListItem("Top Voted Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("select_year",{"at":"0","sort":"num_votes,desc","title_type":"feature,tv_movie,short","next_page":"results_title"})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
-		ump.content_cat="N/A"
-		li=xbmcgui.ListItem("Top 50 Voted", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("select_year",{"at":"0","sort":"num_votes,desc"})
+		li=xbmcgui.ListItem("Top Box Office Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("select_year",{"at":"0","sort":"boxoffice_gross_us,desc","title_type":"feature,tv_movie,short","next_page":"results_title"})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
-		li=xbmcgui.ListItem("Top 50 US Box Office", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("select_year",{"at":"0","sort":"boxoffice_gross_us,desc"})
+		li=xbmcgui.ListItem("Top Rated Series", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("select_year",{"at":"0","num_votes":"5000,","sort":"user_rating","title_type":"tv_series,mini_series","next_page":"results_title"})
+		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		
+		li=xbmcgui.ListItem("Top Voted Series", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("select_year",{"at":"0","sort":"num_votes,desc","title_type":"tv_series,mini_series","next_page":"results_title"})
+		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+
+		li=xbmcgui.ListItem("Top Rated Documentaries", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("select_year",{"at":"0","num_votes":"5000,","sort":"user_rating","title_type":"documentary","next_page":"results_title"})
+		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		
+		li=xbmcgui.ListItem("Top Voted Documentaries", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+		u=ump.link_to("select_year",{"at":"0","sort":"num_votes,desc","title_type":"documentary","next_page":"results_title"})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 		li=xbmcgui.ListItem("Genres", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
@@ -274,11 +360,38 @@ def run(ump):
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	elif ump.page == "awards":
-		awards=(("oscar_best_picture_winners","Oscar Best Picture-Winning",m),("oscar_best_director_winners","Oscar Best Director-Winning",m),("oscar_winners","Oscar-Winning (ALL)",m),("oscar_nominees", "Oscar-Nominated",m),("emmy_winners","Emmy Award-Winning",s),("emmy_nominees Emmy","Emmy Award-Nominated",s),("golden_globe_winners","Golden Globe-Winning",m),("golden_globe_nominees","Golden Globe-Nominated",m),("razzie_winners","Razzie-Winning",m),("razzie_nominees","Razzie-Nominated",m),("national_film_registry","National Film Board Preserved",m))
+		awards=(("oscar_best_picture_winners","OSCARS: Best Picture Winning Movies",0),
+				("oscar_best_director_winners","OSCARS: Best Director Winning Movies",0),
+				("oscar_best_director_winners","OSCARS: Best Director Winning People",2),
+				("oscar_best_actress_winners","OSCARS: Best Actress Winning People",2),
+				("oscar_best_actor_winners","OSCARS: Best Actor Winning People",2),
+				("oscar_best_supporting_actress_winners","OSCARS: Best Supporting Actress Winning People",2),
+				("oscar_best_supporting_actor_winners","OSCARS: Best Supporting Actor Winning People",2),
+				("oscar_winners","OSCARS: Any Category Winning Movies",0),
+				("oscar_winners","OSCARS: Any Category Winning People",2),
+				("emmy_winners","EMMIES: Award Winning Series",1),
+				("golden_globe_winners","GOLDEN GLOBE: Award Winning Movies",0),
+				("razzie_winners","RAZZIES: Award Winning Movies",0),
+				("national_film_registry","National Film Board Preserved Movies",0),
+				("oscar_best_director_nominees","OSCARS: Best Director Nominated People",2),
+				("oscar_best_actress_nominees","OSCARS: Best Actress Nominated People",2),
+				("oscar_best_actor_nominees","OSCARS: Best Actor Nominated People",2),
+				("oscar_best_supporting_actress_nominees","OSCARS: Best Supporting Actress Nominated People",2),
+				("oscar_best_supporting_actor_nominees","OSCARS: Best Supporting Actor Nominated People",2),
+				("oscar_nominees", "OSCARS: Any Category Nominated Movies",0),
+				("emmy_nominees Emmy","EMMIES: Award Nominated Series",1),
+				("golden_globe_nominees","GOLDEN GLOBE: Award Nominated Movies",0),
+				("razzie_nominees","RAZZIES: Award Nominated Movies",0))
+
 		for award in awards:
 			key,val,tt=award
-			li=xbmcgui.ListItem(val, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			u=ump.link_to("results_title",{"at":"0","sort":"release_date_us,desc","groups":key,"title_type":tt})
+			if tt in [0,1]:
+				title_type=["feature,tv_movie,short,documentary","tv_series,mini_series"]
+				li=xbmcgui.ListItem(val, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+				u=ump.link_to("results_title",{"at":"0","sort":"release_date_us,desc","groups":key,"title_type":title_type[tt]})
+			elif tt==2:
+				li=xbmcgui.ListItem(val, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
+				u=ump.link_to("results_name",{"groups":key})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	elif ump.page == "languages":		
@@ -292,27 +405,31 @@ def run(ump):
 
 	elif ump.page == "select_year":
 		ump.args["year"]=""
+		if "next_page" in ump.args:
+			next_page=ump.args["next_page"]
+			ump.args.pop("next_page")
+		else:
+			next_page="search"
 		li=xbmcgui.ListItem("All Time", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("search",ump.args)
+		u=ump.link_to(next_page,ump.args)
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-		for year in reversed(range(date.today().year-50,date.today().year+1)):
+		for year in reversed(range(date.today().year-100,date.today().year+1)):
 			ump.args["year"]=year
 			li=xbmcgui.ListItem(str(year), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			u=ump.link_to("search",ump.args)
+			u=ump.link_to(next_page,ump.args)
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	elif ump.page == "search":
 		title=ump.args.get("title","")
 		if title==" ":
-			kb = xbmc.Keyboard('default', 'heading', True)
+			kb = xbmc.Keyboard('default', 'Title', True)
 			kb.setDefault("")
 			kb.setHiddenInput(False)
 			kb.doModal()
 			ump.args["title"]=kb.getText()
-			ump.args["sort"]="moviemeter,asc"
 		
 		mquery=ump.args.copy()
-		mquery["title_type"]="feature,tv_movie,short,tv_special"
+		mquery["title_type"]="feature,tv_movie,short"
 		mquery["content_cat"]=ump.defs.CC_MOVIES
 		li=xbmcgui.ListItem("Show Only Movies", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("results_title",mquery)
@@ -332,11 +449,45 @@ def run(ump):
 		u=ump.link_to("results_title",dquery)
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
+	elif ump.page == "results_name":
+		name=ump.args.get("name","")
+		if name=="?":
+			kb = xbmc.Keyboard('default', 'Name', True)
+			kb.setDefault("")
+			kb.setHiddenInput(False)
+			kb.doModal()
+			ump.args["name"]=kb.getText()
+		ump.set_content(ump.args.get("content_cat",ump.defs.CC_ALBUMS))
+		page=ump.get_page("http://www.imdb.com/search/name","utf-8",query=ump.args)
+
+		people=scrape_imdb_names(page)
+		ids=[]
+		for p in people:ids.append(p["id"])
+		if not name=="":
+			js=json.loads(ump.get_page("http://www.imdb.com/xml/find?json=1&nr=1&q=%s&nm=on"%ump.args["name"],"utf-8"))
+			for key in ["name_popular","name_substring","name_approx"]:
+				print js.get(key,[])
+				for p in js.get(key,[]):
+					if not p["id"] in ids:
+						people.append({"id":p["id"],"name":p["name"],"poster":"DefaultFolder.png"})
+
+		for person in people:
+			li=xbmcgui.ListItem(person["name"],iconImage=person["poster"], thumbnailImage=person["poster"])
+			u=ump.link_to("search",{"role":person["id"],"sort":"release_date_us,desc",})
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
 
 	elif ump.page == "results_title":
+		title=ump.args.get("title","")
+		if title=="?":
+			kb = xbmc.Keyboard('default', 'Title', True)
+			kb.setDefault("")
+			kb.setHiddenInput(False)
+			kb.doModal()
+			ump.args["title"]=kb.getText()
+		start=end=total=0
 		ump.set_content(ump.args.get("content_cat",ump.defs.CC_MOVIES))
 		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args,header={"Accept-Language":"tr"})#hack imdb to give me original title with my unstandart language header
-		movies=scrape_imdb_search(page)
+		start,end,total,movies=scrape_imdb_search(page)
 		suggest=""
 		if (len(movies) < 1 or ump.args.get("google",False)) and "title" in ump.args.keys():
 			suggest="[SUGGESTED] "
@@ -360,8 +511,19 @@ def run(ump):
 			for id in set(ids):
 				movies.append(scrape_name(id))
 
+		allowed=[]
+		if "role" in ump.args.keys():
+			page=ump.get_page("http://www.imdb.com/name/%s/"%ump.args["role"],"utf-8")
+			roles=re.findall('id="(.*?)-(tt[0-9]*?)"',page)
+			for role in roles:
+				role_t,role_id=role
+				if role_t in ["director","writer","actor"]:
+					allowed.append(role_id)
+
 		if not len(movies) < 1: 
 			for movie in movies:
+				if len(allowed) and not movie["info"]["code"] in allowed and "role" in ump.args.keys():
+					continue
 				name=movie["info"]["title"]
 				li=xbmcgui.ListItem(suggest+movie["info"]["localtitle"])
 				li.setInfo("video",movie["info"])
@@ -379,6 +541,12 @@ def run(ump):
 				else:
 					u=ump.link_to("urlselect")
 					xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+
+			if total>end:
+				li=xbmcgui.ListItem("Results %d-%d"%(end+1,end+51))
+				ump.args["start"]=end+1
+				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("results_title",ump.args),li,True)
+			
 			if not ump.args.get("google",False) and "title" in ump.args.keys():
 				ump.args["google"]=True
 				u=ump.link_to("results_title",ump.args)
