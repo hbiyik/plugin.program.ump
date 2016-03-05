@@ -25,9 +25,14 @@ def get_localtitle(alts,original):
 		if language == country[2] and country[0].lower() in alts.keys():
 			local=alts[country[0].lower()]
 	for key in alts.keys():
-		if ump.is_same("USA",key):
+		if ump.is_same("master",key):
 			ww=alts[key]		
 			break
+	if ww == original:
+		for key in alts.keys():
+			if ump.is_same("USA",key):
+				ww=alts[key]		
+				break
 	if ww == original:
 		for key in alts.keys():
 			if ump.is_same("World-wide",key):
@@ -45,7 +50,6 @@ def tmdb_art(id):
 			fanarts.append("%soriginal%s"%(tmdbu,f["file_path"]))
 		for p in arts.get("posters",[]):
 			if p["iso_639_1"]==language:
-				print p["iso_639_1"]
 				localposters.append("%sw342%s"%(tmdbu,p["file_path"]))
 			elif p["iso_639_1"] == "en" or p["iso_639_1"] is None:
 				posters.append("%sw342%s"%(tmdbu,p["file_path"]))
@@ -54,7 +58,6 @@ def tmdb_art(id):
 		else:
 			fanart=None
 		
-		print localposters
 		if len(localposters):
 			poster=random.choice(localposters)
 		elif len(posters):
@@ -72,7 +75,6 @@ def scrape_imdb_names(page):
 	for tr in trs:
 		#image
 		main=re.findall('a href="/name/(nm[0-9]*?)/" title="(.*?)"><img src="(.*?)"',tr)
-		print main
 		person={}
 		person["id"]=main[0][0]
 		person["name"]=main[0][1]
@@ -253,15 +255,17 @@ def scrape_imdb_search(page):
 def scrape_name(id,lean=False):
 	m1={"info":{},"art":{}}
 	m1["info"]["originaltitle"]=""
-	alts={}
 	res=ump.get_page("http://www.imdb.com/title/%s/releaseinfo"%id,"utf-8")
+	namediv=re.findall('<h3 itemprop="name">.*?itemprop=\'url\'>(.*?)</a>.*?<span class="nobr">(.*?)</span>',res,re.DOTALL)
+	namestr,datestr=namediv[0]
+	alts={"master":namestr}
 	akas=re.findall('<table id="akas"(.*?)</table>',res,re.DOTALL)
 	if len(akas)==1:
 		tds=re.findall("<td>(.*?)</td>",akas[0])
 		pcountry=[]
 		for td in range(1,len(tds),2):
 			country=tds[td-1]
-			if any(word in country for word in ["fake","informal","version","literal","promotional","short"]):
+			if any(word in country for word in ["fake","informal","version","literal","promotional"]):
 				continue
 			country=re.sub("\s\(.*\)","",tds[td-1]).lower()
 			if country in pcountry:
@@ -273,7 +277,6 @@ def scrape_name(id,lean=False):
 			return alts
 		else:
 			poster=re.findall('<img itemprop="image"\nclass="poster".*?alt="(.*?)".*?src="(.*?)"',res,re.DOTALL)
-			namediv=re.findall('<h3 itemprop="name">.*?itemprop=\'url\'>(.*?)</a>.*?<span class="nobr">(.*?)</span>',res,re.DOTALL)
 			if len(namediv)==1:
 				namestr,datestr=namediv[0]
 				m1["info"]["originaltitle"]=namestr
@@ -466,7 +469,6 @@ def run(ump):
 		if not name=="":
 			js=json.loads(ump.get_page("http://www.imdb.com/xml/find?json=1&nr=1&q=%s&nm=on"%ump.args["name"],"utf-8"))
 			for key in ["name_popular","name_substring","name_approx"]:
-				print js.get(key,[])
 				for p in js.get(key,[]):
 					if not p["id"] in ids:
 						people.append({"id":p["id"],"name":p["name"],"poster":"DefaultFolder.png"})

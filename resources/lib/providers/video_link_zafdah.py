@@ -127,7 +127,7 @@ def run(ump):
 		elif len(glinks)>0:
 			urls={}
 			for glink in glinks:
-				if not glink[0][-6:] == "sd.mp4" or True:
+				if not glink[0][-6:] == "sd.mp4" or glink[0][-3:] == "vtt":
 					urls[glink[1]]=glink[0]
 			if len(urls.keys())>1:
 				prv="google"

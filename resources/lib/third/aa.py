@@ -58,16 +58,18 @@ class AADecoder(object):
         str_char = ""
         while enc_char != '':
             found = False
-            for i in range(len(self.b)):
-                #print self.b[i],enc_char.find(self.b[i])
-                if enc_char.find(self.b[i]) == 0:
-                    str_char += self.base_repr(i, radix)
-                    enc_char = enc_char[len(self.b[i]):]
-                    found = True
-                    break
+            #for i in range(len(self.b)):
+            #    print self.b[i],enc_char.find(self.b[i])
+            #    if enc_char.find(self.b[i]) ==0:
+            #        str_char += self.base_repr(i, radix)
+            #        enc_char = enc_char[len(self.b[i]):]
+            #        found = True
+            #        break
 
             #print 'found',found,enc_char
             if not found:
+                for i in range(len(self.b)):             
+                    enc_char=enc_char.replace(self.b[i], str(i))
                 #enc_char=enc_char.replace('(ﾟΘﾟ)','1').replace('(ﾟｰﾟ)','4').replace('(c^_^o)','0').replace('(o^_^o)','3')
                 #print 'enc_char',enc_char
                 startpos=0
@@ -93,27 +95,10 @@ class AADecoder(object):
                             continue
                         elif t=='(':
                             balance+=1
-                 
-                            
-                            
-                                
-                
-                #print 'normal',enc_char
-                #if enc_char.startswith('((') or enc_char.startswith('(-(') or enc_char.startswith('(+('):
-                #    rr='(\(.*?\)\))\+'
-                #else:
-                #    rr="(\(.*?\))\+"
-                #result = re.findall("(\(.*?\))\+", enc_char)
-                #print 'res',result
-               # result = re.search("\((.+?)\)\+ ?", enc_char, re.DOTALL)
+
                 if result is None or len(result)==0:
                     return ""
                 else:
-                    #print 'here', enc_char
-                    #enc_char = enc_char[len(result.group(1)) + 2:]
-                    #print 'here',repr(enc_char)
-                    #print 'decodeme',result.group(1)
-                    #value = self.decode_digit(result.group(1), radix)
                     for r in result:
                         value = self.decode_digit(r, radix)
                         #print 'va',value
@@ -138,8 +123,17 @@ class AADecoder(object):
             pass
         
     def decode_digit(self, enc_int, radix):
-        enc_int=enc_int.replace('(ﾟΘﾟ)','1').replace('(ﾟｰﾟ)','4').replace('(c^_^o)','0').replace('(o^_^o)','3')  
-
+        #enc_int=enc_int.replace('(ﾟΘﾟ)','1').replace('(ﾟｰﾟ)','4').replace('(c^_^o)','0').replace('(o^_^o)','3') 
+        #print 'enc_int before',enc_int
+        #for i in range(len(self.b)):
+            #print self.b[i],enc_char.find(self.b[i])
+            #if enc_char.find(self.b[i]) > 0:
+            #    str_char += self.base_repr(i, radix)
+            #    enc_char = enc_char[len(self.b[i]):]
+            #    found = True
+            #    break     
+        #    enc_int=enc_int.replace(self.b[i], str(i))
+        #print 'enc_int before',enc_int
         rr='(\(.+?\)\))\+'
         rerr=enc_int.split('))+')#re.findall(rr,enc_int)
         v=""
@@ -157,6 +151,7 @@ class AADecoder(object):
                 if '[' in c :
                     v+=str(self.parseJSString(c))
                 else:
+                    #print c
                     v+=str(eval(c))
         return v
             
@@ -269,3 +264,4 @@ def getUrl(url, cookieJar=None,post=None, timeout=20, headers=None):
     link=response.read()
     response.close()
     return link;
+
