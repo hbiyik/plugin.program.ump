@@ -373,7 +373,7 @@ class ump():
 		#if there is no more mirrors and media does not require a provider directly play it.
 		if autoplay:
 			try:
-				state=self.player.create_list(item)
+				state=self.player.create_list(item,True)
 				if state:
 					self.shut(True,3)
 				return None
@@ -436,6 +436,8 @@ class ump():
 					part["urls"].pop(key)
 					self.add_log("key removed : %s, %s"%(key,part["url_provider_name"]))
 			part["uptime"]=time.time()
+			k,w,h,s=self.max_meta([part])
+			part["defmir"]=k
 		return part
 
 	def shut(self,play=False,noblock=0):

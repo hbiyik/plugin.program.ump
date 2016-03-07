@@ -22,16 +22,19 @@ class xplayer(xbmc.Player):
 		else:
 			self.playlist=[]
 	
-	def selectmirror(self,part):
+	def selectmirror(self,part,auto=False):
 		#in case its multiparted and it has timed out
 		part=self.ump._validatepart(part)
 		if len(part["urls"].keys())>1:
-			slc=self.ump.dialog.select("Select Quality", part["urls"].keys())
+			if auto:
+				k=part["defmir"]
+			else:
+				slc=self.ump.dialog.select("Select Quality", part["urls"].keys())
+				k=part["urls"].keys()[slc]
 		elif len(part["urls"].keys())==1:
-			slc=0
+			k=part["urls"].keys()[0]
 		else:
 			return "#"
-		k=part["urls"].keys()[slc]
 		url=part["urls"][k]["url"]
 		urlp=urlparse.urlparse(url)
 		urlenc={"Cookie":"","User-Agent":self.ump.ua,"Referer":part["urls"][k]["referer"]}
@@ -42,7 +45,7 @@ class xplayer(xbmc.Player):
 		urlenc["Cookie"]=cook
 		return url+"|"+urllib.urlencode(urlenc),k
 	
-	def create_list(self,it):
+	def create_list(self,it,auto=False):
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
 			self.playlist.clear()
 		else:
@@ -63,7 +66,7 @@ class xplayer(xbmc.Player):
 				listitem.setLabel(parts[i]["partname"])
 			else:
 				listitem.setLabel(self.ump.info["title"])
-			url,k=self.selectmirror(parts[i])
+			url,k=self.selectmirror(parts[i],auto)
 			if url:
 				if not self.ump.content_type==self.ump.defs.CT_IMAGE:
 					self.playlist.add(url,listitem)
