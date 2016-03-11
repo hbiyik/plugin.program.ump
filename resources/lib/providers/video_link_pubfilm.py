@@ -81,14 +81,16 @@ def run(ump):
 		ump.add_log("pubfilm can't match %s"%name)
 		return None
 
-	link1=re.findall('src="(http://player.pubfilm.com/.*?)"',page)
-	if len(link1)>0:
-		page=ump.get_page(link1[0],encoding,referer=mlink)
+	link1=re.findall('"(http://player.pubfilm.com/.*?)"',page)
+	for link in link1:
+		page=ump.get_page(link,encoding,referer=mlink)
 		link2=re.findall('link:"(.*?)"',page)
 		if len(link2)>0:
 			page=ump.get_page("http://player.pubfilm.com/smplayer/plugins/gkphp/plugins/gkpluginsphp.php",encoding,data={"link":link2[0]},referer=link1)
 			links=json.loads(page)
 			mparts={}
+			if not "link" in links.keys():
+				continue
 			if not isinstance(links["link"],list):
 				mparts["video"]=links["link"]
 			else:
