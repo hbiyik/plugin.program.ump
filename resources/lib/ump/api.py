@@ -250,7 +250,7 @@ class ump():
 		errtype= e.__class__.__name__
 		if not silent:
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
-		if not errtype=="killbill":
+		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true":
 			print traceback.format_exc()
 
 	def add_log(self,line):
@@ -258,7 +258,8 @@ class ump():
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.log=line+"\n"+self.log
 			self.window.status.setText(self.log)
-		print line
+		if addon.getSetting("logtolog")=="true":
+			print line
 
 	def add_mirror(self,parts,name):
 		if not self.terminate and isinstance(parts,list) and len(parts)>0:

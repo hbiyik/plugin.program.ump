@@ -9,7 +9,6 @@ def run(hash,ump,referer=None):
 	src = ump.get_page(domain+hash,"utf8",referer=referer)
 	packed=re.findall("script type='text/javascript'\>(eval\(function\(p.*?)\n</script>",src)
 	data= unpack.unpack(packed[0]).encode("ascii","ignore").replace("\\","")
-	print data.encode("ascii","replace")
 	files=re.findall('file:"([^,]*?)",label:"(.*?)"',data)
 	vids={}
 	for file in files:

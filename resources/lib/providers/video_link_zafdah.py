@@ -76,7 +76,7 @@ def run(ump):
 	i=ump.info
 	exact=False
 	is_serie,names=ump.get_vidnames()
-	if not i["code"][:2]=="tt" or is_serie:
+	if is_serie:
 		return None
 
 	ump.get_page(domain,encoding)
@@ -103,17 +103,18 @@ def run(ump):
 	for embed in embeds:
 		src=ump.get_page(embed,encoding)
 		encoded=re.findall('draw\("(.*?)"\)\;',src)
-		if len(encoded)<1:
-			pass
-		try:
-			plaintext = caesar(encoded[0].decode('base-64'), 13)
-		except:
-			plaintext = encoded[0].decode('base-64')
-		if 'http' not in plaintext:
-			plaintext = caesar(encoded[0].decode('base-64'), 13).decode('base-64')
-		if 'http' not in plaintext:
-			ump.add_log("afdah cant decode embed")
-			continue
+		if len(encoded):
+			try:
+				plaintext = caesar(encoded[0].decode('base-64'), 13)
+			except:
+				plaintext = encoded[0].decode('base-64')
+			if 'http' not in plaintext:
+				plaintext = caesar(encoded[0].decode('base-64'), 13).decode('base-64')
+			if 'http' not in plaintext:
+				ump.add_log("afdah cant decode embed")
+				continue
+		else:
+			plaintext=src
 		iframe=re.findall("\<iframe.*?src='(.*?)'",plaintext)
 		glinks=re.findall('file: "(.*?)", label: "(.*?)"',plaintext)
 		videomega=re.findall("http://videomega.tv/validatehash.php\?hashkey\=([0-9]*?)'",plaintext)
@@ -148,6 +149,7 @@ def run(ump):
 			ump.add_mirror(parts,mname)
 
 	for mirror in mirrors:
+		continue
 		uri = urlparse.urlparse(mirror)
 		prv=uri.hostname.split(".")[-2]
 		hash=codify(prv,uri.path)

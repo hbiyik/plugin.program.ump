@@ -11,7 +11,7 @@ def run(ump):
 	i=ump.info
 	is_serie,names=ump.get_vidnames()
 	found=False
-	if not i["code"][:2]=="tt" or not is_serie:
+	if not is_serie:
 		return None
 
 	for name in names:

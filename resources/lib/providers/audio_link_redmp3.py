@@ -63,7 +63,6 @@ def run(ump):
 			parts=[]
 			count=0
 			for result in crawl_search(i["artist"] + " - " + i["album"]):
-				print result
 				id,artist,title,album=result
 				if ump.is_same(artist,i["artist"]) and ump.is_same(album,i["album"]) and not id in ids:
 					ids.append(id)

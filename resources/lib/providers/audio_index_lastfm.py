@@ -196,6 +196,7 @@ def run(ump):
 			relyear=2000
 			albumimage=get_img(alb.get("image",[]))
 			results=alb.get("tracks",{"track":[]})["track"]
+			tracks=[x["name"] for x in results]
 			i=0
 			audio={}
 			audio["info"]={
@@ -206,6 +207,7 @@ def run(ump):
 			"artist":artist,
 			"title":"",
 			"code":alid,
+			"tracks":tracks,
 			}
 			audio["art"]={
 			"thumb":albumimage,

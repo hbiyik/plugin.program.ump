@@ -100,26 +100,29 @@ def run(ump):
 
 	if is_serie:
 		page=ump.get_page(domain+result.replace("watch-","tv-")+"/season-%d-episode-%d"%(int(i["season"]),int(i["episode"])),encoding)
-
-	externals=re.findall('class=quality_(.*?)\>.*?href="(/external.php.*?)".*?onClick="(.*?)"',page,re.DOTALL)
+	
+	externals=re.findall('class=quality_(.*?)\>.*?href="(/goto.php.*?)".*?onClick="(.*?)"',page,re.DOTALL)
 	for external in externals:
 		if "special_link" in external[2]:
 			continue
-		page=ump.get_page(domain+"/external.php?"+external[1],encoding)
-		link=re.findall('frame src="(http.*?)"',page)
-		if len(link)>0:
-			uri = urlparse.urlparse(link[0])
-			if is_serie:
-				mname="[%s] %s S%dxE%d %s" % (external[0].upper(),name,i["season"],i["episode"],i["title"])
-			else:
-				mname="[%s] %s" % (external[0].upper(),name)
-			prv=uri.hostname.split(".")[-2]
-			hash=codify(prv,uri.path, uri.query)
-			if hash is None: 
-				ump.add_log("Primewire cant codify %s" % link[0])
-				continue
-			ump.add_log("Primewire decoded %s %s" % (mname,prv))
-			parts=[{"url_provider_name":prv, "url_provider_hash":hash}]
-			ump.add_mirror(parts,mname)
+		try:
+			page=ump.get_page(domain+external[1],encoding,head=True)
+		except:
+			ump.add_log("Primewire can't get from %s"%external[1])
+			continue
+		link=page.geturl()
+		uri = urlparse.urlparse(link)
+		if is_serie:
+			mname="[%s] %s S%dxE%d %s" % (external[0].upper(),name,i["season"],i["episode"],i["title"])
+		else:
+			mname="[%s] %s" % (external[0].upper(),name)
+		prv=uri.hostname.split(".")[-2]
+		hash=codify(prv,uri.path, uri.query)
+		if hash is None: 
+			ump.add_log("Primewire cant codify %s" % link)
+			continue
+		ump.add_log("Primewire decoded %s %s" % (mname,prv))
+		parts=[{"url_provider_name":prv, "url_provider_hash":hash}]
+		ump.add_mirror(parts,mname)
 	ump.add_log("Primewire finished crawling %d mirrors"%len(externals))
 	return None

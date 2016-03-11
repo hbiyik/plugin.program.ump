@@ -12,7 +12,7 @@ def run(ump):
 	i=ump.info
 	is_serie,names=ump.get_vidnames()
 	found=False
-	if not i["code"][:2]=="tt" or not is_serie:
+	if not is_serie:
 		return None
 
 	ump.add_log("dizimag is searching %s"%names[0])	
@@ -37,7 +37,7 @@ def run(ump):
 					for id in set(ids):
 						if id.isnumeric():
 							try:
-								data=ump.get_page(domain+"/service/part",encoding,data={"id":id},header={"X-Requested-With":"XMLHttpRequest"})
+								data=ump.get_page(domain+"/service/partikule",encoding,data={"id":id},header={"X-Requested-With":"XMLHttpRequest"})
 							except:
 								ump.add_log("dizimag can't get video id:%s"%id)
 								continue
@@ -46,7 +46,7 @@ def run(ump):
 						videos=json.loads(data)
 						vlink={}
 						for k in range(1,7):
-							if "videolink%d"%k in videos.keys():
+							if isinstance(videos,dict) and "videolink%d"%k in videos.keys():
 								vlink[videos["videokalite%d"%k]]=videos["videolink%d"%k]
 						parts=[{"url_provider_name":"google", "url_provider_hash":vlink}]
 						ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))	

@@ -13,8 +13,6 @@ def run(ump):
 	i=ump.info
 	ump.add_log("Mangafox is searching %s" % i["title"])
 	results=json.loads(ump.get_page(domain+"/ajax/search.php",encoding,query={"term":ump.info["title"]}))
-	print results
-	print ump.info["title"]
 	found=False
 	for result in results:
 		if ump.is_same(result[1],ump.info["title"]) or ump.is_same(result[1],ump.info["originaltitle"]):

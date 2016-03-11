@@ -26,7 +26,7 @@ class xplayer(xbmc.Player):
 		#in case its multiparted and it has timed out
 		part=self.ump._validatepart(part)
 		if len(part["urls"].keys())>1:
-			if auto:
+			if auto or addon.getSetting("automir")=="true":
 				k=part["defmir"]
 			else:
 				slc=self.ump.dialog.select("Select Quality", part["urls"].keys())
