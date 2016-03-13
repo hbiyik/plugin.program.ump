@@ -73,7 +73,7 @@ def scrape_moviepage(url,fansub,name):
 				#todo prepare a decoder
 				uphash=re.findall("iframe/(.*?)/",ump.get_page(domain+u,encoding))[0]
 			else:
-				print "Unknown URL Provider: %s"%up
+				ump.add_log("turkanime: Unknown URL Provider: %s, cant scrape"%up
 				continue
 		except IndexError:
 			print "Turkanimetv changed regex for : %s, skipping"%up

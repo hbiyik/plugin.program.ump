@@ -403,9 +403,13 @@ class ump():
 
 	def _validatepart(self,part):
 		metaf=getattr(meta,self.content_type)
+		timeout=self.urlval_tout
+		provider=providers.load(self.content_type,"url",part["url_provider_name"])
+		if hasattr(provider,"timeout") and isinstance(provider.timeout,int):
+			timeout=provider.timeout
 		#if urls require validation and url is not validated or timed out
-		if not "uptime" in part.keys() or time.time()-part["uptime"]>self.urlval_tout:
-			provider=providers.load(self.content_type,"url",part["url_provider_name"])
+		if not "uptime" in part.keys() or time.time()-part["uptime"]>timeout:
+
 			try:
 				self.add_log("validating %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
 				part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
@@ -429,9 +433,9 @@ class ump():
 					method=addon.getSetting(self.content_type+"_val_method")
 					m=metaf("",method,self.get_page,part["urls"][key]["url"],part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
-#				except (timeout,urllib2.URLError,urllib2.HTTPError),e:
-#					part["urls"].pop(key)
-#					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
+				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
+					part["urls"].pop(key)
+					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
 				except Exception,e:
 					self.notify_error(e)
 					part["urls"].pop(key)
@@ -473,4 +477,4 @@ class ump():
 
 		if hasattr(self,"player"):
 			del(self.player)
-		self.tm.join(cnt=q+a,noblock=noblock)
+		self.tm.join(noblock=noblock)

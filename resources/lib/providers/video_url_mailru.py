@@ -1,4 +1,5 @@
 import json
+timeout=0
 
 def run(hash,ump,referer=None):
 	js=json.loads(ump.get_page("http://videoapi.my.mail.ru/videos/"+hash+".json","utf8"))

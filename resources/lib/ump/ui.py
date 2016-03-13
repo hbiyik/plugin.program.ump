@@ -46,6 +46,8 @@ class xplayer(xbmc.Player):
 		return url+"|"+urllib.urlencode(urlenc),k
 	
 	def create_list(self,it,auto=False):
+		dialog = xbmcgui.DialogProgress()
+		dialog.create('UMP', 'Opening Media')
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
 			self.playlist.clear()
 		else:
@@ -75,6 +77,7 @@ class xplayer(xbmc.Player):
 			else:
 				#not sure even this is possible :) gotta clean this sometime
 				self.ump.add_log("Part Vanished!!!")
+		dialog.close()
 		return True
 		
 	def xplay(self):
