@@ -123,6 +123,7 @@ def run(ump):
 	if ump.page == "root":
 		li=xbmcgui.ListItem("Search")
 		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search"),li,True)
+		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page == "search":
 		if "what" in ump.info.keys():
@@ -157,7 +158,8 @@ def run(ump):
 				pass
 			u=ump.link_to("show_chapters",matches[k])
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-	
+		ump.set_content(ump.defs.CC_ALBUMS)
+
 	elif ump.page== "show_chapters":
 		info=ump.args["info"]
 		art=ump.args["art"]
@@ -224,5 +226,4 @@ def run(ump):
 
 		for p in range(pre-1):
 			create_li(pre-p-1)
-
-	xbmcplugin.endOfDirectory(ump.handle,	cacheToDisc=cacheToDisc)
+		ump.set_content(ump.defs.CC_FILES)

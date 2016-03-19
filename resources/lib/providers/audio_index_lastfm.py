@@ -29,7 +29,7 @@ def run(ump):
 	if ump.page == "root":
 		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"serach":True}),li,True)
-		ump.set_content(ump.defs.CC_TVSHOWS)
+		ump.set_content(ump.defs.CC_FILES)
 
 
 	elif ump.page == "search":

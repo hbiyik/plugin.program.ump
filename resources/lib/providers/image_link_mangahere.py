@@ -11,6 +11,7 @@ encoding="utf-8"
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
+	print i
 	ump.add_log("Mangahere is searching %s" % i["title"])
 	results=json.loads(ump.get_page(domain+"/ajax/search.php",encoding,query={"query":ump.info["title"]}))
 	found=False
@@ -39,5 +40,5 @@ def run(ump):
 			parts=[{"url_provider_name":"mangahere","url_provider_hash":clink}]
 			for page in pages:
 				parts.append({"url_provider_name":"mangahere","url_provider_hash":"%s%s.html"%(clink,page)})
-			ump.add_mirror(parts,ctit)
+			ump.add_mirror(parts,ctit,1.1)
 	return None

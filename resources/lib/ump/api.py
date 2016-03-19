@@ -185,14 +185,19 @@ class ump():
 		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
 		wmode=self.defs.VIEW_SETTINGS.get(content_cat,"default")
 		if not wmode == "default":
-			for i in range(0, 14):
-				if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
-					mode=self.defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
-					if not mode is None:
-						xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
-					break
-				xbmc.sleep(100)
-
+			mode=self.defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
+			if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
+				#issue #38
+				self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
+			else:
+				for i in range(0, 14400):
+					print i
+					if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
+						if not mode is None:
+							xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
+						break
+					xbmc.sleep(100)
+				
 	def is_same(self,name1,name2,strict=False):
 		predicate = lambda x:x not in punctuation+" "
 		if strict:
@@ -291,7 +296,7 @@ class ump():
 		if addon.getSetting("logtolog")=="true":
 			print line
 
-	def add_mirror(self,parts,name):
+	def add_mirror(self,parts,name,wait=0):
 		if not self.terminate and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				upname=part.get("url_provider_name",None)
@@ -313,7 +318,7 @@ class ump():
 				#if first time, create list dynamically
 					self.checked_uids[self.content_type][upname]=[]
 				self.checked_uids[self.content_type][upname].append(uphash)
-			self.tm.add_queue(target=self._on_new_id, args=(parts,name),pri=5)
+			self.tm.add_queue(target=self._on_new_id, args=(parts,name,wait),pri=5)
 		else:
 			return False
 
@@ -345,10 +350,13 @@ class ump():
 			max_s+=part_s
 		return max_key,max_w,max_h,max_s
 
-	def _on_new_id(self,parts,name):
+	def _on_new_id(self,parts,name,wait):
 		##validate media providers url first before adding
-		for part in parts:
-			self._validatepart(part)
+		self._validateparts(parts,wait)
+		#for part in parts:
+		#	self._validatepart(part)
+		#	print wait
+		#	time.sleep(wait)
 		for part in parts:
 			if part["urls"]=={}:
 				#if even 1 part is missing drop the mirror!!
@@ -422,13 +430,14 @@ class ump():
 				if tag.startswith("D:"): d=tag.split("D:")[1]
 			globaldb.sync(self,parts[0]["url_provider_name"],parts[0]["url_provider_hash"],parts[0]["urls"][max_k]["url"],humanres(max_w,max_h),max_w,max_h,hs,fs,d,float(max_s)/1000000)
 
-	def _validateparts(self,parts):
+	def _validateparts(self,parts,wait):
 		gid=self.tm.create_gid()
 		def wrap(i):
 			parts[i]=self._validatepart(parts[i])
 
 		for k in range(len(parts)):
 			self.tm.add_queue(wrap,(k,),gid=gid,pri=5)
+			time.sleep(wait)
 		self.tm.join(gid)
 
 	def _validatepart(self,part):
@@ -463,9 +472,11 @@ class ump():
 					method=addon.getSetting(self.content_type+"_val_method")
 					m=metaf("",method,self.get_page,part["urls"][key]["url"],part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
-				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
-					part["urls"].pop(key)
-					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
+#				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
+#					part["urls"].pop(key)
+#					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
+#					print part
+#					print e
 				except Exception,e:
 					self.notify_error(e)
 					part["urls"].pop(key)

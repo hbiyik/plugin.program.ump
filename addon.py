@@ -45,7 +45,7 @@ if ump.module == "ump":
 			img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
 			li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
 			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
-		xbmcplugin.endOfDirectory(ump.handle)
+		ump.set_content(ump.defs.CC_ALBUMS)
 elif ump.page== "urlselect":
 #	threads=[]
 	if len(link_providers)==0:
