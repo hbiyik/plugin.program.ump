@@ -17,7 +17,6 @@ def update_settings(lst):
 		if xcat.getAttribute("id").lower() in types:
 			for item in xcat.getElementsByTagName("setting"):
 				if not item.getAttribute("id").lower().split("_") in lst:
-					print "@@@@erased@@@@"+item.getAttribute("id").lower()
 					xcat.removeChild(item)
 				else:
 					inxml.append(item.getAttribute("id").lower().split("_"))
@@ -42,11 +41,10 @@ def update_settings(lst):
 				newnode.setAttribute("label", "%s:%s"%(prv[0].upper(),prv[2].title()))
 				newnode.setAttribute("default", "true")
 				xcat.appendChild(newnode)
-				print "@@@@added@@@@"+"%s_%s_%s"%(prv[0],prv[1],prv[2])
 	res.writexml( open(os.path.join(addon_dir,"resources","settings.xml"), 'w'),encoding="UTF-8")
 	return lst2
 
-def find(cat,type):
+def find(cat,type,update=True):
 	if cat is None:
 		return [None,None,None]
 	lst=[]
@@ -54,7 +52,8 @@ def find(cat,type):
 		for file in files:
 			if file.endswith('.py') and len(file.split("_"))==3 and file.split("_")[0] in cats and file.split("_")[1] in types:
 				lst.append(file[:-3].split("_"))
-	lst=update_settings(lst)
+	if update:
+		lst=update_settings(lst)
 	lst2=[]
 	for item in lst:
 		if item[0]==cat and item[1]==type:
@@ -62,7 +61,7 @@ def find(cat,type):
 	return lst2
 
 def is_loadable(cat,type,name,providers=None):
-	providers=[providers,find(cat,type)][providers is None]
+	providers=[providers,find(cat,type,False)][providers is None]
 	return [cat,type,name] in providers
 
 def load(cat,type,name):

@@ -29,6 +29,7 @@ def run(ump):
 	if ump.page == "root":
 		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"serach":True}),li,True)
+		ump.set_content(ump.defs.CC_TVSHOWS)
 
 
 	elif ump.page == "search":
@@ -48,6 +49,7 @@ def run(ump):
 		li=xbmcgui.ListItem("Search %s in Tracks" % what, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("searchresult",{"what":what,"where":"track"})
 		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		ump.set_content(ump.defs.CC_ALBUMS)
 		
 	elif ump.page == "searchresult":
 		what=ump.args["what"]
@@ -63,7 +65,6 @@ def run(ump):
 			return None
 
 		if where=="artist":
-			ump.set_content(ump.defs.CC_ARTISTS)
 			for result in results:
 				mbid=result["mbid"]
 				title=result["name"]
@@ -73,8 +74,8 @@ def run(ump):
 				li=xbmcgui.ListItem(title, iconImage=im, thumbnailImage=im)
 				u=ump.link_to(where,{"mbid":mbid,"name":result["name"],"artim":im})
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			ump.set_content(ump.defs.CC_ARTISTS)
 		if where=="album":
-			ump.set_content(ump.defs.CC_ALBUMS)
 			for result in results:
 				mbid=result["mbid"]
 				title=result["name"]
@@ -85,8 +86,8 @@ def run(ump):
 				li=xbmcgui.ListItem(artist+ " - "+title, iconImage=im, thumbnailImage=im)
 				u=ump.link_to(where,{"mbid":mbid,"name":result["name"],"artim":im})
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			ump.set_content(ump.defs.CC_ALBUMS)
 		if where=="track":
-			ump.set_content(ump.defs.CC_SONGS)
 			for result in results:
 				mbid=result["mbid"]
 				title=result["name"]
@@ -113,12 +114,9 @@ def run(ump):
 				ump.info=audio["info"]
 				u=ump.link_to("urlselect")
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+			ump.set_content(ump.defs.CC_SONGS)
 		
-
-		
-
 	elif ump.page == "artist":
-		ump.set_content(ump.defs.CC_ALBUMS)
 		ambid=ump.args["mbid"]
 		name=ump.args["name"]
 		artim=ump.args["artim"]
@@ -178,11 +176,10 @@ def run(ump):
 				pass
 			u=ump.link_to("album",{"mbid":mbid,"name":result["name"]})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-		
+		ump.set_content(ump.defs.CC_ARTISTS)		
 
 
 	elif ump.page == "album":
-		ump.set_content(ump.defs.CC_SONGS)
 		mbid=ump.args["mbid"]
 		name=ump.args["name"]
 		q={"method":"album.getinfo","mbid":mbid,"api_key":apikey,"format":"json"}
@@ -253,6 +250,4 @@ def run(ump):
 				ump.info=audio["info"]
 				u=ump.link_to("urlselect")
 				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
-
-
-	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc)
+		ump.set_content(ump.defs.CC_ALBUMS)

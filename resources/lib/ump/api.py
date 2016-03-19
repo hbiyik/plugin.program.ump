@@ -107,6 +107,26 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["N/A"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 	
+
+	def view_text(self,label,text):
+		try:
+			id = 10147
+			xbmc.executebuiltin('ActivateWindow(%d)' % id)
+			xbmc.sleep(100)
+			win = xbmcgui.Window(id)
+			retry = 50
+			while (retry > 0):
+				try:
+					xbmc.sleep(10)
+					win.getControl(1).setLabel(label)
+					win.getControl(5).setText(text)
+					retry = 0
+				except:
+					retry -= 1
+		except:
+			pass
+
+
 	def match_cast(self,casting):
 		match_cast=False
 		if len(casting)>0:
@@ -156,12 +176,22 @@ class ump():
 		else:
 			return is_serie,names2[:max]
 
-	def set_content(self,content_cat="N/A"):
+	def set_content(self,content_cat="N/A",enddir=True):
 		if content_cat=="N/A":
 			content_cat=self.content_cat
 		else:
 			self.content_cat=content_cat
 		xbmcplugin.setContent(self.handle, content_cat)
+		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
+		wmode=self.defs.VIEW_SETTINGS.get(content_cat,"default")
+		if not wmode == "default":
+			for i in range(0, 14):
+				if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
+					mode=self.defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
+					if not mode is None:
+						xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
+					break
+				xbmc.sleep(100)
 
 	def is_same(self,name1,name2,strict=False):
 		predicate = lambda x:x not in punctuation+" "
@@ -307,9 +337,9 @@ class ump():
 					if not (w is None or h is None) and w*h>=q:
 						max_w=w
 						max_h=h
-						max_key=key
 						q=w*h
 					if not s is None and s>ss:
+						max_key=key
 						part_s=s
 						ss=s
 			max_s+=part_s

@@ -246,19 +246,20 @@ def run(ump):
 	if ump.page == "root":
 		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"search":True}),li,True)
-
+		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page == "search":
-		kb = xbmc.Keyboard('default', 'heading', True)
-		kb.setDefault("")
-		kb.setHiddenInput(False)
-		kb.doModal()
-		what=kb.getText()
+		what=ump.args.get("title",None)
+		if what is None:
+			kb = xbmc.Keyboard('default', 'Search Series', True)
+			kb.setDefault("")
+			kb.setHiddenInput(False)
+			kb.doModal()
+			what=kb.getText()
 		q={"seriesname":what,"language":"all"}
 		p=ump.get_page("%s/api/GetSeries.php"%mirror,None,query=q)
 		x=minidom.parseString(p)
 		series=x.getElementsByTagName("Series")
-		ump.set_content(ump.defs.CC_TVSHOWS)
 		names={}
 		suggest=""
 		otherids=[]
@@ -320,9 +321,9 @@ def run(ump):
 			li.setInfo(ump.content_type,ump.info)
 			u=ump.link_to("seasons",{"tvdbid":id})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		ump.set_content(ump.defs.CC_TVSHOWS)
 
 	elif ump.page == "seasons":
-		ump.set_content(ump.defs.CC_ALBUMS)
 		id=ump.args.get("tvdbid",None)
 		if not id:
 			return None
@@ -342,10 +343,10 @@ def run(ump):
 			#li.setInfo(ump.content_type,ump.info)
 			u=ump.link_to("episodes",{"tvdbid":id,"season":sno})
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		ump.set_content(ump.defs.CC_ALBUMS)
 			
 	elif ump.page == "episodes":
 		#xbmc.executebuiltin("XBMC.Container.Update(plugin://plugin.program.ump/?test=123)")
-		ump.set_content(ump.defs.CC_EPISODES)
 		id=ump.args.get("tvdbid",None)
 		season=ump.args.get("season",None)
 		if not id or not season:
@@ -365,5 +366,4 @@ def run(ump):
 			li.setInfo(ump.content_type,ump.info)
 			u=ump.link_to("urlselect")
 			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
-
-	xbmcplugin.endOfDirectory(ump.handle,cacheToDisc=cacheToDisc,updateListing=False,succeeded=True)
+		ump.set_content(ump.defs.CC_EPISODES)

@@ -30,8 +30,8 @@ print "CONTENT_TYPE : " + str(ump.content_type)
 
 contents=[ump.defs.CT_AUDIO, ump.defs.CT_IMAGE, ump.defs.CT_VIDEO]
 indexers=providers.find(ump.content_type,"index")
-url_providers=providers.find(ump.content_type,"url")
-link_providers=providers.find(ump.content_type,"link")
+url_providers=providers.find(ump.content_type,"url",False)
+link_providers=providers.find(ump.content_type,"link",False)
 
 if ump.module == "ump":
 	if ump.page == "root":
