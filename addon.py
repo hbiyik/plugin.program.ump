@@ -38,13 +38,17 @@ if ump.module == "ump":
 		if ump.content_type not in contents :
 			for content in contents:
 				setattr(ump,"content_type",content)
-				li=xbmcgui.ListItem(content, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module="ump"),li,True)
-		for provider in indexers:
-			provider_cat,provider_type,provider_name=provider
-			img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
-			li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
+				for provider in providers.find(ump.content_type,"index"):
+					provider_cat,provider_type,provider_name=provider
+					img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
+					li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
+					xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
+		else:
+			for provider in indexers:
+				provider_cat,provider_type,provider_name=provider
+				img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
+				li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
+				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
 		ump.set_content(ump.defs.CC_ALBUMS)
 elif ump.page== "urlselect":
 #	threads=[]
