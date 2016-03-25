@@ -190,7 +190,7 @@ class ump():
 				#issue #38
 				self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
 			else:
-				for i in range(0, 14400):
+				for i in range(0, 600):
 					print i
 					if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
 						if not mode is None:
