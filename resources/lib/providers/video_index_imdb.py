@@ -10,8 +10,6 @@ from ump import countries
 import json
 import random
 
-tmdbk="3b672de17b90fb71d393cf367b793d89"
-tmdbu="http://image.tmdb.org/t/p/"
 try:
 	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
 except AttributeError:
@@ -39,35 +37,6 @@ def get_localtitle(alts,original):
 				ww=alts[key]		
 				break
 	return local,ww
-
-def tmdb_art(id):
-	try:
-		arts=json.loads(ump.get_page("http://api.themoviedb.org/3/movie/%s/images?api_key=%s"%(id,tmdbk),"utf-8"))
-		fanarts=[]
-		localposters=[]
-		posters=[]
-		for f in arts.get("backdrops",[]):
-			fanarts.append("%soriginal%s"%(tmdbu,f["file_path"]))
-		for p in arts.get("posters",[]):
-			if p["iso_639_1"]==language:
-				localposters.append("%sw342%s"%(tmdbu,p["file_path"]))
-			elif p["iso_639_1"] == "en" or p["iso_639_1"] is None:
-				posters.append("%sw342%s"%(tmdbu,p["file_path"]))
-		if len(fanarts):
-			fanart=random.choice(fanarts)
-		else:
-			fanart=None
-		
-		if len(localposters):
-			poster=random.choice(localposters)
-		elif len(posters):
-			poster=random.choice(posters)
-		else:
-			poster=None
-	except:
-		return None,None
-
-	return fanart,poster
 
 def scrape_imdb_names(page):
 	trs=re.findall('detailed"\>(.*?)\</tr\>',page,re.DOTALL)
@@ -231,9 +200,6 @@ def scrape_imdb_search(page):
 		else:
 			m1[key]["info"]["alternates"]= []
 		m1[key]["info"]["localtitle"],m1[key]["info"]["title"]=get_localtitle(alts,m1[key]["info"]["originaltitle"])
-		fanart,poster=tmdb_art(id)
-		if fanart: m1[key]["art"]["fanart"]=fanart
-		if poster: m1[key]["art"]["poster"]=poster
 	try:
 		start,end,total=re.findall('<div id="left">\n(.*?)\-(.*?) of (.*?)\n',page)[0]
 		start=int(start.replace(",",""))
@@ -547,6 +513,14 @@ def run(ump):
 					pass
 				ump.art=movie["art"]
 				ump.info=movie["info"]
+				commands=[("Detailed Movie Information","Action(Info)")]
+				for person in movie["info"].get("director","").split(","):
+					if not person=="":
+						commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
+				for person in movie["info"].get("cast",""):
+					if not person=="":
+						commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
+				li.addContextMenuItems(commands,False)
 				if "tv_series" in ump.args["title_type"]:
 					ump.info["tvshowtitle"]=movie["info"]["title"]
 					u=ump.link_to("show_seasons",{"imdbid":ump.info["code"]})
@@ -608,6 +582,14 @@ def run(ump):
 			ump.art["thumb"]=img
 			ump.art["poster"]=img
 			li.setInfo("video",ump.info)
+			commands=[("Detailed Movie Information","Action(Info)")]
+			for person in ump.info.get("director","").split(","):
+				if not person=="":
+					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
+			for person in ump.info.get("cast",""):
+				if not person=="":
+					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
+			li.addContextMenuItems(commands,False)
 			try:
 				li.setArt(ump.art)
 			except AttributeError:

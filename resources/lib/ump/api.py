@@ -103,10 +103,33 @@ class ump():
 			[lst]=result.get(keep, ["{}"])
 			setattr(self,keep,json.loads(lst))
 
-		[self.content_type]= result.get('content_type', ["index"])
-		[self.content_cat]= result.get('content_cat', ["N/A"])
+		[self.content_type]= result.get('content_type', ["ump"])
+		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 	
+	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True):
+		if page=="urlselect":isFolder=False
+		if info == {}:info=self.info
+		if art == {}:art=self.art
+		#if thumb == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":thumb=art["thumb"]
+		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
+		self.info=info
+		self.art=art
+		u=self.link_to(page,args,module)
+		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
+		li.setArt(art)
+		li.setInfo(self.content_type,info)
+		coms=[]
+		if adddefault:
+			coms.append(('Detailed Info',"Action(Info)"))
+
+			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(addon_dir,"resources","lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
+		coms.extend(cmds)
+		if adddefault:
+			coms.append(("Addon Settings","Addon.OpenSettings(plugin.program.ump)"))
+		li.addContextMenuItems(coms,removeold)
+		xbmcplugin.addDirectoryItem(self.handle,u,li,isFolder)
+		return li
 
 	def view_text(self,label,text):
 		try:

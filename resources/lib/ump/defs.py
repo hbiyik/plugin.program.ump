@@ -1,4 +1,5 @@
 CT_AUDIO, CT_IMAGE, CT_VIDEO = "audio", "image","video" ##content types
+WID={CT_AUDIO:10502,CT_IMAGE:10002,CT_VIDEO:10025}
 CC_FILES, CC_SONGS, CC_ARTISTS, CC_ALBUMS, CC_MOVIES, CC_TVSHOWS, CC_EPISODES, CC_MUSICVIDEOS = "files", "songs", "artists", "albums", "movies", "tvshows", "episodes", "musicvideos"  ##content categories
 VIEW_MODES={
 	"list":{

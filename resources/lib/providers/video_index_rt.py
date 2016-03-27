@@ -176,8 +176,13 @@ def run(ump):
 			if pcount>0:continue
 			img=movie["posters"]["primary"]
 			li=xbmcgui.ListItem(movie["title"], iconImage=img, thumbnailImage=img)
-			u=ump.link_to("search",{"title":movie["title"]},module="imdb")
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			u=ump.link_to("none")
+			commands=[('Search on IMDB', 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["title"]},module="imdb")),
+				('Search on TVDB', 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["title"]},module="tvdb")),
+				('Search on ANN', 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["title"]},module="ann"))
+				]
+			li.addContextMenuItems(commands,True)
+			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
 		if ump.args["page"]*30<count:
 			preargs=ump.args.copy()
 			preargs["page"]=ump.args["page"]+1

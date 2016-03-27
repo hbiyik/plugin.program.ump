@@ -6,7 +6,7 @@ from ump import defs
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
-cats=[defs.CT_AUDIO, defs.CT_IMAGE, defs.CT_VIDEO]
+cats=[defs.CT_AUDIO, defs.CT_IMAGE, defs.CT_VIDEO,"ump"]
 types=["index","link","url"]
 
 def update_settings(lst):
@@ -45,8 +45,6 @@ def update_settings(lst):
 	return lst2
 
 def find(cat,type,update=True):
-	if cat is None:
-		return [None,None,None]
 	lst=[]
 	for root, dirs, files in os.walk(os.path.join(addon_dir, 'resources', 'lib' ,'providers')):
 		for file in files:
@@ -55,14 +53,23 @@ def find(cat,type,update=True):
 	if update:
 		lst=update_settings(lst)
 	lst2=[]
+	lst3=[]
 	for item in lst:
-		if item[0]==cat and item[1]==type:
+		if item[0] == "ump" and item[1]==type:
+			lst3.append(item)
+		elif (item[0]==cat or cat == "ump") and item[1]==type:
 			lst2.append(item)
+	lst2.extend(lst3)
 	return lst2
 
 def is_loadable(cat,type,name,providers=None):
 	providers=[providers,find(cat,type,False)][providers is None]
-	return [cat,type,name] in providers
+	if [cat,type,name] in providers:
+		return 1
+	elif ["ump",type,name] in providers:
+		return 2
+	else:
+		return 0
 
 def load(cat,type,name):
 	fname=cat+"_"+type+"_"+str(name)

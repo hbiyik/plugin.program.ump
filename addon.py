@@ -15,9 +15,9 @@ sys.path.append(os.path.join( addon_dir, 'resources', 'lib' ) )
 from ump import providers
 from ump import api
 from ump import ui
-from ump import bookmark
 
-bookmark.resolve()
+
+#bookmark.resolve()
 ump=api.ump()
 
 print "HANDLE       : " + str(ump.handle)
@@ -28,27 +28,17 @@ print "CONTENT_TYPE : " + str(ump.content_type)
 #print "INFO         : " + str(ump.info)
 #print "ART          : " + str(ump.art)
 
-contents=[ump.defs.CT_AUDIO, ump.defs.CT_IMAGE, ump.defs.CT_VIDEO]
 indexers=providers.find(ump.content_type,"index")
 url_providers=providers.find(ump.content_type,"url",False)
 link_providers=providers.find(ump.content_type,"link",False)
 
 if ump.module == "ump":
 	if ump.page == "root":
-		if ump.content_type not in contents :
-			for content in contents:
-				setattr(ump,"content_type",content)
-				for provider in providers.find(ump.content_type,"index"):
-					provider_cat,provider_type,provider_name=provider
-					img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
-					li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
-					xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
-		else:
-			for provider in indexers:
-				provider_cat,provider_type,provider_name=provider
-				img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
-				li=xbmcgui.ListItem(provider_name, iconImage=img, thumbnailImage=img)
-				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
+		for provider in indexers:
+			provider_cat,provider_type,provider_name=provider
+			img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
+			li=xbmcgui.ListItem(provider_name.title(), iconImage=img, thumbnailImage=img)
+			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
 		ump.set_content(ump.defs.CC_ALBUMS)
 elif ump.page== "urlselect":
 #	threads=[]
@@ -63,8 +53,10 @@ elif ump.page== "urlselect":
 				continue
 			ump.tm.add_queue(provider.run, (ump,),pri=10)
 		ump.window.doModal()
-elif providers.is_loadable(ump.content_type,"index",ump.module,indexers):
+elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==1:
 	providers.load(ump.content_type,"index",ump.module).run(ump)
+elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==2:
+	providers.load("ump","index",ump.module).run(ump)
 ump.shut()
 print "CONTENT_CAT  : " + str(ump.content_cat)
 del gc.garbage[:]

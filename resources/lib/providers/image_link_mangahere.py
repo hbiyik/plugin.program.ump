@@ -40,5 +40,5 @@ def run(ump):
 			parts=[{"url_provider_name":"mangahere","url_provider_hash":clink}]
 			for page in pages:
 				parts.append({"url_provider_name":"mangahere","url_provider_hash":"%s%s.html"%(clink,page)})
-			ump.add_mirror(parts,ctit,1.1)
+			ump.add_mirror(parts,ctit,1.3)
 	return None

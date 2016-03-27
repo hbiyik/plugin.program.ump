@@ -1,23 +1,7 @@
 import xbmc
-import xbmcgui
-import xbmcplugin
-from datetime import date
-from urllib import quote_plus
-from urllib import urlencode
 import time
 import re
-import json
-import urlparse
-recnum=50
-from xml.dom import minidom
-import httplib
-import datetime
-
-from difflib import SequenceMatcher
 from operator import itemgetter
-
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
 
 encoding="utf-8"
 stype="manga"
@@ -28,8 +12,7 @@ def cln(str):
 	return re.sub('<[^<]+?>', '', str)
 
 def get_releases(id):
-	#https://www.mangaupdates.com/releases.html?page=1&search=35&stype=series&perpage=100
-	fpage=ump.get_page("https://www.mangaupdates.com/releases.html?page=1&search=%s&stype=series&perpage=%d"%(str(id),perpage),encoding)
+	fpage=ump.get_page("%s/releases.html?page=1&search=%s&stype=series&perpage=%d"%(domain,str(id),perpage),encoding)
 	pcount=re.findall("Pages \(([0-9]*?)\)",fpage)
 	res=[]
 	
@@ -75,7 +58,7 @@ def get_releases(id):
 	parse_page(fpage)
 
 	def parse_pages(pid):
-		page=ump.get_page("https://www.mangaupdates.com/releases.html?page=%s&search=%s&stype=series&perpage=%d"%(str(pid),str(id),perpage),encoding)
+		page=ump.get_page("%s/releases.html?page=%s&search=%s&stype=series&perpage=%d"%(domain,str(pid),str(id),perpage),encoding)
 		return parse_page(page)
 
 	for p in pages:
@@ -128,9 +111,6 @@ def get_details(matches):
 		thumb="DefaultFolder.png"
 		link="%s/series.html?id=%s"%(domain,id)
 		src=ump.get_page(link,encoding)
-		#<div class="sContent" ><center><img height='350' width='241' src='https://www.mangaupdates.com/image/i119027.png'></center>
-		#title='Author Info'>
-		#releasestitle tabletitle">Berserk</
 		cover=re.findall('class="sContent".*?\<img.*?src=\'(.*?)\'',src)
 		if len(cover)>0:
 			thumb=cover[0]
@@ -164,33 +144,21 @@ def run(ump):
 	globals()['ump'] = ump
 	cacheToDisc=True
 	if ump.page == "root":
-		li=xbmcgui.ListItem("Search")
-		li.addContextMenuItems([],True)
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("select_type",{"stype":"title","perpage":perpage,"page":1}),li,True)
-		li=xbmcgui.ListItem("Genres")
-		li.addContextMenuItems([],True)
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("genres"),li,True)
-		li=xbmcgui.ListItem("Themes")
-		li.addContextMenuItems([],True)
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("categories"),li,True)
-		li=xbmcgui.ListItem("Mangakas")
-		li.addContextMenuItems([],True)
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search_mangaka",{"orderby":"series","perpage":perpage,"page":1,}),li,True)
-		li=xbmcgui.ListItem("Latest Releases")
-		li.addContextMenuItems([],True)
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("releases",{"page":1}),li,True)
-		li=xbmcgui.ListItem("Charts")
-		li.addContextMenuItems([],True)
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("charts",{"page":1}),li,True)
+		ump.index_item("Search","select_type",args={"stype":"title","perpage":perpage,"page":1})
+		ump.index_item("Genres","genres")
+		ump.index_item("Themes","categories")
+		ump.index_item("Mangakas","search_mangaka",args={"orderby":"series","perpage":perpage,"page":1})
+		ump.index_item("Latest Releases","releases",args={"page":1})
+		ump.index_item("Charts","charts",args={"page":1})
 		ump.set_content(ump.defs.CC_FILES)
 	
 	elif ump.page=="genres":
 		page=ump.get_page("%s/genres.html"%domain,encoding)
 		genres=set(re.findall("\?genre\=(.*?)'",page))
 		for genre in genres:
-			li=xbmcgui.ListItem(genre.replace("+"," "))
-			li.addContextMenuItems([],True)
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("select_type",{"genre":genre.lower(),"orderby":"rating","filter":"somereleases","search":None,"stype":"title","perpage":perpage,"page":1}),li,True)
+			name=genre.replace("+"," ")
+			args={"genre":genre.lower(),"orderby":"rating","filter":"somereleases","search":None,"stype":"title","perpage":perpage,"page":1}
+			ump.index_item(name,"select_type",args=args)
 		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="categories":
@@ -198,9 +166,9 @@ def run(ump):
 		cats=re.findall("\?category\=(.*?)'>(.*?)</a",page)
 		for cat in cats:
 			v,c=cat
-			li=xbmcgui.ListItem(c.replace("/s","").replace("/ies",""))
-			li.addContextMenuItems([],True)
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("select_type",{"category":v,"orderby":"rating","filter":"somereleases","search":None,"stype":"title","perpage":perpage,"page":1}),li,True)
+			name=c.replace("/s","").replace("/ies","")
+			args={"category":v,"orderby":"rating","filter":"somereleases","search":None,"stype":"title","perpage":perpage,"page":1}
+			ump.index_item(name,"select_type",args=args)
 		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="charts":
@@ -217,10 +185,8 @@ def run(ump):
 			)
 		for chart in charts:
 			name,args=chart
-			li=xbmcgui.ListItem(name)
-			li.addContextMenuItems([],True)
 			ump.args.update(args)
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("stats",ump.args),li,True)
+			ump.index_item(name,"stats",ump.args)
 		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="select_type":
@@ -235,14 +201,12 @@ def run(ump):
 		types=(("Search Manga (Japanese Comics)","manga"),("Search Mangaka (Author)","mangaka"),("Search Manhwa (Korean Comics)","manhwa"),("Search Manhua (Chinese Comics)","manhua"),("Search Novel","novel"),("Search Artbook","artbook"),("Search Doujinshi (Self Published)","doujinshi"),("Drama CD (Scripts)","drama_cd"),("Search OEL (Original English Language)","oel"),("Search All kinds of Puplications",""))
 		for type in types:
 			t,v=type
-			li=xbmcgui.ListItem(t)
-			li.addContextMenuItems([],True)
 			if v == "mangaka" :
 				if not "search" in ump.args: continue
-				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search_mangaka",ump.args),li,True)
+				ump.index_item(t,"search_mangaka",ump.args)
 			else:
 				ump.args["type"]=v
-				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",ump.args),li,True)
+				ump.index_item(t,"search",ump.args)
 		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="stats":
@@ -251,40 +215,24 @@ def run(ump):
 		pagination=re.findall('title="(.*?)">Last</a>',page)
 		matches={}
 		k=0
-
 		for name in names:
 			k+=1
 			(id,title)=name
 			matches[k] = (cln(id),cln(title))
-
-		print matches
 		matches=get_details(matches)
-
 		for k in sorted(matches.keys()):
-			u=ump.link_to("show_chapters",matches[k])
-			li=xbmcgui.ListItem(matches[k]["info"]["title"])
-			li.setInfo(ump.defs.CT_IMAGE,matches[k]["info"])
-			cmd=('Search %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
-			li.addContextMenuItems([cmd],True)
-			try:
-				li.setArt(matches[k]["art"])
-			except AttributeError:
-				#backwards compatability
-				pass
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			cmd=('Search Mangaka: %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
+			ump.index_item(matches[k]["info"]["title"],"show_chapters",args=matches[k],info=matches[k]["info"],art=matches[k]["art"],cmds=[cmd])
 		if len(pagination):
 			page=ump.args["page"]+1
-			li=xbmcgui.ListItem("Page %d"%page)
-			li.addContextMenuItems([],True)
 			ump.args["page"]=page
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("stats",ump.args),li,True)
+			ump.index_item("Page %d"%page,"stats",ump.args)
 		ump.set_content(ump.defs.CC_ALBUMS)
 
 
 	elif ump.page=="releases":
 		page=ump.get_page("%s/releases.html"%domain,encoding,query=ump.args)
 		names=re.findall("id=([0-9]*?)' title='Series Info'\>(.*?)</a></td>\s*?(<td .*?</td>)\s*?(<td .*?</td>)",page,re.DOTALL)
-		print names
 		pagination=re.findall('title="(.*?)">Last</a>',page)
 		releases={}
 		k=0
@@ -296,23 +244,13 @@ def run(ump):
 		matches=get_details(releases)
 
 		for k in sorted(matches.keys()):
-			u=ump.link_to("show_chapters",matches[k])
-			li=xbmcgui.ListItem("%s , %s, %s"% (releases[k][1],releases[k][2],releases[k][3]))
-			li.setInfo(ump.defs.CT_IMAGE,matches[k]["info"])
-			cmd=('Search %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
-			li.addContextMenuItems([cmd],True)
-			try:
-				li.setArt(matches[k]["art"])
-			except AttributeError:
-				#backwards compatability
-				pass
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			name="%s , %s, %s"% (releases[k][1],releases[k][2],releases[k][3])
+			cmd=('Search Mangaka: %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
+			ump.index_item(name,"show_chapters",args=matches[k],info=matches[k]["info"],art=matches[k]["art"],cmds=[cmd])
 		if len(pagination):
 			page=ump.args["page"]+1
-			li=xbmcgui.ListItem("Page %d"%page)
-			li.addContextMenuItems([],True)
 			ump.args["page"]=page
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("releases",ump.args),li,True)
+			ump.index_item("Page %d"%page,"releases",ump.args)
 		ump.set_content(ump.defs.CC_ALBUMS)
 
 	elif ump.page=="search_mangaka":
@@ -331,26 +269,14 @@ def run(ump):
 		matches=get_details_mangaka(matches)
 
 		for k in sorted(matches.keys()):
-			u=ump.link_to("search",{"names":matches[k]["names"],"page":1})
-			li=xbmcgui.ListItem("%s"% matches[k]["info"]["title"])
-			li.setInfo(ump.defs.CT_IMAGE,matches[k]["info"])
-			li.addContextMenuItems([],True)
-			try:
-				li.setArt(matches[k]["art"])
-			except AttributeError:
-				#backwards compatability
-				pass
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			ump.index_item(matches[k]["info"]["title"],"search",args={"names":matches[k]["names"],"page":1},info=matches[k]["info"],art=matches[k]["art"])
 		if len(pagination):
 			page=ump.args["page"]+1
-			li=xbmcgui.ListItem("Page %d"%page)
-			li.addContextMenuItems([],True)
 			ump.args["page"]=page
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search_mangaka",ump.args),li,True)
+			ump.index_item("Page %d"%page,"search_mangaka",ump.args)
 		ump.set_content(ump.defs.CC_ALBUMS)
 
 	elif ump.page == "search":
-		print ump.args
 		if "names" in ump.args:
 			names=ump.args["names"][(ump.args["page"]-1)*perpage:ump.args["page"]*perpage]
 			if perpage*ump.args["page"]<len(ump.args["names"]):
@@ -370,34 +296,19 @@ def run(ump):
 				matches[k]+=(id," / " + re.sub('<[^<]+?>', '', title))
 			else:
 				matches[k] = (id,re.sub('<[^<]+?>', '', title))
-		print matches
 		matches=get_details(matches)
 		for k in sorted(matches.keys()):
-			u=ump.link_to("show_chapters",matches[k])
-			li=xbmcgui.ListItem("%s , %s"% (matches[k]["info"]["title"],matches[k]["info"]["writer"]))
-			li.setInfo(ump.defs.CT_IMAGE,matches[k]["info"])
-			cmd=('Search %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
-			li.addContextMenuItems([cmd],True)
-			try:
-				li.setArt(matches[k]["art"])
-			except AttributeError:
-				#backwards compatability
-				pass
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			cmd=('Search Mangaka: %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
+			name="%s , %s"% (matches[k]["info"]["title"],matches[k]["info"]["writer"])
+			ump.index_item(name,"show_chapters",args={"names":matches[k]},info=matches[k]["info"],art=matches[k]["art"],cmds=[cmd])
 		if len(pagination):
 			page=ump.args["page"]+1
-			li=xbmcgui.ListItem("Page %d"%page)
-			li.addContextMenuItems([],True)
 			ump.args["page"]=page
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",ump.args),li,True)
+			ump.index_item("Page %d"%page,"search",ump.args)
 		ump.set_content(ump.defs.CC_ALBUMS)
 
 	elif ump.page== "show_chapters":
-		info=ump.args["info"]
-		art=ump.args["art"]
-		ump.art=art
-		ump.info=info
-		id=info["code"]
+		id=ump.info["code"]
 		t1=time.time()
 		releases=get_releases(id)
 		rel_sort=sorted(releases,key=itemgetter(0,3),reverse=True)
@@ -408,19 +319,9 @@ def run(ump):
 			else:
 				chapter=str(chapter)
 				cache.append(chapter)
-				li=xbmcgui.ListItem("Chapter %s"%chapter)
-				li.setInfo(ump.defs.CT_IMAGE,info)
-				li.addContextMenuItems([],True)
-				try:
-					li.setArt(art)
-				except AttributeError:
-					#backwards compatability
-					pass
 				ump.info["season"]="-1"
 				ump.info["episode"]=chapter
-				u=ump.link_to("urlselect")
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
-
+				ump.index_item("Chapter %s"%chapter,"urlselect")
 		cache=[]
 		pre=0
 		suffixes=["end"]
