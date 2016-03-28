@@ -10,7 +10,7 @@ import gc
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
-sys.path.append(os.path.join( addon_dir, 'resources', 'lib' ) )
+sys.path.append(os.path.join(addon_dir,"lib"))
 
 from ump import providers
 from ump import api

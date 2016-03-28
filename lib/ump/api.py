@@ -62,7 +62,7 @@ class ump():
 		self.handle = int(sys.argv[1])
 		self.ws_limit=False #web search limit
 		self.defs=defs
-		self.window = ui.listwindow('select.xml', addon_dir, 'Default', '720p',ump=self)
+		self.window = ui.listwindow('select.xml', addon_dir,'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', addon_dir,"Default","720p")
 		self.urlval_en=True
 		self.urlval_tout=30
@@ -77,10 +77,12 @@ class ump():
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
 		socket.socket = proxy.getsocket()
-		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True)   
-		self.cj=cookielib.LWPCookieJar(os.path.join( addon_dir, 'resources', 'data', "cookie"))
+		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True)
+		if not os.path.exists( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump')):
+			os.makedirs(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'))
+		self.cj=cookielib.LWPCookieJar(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie"))
 		self.cj.set_policy(policy)
-		if os.path.exists(os.path.join( addon_dir, 'resources', 'data', "cookie")):
+		if os.path.exists(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie")):
 			try:
 				self.cj.load()
 			except cookielib.LoadError:
@@ -123,7 +125,7 @@ class ump():
 		if adddefault:
 			coms.append(('Detailed Info',"Action(Info)"))
 
-			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(addon_dir,"resources","lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
+			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
 		coms.extend(cmds)
 		if adddefault:
 			coms.append(("Addon Settings","Addon.OpenSettings(plugin.program.ump)"))
@@ -514,7 +516,7 @@ class ump():
 			self.cj.save()
 		except:
 			try:
-				os.remove(os.path.join( addon_dir, 'resources', 'data', "cookie"))
+				os.remove(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie"))
 			except:
 				pass
 		self.terminate=True

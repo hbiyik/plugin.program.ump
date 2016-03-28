@@ -46,7 +46,7 @@ def update_settings(lst):
 
 def find(cat,type,update=True):
 	lst=[]
-	for root, dirs, files in os.walk(os.path.join(addon_dir, 'resources', 'lib' ,'providers')):
+	for root, dirs, files in os.walk(os.path.join(addon_dir, 'lib' ,'providers')):
 		for file in files:
 			if file.endswith('.py') and len(file.split("_"))==3 and file.split("_")[0] in cats and file.split("_")[1] in types:
 				lst.append(file[:-3].split("_"))

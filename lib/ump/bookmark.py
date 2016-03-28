@@ -104,8 +104,9 @@ def rem(name,thumb,data):
 		fdata=fav.lastChild.data.replace("&quot;",'"')
 		if name==fname and fthumb==thumb and fdata==data:
 			found=True
-			mfavs.removeChild(fav)
-			dialog.ok('UMP', '%s has been removed from bookmarks'%name)
+			if 	dialog.yesno("UMP", "Are you sure you want to remove?",name):
+				mfavs.removeChild(fav)
+				dialog.ok('UMP', '%s has been removed from bookmarks'%name)
 			break
 	if found:
 		res.writexml( open(xbmc.translatePath('special://home/userdata/favourites.xml'), 'w'),encoding="UTF-8")
