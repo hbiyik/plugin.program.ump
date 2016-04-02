@@ -26,6 +26,8 @@ from ump import providers
 from ump import ui
 from ump import cloudfare
 from ump import proxy
+from ump import webtunnel
+from ump import buffering
 from quality import meta
 from third.unescape import unescape
 from third.unidecode import unidecode
@@ -58,6 +60,7 @@ def humanres(w,h):
 class ump():
 	def __init__(self,pt=False):
 		self.settings={}
+		self.buffermode=buffering.get()
 		self.log=""
 		self.handle = int(sys.argv[1])
 		self.ws_limit=False #web search limit
@@ -70,6 +73,7 @@ class ump():
 		self.urlval_d_tout=1.5
 		self.tm_conc=int(float(addon.getSetting("conc")))
 		self.player=None
+		self.tunnel=webtunnel.tunnel()
 		self.mirrors=[]
 		self.terminate=False
 		self.tm=task.manager(self.tm_conc)
@@ -216,7 +220,6 @@ class ump():
 				self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
 			else:
 				for i in range(0, 600):
-					print i
 					if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
 						if not mode is None:
 							xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
@@ -245,7 +248,7 @@ class ump():
 			query[keep]=json.dumps(getattr(self,keep))
 		return sys.argv[0] + '?' + urlencode(query)
 
-	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None):
+	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled"):
 		if self.terminate:
 			raise task.killbill
 
@@ -269,13 +272,16 @@ class ump():
 		else:
 			if not range is None : headers["Range"]="bytes=%d-%d"%(range)
 			req=urllib2.Request(url,headers=headers)
-
+		if not head:
+			self.tunnel.set_tunnel(tunnel)
+			self.tunnel.pre(req)
+		
 		response = cloudfare.ddos_open(self.opener, req, data,timeout=tout)
-
-		if head :
-			return response
+		
+		if head :return response
 		
 		stream=cloudfare.readzip(response)
+		stream=self.tunnel.post(stream)
 
 		if encoding is None:
 			#binary data
@@ -283,7 +289,7 @@ class ump():
 		else:
 			#unicode data
 			src=unicode(unescape(stream.decode(encoding,"ignore")))
-		
+
 		return src
 	
 	def web_search(self,query):
@@ -321,7 +327,7 @@ class ump():
 		if addon.getSetting("logtolog")=="true":
 			print line
 
-	def add_mirror(self,parts,name,wait=0):
+	def add_mirror(self,parts,name,wait=0,missing="drop"):
 		if not self.terminate and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				upname=part.get("url_provider_name",None)
@@ -343,7 +349,7 @@ class ump():
 				#if first time, create list dynamically
 					self.checked_uids[self.content_type][upname]=[]
 				self.checked_uids[self.content_type][upname].append(uphash)
-			self.tm.add_queue(target=self._on_new_id, args=(parts,name,wait),pri=5)
+			self.tm.add_queue(target=self._on_new_id, args=(parts,name,wait,missing),pri=5)
 		else:
 			return False
 
@@ -375,18 +381,23 @@ class ump():
 			max_s+=part_s
 		return max_key,max_w,max_h,max_s
 
-	def _on_new_id(self,parts,name,wait):
+	def _on_new_id(self,parts,name,wait,missing):
 		##validate media providers url first before adding
 		self._validateparts(parts,wait)
-		#for part in parts:
-		#	self._validatepart(part)
-		#	print wait
-		#	time.sleep(wait)
-		for part in parts:
-			if part["urls"]=={}:
+		ignores=[]
+		for k in range(len(parts)):
+			if parts[k]["urls"]=={}:
 				#if even 1 part is missing drop the mirror!!
-				self.add_log("mirror ignored, has missing parts: %s"%str(parts))
-				return False
+				if missing=="drop":
+					self.add_log("mirror dropped, has missing parts: %s"%str(parts))
+					return False
+				elif missing=="ignore":
+					ignores.append(k)
+		
+		for ignore in ignores:
+			self.add_log("part %s,%s ignored"%(parts[ignore]["url_provider_name"],parts[ignore]["url_provider_hash"]))
+			parts.pop(ignore)
+
 		#if payer is not yet ready init it.
 		if self.player is None:
 			self.player=ui.xplayer(ump=self)

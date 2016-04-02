@@ -15,10 +15,12 @@ sys.path.append(os.path.join(addon_dir,"lib"))
 from ump import providers
 from ump import api
 from ump import ui
+from ump import prerun
 
 
 #bookmark.resolve()
 ump=api.ump()
+prerun.run(ump)
 
 print "HANDLE       : " + str(ump.handle)
 print "MODULE       : " + str(ump.module)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import ctypes
 
-domain="https://listen.musicmp3.ru"
+domain="https://listen2.musicmp3.ru"
 
 def boo(d):
 	a = 1234554321
