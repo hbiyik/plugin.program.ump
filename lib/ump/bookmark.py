@@ -117,7 +117,6 @@ def rem(name,thumb,data):
 
 
 def add(isFolder,content_type,name,thumb,uri):
-	print uri
 	path,cat,module,page,args,info,art=decode(uri)
 	favsxml=xbmc.translatePath('special://home/userdata/favourites.xml')
 	if os.path.exists(favsxml):
@@ -133,7 +132,6 @@ def add(isFolder,content_type,name,thumb,uri):
 		str='ActivateWindow(%d,"%s",return)'%(WID[content_type],link)
 	else:
 		str='RunPlugin("%s")'%link
-	print str
 	favs.appendChild(newnode)
 	newnode.appendChild(res.createTextNode(str))
 	res.writexml( open(favsxml, 'w'),encoding="UTF-8")
