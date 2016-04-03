@@ -17,7 +17,6 @@ from ump import api
 from ump import ui
 from ump import prerun
 
-
 #bookmark.resolve()
 ump=api.ump()
 prerun.run(ump)
@@ -31,8 +30,8 @@ print "CONTENT_TYPE : " + str(ump.content_type)
 #print "ART          : " + str(ump.art)
 
 indexers=providers.find(ump.content_type,"index")
-url_providers=providers.find(ump.content_type,"url",False)
-link_providers=providers.find(ump.content_type,"link",False)
+url_providers=providers.find(ump.content_type,"url")
+link_providers=providers.find(ump.content_type,"link")
 
 if ump.module == "ump":
 	if ump.page == "root":

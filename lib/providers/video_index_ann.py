@@ -1,20 +1,11 @@
 # -*- coding: utf-8 -*-
 import xbmc
 import xbmcgui
-import xbmcplugin
 import datetime
-from urllib import quote_plus
 from urllib import urlencode
-import time
 import re
-import json
-import urlparse
 from xml.dom import minidom
 from third.dateutil import parser
-import httplib
-from xml.parsers import expat
-from third.unidecode import unidecode
-import operator
 
 domain="http://www.animenewsnetwork.com"
 encoding="utf-8"
@@ -76,6 +67,7 @@ def scrape_ann_search(animes):
 		type=str(media.getAttribute("precision"))
 		epinum=0
 		num_of_epis=0
+		directors=[]
 		for info in media.getElementsByTagName("info"):
 			t=info.getAttribute("type")
 			#image
@@ -115,6 +107,13 @@ def scrape_ann_search(animes):
 			for k in range(num_of_epis-cur_epis):
 				episodes[cur_epis+k+1]={"title":"Episode %d"%(cur_epis+k+1),"relativenumber":cur_epis+k+1}
 		
+		for staff in media.getElementsByTagName("staff"):
+			try:
+				if staff.childNodes[0].tagName=="task" and ("original" in staff.childNodes[0].lastChild.data.lower() or "character conceptual design" in staff.childNodes[0].lastChild.data.lower()) and staff.childNodes[1].tagName=="person":
+					directors.append(staff.childNodes[1].lastChild.data)
+			except:
+				continue
+
 		if len(episodes)>0:
 			tvshowtitle=maintitle
 		title=maintitle
@@ -172,7 +171,7 @@ def scrape_ann_search(animes):
 			"overlay":0,
 			"cast":[],
 			"castandrole":[],
-			"director":"",
+			"director":",".join(set(directors)),
 			"mpaa":mpaa,
 			"plot":outline,
 			"plotoutline":outline,
@@ -255,10 +254,19 @@ def results_search(animes=None,filters=None):
 			itemcount+=1
 			art=media["art"]
 			info=media["info"]
+			commands2=[]
+			for director in info["director"].split(","):
+				if not director=="":
+					commands2.append(('Search on IMDB : %s'%director, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":director},module="imdb")))
 			if len(media["episodes"].keys())==0:
-				ump.index_item(name,"urlselect",info=info,art=art)
+				commands=[('Search on IMDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":info["title"],"title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},module="imdb"))]
+				commands.extend(commands2)
+				ump.index_item(name,"urlselect",info=info,art=art,cmds=commands)
 			else:
-				ump.index_item(name,"show_episodes",info=info,art=art)
+				commands=[('Search on IMDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":info["title"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS},module="imdb"))]
+				commands.append(('Search on TVDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":info["title"]},module="tvdb")))
+				commands.extend(commands2)
+				ump.index_item(name,"show_episodes",info=info,art=art,cmds=commands)
 		if (index+1)*50 < len(animes) and not itemcount==0:
 			ump.index_item("Results %d-%d"%((index+1)*50+1,(index+2)*50),"results_search",args={"anime":animes,"filters":filters,"index":index+1})
 	ump.set_content(ump.defs.CC_TVSHOWS)
