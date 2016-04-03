@@ -9,7 +9,12 @@ addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 cats=[defs.CT_AUDIO, defs.CT_IMAGE, defs.CT_VIDEO,"ump"]
 types=["index","link","url"]
 
-def update_settings(lst):
+def update_settings():
+	lst=[]
+	for root, dirs, files in os.walk(os.path.join(addon_dir, 'lib' ,'providers')):
+		for file in files:
+			if file.endswith('.py') and len(file.split("_"))==3 and file.split("_")[0] in cats and file.split("_")[1] in types:
+				lst.append(file[:-3].split("_"))
 	#first remove unused providers from settings.xml
 	res=minidom.parse(os.path.join(addon_dir,"resources","settings.xml"))
 	inxml=[]
@@ -44,26 +49,24 @@ def update_settings(lst):
 	res.writexml( open(os.path.join(addon_dir,"resources","settings.xml"), 'w'),encoding="UTF-8")
 	return lst2
 
-def find(cat,type,update=True):
+def find(cat,type):
 	lst=[]
 	for root, dirs, files in os.walk(os.path.join(addon_dir, 'lib' ,'providers')):
 		for file in files:
 			if file.endswith('.py') and len(file.split("_"))==3 and file.split("_")[0] in cats and file.split("_")[1] in types:
 				lst.append(file[:-3].split("_"))
-	if update:
-		lst=update_settings(lst)
 	lst2=[]
 	lst3=[]
 	for item in lst:
-		if item[0] == "ump" and item[1]==type:
+		if item[0] == "ump" and item[1]==type and not addon.getSetting("%s_%s_%s"%(item[0],item[1],item[2]))=="false":
 			lst3.append(item)
-		elif (item[0]==cat or cat == "ump") and item[1]==type:
+		elif (item[0]==cat or cat == "ump") and item[1]==type and not addon.getSetting("%s_%s_%s"%(item[0],item[1],item[2]))=="false":
 			lst2.append(item)
 	lst2.extend(lst3)
 	return lst2
 
 def is_loadable(cat,type,name,providers=None):
-	providers=[providers,find(cat,type,False)][providers is None]
+	providers=[providers,find(cat,type)][providers is None]
 	if [cat,type,name] in providers:
 		return 1
 	elif ["ump",type,name] in providers:

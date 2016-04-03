@@ -253,10 +253,6 @@ def run(ump):
 			q={"method":"album.getinfo","mbid":ump.info["code"],"api_key":apikey,"format":"json"}
 		else:
 			q={"method":"album.getinfo","artist":ump.args["artist"],"album":ump.args["album"],"api_key":apikey,"format":"json"}
-		print "****************"
-		print ump.info["code"]
-		print 
-		print "++++++++++++++++++"
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		tracks=js.get("album",None)
 		alb=js.get("album",None)

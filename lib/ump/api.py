@@ -128,7 +128,6 @@ class ump():
 		coms=[]
 		if adddefault:
 			coms.append(('Detailed Info',"Action(Info)"))
-
 			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
 		coms.extend(cmds)
 		if adddefault:
@@ -212,7 +211,9 @@ class ump():
 			self.content_cat=content_cat
 		xbmcplugin.setContent(self.handle, content_cat)
 		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
-		wmode=self.defs.VIEW_SETTINGS.get(content_cat,"default")
+		wmode=addon.getSetting("view_"+content_cat).lower()
+		if wmode=="":
+			wmode="default"
 		if not wmode == "default":
 			mode=self.defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
 			if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:

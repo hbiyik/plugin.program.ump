@@ -31,14 +31,3 @@ VIEW_MODES={
         'skin.xeebo': 55,
 		},
 	}
-VIEW_SETTINGS={
-	CC_FILES:"list",
-	CC_SONGS:"thumb",
-	CC_ARTISTS:"list",
-	CC_ALBUMS:"thumb",#
-	CC_MOVIES:"thumb",#
-	CC_TVSHOWS:"default",
-	CC_EPISODES:"default",
-	CC_MUSICVIDEOS:"default",
-	"N/A":"default"
-	}
