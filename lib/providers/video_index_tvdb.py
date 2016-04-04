@@ -1,12 +1,4 @@
 import xbmc
-import xbmcgui
-import xbmcplugin
-from datetime import date
-from urllib import quote_plus
-from urllib import urlencode
-import time
-import re
-import json
 from xml.dom import minidom
 import random
 import urlparse
@@ -207,6 +199,7 @@ def get_tvdb_episodes(ids,arts):
 
 
 def make_art(art,season=-1,banner_tables=["text","graphical","blank"]):
+	#make art not war
 	def selectrandom(typ):
 		selected="DefaultFolder.png"
 		for lng in ["local","global","rest"]:
@@ -244,8 +237,7 @@ def run(ump):
 	globals()['ump'] = ump
 	cacheToDisc=True
 	if ump.page == "root":
-		li=xbmcgui.ListItem("Search", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		xbmcplugin.addDirectoryItem(ump.handle,ump.link_to("search",{"search":True}),li,True)
+		ump.index_item("Search","search",args={"search":True})
 		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page == "search":
@@ -310,17 +302,16 @@ def run(ump):
 
 		for id in data.keys():
 			names[id].update(data[id]["info"])
-			li=xbmcgui.ListItem(suggest+names[id]["localtitle"], iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			ump.info=names[id]
-			ump.art=data[id]["art"]
-			try:
-				li.setArt(ump.art)
-			except AttributeError:
-				#backwards compatability
-				pass
-			li.setInfo(ump.content_type,ump.info)
-			u=ump.link_to("seasons",{"tvdbid":id})
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			commands=[]
+			commands.append(('Search on IMDB : %s'%data[id]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":data[id]["info"]["tvshowtitle"],"title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},module="imdb")))
+			commands.append(('Search on ANN : %s'%data[id]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":data[id]["info"]["tvshowtitle"]},module="ann")))
+			for person in data[id]["info"].get("cast","")[:5]:
+				if not person=="":
+					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
+			for person in data[id]["info"].get("director","").split(","):
+				if not person=="":
+					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
+			ump.index_item(suggest+names[id]["localtitle"],"seasons",{"tvdbid":id},info=names[id],art=data[id]["art"],cmds=commands)
 		ump.set_content(ump.defs.CC_TVSHOWS)
 
 	elif ump.page == "seasons":
@@ -332,17 +323,7 @@ def run(ump):
 		#todo get names in all langs
 
 		for sno in sorted(epis.keys(),reverse=True):
-			li=xbmcgui.ListItem("Season %d"%sno, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			ump.art=epis[sno]["art"]
-			#ump.info=epis[sno]["info"]
-			try:
-				li.setArt(ump.art)
-			except AttributeError:
-				#backwards compatability
-				pass
-			#li.setInfo(ump.content_type,ump.info)
-			u=ump.link_to("episodes",{"tvdbid":id,"season":sno})
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+			ump.index_item("Season %d"%sno,"episodes",{"tvdbid":id,"season":sno},art=epis[sno]["art"])
 		ump.set_content(ump.defs.CC_ALBUMS)
 			
 	elif ump.page == "episodes":
@@ -355,15 +336,14 @@ def run(ump):
 		epis=get_tvdb_episodes([id],arts)[id][season]
 		for epno in sorted([int(x) for  x in epis["episode"].keys()],reverse=True):
 			#json keys are strings :(
-			li=xbmcgui.ListItem("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]), iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-			ump.info=epis["episode"][epno]["info"]
-			ump.art=epis["episode"][epno]["art"]
-			try:
-				li.setArt(ump.art)
-			except AttributeError:
-				#backwards compatability
-				pass
-			li.setInfo(ump.content_type,ump.info)
-			u=ump.link_to("urlselect")
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+			commands=[]
+			commands.append(('Search on IMDB : %s'%epis["episode"][epno]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":epis["episode"][epno]["info"]["tvshowtitle"],"title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},module="imdb")))
+			commands.append(('Search on ANN : %s'%epis["episode"][epno]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":epis["episode"][epno]["info"]["tvshowtitle"]},module="ann")))
+			for person in epis["episode"][epno]["info"].get("cast","")[:5]:
+				if not person=="":
+					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
+			for person in epis["episode"][epno]["info"].get("director","").split(","):
+				if not person=="":
+					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
+			ump.index_item("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]),"urlselect",info=epis["episode"][epno]["info"],art=epis["episode"][epno]["art"])
 		ump.set_content(ump.defs.CC_EPISODES)
