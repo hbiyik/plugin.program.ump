@@ -1,8 +1,8 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import int_or_none
+from .common import InfoExtractor
 
 
 class FirstTVIE(InfoExtractor):
@@ -16,7 +16,7 @@ class FirstTVIE(InfoExtractor):
         'info_dict': {
             'id': '73390',
             'ext': 'mp4',
-            'title': 'Олимпийские канатные дороги',
+            'title': 'Олимпий�?кие канатные дороги',
             'description': 'md5:d41d8cd98f00b204e9800998ecf8427e',
             'thumbnail': 're:^https?://.*\.(?:jpg|JPG)$',
             'duration': 149,
@@ -30,7 +30,7 @@ class FirstTVIE(InfoExtractor):
         'info_dict': {
             'id': '35930',
             'ext': 'mp4',
-            'title': 'Наедине со всеми. Людмила Сенчина',
+            'title': '�?аедине �?о в�?еми. Людмила Сенчина',
             'description': 'md5:89553aed1d641416001fe8d450f06cb9',
             'thumbnail': 're:^https?://.*\.(?:jpg|JPG)$',
             'duration': 2694,
@@ -61,10 +61,10 @@ class FirstTVIE(InfoExtractor):
             'video duration', fatal=False)
 
         like_count = self._html_search_regex(
-            r'title="Понравилось".*?/></label> \[(\d+)\]',
+            r'title="Понравило�?ь".*?/></label> \[(\d+)\]',
             webpage, 'like count', default=None)
         dislike_count = self._html_search_regex(
-            r'title="Не понравилось".*?/></label> \[(\d+)\]',
+            r'title="�?е понравило�?ь".*?/></label> \[(\d+)\]',
             webpage, 'dislike count', default=None)
 
         return {

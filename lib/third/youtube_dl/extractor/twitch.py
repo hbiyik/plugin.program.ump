@@ -2,10 +2,9 @@
 from __future__ import unicode_literals
 
 import itertools
-import re
 import random
+import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_parse_qs,
     compat_str,
@@ -22,6 +21,7 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
+from .common import InfoExtractor
 
 
 class TwitchBaseIE(InfoExtractor):

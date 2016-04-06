@@ -6,7 +6,6 @@ import itertools
 import os
 import time
 
-from .fragment import FragmentFD
 from ..compat import (
     compat_etree_fromstring,
     compat_urlparse,
@@ -21,6 +20,7 @@ from ..utils import (
     struct_unpack,
     xpath_text,
 )
+from .fragment import FragmentFD
 
 
 class FlvReader(io.BytesIO):

@@ -1,14 +1,14 @@
 from __future__ import unicode_literals
 
-import re
 import json
+import re
 
-from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     ExtractorError,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 class VeohIE(InfoExtractor):

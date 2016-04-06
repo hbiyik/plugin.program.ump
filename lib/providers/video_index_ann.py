@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import datetime
+import re
+from urllib import urlencode
+from xml.dom import minidom
 import xbmc
 import xbmcgui
-import datetime
-from urllib import urlencode
-import re
-from xml.dom import minidom
 from third.dateutil import parser
+from operator import itemgetter
 
 domain="http://www.animenewsnetwork.com"
 encoding="utf-8"
@@ -19,7 +20,7 @@ except AttributeError:
 def latinise(text):
 	# some roman chars are rare on daily usage, and everybody uses latin representatives. Dont know how romaji works in details.
 	chars={
-		333:"ou", #ō
+		333:"ou", #�?
 		215:"x", #instead of × 
 		8211:"-", # - instead of –
 		}
@@ -273,7 +274,6 @@ def results_search(animes=None,filters=None):
 
 def run(ump):
 	globals()['ump'] = ump
-	cacheToDisc=False
 	if ump.page == "root":
 		ump.index_item("Search","search")
 		ump.index_item("Top Rated Animes","select_year")
@@ -309,7 +309,7 @@ def run(ump):
 	elif ump.page == "bytheme":
 		themes=re.findall('name="th" type="checkbox" value="(.*?)".*?\(([0-9]*?)\)',ump.get_page("%s/encyclopedia/search/genre"%domain,None))
 		addthemes=[]
-		for theme,count in sorted([(x[0],int(x[1])) for x in themes], key=operator.itemgetter(1),reverse=True):
+		for theme,count in sorted([(x[0],int(x[1])) for x in themes], key=itemgetter(1),reverse=True):
 			if not theme in addthemes:
 				addthemes.append(theme)
 				args={"anime":"getgenres('%s')"%urlencode({"th":theme}),"filters":[]}

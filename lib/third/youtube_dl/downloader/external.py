@@ -1,11 +1,10 @@
 from __future__ import unicode_literals
 
 import os.path
+import re
 import subprocess
 import sys
-import re
 
-from .common import FileDownloader
 from ..postprocessor.ffmpeg import FFmpegPostProcessor, EXT_TO_OUT_FORMATS
 from ..utils import (
     cli_option,
@@ -17,6 +16,7 @@ from ..utils import (
     handle_youtubedl_headers,
     check_executable,
 )
+from .common import FileDownloader
 
 
 class ExternalFD(FileDownloader):

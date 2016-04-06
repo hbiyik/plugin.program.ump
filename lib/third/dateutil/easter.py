@@ -9,6 +9,7 @@ __license__ = "PSF License"
 
 import datetime
 
+
 __all__ = ["easter", "EASTER_JULIAN", "EASTER_ORTHODOX", "EASTER_WESTERN"]
 
 EASTER_JULIAN   = 1

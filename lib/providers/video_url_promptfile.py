@@ -1,7 +1,5 @@
-import urlparse
 import re
-import time
-from third import unpack
+
 domain="http://www.promptfile.com/"
 def run(hash,ump,referer=None):
 	src = ump.get_page(domain+"l/"+hash,"utf8",referer=referer)

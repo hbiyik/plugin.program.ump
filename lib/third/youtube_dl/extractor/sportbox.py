@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     unified_strdate,
 )
+from .common import InfoExtractor
 
 
 class SportBoxIE(InfoExtractor):
@@ -18,7 +18,7 @@ class SportBoxIE(InfoExtractor):
         'info_dict': {
             'id': '80822',
             'ext': 'mp4',
-            'title': 'Гонка 2  заезд ««Объединенный 2000»: классы Туринг и Супер-продакшн',
+            'title': 'Гонка 2  заезд ««Объединенный 2000»: кла�?�?ы Туринг и Супер-продакшн',
             'description': 'md5:3d72dc4a006ab6805d82f037fdc637ad',
             'thumbnail': 're:^https?://.*\.jpg$',
             'upload_date': '20140928',
@@ -71,7 +71,7 @@ class SportBoxEmbedIE(InfoExtractor):
         'info_dict': {
             'id': '211355',
             'ext': 'mp4',
-            'title': 'В Новороссийске прошел детский турнир «Поле славы боевой»',
+            'title': 'В �?оворо�?�?ий�?ке прошел дет�?кий турнир «Поле �?лавы боевой»',
             'thumbnail': 're:^https?://.*\.jpg$',
         },
         'params': {

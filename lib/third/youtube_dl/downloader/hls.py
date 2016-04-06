@@ -1,15 +1,14 @@
 from __future__ import unicode_literals
 
-import os.path
+import os
 import re
-
-from .fragment import FragmentFD
 
 from ..compat import compat_urlparse
 from ..utils import (
     encodeFilename,
     sanitize_open,
 )
+from .fragment import FragmentFD
 
 
 class HlsFD(FragmentFD):

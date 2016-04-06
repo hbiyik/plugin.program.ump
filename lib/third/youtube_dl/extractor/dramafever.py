@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import itertools
 
-from .amp import AMPIE
 from ..compat import (
     compat_HTTPError,
     compat_urlparse,
@@ -15,6 +14,7 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata
 )
+from .amp import AMPIE
 
 
 class DramaFeverBaseIE(AMPIE):

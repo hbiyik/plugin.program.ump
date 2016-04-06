@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     js_to_json,
     determine_ext,
 )
+from .common import InfoExtractor
 
 
 class BpbIE(InfoExtractor):

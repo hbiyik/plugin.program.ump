@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_parse_qs
 from ..utils import (
     int_or_none,
@@ -9,6 +8,7 @@ from ..utils import (
     parse_iso8601,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 class FolketingetIE(InfoExtractor):

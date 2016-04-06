@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
 import os
 import subprocess
-
-from .ffmpeg import FFmpegPostProcessor
 
 from ..utils import (
     check_executable,
@@ -15,6 +12,7 @@ from ..utils import (
     prepend_extension,
     shell_quote
 )
+from .ffmpeg import FFmpegPostProcessor
 
 
 class EmbedThumbnailPPError(PostProcessingError):

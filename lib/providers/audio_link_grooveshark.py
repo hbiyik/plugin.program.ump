@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import urllib2
-import urllib
 import json
 import re
-import urlparse
-        		
+
+
 domain="http://groovesharks.org"
 encoding="utf-8"
 tunnel="proxyduck"
@@ -26,7 +24,6 @@ def run(ump):
 	for item in playlist:
 		match=False
 		i=item["info"]
-		a=item["art"]
 		if not i["album"]=="":
 			if match:continue
 			if not ump.is_same(i["artist"],old_artist):
@@ -36,7 +33,7 @@ def run(ump):
 			results=re.findall('<h4 class="nowrap">(.*?)</h4>\s*?<p class="nowrap"><a href="(.*?)".*?>Artist Info</a>',artist_page)
 			for result in results:
 				if match:break
-				artist,link=result
+				artist=result[0]
 				if ump.is_same(artist,i["artist"]):
 					if not ump.is_same(artist,old_artalbum):
 						album_page=ump.get_page("%s/music/getAlbums/"%domain,encoding,query={"csrf_yme":"","artist":artist},referer=domain,tunnel=tunnel)

@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     clean_html,
     determine_ext,
@@ -10,6 +9,7 @@ from ..utils import (
     ExtractorError,
     urlencode_postdata
 )
+from .common import InfoExtractor
 
 
 class FunimationIE(InfoExtractor):

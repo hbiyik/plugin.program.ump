@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import unescapeHTML
+from .common import InfoExtractor
 
 
 class BaiduVideoIE(InfoExtractor):
@@ -14,7 +14,7 @@ class BaiduVideoIE(InfoExtractor):
         'url': 'http://v.baidu.com/comic/1069.htm?frp=bdbrand&q=%E4%B8%AD%E5%8D%8E%E5%B0%8F%E5%BD%93%E5%AE%B6',
         'info_dict': {
             'id': '1069',
-            'title': '中华小当家 TV版国语',
+            'title': '中�?��?当家 TV版国语',
             'description': 'md5:51be07afe461cf99fa61231421b5397c',
         },
         'playlist_count': 52,
@@ -22,7 +22,7 @@ class BaiduVideoIE(InfoExtractor):
         'url': 'http://v.baidu.com/show/11595.htm?frp=bdbrand',
         'info_dict': {
             'id': '11595',
-            'title': 're:^奔跑吧兄弟',
+            'title': 're:^奔跑�?�兄弟',
             'description': 'md5:1bf88bad6d850930f542d51547c089b8',
         },
         'playlist_mincount': 12,

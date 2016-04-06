@@ -29,7 +29,7 @@ class InfoQIE(BokeCCBaseIE):
         'md5': '4918d0cca1497f2244572caf626687ef',
         'info_dict': {
             'id': 'openstack-continued-delivery',
-            'title': 'OpenStack持续交付之路',
+            'title': 'OpenStack�?续交付之路',
             'ext': 'flv',
             'description': 'md5:308d981fb28fa42f49f9568322c683ff',
         },

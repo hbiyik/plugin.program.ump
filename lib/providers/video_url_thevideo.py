@@ -1,4 +1,3 @@
-import urlparse
 import re
 import time
 

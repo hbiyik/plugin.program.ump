@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import ExtractorError
+from .common import InfoExtractor
 
 
 class NewstubeIE(InfoExtractor):
@@ -14,7 +14,7 @@ class NewstubeIE(InfoExtractor):
         'info_dict': {
             'id': '728e0ef2-e187-4012-bac0-5a081fdcb1f6',
             'ext': 'flv',
-            'title': 'Телеканал CNN переместил город Славянск в Крым',
+            'title': 'Телеканал CNN переме�?тил город Слав�?н�?к в Крым',
             'description': 'md5:419a8c9f03442bc0b0a794d689360335',
             'duration': 31.05,
         },

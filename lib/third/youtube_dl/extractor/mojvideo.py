@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     parse_duration,
 )
+from .common import InfoExtractor
 
 
 class MojvideoIE(InfoExtractor):
@@ -19,7 +19,7 @@ class MojvideoIE(InfoExtractor):
             'id': '3d1ed4497707730b2906',
             'display_id': 'v-avtu-pred-mano-rdecelaska-alfi-nipic',
             'ext': 'mp4',
-            'title': 'V avtu pred mano rdeƒçelaska - Alfi Nipiƒç',
+            'title': 'V avtu pred mano rdeƒ?elaska - Alfi Nipiƒ?',
             'thumbnail': 're:^http://.*\.jpg$',
             'duration': 242,
         }

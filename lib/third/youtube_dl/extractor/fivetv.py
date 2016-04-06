@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import int_or_none
+from .common import InfoExtractor
 
 
 class FiveTVIE(InfoExtractor):
@@ -23,7 +23,7 @@ class FiveTVIE(InfoExtractor):
         'info_dict': {
             'id': '96814',
             'ext': 'mp4',
-            'title': 'Россияне выбрали имя для общенациональной платежной системы',
+            'title': 'Ро�?�?и�?не выбрали им�? дл�? общенациональной платежной �?и�?темы',
             'description': 'md5:a8aa13e2b7ad36789e9f77a74b6de660',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 180,
@@ -43,7 +43,7 @@ class FiveTVIE(InfoExtractor):
         'info_dict': {
             'id': 'glavnoe',
             'ext': 'mp4',
-            'title': 'Итоги недели с 8 по 14 июня 2015 года',
+            'title': 'Итоги недели �? 8 по 14 июн�? 2015 года',
             'thumbnail': 're:^https?://.*\.jpg$',
         },
     }, {

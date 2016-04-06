@@ -1,13 +1,12 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
-
 from ..utils import (
     determine_ext,
     parse_iso8601,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 class NerdistIE(InfoExtractor):

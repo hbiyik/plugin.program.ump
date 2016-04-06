@@ -1,9 +1,8 @@
-from urllib2 import HTTPError
-import json
 import re
-import time
 import urlparse
+
 from third.unidecode import  unidecode
+
 
 domain="http://www.animeram.co"
 encoding=None
@@ -41,7 +40,6 @@ def google(names):
 	if not results is None:
 		for result in results:
 			page=ump.get_page(result,encoding)
-			info_table = re.findall('<table\sclass=\"sheet\">(.+?)</table>', page, re.DOTALL)[0]
 			info = re.findall("<td\sclass=\"header\"><label>(.+?)</label></td>\s<td\sclass=\"content1\">(.+?)</td>", page, re.DOTALL)
 			for info_title, info_value in info:
 				if "Title:" in info_title:
@@ -54,12 +52,6 @@ def google(names):
 					if info_value is not "-":
 						#TODO: implement after such found.
 						raise
-
-			for name in refnames:
-				for name1 in names:
-					if ump.is_same(name1,name,strict=True):
-						ump.add_log("animeram found %s"%name)
-						return result
 	return False
 
 def searchsite(names):
@@ -115,7 +107,6 @@ def run(ump):
 	is_serie,names=ump.get_vidnames(org_first = not is_anime)
 	
 
-	urls=[]	
 	#page=(searchsite(names) or google(names))
 	#google has not cached enough
 	found=searchsite(names)
@@ -136,7 +127,7 @@ def run(ump):
 		if is_serie:
 			epipage=ump.get_page(found+"/%d"%i["episode"],encoding)
 			if "Error: Episode not found" in epipage:
-				ump.add_log("animeram can't find episode %d of %s"%(epinum,name))
+				ump.add_log("animeram can't find episode %d of %s"%(epinum,names[0]))
 				return None
 	
 	found=found+"/%d"%i["episode"]

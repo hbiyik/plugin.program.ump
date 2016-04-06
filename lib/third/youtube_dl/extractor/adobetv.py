@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     parse_duration,
@@ -13,6 +12,7 @@ from ..utils import (
     ISO639Utils,
     determine_ext,
 )
+from .common import InfoExtractor
 
 
 class AdobeTVBaseIE(InfoExtractor):

@@ -1,12 +1,12 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     parse_duration,
     remove_end,
 )
+from .common import InfoExtractor
 
 
 class LRTIE(InfoExtractor):

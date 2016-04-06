@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     js_to_json,
     unescapeHTML,
     ExtractorError,
 )
+from .common import InfoExtractor
 
 
 class DVTVIE(InfoExtractor):
@@ -65,7 +65,7 @@ class DVTVIE(InfoExtractor):
             'info_dict': {
                 'id': '6fe14d66853511e4833a0025900fea04',
                 'ext': 'mp4',
-                'title': 'Pánek: Odmítání syrských uprchlíků je ostudou české vlády'
+                'title': 'Pánek: Odmítání syrských uprchlíků je ostudou �?eské vlády'
             }
         }],
     }, {

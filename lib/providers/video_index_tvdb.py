@@ -1,7 +1,9 @@
-import xbmc
-from xml.dom import minidom
 import random
 import urlparse
+from xml.dom import minidom
+
+import xbmc
+
 
 mirror="http://thetvdb.com"
 try:
@@ -235,7 +237,6 @@ def make_art(art,season=-1,banner_tables=["text","graphical","blank"]):
 
 def run(ump):
 	globals()['ump'] = ump
-	cacheToDisc=True
 	if ump.page == "root":
 		ump.index_item("Search","search",args={"search":True})
 		ump.set_content(ump.defs.CC_FILES)

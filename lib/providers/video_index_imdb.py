@@ -1,10 +1,12 @@
-import xbmc
 from datetime import date
-import time
-import re
-import operator
-from ump import countries
 import json
+import operator
+import re
+
+import xbmc
+
+from ump import countries
+
 
 try:
 	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
@@ -49,17 +51,12 @@ def scrape_imdb_names(page):
 
 def scrape_imdb_search(page):
 	m1=[]
-	t1=time.time()
 	trs=re.findall('detailed"\>(.*?)\</tr\>',page,re.DOTALL)
-	t2=time.time()
 	for tr in trs:
 		#image
-		position=re.findall('td class="number">([0-9]*?)\.</td',tr)
 		poster=re.findall('img src="(.*?)"',tr)
 		if len(poster)>0:
 			poster=poster[0].split("._")[0]
-		else:
-			img=""
 		
 		#name/id
 		title=re.findall('href="/title/tt([0-9]*?)/"\>(.*?)\</a\>',tr)
@@ -257,7 +254,6 @@ def scrape_name(id,lean=False):
 
 def run(ump):
 	globals()['ump'] = ump
-	cacheToDisc=True
 	if ump.page == "root":
 		ump.index_item("Search Movies","results_title",args={"title":"?","title_type":"feature,tv_movie,short","sort":"moviemeter,asc"})
 		ump.index_item("Search Series","results_title",args={"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS})		
@@ -396,7 +392,6 @@ def run(ump):
 			kb.setHiddenInput(False)
 			kb.doModal()
 			ump.args["title"]=kb.getText()
-		start=end=total=0
 		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args,header={"Accept-Language":"tr"})#hack imdb to give me original title with my unstandart language header
 		start,end,total,movies=scrape_imdb_search(page)
 		suggest=""

@@ -1,5 +1,7 @@
 import re
+
 from third import unpack
+
 
 def run(hash,ump,referer=None):
 	link="http://videomega.tv/iframe.php?ref="+hash

@@ -18,7 +18,7 @@ class WeiboIE(InfoExtractor):
         'info_dict': {
             'id': '98322879',
             'ext': 'flv',
-            'title': '魔声耳机最新广告“All Eyes On Us”',
+            'title': '魔声耳机最新广告“All Eyes On Us�?',
         },
         'params': {
             'skip_download': True,

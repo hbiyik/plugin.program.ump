@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import ExtractorError
+from .common import InfoExtractor
 from .screenwavemedia import ScreenwaveMediaIE
 
 
@@ -18,7 +18,7 @@ class CinemassacreIE(InfoExtractor):
                 'id': 'Cinemassacre-19911',
                 'ext': 'mp4',
                 'upload_date': '20121110',
-                'title': '“Angry Video Game Nerd: The Movie” – Trailer',
+                'title': '“Angry Video Game Nerd: The Movie�? – Trailer',
                 'description': 'md5:fb87405fcb42a331742a0dce2708560b',
             },
             'params': {

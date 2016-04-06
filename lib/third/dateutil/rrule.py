@@ -7,11 +7,12 @@ datetime module.
 __author__ = "Gustavo Niemeyer <gustavo@niemeyer.net>"
 __license__ = "PSF License"
 
-import itertools
-import datetime
 import calendar
-import thread
+import datetime
+import itertools
 import sys
+import thread
+
 
 __all__ = ["rrule", "rruleset", "rrulestr",
            "YEARLY", "MONTHLY", "WEEKLY", "DAILY",

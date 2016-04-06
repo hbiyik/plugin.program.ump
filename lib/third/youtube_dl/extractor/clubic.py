@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 import json
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     clean_html,
     qualities,
 )
+from .common import InfoExtractor
 
 
 class ClubicIE(InfoExtractor):

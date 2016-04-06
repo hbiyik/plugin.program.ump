@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-import time
 import re
-import json
-from urllib2 import HTTPError
-from xml.dom import minidom
 import urlparse
 
 encoding="utf-8"

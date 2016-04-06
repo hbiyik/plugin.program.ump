@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     unified_strdate
 )
+from .common import InfoExtractor
 
 
 class THVideoIE(InfoExtractor):
@@ -17,10 +17,10 @@ class THVideoIE(InfoExtractor):
         'info_dict': {
             'id': '1987',
             'ext': 'mp4',
-            'title': '【动画】秘封活动记录 ～ The Sealed Esoteric History.分镜稿预览',
+            'title': '�?动画】秘�?活动记录 ～ The Sealed Esoteric History.分镜稿预览',
             'display_id': 'th1987',
             'thumbnail': 'http://thvideo.tv/uploadfile/2014/0722/20140722013459856.jpg',
-            'description': '社团京都幻想剧团的第一个东方二次同人动画作品「秘封活动记录 ～ The Sealed Esoteric History.」 本视频是该动画第一期的分镜草稿...',
+            'description': '社团京都幻想剧团的第一个东方二次�?�人动画作�?「秘�?活动记录 ～ The Sealed Esoteric History.�? 本视频是该动画第一期的分镜�?�稿...',
             'upload_date': '20140722'
         }
     }
@@ -64,7 +64,7 @@ class THVideoPlaylistIE(InfoExtractor):
         'url': 'http://thvideo.tv/mylist2',
         'info_dict': {
             'id': '2',
-            'title': '幻想万華鏡',
+            'title': '幻想万�?��?�',
         },
         'playlist_mincount': 23,
     }

@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-
 import itertools
 import json
 import os.path
@@ -11,9 +10,6 @@ import re
 import time
 import traceback
 
-from .common import InfoExtractor, SearchInfoExtractor
-from ..jsinterp import JSInterpreter
-from ..swfinterp import SWFInterpreter
 from ..compat import (
     compat_chr,
     compat_parse_qs,
@@ -24,6 +20,8 @@ from ..compat import (
     compat_urlparse,
     compat_str,
 )
+from ..jsinterp import JSInterpreter
+from ..swfinterp import SWFInterpreter
 from ..utils import (
     clean_html,
     error_to_compat_str,
@@ -47,6 +45,7 @@ from ..utils import (
     urlencode_postdata,
     ISO3166Utils,
 )
+from .common import InfoExtractor, SearchInfoExtractor
 
 
 class YoutubeBaseInfoExtractor(InfoExtractor):
@@ -383,13 +382,13 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             'info_dict': {
                 'id': 'BaW_jenozKc',
                 'ext': 'mp4',
-                'title': 'youtube-dl test video "\'/\\ä↭𝕐',
+                'title': 'youtube-dl test video "\'/\\ä↭�?�?',
                 'uploader': 'Philipp Hagemeister',
                 'uploader_id': 'phihag',
                 'uploader_url': 're:https?://(?:www\.)?youtube\.com/user/phihag',
                 'upload_date': '20121002',
                 'license': 'Standard YouTube License',
-                'description': 'test chars:  "\'/\\ä↭𝕐\ntest URL: https://github.com/rg3/youtube-dl/issues/1892\n\nThis is a test video for youtube-dl.\n\nFor more information, contact phihag@phihag.de .',
+                'description': 'test chars:  "\'/\\ä↭�?�?\ntest URL: https://github.com/rg3/youtube-dl/issues/1892\n\nThis is a test video for youtube-dl.\n\nFor more information, contact phihag@phihag.de .',
                 'categories': ['Science & Technology'],
                 'tags': ['youtube-dl'],
                 'like_count': int,
@@ -458,13 +457,13 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             'info_dict': {
                 'id': 'BaW_jenozKc',
                 'ext': 'mp4',
-                'title': 'youtube-dl test video "\'/\\ä↭𝕐',
+                'title': 'youtube-dl test video "\'/\\ä↭�?�?',
                 'uploader': 'Philipp Hagemeister',
                 'uploader_id': 'phihag',
                 'uploader_url': 're:https?://(?:www\.)?youtube\.com/user/phihag',
                 'upload_date': '20121002',
                 'license': 'Standard YouTube License',
-                'description': 'test chars:  "\'/\\ä↭𝕐\ntest URL: https://github.com/rg3/youtube-dl/issues/1892\n\nThis is a test video for youtube-dl.\n\nFor more information, contact phihag@phihag.de .',
+                'description': 'test chars:  "\'/\\ä↭�?�?\ntest URL: https://github.com/rg3/youtube-dl/issues/1892\n\nThis is a test video for youtube-dl.\n\nFor more information, contact phihag@phihag.de .',
                 'categories': ['Science & Technology'],
                 'tags': ['youtube-dl'],
                 'like_count': int,
@@ -626,10 +625,10 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 'upload_date': '20110310',
                 'uploader_id': 'AllenMeow',
                 'uploader_url': 're:https?://(?:www\.)?youtube\.com/user/AllenMeow',
-                'description': 'made by Wacom from Korea | 字幕&加油添醋 by TY\'s Allen | 感謝heylisa00cavey1001同學熱情提供梗及翻譯',
+                'description': 'made by Wacom from Korea | 字幕&加油添醋 by TY\'s Allen | 感�?heylisa00cavey1001�?�學熱情�??供梗�?�翻譯',
                 'uploader': '孫艾倫',
                 'license': 'Standard YouTube License',
-                'title': '[A-made] 變態妍字幕版 太妍 我就是這樣的人',
+                'title': '[A-made] 變態�?字幕版 太�? 我就是這樣的人',
             },
         },
         # url_encoded_fmt_stream_map is empty string
@@ -638,11 +637,11 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             'info_dict': {
                 'id': 'qEJwOuvDf7I',
                 'ext': 'webm',
-                'title': 'Обсуждение судебной практики по выборам 14 сентября 2014 года в Санкт-Петербурге',
+                'title': 'Об�?уждение �?удебной практики по выборам 14 �?ент�?бр�? 2014 года в Санкт-Петербурге',
                 'description': '',
                 'upload_date': '20150404',
                 'uploader_id': 'spbelect',
-                'uploader': 'Наблюдатели Петербурга',
+                'uploader': '�?аблюдатели Петербурга',
             },
             'params': {
                 'skip_download': 'requires avconv',

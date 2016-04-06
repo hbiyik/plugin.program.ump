@@ -1,7 +1,7 @@
-import xbmc
-import time
-import re
 from operator import itemgetter
+import re
+import time
+import xbmc
 
 encoding="utf-8"
 stype="manga"
@@ -83,7 +83,6 @@ def get_details_mangaka(matches):
 		info={}
 		cover=re.findall("<img height.*?src='(.*?)'>",src)
 		if len(cover):thumb=cover[0]
-		from operator import itemgetter
 		names1=sorted(re.findall('series\.html\?id\=(.*?)"\>(.*?)</a.*?>([0-9]*?)</td>\s*?</tr>',src,re.DOTALL),key=itemgetter(2),reverse=True)
 		names=[]
 		for name in names1:
@@ -142,7 +141,6 @@ def get_details(matches):
 
 def run(ump):
 	globals()['ump'] = ump
-	cacheToDisc=True
 	if ump.page == "root":
 		ump.index_item("Search","select_type",args={"stype":"title","perpage":perpage,"page":1})
 		ump.index_item("Genres","genres")
@@ -309,7 +307,6 @@ def run(ump):
 
 	elif ump.page== "show_chapters":
 		id=ump.info["code"]
-		t1=time.time()
 		releases=get_releases(id)
 		rel_sort=sorted(releases,key=itemgetter(0,3),reverse=True)
 		

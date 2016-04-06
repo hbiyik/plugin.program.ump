@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
+from ..aes import aes_decrypt_text
 from ..compat import (
     compat_urllib_parse_unquote,
     compat_urllib_parse_urlparse,
@@ -12,7 +12,7 @@ from ..utils import (
     str_to_int,
     unified_strdate,
 )
-from ..aes import aes_decrypt_text
+from .common import InfoExtractor
 
 
 class SpankwireIE(InfoExtractor):

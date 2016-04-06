@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     fix_xml_ampersands,
     parse_duration,
@@ -10,6 +9,7 @@ from ..utils import (
     strip_jsonp,
     unified_strdate,
 )
+from .common import InfoExtractor
 
 
 class NPOBaseIE(InfoExtractor):

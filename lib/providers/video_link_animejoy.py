@@ -1,8 +1,7 @@
-from urllib2 import HTTPError
 import json
 import re
 import time
-			
+
 domain="http://anime-joy.tv"
 encoding="utf-8"
 
@@ -50,7 +49,7 @@ def run(ump):
 		try:
 			time.sleep(slower)
 			results=json.loads(ump.get_page(domain+"/search.php",encoding,query={"term":name}))
-		except ValueError,timeout:
+		except ValueError:
 			continue
 		
 		found=match_uri([domain+"/watch/"+item["id"] for item in results],names)

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_str,
     compat_urllib_parse_urlencode,
@@ -12,6 +11,7 @@ from ..utils import (
     ExtractorError,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 class SohuIE(InfoExtractor):
@@ -33,7 +33,7 @@ class SohuIE(InfoExtractor):
         'info_dict': {
             'id': '409385080',
             'ext': 'mp4',
-            'title': '《2015湖南卫视羊年元宵晚会》唐嫣《花好月圆》',
+            'title': '《2015湖�?��?�视羊年元宵晚会》�?嫣《花好月圆》',
         }
     }, {
         'url': 'http://my.tv.sohu.com/us/232799889/78693464.shtml',
@@ -41,14 +41,14 @@ class SohuIE(InfoExtractor):
         'info_dict': {
             'id': '78693464',
             'ext': 'mp4',
-            'title': '【爱范品】第31期：MWC见不到的奇葩手机',
+            'title': '�?爱范�?】第31期：MWC�?�?到的奇葩手机',
         }
     }, {
         'note': 'Multipart video',
         'url': 'http://my.tv.sohu.com/pl/8384802/78910339.shtml',
         'info_dict': {
             'id': '78910339',
-            'title': '【神探苍实战秘籍】第13期 战争之影 赫卡里姆',
+            'title': '�?神探�?实战秘�?】第13期 战争之影 赫�?�里姆',
         },
         'playlist': [{
             'md5': 'bdbfb8f39924725e6589c146bc1883ad',
@@ -56,7 +56,7 @@ class SohuIE(InfoExtractor):
                 'id': '78910339_part1',
                 'ext': 'mp4',
                 'duration': 294,
-                'title': '【神探苍实战秘籍】第13期 战争之影 赫卡里姆',
+                'title': '�?神探�?实战秘�?】第13期 战争之影 赫�?�里姆',
             }
         }, {
             'md5': '3e1f46aaeb95354fd10e7fca9fc1804e',
@@ -64,7 +64,7 @@ class SohuIE(InfoExtractor):
                 'id': '78910339_part2',
                 'ext': 'mp4',
                 'duration': 300,
-                'title': '【神探苍实战秘籍】第13期 战争之影 赫卡里姆',
+                'title': '�?神探�?实战秘�?】第13期 战争之影 赫�?�里姆',
             }
         }, {
             'md5': '8407e634175fdac706766481b9443450',
@@ -72,7 +72,7 @@ class SohuIE(InfoExtractor):
                 'id': '78910339_part3',
                 'ext': 'mp4',
                 'duration': 150,
-                'title': '【神探苍实战秘籍】第13期 战争之影 赫卡里姆',
+                'title': '�?神探�?实战秘�?】第13期 战争之影 赫�?�里姆',
             }
         }]
     }, {
@@ -112,7 +112,7 @@ class SohuIE(InfoExtractor):
 
         webpage = self._download_webpage(url, video_id)
 
-        title = re.sub(r' - 搜狐视频$', '', self._og_search_title(webpage))
+        title = re.sub(r' - �?��?视频$', '', self._og_search_title(webpage))
 
         vid = self._html_search_regex(
             r'var vid ?= ?["\'](\d+)["\']',

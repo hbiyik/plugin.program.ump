@@ -1,8 +1,9 @@
-import urllib2
-import re
-import time
 from StringIO import StringIO
 import gzip
+import re
+import time
+import urllib2
+
 
 def dec(s):
 	offset=1 if s[0]=='+' else 0

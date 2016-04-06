@@ -1,5 +1,6 @@
 import re
 
+
 domain="http://mangafox.me"
 encoding="utf-8"
 

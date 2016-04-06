@@ -1,5 +1,6 @@
 import re
 
+
 def run(hash,ump,referer=None):
 	src=ump.get_page("http://filenuke.com/f/"+hash,"utf-8",referer=referer)
 	link2=re.findall('href="(.*?)">Free</a>',src)

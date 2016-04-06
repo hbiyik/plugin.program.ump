@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import PostProcessor
 from ..utils import PostProcessingError
+from .common import PostProcessor
 
 
 class MetadataFromTitlePPError(PostProcessingError):

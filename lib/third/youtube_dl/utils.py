@@ -14,8 +14,8 @@ import email.utils
 import errno
 import functools
 import gzip
-import itertools
 import io
+import itertools
 import json
 import locale
 import math
@@ -24,8 +24,8 @@ import os
 import pipes
 import platform
 import re
-import ssl
 import socket
+import ssl
 import struct
 import subprocess
 import sys

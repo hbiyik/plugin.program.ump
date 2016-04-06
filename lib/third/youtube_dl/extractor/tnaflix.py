@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     fix_xml_ampersands,
@@ -12,6 +11,7 @@ from ..utils import (
     str_to_int,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 class TNAFlixNetworkBaseIE(InfoExtractor):

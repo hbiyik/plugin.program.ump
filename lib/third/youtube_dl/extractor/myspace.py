@@ -1,14 +1,14 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import re
 import json
+import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_str,
 )
 from ..utils import ExtractorError
+from .common import InfoExtractor
 
 
 class MySpaceIE(InfoExtractor):

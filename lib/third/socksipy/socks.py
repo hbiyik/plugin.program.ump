@@ -33,6 +33,7 @@ for tunneling connections through SOCKS proxies.
 import socket
 import struct
 
+
 PROXY_TYPE_SOCKS4 = 1
 PROXY_TYPE_SOCKS5 = 2
 PROXY_TYPE_HTTP = 3

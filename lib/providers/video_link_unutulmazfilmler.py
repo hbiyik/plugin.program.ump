@@ -1,6 +1,7 @@
 import re
 import string
-			
+
+
 domain="http://www.unutulmazfilmler.co"
 encoding="utf-8"
 
@@ -36,8 +37,7 @@ def run(ump):
 
 	if is_serie:
 		return None
-	pages=[]
-	
+
 	for name in names:
 		ump.add_log("UnutulmazFilmler is searching %s" % name)
 		query={"arama":filtertext(name,False," ")}

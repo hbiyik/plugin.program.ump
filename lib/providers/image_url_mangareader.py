@@ -1,5 +1,6 @@
 import re
 
+
 domain="http://www.mangareader.net"
 encoding="utf-8"
 

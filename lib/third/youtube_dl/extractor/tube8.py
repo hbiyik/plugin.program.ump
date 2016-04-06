@@ -2,14 +2,14 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
+from ..aes import aes_decrypt_text
 from ..compat import compat_str
 from ..utils import (
     int_or_none,
     sanitized_Request,
     str_to_int,
 )
-from ..aes import aes_decrypt_text
+from .common import InfoExtractor
 
 
 class Tube8IE(InfoExtractor):

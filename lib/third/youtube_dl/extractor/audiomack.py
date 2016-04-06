@@ -4,12 +4,12 @@ from __future__ import unicode_literals
 import itertools
 import time
 
-from .common import InfoExtractor
-from .soundcloud import SoundcloudIE
 from ..utils import (
     ExtractorError,
     url_basename,
 )
+from .common import InfoExtractor
+from .soundcloud import SoundcloudIE
 
 
 class AudiomackIE(InfoExtractor):

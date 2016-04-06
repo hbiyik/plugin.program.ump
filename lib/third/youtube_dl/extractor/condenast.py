@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_urllib_parse_urlparse,
@@ -13,6 +12,7 @@ from ..utils import (
     orderedSet,
     remove_end,
 )
+from .common import InfoExtractor
 
 
 class CondeNastIE(InfoExtractor):

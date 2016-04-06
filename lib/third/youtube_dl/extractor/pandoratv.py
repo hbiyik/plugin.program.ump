@@ -1,7 +1,6 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import (
     compat_str,
     compat_urlparse,
@@ -12,23 +11,24 @@ from ..utils import (
     parse_duration,
     str_to_int,
 )
+from .common import InfoExtractor
 
 
 class PandoraTVIE(InfoExtractor):
     IE_NAME = 'pandora.tv'
-    IE_DESC = '판도라TV'
+    IE_DESC = '�?�?��?�TV'
     _VALID_URL = r'https?://(?:.+?\.)?channel\.pandora\.tv/channel/video\.ptv\?'
     _TEST = {
         'url': 'http://jp.channel.pandora.tv/channel/video.ptv?c1=&prgid=53294230&ch_userid=mikakim&ref=main&lot=cate_01_2',
         'info_dict': {
             'id': '53294230',
             'ext': 'flv',
-            'title': '頭を撫でてくれる？',
-            'description': '頭を撫でてくれる？',
+            'title': '頭を撫�?��?��??れる？',
+            'description': '頭を撫�?��?��??れる？',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 39,
             'upload_date': '20151218',
-            'uploader': 'カワイイ動物まとめ',
+            'uploader': 'カワイイ動物�?��?��?',
             'uploader_id': 'mikakim',
             'view_count': int,
             'like_count': int,

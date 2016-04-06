@@ -1,12 +1,12 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     parse_duration,
     parse_iso8601,
 )
+from .common import InfoExtractor
 
 
 class MnetIE(InfoExtractor):
@@ -15,7 +15,7 @@ class MnetIE(InfoExtractor):
         'url': 'http://www.mnet.com/tv/vod/171008',
         'info_dict': {
             'id': '171008',
-            'title': 'SS_이해인@히든박스',
+            'title': 'SS_�?�해�?�@히든박스',
             'description': 'md5:b9efa592c3918b615ba69fe9f8a05c55',
             'duration': 88,
             'upload_date': '20151231',

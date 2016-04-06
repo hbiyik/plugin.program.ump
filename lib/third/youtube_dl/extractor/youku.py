@@ -6,7 +6,6 @@ import random
 import string
 import time
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_ord,
@@ -15,6 +14,7 @@ from ..utils import (
     ExtractorError,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 class YoukuIE(InfoExtractor):
@@ -50,7 +50,7 @@ class YoukuIE(InfoExtractor):
         'url': 'http://v.youku.com/v_show/id_XMTI1OTczNDM5Mg==.html',
         'info_dict': {
             'id': 'XMTI1OTczNDM5Mg',
-            'title': '花千骨 04',
+            'title': '花�?�骨 04',
         },
         'playlist_count': 13,
     }, {
@@ -58,7 +58,7 @@ class YoukuIE(InfoExtractor):
         'note': 'Video protected with password',
         'info_dict': {
             'id': 'XNjA1NzA2Njgw',
-            'title': '邢義田复旦讲座之想象中的胡人—从“左衽孔子”说起',
+            'title': '邢義田�?旦讲座之想象中的胡人—从“左衽孔�?�?说起',
         },
         'playlist_count': 19,
         'params': {
@@ -226,10 +226,10 @@ class YoukuIE(InfoExtractor):
         error = data.get('error')
         if error:
             error_note = error.get('note')
-            if error_note is not None and '因版权原因无法观看此视频' in error_note:
+            if error_note is not None and '因版�?�原因无法观看此视频' in error_note:
                 raise ExtractorError(
                     'Youku said: Sorry, this video is available in China only', expected=True)
-            elif error_note and '该视频被设为私密' in error_note:
+            elif error_note and '该视频被设为�?密' in error_note:
                 raise ExtractorError(
                     'Youku said: Sorry, this video is private', expected=True)
             else:

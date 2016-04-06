@@ -1,8 +1,7 @@
-from urllib2 import HTTPError
-import json
 import re
-import time
-			
+from urllib2 import HTTPError
+
+
 domain="http://www.animejolt.org"
 encoding="utf-8"
 
@@ -15,7 +14,6 @@ def run(ump):
 		return None
 
 	is_serie,names=ump.get_vidnames(org_first = not is_anime)
-	urls=[]	
 	found=False
 	for name in names:
 		if found:

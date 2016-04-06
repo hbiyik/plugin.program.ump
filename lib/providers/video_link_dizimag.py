@@ -1,6 +1,7 @@
-import re
 import json
+import re
 from urllib2 import HTTPError
+
 
 encoding="utf-8"
 domain = 'http://dizimag.co'
@@ -11,7 +12,6 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	is_serie,names=ump.get_vidnames()
-	found=False
 	if not is_serie:
 		return None
 

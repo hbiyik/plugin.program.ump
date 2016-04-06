@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import random
 
-from .common import InfoExtractor
 from ..compat import compat_urllib_parse_urlencode
 from ..utils import (
     sanitized_Request,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 class MatchTVIE(InfoExtractor):
@@ -18,7 +18,7 @@ class MatchTVIE(InfoExtractor):
         'info_dict': {
             'id': 'matchtv-live',
             'ext': 'flv',
-            'title': 're:^Матч ТВ - Прямой эфир \d{4}-\d{2}-\d{2} \d{2}:\d{2}$',
+            'title': 're:^Матч ТВ - Пр�?мой �?фир \d{4}-\d{2}-\d{2} \d{2}:\d{2}$',
             'is_live': True,
         },
         'params': {
@@ -50,7 +50,7 @@ class MatchTVIE(InfoExtractor):
         self._sort_formats(formats)
         return {
             'id': video_id,
-            'title': self._live_title('Матч ТВ - Прямой эфир'),
+            'title': self._live_title('Матч ТВ - Пр�?мой �?фир'),
             'is_live': True,
             'formats': formats,
         }

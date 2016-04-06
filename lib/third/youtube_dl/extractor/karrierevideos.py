@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     fix_xml_ampersands,
@@ -9,6 +8,7 @@ from ..utils import (
     xpath_with_ns,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 class KarriereVideosIE(InfoExtractor):

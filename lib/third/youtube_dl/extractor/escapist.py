@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import json
 
-from .common import InfoExtractor
 from ..utils import (
     determine_ext,
     clean_html,
@@ -10,6 +9,7 @@ from ..utils import (
     float_or_none,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 def _decrypt_config(key, string):

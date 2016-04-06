@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import parse_filesize
+from .common import InfoExtractor
 
 
 class TagesschauIE(InfoExtractor):

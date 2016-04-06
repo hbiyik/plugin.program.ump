@@ -1,11 +1,11 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_urllib_parse_unquote_plus
 from ..utils import (
     js_to_json,
 )
+from .common import InfoExtractor
 
 
 class KaraoketvIE(InfoExtractor):
@@ -15,7 +15,7 @@ class KaraoketvIE(InfoExtractor):
         'info_dict': {
             'id': '171568',
             'ext': 'mp4',
-            'title': 'אל העולם שלך - רותם כהן - שרים קריוקי',
+            'title': '�?ל העול�? שלך - רות�? כהן - שרי�? קריוקי',
         }
     }
 

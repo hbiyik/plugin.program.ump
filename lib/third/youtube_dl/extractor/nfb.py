@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
+from .common import InfoExtractor
 
 
 class NFBIE(InfoExtractor):

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     HEADRequest,
@@ -12,6 +11,7 @@ from ..utils import (
     urlencode_postdata,
     urlhandle_detect_ext,
 )
+from .common import InfoExtractor
 
 
 class HearThisAtIE(InfoExtractor):

@@ -1,7 +1,7 @@
-import urllib
 import re
+import urllib
 import urlparse
-import time
+
 
 def run(hash,ump,referer=None):
 	src=ump.get_page("http://www.movshare.net/video/"+hash,"utf8")

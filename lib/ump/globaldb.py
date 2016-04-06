@@ -1,7 +1,9 @@
 import json
-import xbmc
 import re
-import uuid,md5
+import uuid, md5
+
+import xbmc
+
 
 anime_providers=["ann"]
 #mtypes:0 movie,1 series, 2 anime movies, 3 anime series

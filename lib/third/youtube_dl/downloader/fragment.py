@@ -3,12 +3,12 @@ from __future__ import division, unicode_literals
 import os
 import time
 
-from .common import FileDownloader
-from .http import HttpFD
 from ..utils import (
     encodeFilename,
     sanitize_open,
 )
+from .common import FileDownloader
+from .http import HttpFD
 
 
 class HttpQuietDownloader(HttpFD):

@@ -1,7 +1,6 @@
 import re
 import urlparse
-from third.unidecode import unidecode
-			
+
 domain="http://www.primewire.ag"
 encoding="utf-8"
 matches=[]

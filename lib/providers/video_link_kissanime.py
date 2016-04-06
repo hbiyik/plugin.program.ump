@@ -1,8 +1,7 @@
-from urllib2 import HTTPError
 import json
 import re
-import time
-			
+
+
 domain="https://kissanime.to"
 encoding="utf-8"
 

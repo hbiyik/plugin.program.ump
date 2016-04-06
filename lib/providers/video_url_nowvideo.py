@@ -1,6 +1,7 @@
 import re
 import urlparse
 
+
 dmn="http://www.nowvideo.sx"
 def run(hash,ump,referer=None):
 	link=dmn+"/video/"+hash

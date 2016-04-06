@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .srgssr import SRGSSRIE
 from ..compat import (
     compat_str,
     compat_urllib_parse_urlparse,
@@ -15,6 +14,7 @@ from ..utils import (
     unescapeHTML,
     xpath_text,
 )
+from .srgssr import SRGSSRIE
 
 
 class RTSIE(SRGSSRIE):

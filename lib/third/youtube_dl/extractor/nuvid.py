@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     parse_duration,
     sanitized_Request,
     unified_strdate,
 )
+from .common import InfoExtractor
 
 
 class NuvidIE(InfoExtractor):

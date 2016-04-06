@@ -1,6 +1,7 @@
 import json
 import re
 
+
 def run(hash,ump,referer=None):
 	src = ump.get_page("http://myvi.ru/player/embed/html/"+hash,"utf8")
 	p=re.findall("dataUrl:'(.*?)'",src)[0]

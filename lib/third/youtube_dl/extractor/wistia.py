@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     sanitized_Request,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class WistiaIE(InfoExtractor):

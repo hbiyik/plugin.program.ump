@@ -1,5 +1,6 @@
 from quality import atom
 
+
 def mp4qual(meta,dfunc,u):
 	try:
 		atoms=atom.parse_mp4(meta)

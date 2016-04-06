@@ -4,13 +4,13 @@ import base64
 import datetime
 import hashlib
 import json
+import math
 import netrc
 import os
 import re
 import socket
 import sys
 import time
-import math
 
 from ..compat import (
     compat_cookiejar,

@@ -1,6 +1,9 @@
-import xbmc
 import json
+
+import xbmc
+
 from ump import countries
+
 
 mirror="http://ws.audioscrobbler.com/2.0/"
 encoding="utf-8"
@@ -18,7 +21,7 @@ def get_country():
 		return "USA"
 
 def get_img(ops,default="DefaultFolder.png"):
-	im=""
+	im=default
 	for image in reversed(ops):
 		if image["#text"].startswith("http"):
 			im=image["#text"]
@@ -27,7 +30,6 @@ def get_img(ops,default="DefaultFolder.png"):
 
 def run(ump):
 	globals()['ump'] = ump
-	cacheToDisc=True
 	if ump.page == "root":
 		ump.index_item("Search","search",args={"search":True})
 		ump.index_item("Top Artists","topartist")
@@ -257,7 +259,6 @@ def run(ump):
 		tracks=js.get("album",None)
 		alb=js.get("album",None)
 		if alb:
-			release=alb.get("releasedate","")
 			relyear=2000
 			albumimage=get_img(alb.get("image",[]))
 			results=alb.get("tracks",{"track":[]})["track"]

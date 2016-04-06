@@ -1,15 +1,15 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import re
 import os.path
+import re
 
-from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     sanitized_Request,
     urlencode_postdata,
 )
+from .common import InfoExtractor
 
 
 class PlayedIE(InfoExtractor):

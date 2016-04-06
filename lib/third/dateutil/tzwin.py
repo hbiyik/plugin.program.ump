@@ -1,7 +1,8 @@
 # This code was originally contributed by Jeffrey Harris.
+import _winreg
 import datetime
 import struct
-import _winreg
+
 
 __author__ = "Jeffrey Harris & Gustavo Niemeyer <gustavo@niemeyer.net>"
 

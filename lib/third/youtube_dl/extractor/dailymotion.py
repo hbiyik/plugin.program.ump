@@ -1,11 +1,9 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import re
-import json
 import itertools
-
-from .common import InfoExtractor
+import json
+import re
 
 from ..utils import (
     determine_ext,
@@ -17,6 +15,7 @@ from ..utils import (
     str_to_int,
     unescapeHTML,
 )
+from .common import InfoExtractor
 
 
 class DailymotionBaseInfoExtractor(InfoExtractor):

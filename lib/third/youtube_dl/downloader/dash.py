@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 import os
 import re
 
-from .fragment import FragmentFD
 from ..compat import compat_urllib_error
 from ..utils import (
     sanitize_open,
     encodeFilename,
 )
+from .fragment import FragmentFD
 
 
 class DashSegmentsFD(FragmentFD):

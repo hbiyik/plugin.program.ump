@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_parse_qs,
     compat_urllib_parse_urlencode,
@@ -14,6 +13,7 @@ from ..utils import (
     parse_duration,
     replace_extension,
 )
+from .common import InfoExtractor
 
 
 class FiveMinIE(InfoExtractor):

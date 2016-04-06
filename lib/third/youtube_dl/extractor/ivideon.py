@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_urlparse,
 )
 from ..utils import qualities
+from .common import InfoExtractor
 
 
 class IvideonIE(InfoExtractor):
@@ -20,8 +20,8 @@ class IvideonIE(InfoExtractor):
         'info_dict': {
             'id': '100-916ca13b5c4ad9f564266424a026386d',
             'ext': 'flv',
-            'title': 're:^Касса [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
-            'description': 'Основное предназначение - запись действий кассиров. Плюс общий вид.',
+            'title': 're:^Ка�?�?а [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
+            'description': 'О�?новное предназначение - запи�?ь дей�?твий ка�?�?иров. Плю�? общий вид.',
             'is_live': True,
         },
         'params': {

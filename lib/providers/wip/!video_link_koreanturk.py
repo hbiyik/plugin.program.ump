@@ -1,6 +1,7 @@
-import re
 import json
+import re
 from urllib2 import HTTPError
+
 
 encoding="utf-8"
 domain = 'http://www.koreanturk.com'

@@ -1,13 +1,12 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+import hashlib
+import hmac
+import itertools
 import json
 import time
-import hmac
-import hashlib
-import itertools
 
-from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     int_or_none,
@@ -15,6 +14,7 @@ from ..utils import (
     parse_iso8601,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 class VikiBaseIE(InfoExtractor):

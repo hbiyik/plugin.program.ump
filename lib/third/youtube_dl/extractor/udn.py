@@ -2,16 +2,17 @@
 from __future__ import unicode_literals
 
 import json
-from .common import InfoExtractor
+
+from ..compat import compat_urlparse
 from ..utils import (
     js_to_json,
     ExtractorError,
 )
-from ..compat import compat_urlparse
+from .common import InfoExtractor
 
 
 class UDNEmbedIE(InfoExtractor):
-    IE_DESC = '聯合影音'
+    IE_DESC = '�?��?�影音'
     _PROTOCOL_RELATIVE_VALID_URL = r'//video\.udn\.com/(?:embed|play)/news/(?P<id>\d+)'
     _VALID_URL = r'https?:' + _PROTOCOL_RELATIVE_VALID_URL
     _TESTS = [{
@@ -20,7 +21,7 @@ class UDNEmbedIE(InfoExtractor):
         'info_dict': {
             'id': '300040',
             'ext': 'mp4',
-            'title': '生物老師男變女 全校挺"做自己"',
+            'title': '生物�?師男變女 全校挺"�?�自己"',
             'thumbnail': 're:^https?://.*\.jpg$',
         }
     }, {

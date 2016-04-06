@@ -1,8 +1,11 @@
 import os
+from xml.dom import minidom
+
 import xbmc
 import xbmcaddon
-from xml.dom import minidom
+
 from ump import defs
+
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )

@@ -1,13 +1,13 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     ExtractorError,
     sanitized_Request,
     urlencode_postdata,
 )
+from .common import InfoExtractor
 
 
 class Vbox7IE(InfoExtractor):
@@ -18,7 +18,7 @@ class Vbox7IE(InfoExtractor):
         'info_dict': {
             'id': '249bb972c2',
             'ext': 'mp4',
-            'title': 'Смях! Чудо - чист за секунди - Скрита камера',
+            'title': 'См�?х! Чудо - чи�?т за �?екунди - Скрита камера',
         },
     }
 

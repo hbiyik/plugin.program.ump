@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     clean_html,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class TVCIE(InfoExtractor):
@@ -18,7 +18,7 @@ class TVCIE(InfoExtractor):
         'info_dict': {
             'id': '74622',
             'ext': 'mp4',
-            'title': 'События. "События". Эфир от 22.05.2015 14:30',
+            'title': 'Событи�?. "Событи�?". Эфир от 22.05.2015 14:30',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 1122,
         },
@@ -70,7 +70,7 @@ class TVCArticleIE(InfoExtractor):
         'info_dict': {
             'id': '74622',
             'ext': 'mp4',
-            'title': 'События. "События". Эфир от 22.05.2015 14:30',
+            'title': 'Событи�?. "Событи�?". Эфир от 22.05.2015 14:30',
             'description': 'md5:ad7aa7db22903f983e687b8a3e98c6dd',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 1122,
@@ -80,7 +80,7 @@ class TVCArticleIE(InfoExtractor):
         'info_dict': {
             'id': '75399',
             'ext': 'mp4',
-            'title': 'Эксперты: в столице встал вопрос о максимально безопасных остановках',
+            'title': 'Эк�?перты: в �?толице в�?тал вопро�? о мак�?имально безопа�?ных о�?тановках',
             'description': 'md5:f2098f71e21f309e89f69b525fd9846e',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 278,

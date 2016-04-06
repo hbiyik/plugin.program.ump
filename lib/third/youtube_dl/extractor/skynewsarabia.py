@@ -1,12 +1,12 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     parse_iso8601,
     parse_duration,
 )
+from .common import InfoExtractor
 
 
 class SkyNewsArabiaBaseIE(InfoExtractor):
@@ -48,7 +48,7 @@ class SkyNewsArabiaIE(SkyNewsArabiaBaseIE):
         'info_dict': {
             'id': '794902',
             'ext': 'flv',
-            'title': 'نصف مليون مصباح على شجرة كريسماس',
+            'title': 'نص�? مليون مصباح على شجرة كريسماس',
             'description': 'md5:22f1b27f0850eeb10c7e59b1f16eb7c6',
             'upload_date': '20151128',
             'timestamp': 1448697198,
@@ -74,7 +74,7 @@ class SkyNewsArabiaArticleIE(SkyNewsArabiaBaseIE):
         'info_dict': {
             'id': '794549',
             'ext': 'flv',
-            'title': 'بالفيديو.. ألعاب ذكية تحاكي واقع المنطقة',
+            'title': 'بال�?يديو.. ألعاب ذكية تحاكي واقع المنطقة',
             'description': 'md5:0c373d29919a851e080ee4edd0c5d97f',
             'upload_date': '20151126',
             'timestamp': 1448559336,

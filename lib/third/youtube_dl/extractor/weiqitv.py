@@ -21,14 +21,14 @@ class WeiqiTVIE(InfoExtractor):
         'info_dict': {
             'id': '567379a2d4c36cca518b4569',
             'ext': 'mp4',
-            'title': '民国围棋史',
+            'title': '民国围棋�?�',
         },
     }, {
         'url': 'http://www.weiqitv.com/index/video_play?videoId=5430220a9874f088658b4567',
         'info_dict': {
             'id': '5430220a9874f088658b4567',
             'ext': 'mp4',
-            'title': '二路托过的手段和运用',
+            'title': '二路托过的手段和�?用',
         },
     }]
 

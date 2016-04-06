@@ -1,21 +1,22 @@
 ﻿import sys
+import gc
 import os
+import threading
+import time
+
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
-import threading
-import time
-import gc
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 sys.path.append(os.path.join(addon_dir,"lib"))
 
-from ump import providers
 from ump import api
-from ump import ui
 from ump import prerun
+from ump import providers
+from ump import ui
 
 #bookmark.resolve()
 ump=api.ump()

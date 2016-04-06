@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import json
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     determine_ext,
     ExtractorError,
@@ -13,6 +12,7 @@ from ..utils import (
     parse_iso8601,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 class ToggleIE(InfoExtractor):

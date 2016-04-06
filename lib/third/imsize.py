@@ -13,6 +13,7 @@
 #!/usr/bin/env python
 import struct
 
+
 class UnknownImageFormat(Exception):
 	pass
 

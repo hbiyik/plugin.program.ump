@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import re
 import json
+import re
 from urllib2 import HTTPError
+
 
 encoding="utf-8"
 domain = 'http://www.dizigold.net'
@@ -11,7 +12,6 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	is_serie,names=ump.get_vidnames()
-	found=False
 	if not is_serie:
 		return None
 
@@ -22,7 +22,6 @@ def run(ump):
 		links=re.findall('<div class="detay "><a href="(.*?)"></a>',page)
 		series=zip(links,names)
 		for serie in series:
-			found=False
 			l,t=serie
 			if ump.is_same(t,name):
 				url=l+"/"+str(i["season"])+"-sezon/"+str(i["episode"])+"-bolum"

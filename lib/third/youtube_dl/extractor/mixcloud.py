@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_urllib_parse_unquote
 from ..utils import (
     ExtractorError,
@@ -10,6 +9,7 @@ from ..utils import (
     parse_count,
     str_to_int,
 )
+from .common import InfoExtractor
 
 
 class MixcloudIE(InfoExtractor):

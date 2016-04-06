@@ -2,11 +2,11 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     js_to_json,
     remove_end,
 )
+from .common import InfoExtractor
 
 
 class HellPornoIE(InfoExtractor):

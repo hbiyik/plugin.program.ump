@@ -1,13 +1,13 @@
 from __future__ import unicode_literals
 
-import re
 import json
+import re
 
-from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     parse_age_limit,
 )
+from .common import InfoExtractor
 
 
 class BreakIE(InfoExtractor):

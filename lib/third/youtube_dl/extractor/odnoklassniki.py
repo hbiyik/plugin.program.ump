@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_urllib_parse_unquote
 from ..utils import (
     ExtractorError,
@@ -10,6 +9,7 @@ from ..utils import (
     qualities,
     unescapeHTML,
 )
+from .common import InfoExtractor
 
 
 class OdnoklassnikiIE(InfoExtractor):
@@ -21,11 +21,11 @@ class OdnoklassnikiIE(InfoExtractor):
         'info_dict': {
             'id': '20079905452',
             'ext': 'mp4',
-            'title': 'Культура меняет нас (прекрасный ролик!))',
+            'title': 'Культура мен�?ет на�? (прекра�?ный ролик!))',
             'duration': 100,
             'upload_date': '20141207',
             'uploader_id': '330537914540',
-            'uploader': 'Виталий Добровольский',
+            'uploader': 'Виталий Доброволь�?кий',
             'like_count': int,
             'age_limit': 0,
         },
@@ -37,11 +37,11 @@ class OdnoklassnikiIE(InfoExtractor):
         'info_dict': {
             'id': '63567059965189-0',
             'ext': 'mp4',
-            'title': 'Девушка без комплексов ...',
+            'title': 'Девушка без комплек�?ов ...',
             'duration': 191,
             'upload_date': '20150518',
             'uploader_id': '534380003155',
-            'uploader': '☭ Андрей Мещанинов ☭',
+            'uploader': '☭ �?ндрей Мещанинов ☭',
             'like_count': int,
             'age_limit': 0,
         },
@@ -52,12 +52,12 @@ class OdnoklassnikiIE(InfoExtractor):
         'info_dict': {
             'id': '64211978996595-1',
             'ext': 'mp4',
-            'title': 'Космическая среда от 26 августа 2015',
+            'title': 'Ко�?миче�?ка�? �?реда от 26 авгу�?та 2015',
             'description': 'md5:848eb8b85e5e3471a3a803dae1343ed0',
             'duration': 440,
             'upload_date': '20150826',
             'uploader_id': '750099571',
-            'uploader': 'Алина П',
+            'uploader': '�?лина П',
             'age_limit': 0,
         },
     }, {

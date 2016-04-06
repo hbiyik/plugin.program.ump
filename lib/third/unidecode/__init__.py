@@ -14,8 +14,9 @@ In Python 3, a standard string object will be returned. If you need bytes, use:
 >>> unidecode("Κνωσός").encode("ascii")
 b'Knosos'
 """
-import warnings
 from sys import version_info
+import warnings
+
 
 Cache = {}
 

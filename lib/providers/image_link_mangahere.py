@@ -1,10 +1,6 @@
-import urllib2
-import urllib
 import json
 import re
-import json
-from xml.dom import minidom
-			
+
 domain="http://mangahere.co"
 encoding="utf-8"
 

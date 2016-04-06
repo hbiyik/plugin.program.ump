@@ -1,6 +1,9 @@
-from task import manager
 import threading
 import time
+
+from task import manager
+
+
 m=manager(10)
 def f2(s,i):
 	time.sleep(i)

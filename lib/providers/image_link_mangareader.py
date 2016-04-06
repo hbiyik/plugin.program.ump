@@ -1,10 +1,5 @@
-import urllib2
-import urllib
-import json
 import re
-import json
-from xml.dom import minidom
-			
+
 domain="http://www.mangareader.net"
 encoding="utf-8"
 

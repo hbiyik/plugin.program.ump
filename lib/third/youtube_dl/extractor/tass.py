@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import json
 
-from .common import InfoExtractor
 from ..utils import (
     js_to_json,
     qualities,
 )
+from .common import InfoExtractor
 
 
 class TassIE(InfoExtractor):
@@ -19,7 +19,7 @@ class TassIE(InfoExtractor):
             'info_dict': {
                 'id': '1586870',
                 'ext': 'mp4',
-                'title': 'Посетителям московского зоопарка показали красную панду',
+                'title': 'По�?етител�?м мо�?ков�?кого зоопарка показали кра�?ную панду',
                 'description': 'Приехавшую из Дублина Зейну можно увидеть в павильоне "Кошки тропиков"',
                 'thumbnail': 're:^https?://.*\.jpg$',
             },

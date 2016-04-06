@@ -17,13 +17,14 @@ import os
 import platform
 import re
 import shutil
-import subprocess
 import socket
+import subprocess
 import sys
 import time
 import tokenize
 import traceback
 
+from .cache import Cache
 from .compat import (
     compat_basestring,
     compat_cookiejar,
@@ -37,6 +38,17 @@ from .compat import (
     compat_urllib_error,
     compat_urllib_request,
     compat_urllib_request_DataHandler,
+)
+from .downloader import get_suitable_downloader
+from .downloader.rtmp import rtmpdump_version
+from .extractor import get_info_extractor, gen_extractors
+from .postprocessor import (
+    FFmpegFixupM3u8PP,
+    FFmpegFixupM4aPP,
+    FFmpegFixupStretchedPP,
+    FFmpegMergerPP,
+    FFmpegPostProcessor,
+    get_postprocessor,
 )
 from .utils import (
     age_restricted,
@@ -81,19 +93,8 @@ from .utils import (
     YoutubeDLCookieProcessor,
     YoutubeDLHandler,
 )
-from .cache import Cache
-from .extractor import get_info_extractor, gen_extractors
-from .downloader import get_suitable_downloader
-from .downloader.rtmp import rtmpdump_version
-from .postprocessor import (
-    FFmpegFixupM3u8PP,
-    FFmpegFixupM4aPP,
-    FFmpegFixupStretchedPP,
-    FFmpegMergerPP,
-    FFmpegPostProcessor,
-    get_postprocessor,
-)
 from .version import __version__
+
 
 if compat_os_name == 'nt':
     import ctypes

@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     ExtractorError,
@@ -10,6 +9,7 @@ from ..utils import (
     int_or_none,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 class VoiceRepublicIE(InfoExtractor):

@@ -1,7 +1,10 @@
-from xml.dom import minidom
-from third.socksipy import socks
 import socket
+from xml.dom import minidom
+
 import xbmc
+
+from third.socksipy import socks
+
 
 def get_set(genset,n):
 	nd=genset.getElementsByTagName(n)[0]

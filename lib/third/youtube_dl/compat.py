@@ -5,6 +5,7 @@ import collections
 import email
 import getpass
 import io
+import itertools
 import optparse
 import os
 import re
@@ -13,7 +14,6 @@ import shutil
 import socket
 import subprocess
 import sys
-import itertools
 import xml.etree.ElementTree
 
 

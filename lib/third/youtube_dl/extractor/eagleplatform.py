@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class EaglePlatformIE(InfoExtractor):
@@ -25,7 +25,7 @@ class EaglePlatformIE(InfoExtractor):
         'info_dict': {
             'id': '227304',
             'ext': 'mp4',
-            'title': 'Навальный вышел на свободу',
+            'title': '�?авальный вышел на �?вободу',
             'description': 'md5:d97861ac9ae77377f3f20eaf9d04b4f5',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 87,

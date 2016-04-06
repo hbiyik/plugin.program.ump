@@ -5,7 +5,6 @@ import itertools
 import json
 import re
 
-from .common import InfoExtractor, SearchInfoExtractor
 from ..compat import (
     compat_urllib_parse,
     compat_urllib_parse_urlencode,
@@ -18,7 +17,7 @@ from ..utils import (
     int_or_none,
     mimetype2ext,
 )
-
+from .common import InfoExtractor, SearchInfoExtractor
 from .nbc import NBCSportsVPlayerIE
 
 
@@ -59,13 +58,13 @@ class YahooIE(InfoExtractor):
             }
         },
         {
-            'url': 'https://tw.screen.yahoo.com/election-2014-askmayor/敢問市長-黃秀霜批賴清德-非常高傲-033009720.html',
+            'url': 'https://tw.screen.yahoo.com/election-2014-askmayor/敢�?市長-黃秀霜批賴清德-�?�常高傲-033009720.html',
             'md5': '3a09cf59349cfaddae1797acc3c087fc',
             'info_dict': {
                 'id': 'cac903b3-fcf4-3c14-b632-643ab541712f',
                 'ext': 'mp4',
-                'title': '敢問市長／黃秀霜批賴清德「非常高傲」',
-                'description': '直言台南沒捷運 交通居五都之末',
+                'title': '敢�?市長�?黃秀霜批賴清德「�?�常高傲�?',
+                'description': '直言�?��?�沒�?��?� 交通居五都之末',
                 'duration': 396,
             }
         },

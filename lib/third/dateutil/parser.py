@@ -11,16 +11,16 @@ __license__ = "PSF License"
 import datetime
 import string
 import time
-import sys
-import os
+
+from . import relativedelta
+from . import tz
+
 
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 
-from . import relativedelta
-from . import tz
 
 
 __all__ = ["parse", "parserinfo"]

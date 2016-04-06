@@ -1,17 +1,21 @@
+from datetime import date
+import httplib
+import json
+import re
+import time
+from urllib import quote_plus
+from urllib import urlencode
+import urlparse
+from xml.dom import minidom
+
 import xbmc
 import xbmcgui
 import xbmcplugin
-from datetime import date
-from urllib import quote_plus
-from urllib import urlencode
-import time
-import re
-import json
-import urlparse
-recnum=50
-from xml.dom import minidom
+
 import dateutil.parser as dparser
-import httplib
+
+
+recnum=50
 
 domain="http://www.animenewsnetwork.com"
 encoding="utf-8"

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     ExtractorError,
@@ -13,6 +12,7 @@ from ..utils import (
     parse_duration,
     remove_start,
 )
+from .common import InfoExtractor
 
 
 class NowTVBaseIE(InfoExtractor):

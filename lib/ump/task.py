@@ -1,18 +1,17 @@
-import threading
-import Queue
 from operator import itemgetter
-import uuid
+import threading
 import time
-import inspect
 import traceback
+import uuid
+
 import xbmcgui
+
 
 #simple task manager but quite handy one
 #can monitor different task groups and wait them to finish seperately
 #can also priotrize the tasks  
 #concurrentcy may be set to CPU count however my app heavily uses network stuff so i use more than 10 or more.
 #dont mess with thread names
-
 class killbill(Exception):
 	pass
 	
@@ -31,11 +30,7 @@ class manager(object):
 			self.q=[]
 			self.s.set()
 			return None
-		except Exception,e:
-			frm = inspect.trace()[-1]
-			mod = inspect.getmodule(frm[0])
-			modname = mod.__name__ if mod else frm[1]
-			errtype= e.__class__.__name__
+		except Exception:
 			print traceback.format_exc()
 			val=None
 

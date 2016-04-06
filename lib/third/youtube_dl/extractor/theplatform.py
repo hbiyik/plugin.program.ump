@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import re
-import time
-import hmac
 import binascii
 import hashlib
+import hmac
+import re
+import time
 
-
-from .once import OnceIE
 from ..compat import (
     compat_parse_qs,
     compat_urllib_parse_urlparse,
@@ -23,6 +21,8 @@ from ..utils import (
     mimetype2ext,
     find_xpath_attr,
 )
+from .once import OnceIE
+
 
 default_ns = 'http://www.w3.org/2005/SMIL21/Language'
 _x = lambda p: xpath_with_ns(p, {'smil': default_ns})

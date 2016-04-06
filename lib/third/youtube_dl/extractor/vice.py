@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 import re
 
+from ..utils import ExtractorError
 from .common import InfoExtractor
 from .ooyala import OoyalaIE
-from ..utils import ExtractorError
 
 
 class ViceIE(InfoExtractor):

@@ -1,8 +1,8 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import parse_iso8601
+from .common import InfoExtractor
 
 
 class NextMediaIE(InfoExtractor):
@@ -14,7 +14,7 @@ class NextMediaIE(InfoExtractor):
         'info_dict': {
             'id': '53109199',
             'ext': 'mp4',
-            'title': '【佔領金鐘】50外國領事議員撐場 讚學生勇敢香港有希望',
+            'title': '�?佔領金�?�】50外國領事議員�?場 讚學生勇敢香港有希望',
             'thumbnail': 're:^https?://.*\.jpg$',
             'description': 'md5:28222b9912b6665a21011b034c70fcc7',
             'timestamp': 1415456273,
@@ -67,7 +67,7 @@ class NextMediaIE(InfoExtractor):
 
 
 class NextMediaActionNewsIE(NextMediaIE):
-    IE_DESC = '蘋果日報 - 動新聞'
+    IE_DESC = '蘋果日報 - 動新�?�'
     _VALID_URL = r'https?://hk.dv.nextmedia.com/actionnews/[^/]+/(?P<date>\d+)/(?P<id>\d+)/\d+'
     _TESTS = [{
         'url': 'http://hk.dv.nextmedia.com/actionnews/hit/20150121/19009428/20061460',
@@ -75,7 +75,7 @@ class NextMediaActionNewsIE(NextMediaIE):
         'info_dict': {
             'id': '19009428',
             'ext': 'mp4',
-            'title': '【壹週刊】細10年男友偷食　50歲邵美琪再失戀',
+            'title': '�?壹週刊】細10年男�?��?�食　50歲邵美�?��?失戀',
             'thumbnail': 're:^https?://.*\.jpg$',
             'description': 'md5:cd802fad1f40fd9ea178c1e2af02d659',
             'timestamp': 1421791200,
@@ -92,7 +92,7 @@ class NextMediaActionNewsIE(NextMediaIE):
 
 
 class AppleDailyIE(NextMediaIE):
-    IE_DESC = '臺灣蘋果日報'
+    IE_DESC = '臺�?�蘋果日報'
     _VALID_URL = r'https?://(www|ent).appledaily.com.tw/(?:animation|appledaily|enews|realtimenews)/[^/]+/[^/]+/(?P<date>\d+)/(?P<id>\d+)(/.*)?'
     _TESTS = [{
         'url': 'http://ent.appledaily.com.tw/enews/article/entertainment/20150128/36354694',
@@ -100,7 +100,7 @@ class AppleDailyIE(NextMediaIE):
         'info_dict': {
             'id': '36354694',
             'ext': 'mp4',
-            'title': '周亭羽走過摩鐵陰霾2男陪吃 九把刀孤寒看醫生',
+            'title': '周亭羽走�?�摩�?�陰霾2男陪�?� �?把刀孤寒看醫生',
             'thumbnail': 're:^https?://.*\.jpg$',
             'description': 'md5:2acd430e59956dc47cd7f67cb3c003f4',
             'upload_date': '20150128',
@@ -111,7 +111,7 @@ class AppleDailyIE(NextMediaIE):
         'info_dict': {
             'id': '550549',
             'ext': 'mp4',
-            'title': '不滿被踩腳　山東兩大媽一路打下車',
+            'title': '�?滿被踩腳　山�?�兩大媽一路打下車',
             'thumbnail': 're:^https?://.*\.jpg$',
             'description': 'md5:175b4260c1d7c085993474217e4ab1b4',
             'upload_date': '20150128',
@@ -122,7 +122,7 @@ class AppleDailyIE(NextMediaIE):
         'info_dict': {
             'id': '5003671',
             'ext': 'mp4',
-            'title': '20正妹熱舞　《刀龍傳說Online》火辣上市',
+            'title': '20正妹熱舞　《刀�?傳說Online》�?�辣上市',
             'thumbnail': 're:^https?://.*\.jpg$',
             'description': 'md5:23c0aac567dc08c9c16a3161a2c2e3cd',
             'upload_date': '20150128',
@@ -135,7 +135,7 @@ class AppleDailyIE(NextMediaIE):
         'info_dict': {
             'id': '5003673',
             'ext': 'mp4',
-            'title': '半夜尿尿　好像會看到___',
+            'title': '�?�夜尿尿　好�?會看到___',
             'description': 'md5:61d2da7fe117fede148706cdb85ac066',
             'upload_date': '20150128',
         },
@@ -149,7 +149,7 @@ class AppleDailyIE(NextMediaIE):
         'info_dict': {
             'id': '35770334',
             'ext': 'mp4',
-            'title': '咖啡占卜測 XU裝熟指數',
+            'title': '咖啡�?��?�測 XU�?熟指數',
             'thumbnail': 're:^https?://.*\.jpg$',
             'description': 'md5:7b859991a6a4fedbdf3dd3b66545c748',
             'upload_date': '20140417',

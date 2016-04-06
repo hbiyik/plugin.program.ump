@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     xpath_text,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class WallaIE(InfoExtractor):
@@ -18,7 +18,7 @@ class WallaIE(InfoExtractor):
             'id': '2642630',
             'display_id': 'one-direction-all-for-one',
             'ext': 'flv',
-            'title': 'וואן דיירקשן: ההיסטריה',
+            'title': 'וו�?ן דיירקשן: ההיסטריה',
             'description': 'md5:de9e2512a92442574cdb0913c49bc4d8',
             'thumbnail': 're:^https?://.*\.jpg',
             'duration': 3600,

@@ -8,6 +8,7 @@ from .utils import (
     ExtractorError,
 )
 
+
 _OPERATORS = [
     ('|', operator.or_),
     ('^', operator.xor),

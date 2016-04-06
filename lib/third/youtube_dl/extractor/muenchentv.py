@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import json
 
-from .common import InfoExtractor
 from ..utils import (
     determine_ext,
     int_or_none,
     js_to_json,
 )
+from .common import InfoExtractor
 
 
 class MuenchenTVIE(InfoExtractor):

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import itertools
 
-from .common import InfoExtractor
 from ..utils import (
     qualities,
     compat_str,
@@ -11,6 +10,7 @@ from ..utils import (
     parse_iso8601,
     str_to_int,
 )
+from .common import InfoExtractor
 
 
 class GigaIE(InfoExtractor):

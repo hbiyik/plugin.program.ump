@@ -1,12 +1,11 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from hashlib import md5
 from base64 import b64encode
 from datetime import datetime
+from hashlib import md5
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_str,
@@ -16,6 +15,7 @@ from ..utils import (
     sanitized_Request,
     float_or_none,
 )
+from .common import InfoExtractor
 
 
 class NetEaseMusicBaseIE(InfoExtractor):
@@ -75,7 +75,7 @@ class NetEaseMusicBaseIE(InfoExtractor):
 
 class NetEaseMusicIE(NetEaseMusicBaseIE):
     IE_NAME = 'netease:song'
-    IE_DESC = '网易云音乐'
+    IE_DESC = '网易云音�?'
     _VALID_URL = r'https?://music\.163\.com/(#/)?song\?id=(?P<id>[0-9]+)'
     _TESTS = [{
         'url': 'http://music.163.com/#/song?id=32102397',
@@ -95,8 +95,8 @@ class NetEaseMusicIE(NetEaseMusicBaseIE):
         'info_dict': {
             'id': '29822014',
             'ext': 'mp3',
-            'title': '听见下雨的声音',
-            'creator': '周杰伦',
+            'title': '�?��?下雨的声音',
+            'creator': '周�?�伦',
             'upload_date': '20141225',
             'timestamp': 1419523200,
             'description': 'md5:a4d8d89f44656af206b7b2555c0bce6c',
@@ -118,12 +118,12 @@ class NetEaseMusicIE(NetEaseMusicBaseIE):
         'info_dict': {
             'id': '22735043',
             'ext': 'mp3',
-            'title': '소원을 말해봐 (Genie)',
+            'title': '소�?�?� �?해�? (Genie)',
             'creator': '少女时代',
             'description': 'md5:79d99cc560e4ca97e0c4d86800ee4184',
             'upload_date': '20100127',
             'timestamp': 1264608000,
-            'alt_title': '说出愿望吧(Genie)',
+            'alt_title': '说出愿望�?�(Genie)',
         }
     }]
 
@@ -183,7 +183,7 @@ class NetEaseMusicIE(NetEaseMusicBaseIE):
 
 class NetEaseMusicAlbumIE(NetEaseMusicBaseIE):
     IE_NAME = 'netease:album'
-    IE_DESC = '网易云音乐 - 专辑'
+    IE_DESC = '网易云音�? - 专辑'
     _VALID_URL = r'https?://music\.163\.com/(#/)?album\?id=(?P<id>[0-9]+)'
     _TEST = {
         'url': 'http://music.163.com/#/album?id=220780',
@@ -213,7 +213,7 @@ class NetEaseMusicAlbumIE(NetEaseMusicBaseIE):
 
 class NetEaseMusicSingerIE(NetEaseMusicBaseIE):
     IE_NAME = 'netease:singer'
-    IE_DESC = '网易云音乐 - 歌手'
+    IE_DESC = '网易云音�? - 歌手'
     _VALID_URL = r'https?://music\.163\.com/(#/)?artist\?id=(?P<id>[0-9]+)'
     _TESTS = [{
         'note': 'Singer has aliases.',
@@ -228,7 +228,7 @@ class NetEaseMusicSingerIE(NetEaseMusicBaseIE):
         'url': 'http://music.163.com/#/artist?id=124098',
         'info_dict': {
             'id': '124098',
-            'title': '李昇基 - 이승기',
+            'title': '�?�昇基 - �?�승기',
         },
         'playlist_count': 50,
     }]
@@ -256,7 +256,7 @@ class NetEaseMusicSingerIE(NetEaseMusicBaseIE):
 
 class NetEaseMusicListIE(NetEaseMusicBaseIE):
     IE_NAME = 'netease:playlist'
-    IE_DESC = '网易云音乐 - 歌单'
+    IE_DESC = '网易云音�? - 歌�?�'
     _VALID_URL = r'https?://music\.163\.com/(#/)?(playlist|discover/toplist)\?id=(?P<id>[0-9]+)'
     _TESTS = [{
         'url': 'http://music.163.com/#/playlist?id=79177352',
@@ -302,14 +302,14 @@ class NetEaseMusicListIE(NetEaseMusicBaseIE):
 
 class NetEaseMusicMvIE(NetEaseMusicBaseIE):
     IE_NAME = 'netease:mv'
-    IE_DESC = '网易云音乐 - MV'
+    IE_DESC = '网易云音�? - MV'
     _VALID_URL = r'https?://music\.163\.com/(#/)?mv\?id=(?P<id>[0-9]+)'
     _TEST = {
         'url': 'http://music.163.com/#/mv?id=415350',
         'info_dict': {
             'id': '415350',
             'ext': 'mp4',
-            'title': '이럴거면 그러지말지',
+            'title': '�?�럴거면 그러지�?지',
             'description': '白雅言自作曲唱甜蜜爱情',
             'creator': '白雅言',
             'upload_date': '20150520',
@@ -343,16 +343,16 @@ class NetEaseMusicMvIE(NetEaseMusicBaseIE):
 
 class NetEaseMusicProgramIE(NetEaseMusicBaseIE):
     IE_NAME = 'netease:program'
-    IE_DESC = '网易云音乐 - 电台节目'
+    IE_DESC = '网易云音�? - 电�?�节目'
     _VALID_URL = r'https?://music\.163\.com/(#/?)program\?id=(?P<id>[0-9]+)'
     _TESTS = [{
         'url': 'http://music.163.com/#/program?id=10109055',
         'info_dict': {
             'id': '10109055',
             'ext': 'mp3',
-            'title': '不丹足球背后的故事',
-            'description': '喜马拉雅人的足球梦 ...',
-            'creator': '大话西藏',
+            'title': '�?丹足�?�背�?�的故事',
+            'description': '喜马拉雅人的足�?�梦 ...',
+            'creator': '大�?西�?',
             'timestamp': 1434179342,
             'upload_date': '20150613',
             'duration': 900,
@@ -362,7 +362,7 @@ class NetEaseMusicProgramIE(NetEaseMusicBaseIE):
         'url': 'http://music.163.com/#/program?id=10141022',
         'info_dict': {
             'id': '10141022',
-            'title': '25岁，你是自在如风的少年<27°C>',
+            'title': '25�?，你是自在如风的少年<27°C>',
             'description': 'md5:8d594db46cc3e6509107ede70a4aaa3b',
         },
         'playlist_count': 4,
@@ -372,7 +372,7 @@ class NetEaseMusicProgramIE(NetEaseMusicBaseIE):
         'info_dict': {
             'id': '10141022',
             'ext': 'mp3',
-            'title': '25岁，你是自在如风的少年<27°C>',
+            'title': '25�?，你是自在如风的少年<27°C>',
             'description': 'md5:8d594db46cc3e6509107ede70a4aaa3b',
             'timestamp': 1434450841,
             'upload_date': '20150616',
@@ -428,7 +428,7 @@ class NetEaseMusicProgramIE(NetEaseMusicBaseIE):
 
 class NetEaseMusicDjRadioIE(NetEaseMusicBaseIE):
     IE_NAME = 'netease:djradio'
-    IE_DESC = '网易云音乐 - 电台'
+    IE_DESC = '网易云音�? - 电�?�'
     _VALID_URL = r'https?://music\.163\.com/(#/)?djradio\?id=(?P<id>[0-9]+)'
     _TEST = {
         'url': 'http://music.163.com/#/djradio?id=42',

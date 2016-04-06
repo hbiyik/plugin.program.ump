@@ -5,9 +5,6 @@ import os
 import subprocess
 import time
 
-
-from .common import AudioConversionError, PostProcessor
-
 from ..compat import (
     compat_subprocess_get_DEVNULL,
 )
@@ -23,6 +20,7 @@ from ..utils import (
     dfxp2srt,
     ISO639Utils,
 )
+from .common import AudioConversionError, PostProcessor
 
 
 EXT_TO_OUT_FORMATS = {

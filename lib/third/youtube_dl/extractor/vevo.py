@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_etree_fromstring
 from ..utils import (
     ExtractorError,
@@ -10,6 +9,7 @@ from ..utils import (
     sanitized_Request,
     parse_iso8601,
 )
+from .common import InfoExtractor
 
 
 class VevoIE(InfoExtractor):

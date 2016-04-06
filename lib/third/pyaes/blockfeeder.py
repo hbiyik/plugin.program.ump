@@ -41,10 +41,7 @@ from .util import append_PKCS7_padding, strip_PKCS7_padding, to_bufferable
 #       - same as _final_encrypt except for decrypt, for
 #         stripping off padding
 #
-
-
 # ECB and CBC are block-only ciphers
-
 def _block_can_consume(self, size):
     if size >= 16: return 16
     return 0

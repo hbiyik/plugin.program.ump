@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 import os
 import subprocess
 
-from .common import FileDownloader
 from ..utils import (
     check_executable,
     encodeFilename,
 )
+from .common import FileDownloader
 
 
 class RtspFD(FileDownloader):

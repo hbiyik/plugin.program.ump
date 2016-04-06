@@ -1,11 +1,11 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .jwplatform import JWPlatformBaseIE
 from ..utils import (
     decode_packed_codes,
     js_to_json,
 )
+from .jwplatform import JWPlatformBaseIE
 
 
 class VidziIE(JWPlatformBaseIE):

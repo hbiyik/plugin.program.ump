@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_urlparse,
@@ -16,6 +15,7 @@ from ..utils import (
     xpath_element,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 class Laola1TvIE(InfoExtractor):

@@ -1,8 +1,8 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import parse_iso8601
+from .common import InfoExtractor
 
 
 class PeriscopeIE(InfoExtractor):
@@ -15,7 +15,7 @@ class PeriscopeIE(InfoExtractor):
         'info_dict': {
             'id': '56102209',
             'ext': 'mp4',
-            'title': 'Bec Boop - 🚠✈️🇬🇧 Fly above #London in Emirates Air Line cable car at night 🇬🇧✈️🚠 #BoopScope 🎀💗',
+            'title': 'Bec Boop - 🚠✈�?🇬🇧 Fly above #London in Emirates Air Line cable car at night 🇬🇧✈�?🚠 #BoopScope 🎀💗',
             'timestamp': 1438978559,
             'upload_date': '20150807',
             'uploader': 'Bec Boop',

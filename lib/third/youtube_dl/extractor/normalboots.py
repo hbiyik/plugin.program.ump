@@ -1,11 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
-
 from ..utils import (
     unified_strdate,
 )
+from .common import InfoExtractor
 
 
 class NormalbootsIE(InfoExtractor):

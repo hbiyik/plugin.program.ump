@@ -1,4 +1,6 @@
 import re
+
+
 class JJDecoder(object):
     def __init__(self, jj_encoded_data):
         self.encoded_str = jj_encoded_data

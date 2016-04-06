@@ -1,14 +1,15 @@
-import xbmcgui
-import xbmc
 import json
-from ump import providers
-import time
-import threading
-import urlparse
-import urllib
-import time
-import xbmcaddon
 from operator import itemgetter
+import time
+import urllib
+import urlparse
+
+import xbmc
+import xbmcaddon
+import xbmcgui
+
+from ump import providers
+
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )

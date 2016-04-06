@@ -1,9 +1,9 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
-from .brightcove import BrightcoveLegacyIE
 from ..compat import compat_parse_qs
+from .brightcove import BrightcoveLegacyIE
+from .common import InfoExtractor
 
 
 class TheStarIE(InfoExtractor):

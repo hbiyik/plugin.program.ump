@@ -1,13 +1,9 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import re
 import itertools
+import re
 
-from .common import (
-    InfoExtractor,
-    SearchInfoExtractor
-)
 from ..compat import (
     compat_str,
     compat_urlparse,
@@ -17,6 +13,10 @@ from ..utils import (
     ExtractorError,
     int_or_none,
     unified_strdate,
+)
+from .common import (
+    InfoExtractor,
+    SearchInfoExtractor
 )
 
 

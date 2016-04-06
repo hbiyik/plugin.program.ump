@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
-from .xstream import XstreamIE
 from ..utils import (
     ExtractorError,
     float_or_none,
 )
+from .common import InfoExtractor
+from .xstream import XstreamIE
 
 
 class VGTVIE(XstreamIE):

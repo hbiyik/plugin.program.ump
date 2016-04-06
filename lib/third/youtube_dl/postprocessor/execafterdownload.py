@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 import subprocess
 
-from .common import PostProcessor
 from ..compat import shlex_quote
 from ..utils import PostProcessingError
+from .common import PostProcessor
 
 
 class ExecAfterDownloadPP(PostProcessor):

@@ -1,6 +1,8 @@
 import re
+
 from third.unidecode import unidecode
-			
+
+
 domain="http://www.turkanime.tv/"
 encoding="utf-8"
 
@@ -73,7 +75,7 @@ def scrape_moviepage(url,fansub,name):
 				#todo prepare a decoder
 				uphash=re.findall("iframe/(.*?)/",ump.get_page(domain+u,encoding))[0]
 			else:
-				ump.add_log("turkanime: Unknown URL Provider: %s, cant scrape"%up
+				ump.add_log("turkanime: Unknown URL Provider: %s, cant scrape"%up)
 				continue
 		except IndexError:
 			print "Turkanimetv changed regex for : %s, skipping"%up

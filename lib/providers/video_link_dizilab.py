@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import time
 import re
-import json
-from urllib2 import HTTPError
 from xml.dom import minidom
+
 
 encoding="utf-8"
 domain = 'http://dizilab.com'
@@ -13,7 +11,6 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	is_serie,names=ump.get_vidnames()
-	found=False
 	if not is_serie:
 		return None
 	ump.add_log("dizilab is searching %s"%names[0])

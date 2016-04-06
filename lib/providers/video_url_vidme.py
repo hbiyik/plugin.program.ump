@@ -1,7 +1,4 @@
-import urlparse
 import re
-import time
-from third import unpack
 
 domain="https://vid.me/"
 

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     int_or_none,
@@ -11,6 +10,7 @@ from ..utils import (
     ExtractorError,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 class BiliBiliIE(InfoExtractor):
@@ -22,21 +22,21 @@ class BiliBiliIE(InfoExtractor):
         'info_dict': {
             'id': '1554319',
             'ext': 'flv',
-            'title': '【金坷垃】金泡沫',
+            'title': '�?金�?�垃】金泡沫',
             'duration': 308313,
             'upload_date': '20140420',
             'thumbnail': 're:^https?://.+\.jpg',
             'description': 'md5:ce18c2a2d2193f0df2917d270f2e5923',
             'timestamp': 1397983878,
-            'uploader': '菊子桑',
+            'uploader': '�?��?桑',
         },
     }, {
         'url': 'http://www.bilibili.com/video/av1041170/',
         'info_dict': {
             'id': '1041170',
-            'title': '【BD1080P】刀语【诸神&异域】',
-            'description': '这是个神奇的故事~每个人不留弹幕不给走哦~切利哦！~',
-            'uploader': '枫叶逝去',
+            'title': '�?BD1080P】刀语�?诸神&异域】',
+            'description': '这是个神奇的故事~�?个人�?留弹幕�?给走哦~切利哦�?~',
+            'uploader': '枫�?��?去',
             'timestamp': 1396501299,
         },
         'playlist_count': 9,

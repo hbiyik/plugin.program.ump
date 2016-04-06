@@ -1,6 +1,7 @@
 import re
-import urlparse
+
 import video_url_vk
+
 
 def run(hash,ump,referer=None):
 	src=ump.get_page(hash.replace("amp;",""),"utf-8")

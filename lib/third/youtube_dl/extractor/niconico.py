@@ -1,11 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import re
-import json
 import datetime
+import json
+import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_urlparse,
@@ -20,6 +19,7 @@ from ..utils import (
     determine_ext,
     urlencode_postdata,
 )
+from .common import InfoExtractor
 
 
 class NiconicoIE(InfoExtractor):
@@ -47,9 +47,9 @@ class NiconicoIE(InfoExtractor):
         'info_dict': {
             'id': 'nm14296458',
             'ext': 'swf',
-            'title': '【鏡音リン】Dance on media【オリジナル】take2!',
+            'title': '�?�?�音リン】Dance on media�?オリジナル】take2!',
             'description': 'md5:689f066d74610b3b22e0f1739add0f58',
-            'uploader': 'りょうた',
+            'uploader': 'りょ�?��?�',
             'uploader_id': '18822557',
             'upload_date': '20110429',
             'timestamp': 1304065916,
@@ -63,7 +63,7 @@ class NiconicoIE(InfoExtractor):
             'id': 'sm10000',
             'ext': 'unknown_video',
             'description': 'deleted',
-            'title': 'ドラえもんエターナル第3話「決戦第3新東京市」＜前編＞',
+            'title': 'ドラ�?�もんエターナル第3話「決戦第3新�?�京市�?＜�?編＞',
             'upload_date': '20071224',
             'timestamp': 1198527840,  # timestamp field has different value if logged in
             'duration': 304,
@@ -73,11 +73,11 @@ class NiconicoIE(InfoExtractor):
         'info_dict': {
             'id': '1388129933',
             'ext': 'mp4',
-            'title': '【第1回】RADIOアニメロミックス ラブライブ！～のぞえりRadio Garden～',
+            'title': '�?第1回】RADIOアニメロミックス ラブライブ�?～�?��?��?�りRadio Garden～',
             'description': 'md5:b27d224bb0ff53d3c8269e9f8b561cf1',
             'timestamp': 1388851200,
             'upload_date': '20140104',
-            'uploader': 'アニメロチャンネル',
+            'uploader': 'アニメロ�?ャン�?ル',
             'uploader_id': '312',
         }
     }]
@@ -258,7 +258,7 @@ class NiconicoPlaylistIE(InfoExtractor):
         'url': 'http://www.nicovideo.jp/mylist/27411728',
         'info_dict': {
             'id': '27411728',
-            'title': 'AKB48のオールナイトニッポン',
+            'title': 'AKB48�?�オールナイトニッ�?ン',
         },
         'playlist_mincount': 225,
     }

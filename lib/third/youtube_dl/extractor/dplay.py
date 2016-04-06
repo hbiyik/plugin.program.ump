@@ -5,8 +5,8 @@ import json
 import re
 import time
 
-from .common import InfoExtractor
 from ..utils import int_or_none
+from .common import InfoExtractor
 
 
 class DPlayIE(InfoExtractor):

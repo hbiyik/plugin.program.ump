@@ -1,9 +1,8 @@
 from __future__ import unicode_literals
 
-import re
 import json
+import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_unquote,
     compat_urlparse,
@@ -13,6 +12,7 @@ from ..utils import (
     clean_html,
     get_element_by_id,
 )
+from .common import InfoExtractor
 
 
 class VeeHDIE(InfoExtractor):

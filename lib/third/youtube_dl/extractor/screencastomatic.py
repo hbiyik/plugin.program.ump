@@ -1,12 +1,12 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     ExtractorError,
     js_to_json,
 )
+from .common import InfoExtractor
 
 
 class ScreencastOMaticIE(InfoExtractor):

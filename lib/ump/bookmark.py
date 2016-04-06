@@ -1,13 +1,16 @@
-import sys
-import zlib
-import xbmc
-import xbmcgui
+import json
 import os
 import re
-from xml.dom import minidom
-import urlparse
-import json
+import sys
 import urllib
+import urlparse
+from xml.dom import minidom
+import zlib
+
+import xbmc
+import xbmcgui
+
+
 try:
 	from ump.defs import WID
 except:

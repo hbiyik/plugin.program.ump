@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     parse_iso8601,
@@ -11,6 +10,7 @@ from ..utils import (
     xpath_text,
     find_xpath_attr,
 )
+from .common import InfoExtractor
 
 
 class XstreamIE(InfoExtractor):

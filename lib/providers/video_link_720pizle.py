@@ -1,7 +1,8 @@
 import json
 import re
 import time
-			
+
+
 domain="http://720pizle.com"
 encoding="iso-8859-9"
 
@@ -56,7 +57,6 @@ def run(ump):
 		if len(results)==0 or len(results)==1 and "orgfilmadi" in results[0].keys() and "Bulunamad" in results[0]["orgfilmadi"] : 
 			ump.add_log("720pizle can't find any links for %s"%name)
 			continue
-		imdbmatch=False
 
 		for result in results:
 			if result["imdbid"]==i["code"]:

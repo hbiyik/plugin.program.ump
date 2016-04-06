@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-import re
 import os
+import re
 
 from .common import InfoExtractor
 

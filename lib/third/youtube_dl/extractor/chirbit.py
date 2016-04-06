@@ -1,11 +1,11 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     parse_duration,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class ChirbitIE(InfoExtractor):
@@ -17,7 +17,7 @@ class ChirbitIE(InfoExtractor):
         'info_dict': {
             'id': 'PrIPv5',
             'ext': 'mp3',
-            'title': 'Фасадстрой',
+            'title': 'Фа�?ад�?трой',
             'duration': 52,
             'view_count': int,
             'comment_count': int,

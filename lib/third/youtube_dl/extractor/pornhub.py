@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 import os
 import re
 
-from .common import InfoExtractor
+from ..aes import (
+    aes_decrypt_text
+)
 from ..compat import (
     compat_urllib_parse_unquote,
     compat_urllib_parse_unquote_plus,
@@ -15,9 +17,7 @@ from ..utils import (
     sanitized_Request,
     str_to_int,
 )
-from ..aes import (
-    aes_decrypt_text
-)
+from .common import InfoExtractor
 
 
 class PornHubIE(InfoExtractor):

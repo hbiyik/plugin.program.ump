@@ -1,16 +1,15 @@
 from __future__ import unicode_literals
 
+import hashlib
 import io
 import json
-import traceback
-import hashlib
 import os
 import subprocess
 import sys
+import traceback
 from zipimport import zipimporter
 
 from .utils import encode_compat_str
-
 from .version import __version__
 
 

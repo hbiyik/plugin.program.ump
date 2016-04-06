@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urlparse,
 )
@@ -10,6 +9,7 @@ from ..utils import (
     int_or_none,
     ExtractorError,
 )
+from .common import InfoExtractor
 
 
 class FranceCultureIE(InfoExtractor):

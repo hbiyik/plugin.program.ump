@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     float_or_none,
     xpath_text,
@@ -11,6 +10,7 @@ from ..utils import (
     int_or_none,
     ExtractorError,
 )
+from .common import InfoExtractor
 
 
 class TwitterBaseIE(InfoExtractor):
@@ -254,7 +254,7 @@ class TwitterIE(InfoExtractor):
         'info_dict': {
             'id': 'MIOxnrUteUd',
             'ext': 'mp4',
-            'title': 'Dr.Pepperの飲み方 #japanese #バカ #ドクペ #電動ガン',
+            'title': 'Dr.Pepper�?�飲�?�方 #japanese #�?カ #ドクペ #電動ガン',
             'uploader': 'TAKUMA',
             'uploader_id': '1004126642786242560',
             'upload_date': '20140615',
@@ -271,7 +271,7 @@ class TwitterIE(InfoExtractor):
 
         username = remove_end(self._og_search_title(webpage), ' on Twitter')
 
-        title = description = self._og_search_description(webpage).strip('').replace('\n', ' ').strip('“”')
+        title = description = self._og_search_description(webpage).strip('').replace('\n', ' ').strip('“�?')
 
         # strip  'https -_t.co_BJYgOjSeGA' junk from filenames
         title = re.sub(r'\s+(https?://[^ ]+)', '', title)

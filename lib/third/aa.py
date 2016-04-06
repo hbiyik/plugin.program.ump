@@ -6,11 +6,11 @@
 # by DrZ3r0
 # ------------------------------------------------------------
 # Modified by Shani 
-import re,urllib2
+import re, urllib2
+
 
 #from core import logger
 #from core import scrapertools
-
 headers = [
     ['User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:38.0) Gecko/20100101 Firefox/38.0'],
     ['Accept-Encoding', 'gzip, deflate'],
@@ -28,7 +28,7 @@ class AADecoder(object):
                   "(ﾟДﾟ) ['c']", "(ﾟДﾟ) .ﾟｰﾟﾉ", "(ﾟДﾟ) .ﾟДﾟﾉ", "(ﾟДﾟ) [ﾟΘﾟ]"]
 
     def is_aaencoded(self):
-        idx = self.encoded_str.find("ﾟωﾟﾉ= /｀ｍ´）ﾉ ~┻━┻   //*´∇｀*/ ['_']; o=(ﾟｰﾟ)  =_=3; c=(ﾟΘﾟ) =(ﾟｰﾟ)-(ﾟｰﾟ); ")
+        idx = self.encoded_str.find("ﾟωﾟﾉ= /｀�?´）ﾉ ~┻�?┻   //*´∇｀*/ ['_']; o=(ﾟｰﾟ)  =_=3; c=(ﾟΘﾟ) =(ﾟｰﾟ)-(ﾟｰﾟ); ")
         if idx == -1:
             return False
 

@@ -5,7 +5,6 @@ import base64
 import re
 import time
 
-from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     float_or_none,
@@ -15,6 +14,7 @@ from ..utils import (
     std_headers,
     struct_unpack,
 )
+from .common import InfoExtractor
 
 
 def _decrypt_url(png):

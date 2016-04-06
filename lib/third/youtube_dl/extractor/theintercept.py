@@ -1,13 +1,13 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     parse_iso8601,
     int_or_none,
     ExtractorError,
 )
+from .common import InfoExtractor
 
 
 class TheInterceptIE(InfoExtractor):

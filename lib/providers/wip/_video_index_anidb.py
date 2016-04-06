@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
+import datetime
+import httplib
+import json
+import operator
+import re
+import time
+from urllib import quote_plus
+from urllib import urlencode
+import urlparse
+from xml.dom import minidom
+from xml.parsers import expat
+
 import xbmc
 import xbmcgui
 import xbmcplugin
-import datetime
-from urllib import quote_plus
-from urllib import urlencode
-import time
-import re
-import json
-import urlparse
-from xml.dom import minidom
+
 from third.dateutil import parser
-import httplib
-from xml.parsers import expat
 from third.unidecode import unidecode
-import operator
+
 
 domain="http://anidb.net"
 encoding="utf-8"
@@ -28,7 +31,7 @@ except AttributeError:
 def latinise(text):
 	# some roman chars are rare on daily usage, and everybody uses latin representatives. Dont know how romaji works in details.
 	chars={
-		333:"ou", #ō
+		333:"ou", #�?
 		215:"x", #instead of × 
 		8211:"-", # - instead of –
 		}

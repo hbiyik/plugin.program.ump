@@ -1,5 +1,6 @@
 import sys
 
+
 if len(sys.argv)>1:
 	if sys.argv[1]=="addfav":
 		from bookmark import add

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_parse_qs,
     compat_urllib_parse_urlparse,
@@ -16,12 +15,12 @@ from ..utils import (
     NO_DEFAULT,
     qualities,
 )
+from .common import InfoExtractor
+
 
 # There are different sources of video in arte.tv, the extraction process
 # is different for each one. The videos usually expire in 7 days, so we can't
 # add tests.
-
-
 class ArteTvIE(InfoExtractor):
     _VALID_URL = r'https?://videos\.arte\.tv/(?P<lang>fr|de|en|es)/.*-(?P<id>.*?)\.html'
     IE_NAME = 'arte.tv'

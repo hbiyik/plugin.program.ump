@@ -1,7 +1,8 @@
-import urlparse
 import re
 import time
 from third import unpack
+
+
 domain="http://vidto.me/"
 def run(hash,ump,referer=None):
 	src = ump.get_page(domain+hash,"utf8",referer=referer)

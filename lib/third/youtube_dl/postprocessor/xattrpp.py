@@ -1,11 +1,10 @@
 from __future__ import unicode_literals
 
+import errno
 import os
 import subprocess
 import sys
-import errno
 
-from .common import PostProcessor
 from ..compat import compat_os_name
 from ..utils import (
     check_executable,
@@ -15,6 +14,7 @@ from ..utils import (
     encodeArgument,
     encodeFilename,
 )
+from .common import PostProcessor
 
 
 class XAttrMetadataError(PostProcessingError):

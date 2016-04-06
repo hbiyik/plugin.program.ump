@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     js_to_json,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class ABCIE(InfoExtractor):

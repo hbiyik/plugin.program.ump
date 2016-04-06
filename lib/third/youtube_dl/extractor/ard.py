@@ -3,8 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
-from .generic import GenericIE
+from ..compat import compat_etree_fromstring
 from ..utils import (
     determine_ext,
     ExtractorError,
@@ -15,7 +14,8 @@ from ..utils import (
     unified_strdate,
     xpath_text,
 )
-from ..compat import compat_etree_fromstring
+from .common import InfoExtractor
+from .generic import GenericIE
 
 
 class ARDMediathekIE(InfoExtractor):

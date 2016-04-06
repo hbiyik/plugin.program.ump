@@ -2,10 +2,9 @@
 
 from __future__ import unicode_literals
 
-import re
 import itertools
+import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_parse_qs,
     compat_urllib_parse_unquote,
@@ -18,6 +17,7 @@ from ..utils import (
     xpath_text,
     unescapeHTML,
 )
+from .common import InfoExtractor
 
 
 class DaumIE(InfoExtractor):
@@ -29,7 +29,7 @@ class DaumIE(InfoExtractor):
         'info_dict': {
             'id': 'vab4dyeDBysyBssyukBUjBz',
             'ext': 'mp4',
-            'title': '마크 헌트 vs 안토니오 실바',
+            'title': '마�?� 헌트 vs 안토니오 실바',
             'description': 'Mark Hunt vs Antonio Silva',
             'upload_date': '20131217',
             'thumbnail': 're:^https?://.*\.(?:jpg|png)',
@@ -42,7 +42,7 @@ class DaumIE(InfoExtractor):
         'info_dict': {
             'id': '65139429',
             'ext': 'mp4',
-            'title': '1297회, \'아빠 아들로 태어나길 잘 했어\' 민수, 감동의 눈물[아빠 어디가] 20150118',
+            'title': '1297회, \'아빠 아들로 태어나길 잘 했어\' 민수, �?�?��?� 눈물[아빠 어디가] 20150118',
             'description': 'md5:79794514261164ff27e36a21ad229fc5',
             'upload_date': '20150604',
             'thumbnail': 're:^https?://.*\.(?:jpg|png)',
@@ -59,7 +59,7 @@ class DaumIE(InfoExtractor):
             'id': 'vwIpVpCQsT8$',
             'ext': 'flv',
             'title': '01-Korean War ( Trouble on the horizon )',
-            'description': '\nKorean War 01\nTrouble on the horizon\n전쟁의 먹구름',
+            'description': '\nKorean War 01\nTrouble on the horizon\n전�?�?� 먹구름',
             'upload_date': '20080223',
             'thumbnail': 're:^https?://.*\.(?:jpg|png)',
             'duration': 249,
@@ -249,7 +249,7 @@ class DaumUserIE(DaumListIE):
         'url': 'http://tvpot.daum.net/mypot/View.do?ownerid=o2scDLIVbHc0',
         'info_dict': {
             'id': 'o2scDLIVbHc0',
-            'title': '마이 리틀 텔레비전',
+            'title': '마�?� 리틀 텔레비전',
         },
         'playlist_mincount': 213
     }, {
@@ -257,7 +257,7 @@ class DaumUserIE(DaumListIE):
         'info_dict': {
             'id': '73801156',
             'ext': 'mp4',
-            'title': '[미공개] 김구라, 오만석이 부릅니다 \'오케피\' - 마이 리틀 텔레비전 20160116',
+            'title': '[미공개] 김구�?�, 오만�?�?� 부릅니다 \'오케피\' - 마�?� 리틀 텔레비전 20160116',
             'upload_date': '20160117',
             'description': 'md5:5e91d2d6747f53575badd24bd62b9f36'
         },
@@ -270,7 +270,7 @@ class DaumUserIE(DaumListIE):
         'url': 'http://tvpot.daum.net/mypot/View.do?ownerid=o2scDLIVbHc0&playlistid=6196631',
         'info_dict': {
             'id': '6196631',
-            'title': '마이 리틀 텔레비전 - 20160109',
+            'title': '마�?� 리틀 텔레비전 - 20160109',
         },
         'playlist_count': 11
     }, {

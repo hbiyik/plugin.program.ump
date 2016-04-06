@@ -1,15 +1,15 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import re
 import os.path
+import re
 
-from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     url_basename,
     remove_start,
 )
+from .common import InfoExtractor
 
 
 class DemocracynowIE(InfoExtractor):

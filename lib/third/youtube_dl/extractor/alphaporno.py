@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     parse_iso8601,
     parse_duration,
     parse_filesize,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class AlphaPornoIE(InfoExtractor):

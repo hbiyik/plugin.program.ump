@@ -1,8 +1,9 @@
-import sys
 import os
 from xml.dom import minidom
+
 import xbmc
 import xbmcgui
+
 
 logs={
 "0":"Buffer all internet filesystems (like 2 but additionally also ftp, webdav, etc.) (default)",

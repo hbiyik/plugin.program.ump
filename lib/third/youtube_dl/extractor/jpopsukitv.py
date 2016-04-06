@@ -1,11 +1,11 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     unified_strdate,
 )
+from .common import InfoExtractor
 
 
 class JpopsukiIE(InfoExtractor):
@@ -19,7 +19,7 @@ class JpopsukiIE(InfoExtractor):
             'id': '00be659d23b0b40508169cdee4545771',
             'ext': 'mp4',
             'title': 'ayumi hamasaki - evolution',
-            'description': 'Release date: 2001.01.31\r\n浜崎あゆみ - evolution',
+            'description': 'Release date: 2001.01.31\r\n浜崎�?�ゆ�?� - evolution',
             'thumbnail': 'http://www.jpopsuki.tv/cache/89722c74d2a2ebe58bcac65321c115b2.jpg',
             'uploader': 'plama_chan',
             'uploader_id': '404',

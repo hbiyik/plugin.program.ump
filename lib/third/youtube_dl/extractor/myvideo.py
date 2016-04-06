@@ -1,12 +1,11 @@
 from __future__ import unicode_literals
 
-import binascii
 import base64
+import binascii
 import hashlib
-import re
 import json
+import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_ord,
     compat_urllib_parse_unquote,
@@ -16,6 +15,7 @@ from ..utils import (
     ExtractorError,
     sanitized_Request,
 )
+from .common import InfoExtractor
 
 
 class MyVideoIE(InfoExtractor):

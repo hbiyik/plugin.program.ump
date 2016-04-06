@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-import urllib2
-import urllib
-import json
 import re
-import urlparse
-			
+
+
 domain="http://musicmp3.ru"
 encoding="utf-8"
 tunnel="random"
@@ -27,7 +24,6 @@ def run(ump):
 		mname="%s - %s" %(ump.info["artist"],ump.info["title"])
 	for item in playlist:
 		i=item["info"]
-		a=item["art"]
 		ump.add_log("musicmp3 is searching %s"%i["artist"])
 		if not i["album"]=="":
 			s_query=i["artist"]

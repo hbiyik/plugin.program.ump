@@ -1,15 +1,15 @@
 from __future__ import unicode_literals
 
-import re
 import json
+import re
 
-from .common import InfoExtractor
-from .youtube import YoutubeIE
 from ..utils import (
     clean_html,
     ExtractorError,
     get_element_by_id,
 )
+from .common import InfoExtractor
+from .youtube import YoutubeIE
 
 
 class TechTVMITIE(InfoExtractor):

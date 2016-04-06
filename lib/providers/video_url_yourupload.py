@@ -1,5 +1,4 @@
 import re
-import urlparse
 
 def run(hash,ump,referer=None):
 	url = "http://yourupload.com/embed/%s" % hash

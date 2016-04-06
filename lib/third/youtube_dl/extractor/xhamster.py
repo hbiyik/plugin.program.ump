@@ -2,13 +2,13 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..utils import (
     dict_get,
     float_or_none,
     int_or_none,
     unified_strdate,
 )
+from .common import InfoExtractor
 
 
 class XHamsterIE(InfoExtractor):

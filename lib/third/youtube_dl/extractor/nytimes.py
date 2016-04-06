@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     float_or_none,
     int_or_none,
     parse_iso8601,
 )
+from .common import InfoExtractor
 
 
 class NYTimesBaseIE(InfoExtractor):

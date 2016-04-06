@@ -1,5 +1,6 @@
 import json
 
+
 def run(hash,ump,referer=None):
 	if isinstance(hash,dict):
 		return hash

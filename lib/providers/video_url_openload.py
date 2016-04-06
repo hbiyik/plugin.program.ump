@@ -3,15 +3,16 @@
 import re
 import urllib2
 
+
 domain="https://www.openload.co/"
 
-def base(decimal ,base) :
-    list = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".lower()
-    otherbase = ""
-    while decimal != 0 :
-        otherbase = list[decimal % base] + otherbase
-        decimal    = decimal / base
-    return otherbase
+def base(decimal ,base):
+	list = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".lower()
+	otherbase = ""
+	while decimal != 0 :
+		otherbase = list[decimal % base] + otherbase
+		decimal	= decimal / base
+	return otherbase
 
 def run(hash,ump,referer=None):
 	data=ump.get_page(domain+"embed/"+hash,None)

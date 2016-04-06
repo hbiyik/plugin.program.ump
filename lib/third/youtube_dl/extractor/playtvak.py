@@ -1,7 +1,6 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urlparse,
     compat_urllib_parse_urlencode,
@@ -12,6 +11,7 @@ from ..utils import (
     parse_iso8601,
     qualities,
 )
+from .common import InfoExtractor
 
 
 class PlaytvakIE(InfoExtractor):
@@ -77,7 +77,7 @@ class PlaytvakIE(InfoExtractor):
         'info_dict': {
             'id': 'A141111_173251_metro-extra_row',
             'ext': 'mp4',
-            'title': 'Recesisté udělali z billboardu kolotoč',
+            'title': 'Recesisté udělali z billboardu koloto�?',
             'description': 'md5:7369926049588c3989a66c9c1a043c4c',
             'thumbnail': 're:(?i)^https?://.*\.(?:jpg|png)$',
             'timestamp': 1415725500,

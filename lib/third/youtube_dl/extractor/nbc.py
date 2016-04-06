@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
-from .theplatform import ThePlatformIE
 from ..utils import (
     find_xpath_attr,
     lowercase_escape,
@@ -14,6 +12,8 @@ from ..utils import (
     HEADRequest,
     parse_iso8601,
 )
+from .common import InfoExtractor
+from .theplatform import ThePlatformIE
 
 
 class NBCIE(InfoExtractor):

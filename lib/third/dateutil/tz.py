@@ -8,10 +8,11 @@ __author__ = "Gustavo Niemeyer <gustavo@niemeyer.net>"
 __license__ = "PSF License"
 
 import datetime
-import struct
-import time
-import sys
 import os
+import struct
+import sys
+import time
+
 
 relativedelta = None
 parser = None

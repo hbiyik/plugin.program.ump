@@ -3,18 +3,13 @@
 
 from __future__ import unicode_literals
 
-__license__ = 'Public Domain'
-
 import codecs
 import io
 import os
 import random
 import sys
 
-
-from .options import (
-    parseOpts,
-)
+from .YoutubeDL import YoutubeDL
 from .compat import (
     compat_expanduser,
     compat_getpass,
@@ -22,6 +17,14 @@ from .compat import (
     compat_shlex_split,
     workaround_optparse_bug9161,
 )
+from .downloader import (
+    FileDownloader,
+)
+from .extractor import gen_extractors, list_extractors
+from .options import (
+    parseOpts,
+)
+from .update import update_self
 from .utils import (
     DateRange,
     decodeOption,
@@ -36,12 +39,12 @@ from .utils import (
     std_headers,
     write_string,
 )
-from .update import update_self
-from .downloader import (
-    FileDownloader,
-)
-from .extractor import gen_extractors, list_extractors
-from .YoutubeDL import YoutubeDL
+
+
+__license__ = 'Public Domain'
+
+
+
 
 
 def _real_main(argv=None):

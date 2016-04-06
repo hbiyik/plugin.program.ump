@@ -2,11 +2,10 @@ from __future__ import unicode_literals
 
 import errno
 import os
+import re
 import socket
 import time
-import re
 
-from .common import FileDownloader
 from ..compat import compat_urllib_error
 from ..utils import (
     ContentTooShortError,
@@ -14,6 +13,7 @@ from ..utils import (
     sanitize_open,
     sanitized_Request,
 )
+from .common import FileDownloader
 
 
 class HttpFD(FileDownloader):

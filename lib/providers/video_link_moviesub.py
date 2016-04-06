@@ -1,10 +1,10 @@
+import json
 import re
 import string
-import time
+
 from third import unidecode
-import json
-import urllib
-			
+
+
 domain="http://www.moviesub.net"
 encoding="utf-8"
 

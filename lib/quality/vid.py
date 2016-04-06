@@ -1,5 +1,6 @@
-import struct
 import re
+import struct
+
 
 def find_atom(url,referer,cur,name):
 	while True:

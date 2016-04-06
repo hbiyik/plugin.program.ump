@@ -1,13 +1,13 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from .common import InfoExtractor
 from ..utils import (
     parse_iso8601,
     int_or_none,
     xpath_attr,
     xpath_element,
 )
+from .common import InfoExtractor
 
 
 class TwentyFourVideoIE(InfoExtractor):
@@ -22,7 +22,7 @@ class TwentyFourVideoIE(InfoExtractor):
                 'id': '1044982',
                 'ext': 'mp4',
                 'title': 'Эротика каменного века',
-                'description': 'Как смотрели порно в каменном веке.',
+                'description': 'Как �?мотрели порно в каменном веке.',
                 'thumbnail': 're:^https?://.*\.jpg$',
                 'uploader': 'SUPERTELO',
                 'duration': 31,
@@ -60,7 +60,7 @@ class TwentyFourVideoIE(InfoExtractor):
             webpage, 'uploader', fatal=False)
 
         view_count = int_or_none(self._html_search_regex(
-            r'<span class="video-views">(\d+) просмотр',
+            r'<span class="video-views">(\d+) про�?мотр',
             webpage, 'view count', fatal=False))
         comment_count = int_or_none(self._html_search_regex(
             r'<div class="comments-title" id="comments-count">(\d+) комментари',

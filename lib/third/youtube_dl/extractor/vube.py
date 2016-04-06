@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_str,
 )
@@ -10,6 +9,7 @@ from ..utils import (
     int_or_none,
     ExtractorError,
 )
+from .common import InfoExtractor
 
 
 class VubeIE(InfoExtractor):

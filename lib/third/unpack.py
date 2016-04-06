@@ -29,6 +29,7 @@ Unpacker for Dean Edward's p.a.c.k.e.r
 
 import re
 
+
 def detect(source):
     """Detects whether `source` is P.A.C.K.E.R. coded."""
     source = source.replace(' ', '')

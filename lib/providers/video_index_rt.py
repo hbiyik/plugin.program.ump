@@ -1,15 +1,9 @@
+import json
+import re
 import xbmc
 import xbmcgui
 import xbmcplugin
-from datetime import date
-from urllib import quote_plus
-import time
-import re
-import operator
-from ump import countries
-import json
 
-from third import unidecode
 
 try:
 	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
@@ -26,7 +20,6 @@ def htmlfilter(text):
 
 def run(ump):
 	globals()['ump'] = ump
-	cacheToDisc=True
 	if ump.page == "root":
 		li=xbmcgui.ListItem("LIST: Top Box Office", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 		u=ump.link_to("browse",{"type":"in-theaters","sortBy":"popularity"})

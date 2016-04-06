@@ -3,15 +3,15 @@ from __future__ import unicode_literals
 
 import json
 
-from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     js_to_json,
 )
+from .common import InfoExtractor
 
 
 class KrasViewIE(InfoExtractor):
-    IE_DESC = 'Красвью'
+    IE_DESC = 'Кра�?вью'
     _VALID_URL = r'https?://krasview\.ru/(?:video|embed)/(?P<id>\d+)'
 
     _TEST = {
@@ -20,8 +20,8 @@ class KrasViewIE(InfoExtractor):
         'info_dict': {
             'id': '512228',
             'ext': 'mp4',
-            'title': 'Снег, лёд, заносы',
-            'description': 'Снято в городе Нягань, в Ханты-Мансийском автономном округе.',
+            'title': 'Снег, лёд, зано�?ы',
+            'description': 'Сн�?то в городе �?�?гань, в Ханты-Ман�?ий�?ком автономном округе.',
             'duration': 27,
             'thumbnail': 're:^https?://.*\.jpg',
         },

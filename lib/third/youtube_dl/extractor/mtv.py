@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_str,
@@ -19,6 +18,7 @@ from ..utils import (
     RegexNotFoundError,
     xpath_text,
 )
+from .common import InfoExtractor
 
 
 def _media_xml_tag(tag):

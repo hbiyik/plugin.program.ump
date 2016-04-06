@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import hashlib
 
-from .common import InfoExtractor
 from ..compat import (
     compat_urllib_request,
     compat_urlparse,
@@ -13,6 +12,7 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
+from .common import InfoExtractor
 
 
 class FC2IE(InfoExtractor):

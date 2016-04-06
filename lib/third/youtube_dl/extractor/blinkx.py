@@ -2,11 +2,11 @@ from __future__ import unicode_literals
 
 import json
 
-from .common import InfoExtractor
 from ..utils import (
     remove_start,
     int_or_none,
 )
+from .common import InfoExtractor
 
 
 class BlinkxIE(InfoExtractor):

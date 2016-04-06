@@ -1,10 +1,8 @@
-import urllib2
-import urllib
 import json
 import re
-import json
 from xml.dom import minidom
-			
+
+
 domain="http://mangafox.me"
 encoding="utf-8"
 

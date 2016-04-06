@@ -1,16 +1,19 @@
-from ump import bookmark
+import json
+import os
+
+import xbmc
+import xbmcaddon
 import xbmcgui
 import xbmcplugin
-import xbmcaddon
-import xbmc
-import os
-import json
+
+from ump import bookmark
+
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
 def run(ump):
-	res,favs=bookmark.load()
+	favs=bookmark.load()[1]
 	ccat=ump.content_type
 	for fav in favs:
 		wid,name,thumb,data,cat,module,page,args,info,art=fav
