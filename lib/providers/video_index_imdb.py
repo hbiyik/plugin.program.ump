@@ -345,17 +345,17 @@ def run(ump):
 		mquery=ump.args.copy()
 		mquery["title_type"]="feature,tv_movie,short"
 		mquery["content_cat"]=ump.defs.CC_MOVIES
-		ump.index_item("Show Only Movies","results_title",args=mquery)
+		ump.index_item("Show Only Movies","results_title",args=mquery,art=None)
 
 		squery=ump.args.copy()
 		squery["title_type"]="tv_series,mini_series"
 		squery["content_cat"]=ump.defs.CC_TVSHOWS
-		ump.index_item("Show Only Series","results_title",args=squery)
+		ump.index_item("Show Only Series","results_title",args=squery,art=None)
 
 		dquery=ump.args.copy()
 		dquery["title_type"]="documentary"
 		dquery["content_cat"]=ump.defs.CC_MOVIES
-		ump.index_item("Show Only Documentaries","results_title",args=dquery)
+		ump.index_item("Show Only Documentaries","results_title",args=dquery,art=None)
 		ump.set_content(ump.defs.CC_ALBUMS)
 	
 	elif ump.page == "results_name":

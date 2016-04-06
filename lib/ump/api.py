@@ -115,7 +115,9 @@ class ump():
 	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True):
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
+		if info is None:info={} 
 		if art == {}:art=self.art
+		if art is None: art={}
 		#if thumb == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":thumb=art["thumb"]
 		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
 		self.info=info

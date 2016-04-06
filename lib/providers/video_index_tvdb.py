@@ -256,8 +256,13 @@ def run(ump):
 		names={}
 		suggest=""
 		otherids=[]
+		processed=[]
 		for s in series:
 			sid=s.getElementsByTagName("seriesid")[0].lastChild.data
+			if sid in processed:
+				continue
+			else:
+				processed.append(sid)
 			lang=s.getElementsByTagName("language")[0].lastChild.data
 			if not lang == "":
 				otherids.append(sid)
@@ -300,18 +305,14 @@ def run(ump):
 
 
 		data=get_tvdb_info(names.keys())
-
 		for id in data.keys():
 			names[id].update(data[id]["info"])
 			commands=[]
-			commands.append(('Search on IMDB : %s'%data[id]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":data[id]["info"]["tvshowtitle"],"title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},module="imdb")))
-			commands.append(('Search on ANN : %s'%data[id]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":data[id]["info"]["tvshowtitle"]},module="ann")))
+			commands.append(('Search on IMDB : %s'%names[id]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":names[id]["tvshowtitle"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS},module="imdb")))
+			commands.append(('Search on ANN : %s'%names[id]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":names[id]["tvshowtitle"]},module="ann")))
 			for person in data[id]["info"].get("cast","")[:5]:
 				if not person=="":
 					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
-			for person in data[id]["info"].get("director","").split(","):
-				if not person=="":
-					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
 			ump.index_item(suggest+names[id]["localtitle"],"seasons",{"tvdbid":id},info=names[id],art=data[id]["art"],cmds=commands)
 		ump.set_content(ump.defs.CC_TVSHOWS)
 
@@ -338,7 +339,7 @@ def run(ump):
 		for epno in sorted([int(x) for  x in epis["episode"].keys()],reverse=True):
 			#json keys are strings :(
 			commands=[]
-			commands.append(('Search on IMDB : %s'%epis["episode"][epno]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":epis["episode"][epno]["info"]["tvshowtitle"],"title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},module="imdb")))
+			commands.append(('Search on IMDB : %s'%epis["episode"][epno]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":epis["episode"][epno]["info"]["tvshowtitle"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS},module="imdb")))
 			commands.append(('Search on ANN : %s'%epis["episode"][epno]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":epis["episode"][epno]["info"]["tvshowtitle"]},module="ann")))
 			for person in epis["episode"][epno]["info"].get("cast","")[:5]:
 				if not person=="":
@@ -346,5 +347,5 @@ def run(ump):
 			for person in epis["episode"][epno]["info"].get("director","").split(","):
 				if not person=="":
 					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
-			ump.index_item("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]),"urlselect",info=epis["episode"][epno]["info"],art=epis["episode"][epno]["art"])
+			ump.index_item("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]),"urlselect",info=epis["episode"][epno]["info"],art=epis["episode"][epno]["art"],cmds=commands)
 		ump.set_content(ump.defs.CC_EPISODES)

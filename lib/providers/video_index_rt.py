@@ -1,8 +1,6 @@
 import json
 import re
 import xbmc
-import xbmcgui
-import xbmcplugin
 
 
 try:
@@ -21,49 +19,17 @@ def htmlfilter(text):
 def run(ump):
 	globals()['ump'] = ump
 	if ump.page == "root":
-		li=xbmcgui.ListItem("LIST: Top Box Office", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("browse",{"type":"in-theaters","sortBy":"popularity"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("LIST: Top DVD Rentals", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("browse",{"type":"dvd-top-rentals","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"popularity"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("LIST: New DVD Releases", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("browse",{"type":"dvd-new-releases","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"release"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("LIST: Upcoming DVD", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("browse",{"type":"dvd-upcoming","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"release"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("LIST: Certified Fresh DVDs", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("browse",{"type":"cf-dvd-all","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"release","certified":"true"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("EDITORIAL: Countdown", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("editorial",{"ptype":"list","edit":"countdown"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("EDITORIAL: Binge Guide", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("editorial",{"ptype":"list","edit":"binge-guide"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("EDITORIAL: Five Favorite Films", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("editorial",{"ptype":"list","edit":"five-favorite-films"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("EDITORIAL: Now Streaming", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("editorial",{"ptype":"list","edit":"now-streaming"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-		
-		li=xbmcgui.ListItem("EDITORIAL: Parental Guidance", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("editorial",{"ptype":"list","edit":"parental-guidance"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-
-		li=xbmcgui.ListItem("EDITORIAL: Total Recall", iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
-		u=ump.link_to("editorial",{"ptype":"list","edit":"total-recall"})
-		xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+		ump.index_item("LIST: Top Box Office","browse",args={"type":"in-theaters","sortBy":"popularity"})
+		ump.index_item("LIST: Top DVD Rentals","browse",args={"type":"dvd-top-rentals","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"popularity"})
+		ump.index_item("LIST: New DVD Releases","browse",args={"type":"dvd-new-releases","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"release"})
+		ump.index_item("LIST: Upcoming DVD","browse",args={"type":"dvd-upcoming","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"release"})
+		ump.index_item("LIST: Certified Fresh DVDs","browse",args={"type":"cf-dvd-all","services":"amazon;amazon_prime;flixster;hbo_go;itunes;netflix_iw;vudu","sortBy":"release","certified":"true"})
+		ump.index_item("EDITORIAL: Countdown","editorial",args={"ptype":"list","edit":"countdown"})
+		ump.index_item("EDITORIAL: Binge Guide","editorial",args={"ptype":"list","edit":"binge-guide"})
+		ump.index_item("EDITORIAL: Five Favorite Films","editorial",args={"ptype":"list","edit":"five-favorite-films"})
+		ump.index_item("EDITORIAL: Now Streaming","editorial",args={"ptype":"list","edit":"now-streaming"})
+		ump.index_item("EDITORIAL: Parental Guidance","editorial",args={"ptype":"list","edit":"parental-guidance"})
+		ump.index_item("EDITORIAL: Total Recall","editorial",args={"ptype":"list","edit":"total-recall"})
 		ump.set_content(ump.defs.CC_FILES)
 	elif ump.page == "view":
 		text=htmlfilter(ump.args.get("text",""))
@@ -85,18 +51,14 @@ def run(ump):
 			for ct in countdowns:
 				lnk,img,title=ct
 				if "video:" in title.lower(): continue
-				li=xbmcgui.ListItem(re.sub("\<.*?\>","",title), iconImage=img, thumbnailImage=img)
 				ump.args["ptype"]="content"
 				ump.args["clink"]=lnk
-				u=ump.link_to("editorial",ump.args)
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+				ump.index_item(re.sub("\<.*?\>","",title),"editorial",args=ump.args,art={"thumb":img,"icon":img})
 			if not pages[-1]==actp[0]:
 				prep=int(actp[0])+1
-				li=xbmcgui.ListItem("Page %d"%prep, iconImage="DefaultFolder.png", thumbnailImage="DefaultFolder.png")
 				ump.args["plink"]="?wpv_view_count=%s&wpv_paged=%d"%(dwn[0],prep)
 				ump.args["ptype"]="list"
-				u=ump.link_to("editorial",ump.args)	
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
+				ump.index_item("Page %d"%prep, "editorial",args=ump.args,art=None)
 			ump.set_content(ump.defs.CC_FILES)
 		elif ptype=="content":
 			clink=ump.args.get("clink","")
@@ -120,8 +82,7 @@ def run(ump):
 						img,title,num,desc=movie
 						title=re.sub("\: series [0-9]*","",title.lower())
 						title=re.sub("\: season [0-9]*","",title.lower())
-						li=xbmcgui.ListItem("%s) %s"%(num,title.title()), iconImage=img, thumbnailImage=img)
-						items[int(num)]=(li,{"title":title,"text":desc})
+						items[int(num)]=("%s) %s"%(num,title.title()),img,{"title":title,"text":desc})
 				#binge guide
 				#5 favs
 				#nowstreaming
@@ -143,17 +104,14 @@ def run(ump):
 						title,year,img,desc=movie
 						title=re.sub("\: series [0-9]*","",title.lower())
 						title=re.sub("\: season [0-9]*","",title.lower())
-						li=xbmcgui.ListItem(title.title(), iconImage=img, thumbnailImage=img)
-						items[k]=(li,{"title":title,"text":desc})
+						items[k]=(title.title(),img,{"title":title,"text":desc})
 			for k in sorted(items.keys()):
-				li,args=items[k]
-				u=ump.link_to("view",args)
+				liname,lim,args=items[k]
 				commands=[('Search on IMDB', 'XBMC.Container.Update(%s)'%ump.link_to("search",args,module="imdb")),
 				('Search on TVDB', 'XBMC.Container.Update(%s)'%ump.link_to("search",args,module="tvdb")),
 				('Search on ANN', 'XBMC.Container.Update(%s)'%ump.link_to("search",args,module="ann"))
 				]
-				li.addContextMenuItems(commands,True)
-				xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+				ump.index_item(liname,"view",args=args,art={"thumb":lim,"icon":lim},cmds=commands)
 			ump.set_content(ump.defs.CC_ALBUMS)
 	
 	elif ump.page=="browse":
@@ -168,19 +126,13 @@ def run(ump):
 			pcount-=1
 			if pcount>0:continue
 			img=movie["posters"]["primary"]
-			li=xbmcgui.ListItem(movie["title"], iconImage=img, thumbnailImage=img)
-			u=ump.link_to("none")
 			commands=[('Search on IMDB', 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["title"]},module="imdb")),
 				('Search on TVDB', 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["title"]},module="tvdb")),
 				('Search on ANN', 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["title"]},module="ann"))
 				]
-			li.addContextMenuItems(commands,True)
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,False)
+			ump.index_item(movie["title"],"none",art={"thumb":img,"icon":img},cmds=commands)
 		if ump.args["page"]*30<count:
 			preargs=ump.args.copy()
 			preargs["page"]=ump.args["page"]+1
-			img="DefaultFolder.png"
-			li=xbmcgui.ListItem("Page %d"%preargs["page"], iconImage=img, thumbnailImage=img)
-			u=ump.link_to("browse",preargs)
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,True)
-		ump.set_content(ump.defs.CC_ALBUMS)
+			ump.index_item("Page %d"%preargs["page"],"browse",args=preargs,art=None)
+		ump.set_content(ump.defs.CC_MOVIES)
