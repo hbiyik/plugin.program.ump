@@ -204,7 +204,7 @@ def scrape_imdb_search(page):
 	gid=ump.tm.create_gid()
 	for m in range(len(m1)):
 		ump.tm.add_queue(alternate,(m,m1[m]["info"]["code"]),gid=gid)
-	ump.tm.join(gid=gid)
+	ump.tm.join(gid=gid,cnt="all")
 
 	return start,end,total,m1
 
@@ -256,14 +256,14 @@ def run(ump):
 	globals()['ump'] = ump
 	if ump.page == "root":
 		ump.index_item("Search Movies","results_title",args={"title":"?","title_type":"feature,tv_movie,short","sort":"moviemeter,asc"})
-		ump.index_item("Search Series","results_title",args={"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS})		
+		ump.index_item("Search Series","results_title",args={"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc"})		
 		ump.index_item("Search Documentaries","results_title",args={"title":"?","title_type":"documentary","sort":"moviemeter,asc"})
 		ump.index_item("Search People","results_name",args={"name":"?"})
 		ump.index_item("Top Rated Movies","select_year",args={"at":"0","num_votes":"60000,","sort":"user_rating","title_type":"feature,tv_movie,short","next_page":"results_title"})
 		ump.index_item("Top Voted Movies","select_year",args={"at":"0","sort":"num_votes,desc","title_type":"feature,tv_movie,short","next_page":"results_title"})
 		ump.index_item("Top Box Office Movies","select_year",args={"at":"0","sort":"boxoffice_gross_us,desc","title_type":"feature,tv_movie,short","next_page":"results_title"})
-		ump.index_item("Top Rated Series","select_year",args={"at":"0","num_votes":"5000,","sort":"user_rating","title_type":"tv_series,mini_series","next_page":"results_title","content_cat":ump.defs.CC_TVSHOWS})
-		ump.index_item("Top Voted Series","select_year",args={"at":"0","sort":"num_votes,desc","title_type":"tv_series,mini_series","next_page":"results_title","content_cat":ump.defs.CC_TVSHOWS})
+		ump.index_item("Top Rated Series","select_year",args={"at":"0","num_votes":"5000,","sort":"user_rating","title_type":"tv_series,mini_series","next_page":"results_title"})
+		ump.index_item("Top Voted Series","select_year",args={"at":"0","sort":"num_votes,desc","title_type":"tv_series,mini_series","next_page":"results_title"})
 		ump.index_item("Top Rated Documentaries","select_year",args={"at":"0","num_votes":"5000,","sort":"user_rating","title_type":"documentary","next_page":"results_title"})
 		ump.index_item("Top Voted Documentaries","select_year",args={"at":"0","sort":"num_votes,desc","title_type":"documentary","next_page":"results_title"})
 		ump.index_item("Genres","genres")
@@ -305,9 +305,9 @@ def run(ump):
 		for award in awards:
 			key,val,tt=award
 			if tt == 0:
-				ump.index_item(val,"results_title",args={"at":"0","sort":"release_date_us,desc","groups":key,"title_type":"feature,tv_movie,short,documentary","content_cat":ump.defs.CC_MOVIES})
+				ump.index_item(val,"results_title",args={"at":"0","sort":"release_date_us,desc","groups":key,"title_type":"feature,tv_movie,short,documentary"})
 			elif tt == 1:
-				ump.index_item(val,"results_title",args={"at":"0","sort":"release_date_us,desc","groups":key,"title_type":"tv_series,mini_series","content_cat":ump.defs.CC_TVSHOWS})
+				ump.index_item(val,"results_title",args={"at":"0","sort":"release_date_us,desc","groups":key,"title_type":"tv_series,mini_series"})
 			elif tt == 2:
 				ump.index_item(val,"results_name",args={"groups":key})
 		ump.set_content(ump.defs.CC_FILES)
@@ -336,11 +336,7 @@ def run(ump):
 	elif ump.page == "search":
 		title=ump.args.get("title","")
 		if title==" ":
-			kb = xbmc.Keyboard('default', 'Title', True)
-			kb.setDefault("")
-			kb.setHiddenInput(False)
-			kb.doModal()
-			ump.args["title"]=kb.getText()
+			conf,ump.args["title"]=ump.get_keyboard('default', 'Title', True)
 		
 		mquery=ump.args.copy()
 		mquery["title_type"]="feature,tv_movie,short"
@@ -386,6 +382,7 @@ def run(ump):
 	
 	elif ump.page == "results_title":
 		title=ump.args.get("title","")
+		ctype=ump.defs.CC_MOVIES
 		if title=="?":
 			kb = xbmc.Keyboard('default', 'Title', True)
 			kb.setDefault("")
@@ -425,7 +422,6 @@ def run(ump):
 				role_t,role_id=role
 				if role_t in ["director","writer","actor"]:
 					allowed.append(role_id)
-
 		if not len(movies) < 1: 
 			for movie in movies:
 				if len(allowed) and not movie["info"]["code"] in allowed and "role" in ump.args.keys():

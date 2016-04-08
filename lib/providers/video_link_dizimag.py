@@ -73,7 +73,6 @@ def run(ump):
 							is_single_part=js["tekpart"]
 							query={"type":tur,"a":code,"b":"1"+str(idd),"s":serie1,"episode":episode1}
 							script=ump.get_page(domain+'/service/idmg',encoding,query=query)
-							#print script.encode("ascii","ignore")
 						vids=re.findall('file:"(.*?)",label: "(.*?)"',script)
 						vlink={}
 						if len(vids)>0:

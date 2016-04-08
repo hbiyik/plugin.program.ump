@@ -22,6 +22,8 @@ from ump import ui
 ump=api.ump()
 prerun.run(ump)
 
+import threading
+
 print "HANDLE       : " + str(ump.handle)
 print "MODULE       : " + str(ump.module)
 print "PAGE         : " + str(ump.page)
@@ -56,9 +58,17 @@ elif ump.page== "urlselect":
 			ump.tm.add_queue(provider.run, (ump,),pri=10)
 		ump.window.doModal()
 elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==1:
-	providers.load(ump.content_type,"index",ump.module).run(ump)
+	try:
+		providers.load(ump.content_type,"index",ump.module).run(ump)
+	except Exception,e:
+		ump.notify_error(e)
+		
 elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==2:
-	providers.load("ump","index",ump.module).run(ump)
+	try:
+		providers.load("ump","index",ump.module).run(ump)
+	except Exception,e:
+		ump.notify_error(e)
+		
 ump.shut()
 print "CONTENT_CAT  : " + str(ump.content_cat)
 del gc.garbage[:]

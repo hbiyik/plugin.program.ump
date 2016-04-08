@@ -4,7 +4,6 @@ import re
 from urllib import urlencode
 from xml.dom import minidom
 import xbmc
-import xbmcgui
 from third.dateutil import parser
 from operator import itemgetter
 
@@ -30,16 +29,14 @@ def latinise(text):
 	return text
 
 def scrape_ann_search(animes):
-	pDialog = xbmcgui.DialogProgress()
-	pDialog.create('ANN', 'Retrieving Information')
-	pDialog.update(5, 'Retrieving Information')
+	ump.dialogpg.update(5, message='Retrieving Information')
 	res=ump.get_page(domain+"/encyclopedia/api.xml?anime="+"/".join(animes),None)
-	pDialog.update(40, 'Retrieving Information')
+	ump.dialogpg.update(40, message='Retrieving Information')
 	m1=[]
 	#no idea why chr 08 causes xml sructure error :/
 	res=minidom.parseString(res.replace(chr(8),""))
 	medias=res.getElementsByTagName("anime")
-	pDialog.update(50, 'Retrieving Information')
+	ump.dialogpg.update(50, message='Retrieving Information')
 	count=0
 	for media in medias:
 		count+=1
@@ -210,9 +207,8 @@ def scrape_ann_search(animes):
 			}
 		data["episodes"]=episodes #special only for this indexer
 		m1.append(data)
-		pDialog.update(50+count, 'Retrieving Information')
+		ump.dialogpg.update(50+count, message='Retrieving Information')
 
-	pDialog.close()
 	return m1
 
 def grab_searches(link,maxpage=2):
@@ -345,11 +341,7 @@ def run(ump):
 	elif ump.page == "search":
 		what=ump.args.get("title",None)
 		if what is None:
-			kb = xbmc.Keyboard('default', 'Search Anime', True)
-			kb.setDefault("")
-			kb.setHiddenInput(False)
-			kb.doModal()
-			what=kb.getText()
+			conf,what=ump.get_keyboard('default', 'Search Anime', True)
 		q={"id":155,"type":"anime","search":what}
 		res=ump.get_page(domain+"/encyclopedia/reports.xml",None,query=q)
 		res=minidom.parseString(res)

@@ -85,7 +85,7 @@ def get_tvdb_art(ids):
 	for id in ids:
 		ump.tm.add_queue(get_id,(id,),gid=gid)
 	
-	ump.tm.join(gid=gid)
+	ump.tm.join(gid=gid,cnt="all")
 	return result
 
 def get_tvdb_info(ids,force_lang=False):
@@ -145,7 +145,7 @@ def get_tvdb_info(ids,force_lang=False):
 	for id in ids:
 		ump.tm.add_queue(get_id,(id,force_lang),gid=gid)
 	
-	ump.tm.join(gid=gid)
+	ump.tm.join(gid=gid,cnt="all")
 	return result
 
 def get_tvdb_episodes(ids,arts):
@@ -196,7 +196,7 @@ def get_tvdb_episodes(ids,arts):
 	for k in range(len(ids)):
 		ump.tm.add_queue(get_id,(ids[k],),gid=gid)
 	
-	ump.tm.join(gid=gid)
+	ump.tm.join(gid=gid,cnt="all")
 	return result	
 
 
@@ -244,11 +244,7 @@ def run(ump):
 	elif ump.page == "search":
 		what=ump.args.get("title",None)
 		if what is None:
-			kb = xbmc.Keyboard('default', 'Search Series', True)
-			kb.setDefault("")
-			kb.setHiddenInput(False)
-			kb.doModal()
-			what=kb.getText()
+			conf,what=ump.get_keyboard('default', 'Search Series', True)
 		q={"seriesname":what,"language":"all"}
 		p=ump.get_page("%s/api/GetSeries.php"%mirror,None,query=q)
 		x=minidom.parseString(p)

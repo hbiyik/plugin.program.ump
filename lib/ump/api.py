@@ -31,7 +31,6 @@ from ump import ui
 from ump import webtunnel
 from ump import prefs 
 
-
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
@@ -66,6 +65,8 @@ class ump():
 		self.handle = int(sys.argv[1])
 		self.ws_limit=False #web search limit
 		self.defs=defs
+		self.monitor=xbmc.Monitor()
+		if self.monitor.abortRequested():sys.exit()
 		self.window = ui.listwindow('select.xml', addon_dir,'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', addon_dir,"Default","720p")
 		self.urlval_en=True
@@ -77,7 +78,11 @@ class ump():
 		self.tunnel=webtunnel.tunnel()
 		self.mirrors=[]
 		self.terminate=False
-		self.tm=task.manager(self.tm_conc)
+		self.dialog=xbmcgui.Dialog()
+		self.dialogpg=xbmcgui.DialogProgressBG()
+		self.dialogpg.create("UMP")
+		self.dialogpg.update(100)
+		self.tm=task.manager(self.dialogpg,self.tm_conc)
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
@@ -99,7 +104,6 @@ class ump():
 			from ump import useragents
 			self.ua=choice(useragents.all)
 		self.opener.addheaders = [('User-agent', self.ua)]
-		self.dialog=xbmcgui.Dialog()
 		query=sys.argv[2][1:]
 		result=parse_qs(query)
 		[self.module]= result.get('module', ["ump"])
@@ -109,11 +113,21 @@ class ump():
 		for keep in ["info","art"]:
 			[lst]=result.get(keep, ["{}"])
 			setattr(self,keep,json.loads(lst))
-
 		[self.content_type]= result.get('content_type', ["ump"])
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
-	
+		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+	def get_keyboard(self,*args):
+		kb = xbmc.Keyboard(*args)
+		kb.setDefault("")
+		kb.setHiddenInput(False)
+		if not self.monitor.abortRequested():
+			kb.doModal()
+		if self.monitor.abortRequested():
+			self.dialogpg.close()
+			sys.exit()
+		return kb.isConfirmed(),kb.getText()
+		
 	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True):
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
@@ -228,14 +242,14 @@ class ump():
 			mode=self.defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
 		else:
 			mode=prefs.get("pref_views",content_cat,xbmc.getSkinDir())
-			print mode
 			if mode=={}: mode=None
 		if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
 			#issue #38
 			self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
 		elif not mode is None:
 			for i in range(0, 10*60):
-				print i
+				if self.terminate or self.monitor.abortRequested():
+					break
 				if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
 					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
 					break
@@ -264,6 +278,7 @@ class ump():
 		return sys.argv[0] + '?' + urlencode(query)
 
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled"):
+		
 		if self.terminate:
 			raise task.killbill
 
@@ -276,7 +291,8 @@ class ump():
 		#change timeout
 		if tout is None:
 			tout=int(float(addon.getSetting("tout")))
-
+		#if self.dialogpg.isFinished():
+		#	self.dialogpg.update(100,"UMP has Downloaded",url)
 		headers={'Accept-encoding':'gzip'}
 		if not referer is None : headers["Referer"]=referer
 		if not header is None :
@@ -290,8 +306,8 @@ class ump():
 		if not head:
 			self.tunnel.set_tunnel(tunnel)
 			self.tunnel.pre(req)
-		
 		response = cloudfare.ddos_open(self.opener, req, data,timeout=tout)
+		
 		
 		if head :return response
 		
@@ -304,7 +320,6 @@ class ump():
 		else:
 			#unicode data
 			src=unicode(unescape(stream.decode(encoding,"ignore")))
-
 		return src
 	
 	def web_search(self,query):
@@ -331,7 +346,7 @@ class ump():
 		errtype= e.__class__.__name__
 		if not silent:
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
-		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true":
+		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true" or True:
 			print traceback.format_exc()
 
 	def add_log(self,line):
@@ -343,7 +358,7 @@ class ump():
 			print line
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
-		if not self.terminate and isinstance(parts,list) and len(parts)>0:
+		if not (self.terminate or self.monitor.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				upname=part.get("url_provider_name",None)
 				uphash=part.get("url_provider_hash",None)
@@ -538,6 +553,25 @@ class ump():
 		return part
 
 	def shut(self,play=False,noblock=0):
+		self.terminate=True
+		self.tm.s.set()
+		if hasattr(self,"dialogpg"):
+			self.dialogpg.close()
+			del(self.dialogpg)
+		if self.monitor.abortRequested():
+			return None
+		if hasattr(self,"window"):
+			self.window.close()
+			if hasattr(self.window,"status"):
+				del(self.window.status)
+			del(self.window)
+		if hasattr(self,"iwindow"):
+			self.iwindow.close()
+			if hasattr(self.iwindow,"img"):
+				del(self.iwindow.img)
+			del(self.iwindow)
+		if hasattr(self,"dialog"):
+			del(self.dialog)
 		try:
 			self.cj.save()
 		except:
@@ -545,28 +579,12 @@ class ump():
 				os.remove(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie"))
 			except:
 				pass
-		self.terminate=True
-		if hasattr(self,"window"):
-			self.window.close()
-		self.tm.s.set()
-		q,a,p=self.tm.stats()
 		if play:
-			q=a=0
 			self.player.xplay()
-		if hasattr(self,"window"):
-			if hasattr(self.window,"status"):
-				del(self.window.status)
-			del(self.window)
-
-		if hasattr(self,"iwindow"):
-			self.iwindow.close()
-			if hasattr(self.iwindow,"img"):
-				del(self.iwindow.img)
-			del(self.iwindow)
-
-		if hasattr(self,"dialog"):
-			del(self.dialog)
-
+			cnt=0
+		else:
+			cnt="all"
 		if hasattr(self,"player"):
 			del(self.player)
-		self.tm.join(noblock=noblock)
+		if self.handle=="-1":
+			self.tm.join(noblock=noblock,cnt=cnt)

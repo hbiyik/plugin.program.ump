@@ -166,11 +166,7 @@ def run(ump):
 
 
 	elif ump.page == "search":
-		kb = xbmc.Keyboard('default', 'Search Audio', True)
-		kb.setDefault("")
-		kb.setHiddenInput(False)
-		kb.doModal()
-		what=kb.getText()
+		conf,what=ump.get_keyboard('default', 'Search Audio', True)
 		ump.index_item("Search %s in Artists" % what,"searchresult",args={"what":what,"where":"artist"})
 		ump.index_item("Search %s in Albums" % what,"searchresult",args={"what":what,"where":"album"})
 		ump.index_item("Search %s in Tracks" % what,"searchresult",args={"what":what,"where":"track"})

@@ -1,10 +1,8 @@
 from operator import itemgetter
 import threading
-import time
 import traceback
 import uuid
-
-import xbmcgui
+import xbmc
 
 
 #simple task manager but quite handy one
@@ -16,12 +14,14 @@ class killbill(Exception):
 	pass
 	
 class manager(object):
-	def __init__(self, concurrent=4):
+	def __init__(self, dialogpg,concurrent=4):
+		self.dialogpg=dialogpg
 		self.c = concurrent #concurrency count, runtime changable
 		self.s = threading.Event() #stop flag
 		self.q = [] #queue for the function when concurrency is not available
 		self.p = [] #processed tasks
 		self.g = [] #group ids
+		self.m = xbmc.Monitor()
 
 	def task(self,func,args):
 		try:
@@ -69,18 +69,20 @@ class manager(object):
 				
 
 	def join(self,gid=None,cnt=0,noblock=0):
-		if cnt>0:
-			dialog = xbmcgui.DialogProgress()
-			dialog.create('UMP', 'Shutting Down Task Manager')
-		while True:
+		q,a,p=self.stats(gid)
+		if cnt=="all":
+			cnt=q+a
+		if noblock=="all":
+			noblock=q+a
+		i=0
+		while True and not self.m.abortRequested():
+			i+=1
 			q,a,p=self.stats(gid)
 			if cnt>0 and not q+a==0:
-				dialog.update(100-100*(q+a)/cnt,"Shutting Down Tasks %d of %d"%(cnt-q-a,cnt))
+				self.dialogpg.update(100-100*(q+a)/cnt,message="%d of %d"%(cnt-q-a,cnt))
 			if (self.s.isSet() or q==0) and a<=noblock:
 				break
-			time.sleep(1)
-		if cnt>0:
-			dialog.close()
+			xbmc.sleep(1000)
 		return q,a,p
 	
 	def	create_gid(self):

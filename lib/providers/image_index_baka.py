@@ -1,7 +1,6 @@
 from operator import itemgetter
 import re
 import time
-import xbmc
 
 encoding="utf-8"
 stype="manga"
@@ -60,11 +59,12 @@ def get_releases(id):
 	def parse_pages(pid):
 		page=ump.get_page("%s/releases.html?page=%s&search=%s&stype=series&perpage=%d"%(domain,str(pid),str(id),perpage),encoding)
 		return parse_page(page)
-
+	
+	gid=ump.tm.create_gid()
 	for p in pages:
-		ump.tm.add_queue(parse_pages,(p,))
-
-	ump.tm.join()
+		ump.tm.add_queue(parse_pages,(p,),gid=gid)
+		
+	ump.tm.join(gid=gid,cnt="all")
 
 	return res
 
@@ -90,11 +90,13 @@ def get_details_mangaka(matches):
 		info["orginaltitle"]=info["title"]=re.findall("<span class='tabletitle'><b>(.*?)</b>",src)[0]
 		res[k]={"info":info,"art":{"thumb":thumb,"poster":thumb},"names":names}
 
+	gid=ump.tm.create_gid()
 	for k in matches.keys():
 		id,name=matches[k]
-		ump.tm.add_queue(update,(k,id,name))
+		ump.tm.add_queue(update,(k,id,name),gid=gid)
 
-	ump.tm.join()
+
+	ump.tm.join(gid=gid,cnt="all")
 	for p in pops:res.pop(p)
 	return  res
 
@@ -128,13 +130,14 @@ def get_details(matches):
 			title=name
 		info={"title":title,"originaltitle":name,"writer":mangaka,"code":id}
 		res[k]={"info":info,"art":{"thumb":thumb,"poster":thumb}}
-	
+
+	gid=ump.tm.create_gid()
 	for k in matches.keys():
 		id=matches[k][0]
 		name=matches[k][1]
-		ump.tm.add_queue(update,(k,id,name))
+		ump.tm.add_queue(update,(k,id,name),gid=gid)
 	
-	ump.tm.join()
+	ump.tm.join(gid=gid,cnt="all")
 
 	for p in pops:res.pop(p)
 	return  res
@@ -189,11 +192,7 @@ def run(ump):
 
 	elif ump.page=="select_type":
 		if not "search" in ump.args:
-			kb = xbmc.Keyboard('default', 'Search Baka', True)
-			kb.setDefault("")
-			kb.setHiddenInput(False)
-			kb.doModal()
-			ump.args["search"]=kb.getText()
+			conf,ump.args["search"]=ump.get_keyboard('default', 'Search Baka', True)
 		elif ump.args["search"] is None:
 			ump.args.pop("search")
 		types=(("Search Manga (Japanese Comics)","manga"),("Search Mangaka (Author)","mangaka"),("Search Manhwa (Korean Comics)","manhwa"),("Search Manhua (Chinese Comics)","manhua"),("Search Novel","novel"),("Search Artbook","artbook"),("Search Doujinshi (Self Published)","doujinshi"),("Drama CD (Scripts)","drama_cd"),("Search OEL (Original English Language)","oel"),("Search All kinds of Puplications",""))

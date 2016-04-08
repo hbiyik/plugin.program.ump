@@ -20,7 +20,7 @@ class tunnel():
 	def set_tunnel(self,mode):
 		if not mode=="random" and addon.getSetting("entn_%s"%mode)=="true":
 			self.mode=mode
-		elif len(self.entunnels):
+		elif not mode=="disabled" and len(self.entunnels):
 			self.mode="random"
 		else:
 			self.mode="disabled"
