@@ -58,6 +58,7 @@ def humanres(w,h):
 
 class ump():
 	def __init__(self,pt=False):
+		self.index_items=[]
 		self.settings={}
 		self.buffermode=buffering.get()
 		self.log=""
@@ -134,7 +135,7 @@ class ump():
 		if adddefault:
 			coms.append(("Addon Settings","Addon.OpenSettings(plugin.program.ump)"))
 		li.addContextMenuItems(coms,removeold)
-		xbmcplugin.addDirectoryItem(self.handle,u,li,isFolder)
+		self.index_items.append((u,li,isFolder,adddefault,coms,removeold))
 		return li
 
 	def view_text(self,label,text):
@@ -205,12 +206,20 @@ class ump():
 		else:
 			return is_serie,names2[:max]
 
-	def set_content(self,content_cat="N/A",enddir=True):
+	def set_content(self,content_cat="ump",enddir=True):
 		if content_cat=="N/A":
 			content_cat=self.content_cat
 		else:
 			self.content_cat=content_cat
 		xbmcplugin.setContent(self.handle, content_cat)
+		items=[]
+		if len(self.index_items):
+			for u,li,isfolder,adddef,coms,remold in self.index_items:
+				items.append((u,li,isfolder))
+				if adddef:
+					coms.append(('Set current view \"default\" for %s'%content_cat,"RunScript(%s,setview,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),self.content_type,content_cat)))
+					li.addContextMenuItems(coms,remold)
+			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
 		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
 		wmode=addon.getSetting("view_"+content_cat).lower()
 		if wmode=="":
@@ -225,6 +234,7 @@ class ump():
 					if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
 						if not mode is None:
 							xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
+							xbmc.executebuiltin('SetProperty(content_cat,%s)' % content_cat)
 						break
 					xbmc.sleep(100)
 				
