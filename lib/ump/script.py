@@ -15,7 +15,7 @@ if len(sys.argv)>1:
 		from buffering import force
 		force(sys.argv[2])
 	elif sys.argv[1]=="setview":
-		from prefs import dictate
+		from prefs import set_view
 		#print get_skin_view(sys.argv[2])
-		dictate("test",1,2,3)
+		set_view(sys.argv[2],sys.argv[3])
 		

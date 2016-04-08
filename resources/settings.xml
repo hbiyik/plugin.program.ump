@@ -33,6 +33,7 @@
 		<setting default="Thumb" id="view_albums" label="Albums View" type="select" values="List|Thumb|Default"/>
 		<setting default="Default" id="view_songs" label="Songs View" type="select" values="List|Thumb|Default"/>
 		<setting default="Default" id="view_musicvideos" label="Music Videos View" type="select" values="List|Thumb|Default"/>
+		<setting default="" id="pref_views" type="text" visible="false"/>
 	 </category>
     <category id="advanced" label="Advanced Settings">
         <setting label="LIBCURL BUFFER MODE: APPLIES KODI-WIDE" type="lsep"/>

@@ -222,21 +222,21 @@ class ump():
 			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
 		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
 		wmode=addon.getSetting("view_"+content_cat).lower()
-		if wmode=="":
-			wmode="default"
+		if wmode=="":wmode="default"
 		if not wmode == "default":
 			mode=self.defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
-			if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
-				#issue #38
-				self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
-			else:
-				for i in range(0, 600):
-					if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
-						if not mode is None:
-							xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
-							xbmc.executebuiltin('SetProperty(content_cat,%s)' % content_cat)
-						break
-					xbmc.sleep(100)
+		else:
+			mode=prefs.get("pref_views",content_cat,xbmc.getSkinDir())
+			if mode=={}: mode=None
+		if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
+			#issue #38
+			self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
+		elif not mode is None:
+			for i in range(0, 600):
+				if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
+					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
+					break
+				xbmc.sleep(100)
 				
 	def is_same(self,name1,name2,strict=False):
 		predicate = lambda x:x not in punctuation+" "
