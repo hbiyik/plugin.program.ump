@@ -272,7 +272,7 @@ def run(ump):
 			page=ump.args["page"]+1
 			ump.args["page"]=page
 			ump.index_item("Page %d"%page,"search_mangaka",ump.args)
-		ump.set_content(ump.defs.CC_ALBUMS)
+		ump.set_content(ump.defs.CC_ARTISTS)
 
 	elif ump.page == "search":
 		if "names" in ump.args:
@@ -357,4 +357,4 @@ def run(ump):
 
 		for p in range(pre-1):
 			create_li(pre-p-1)
-		ump.set_content(ump.defs.CC_FILES)
+		ump.set_content(ump.defs.CC_SONGS)

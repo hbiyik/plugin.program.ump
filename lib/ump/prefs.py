@@ -45,18 +45,15 @@ def getkeys(d,k):
 #that is a restriction in json and the returned value can be anything that json can encode, basically all generic built in types
 #ie: int,float,str, None, list, tuple, dicts etc..
 
-def dictate(*args):
-	#arg0: json string to decode
-	#arg1 to n, path strings.
+def dictate(boot,path):
+	#boot: json string to decode
+	#path to n, path strings.
 	try:
-		boot=json.loads(args[0])
+		boot=json.loads(boot)
 	except:
 		boot={}
 	prekeys=[]
-
-	for key in args[1:]:
-		print key
-		print boot
+	for key in path:
 		currentkey=getkeys(boot,prekeys)
 		if not key in currentkey:
 			prekeys.append(key)
@@ -69,16 +66,16 @@ def dictate(*args):
 def get(*args):
 	#arg0: setting name to get
 	#arg1 to n, path strings.
-	result=dictate(json.loads(addon.getSetting(args[0])),args[1:])
+	result=dictate(addon.getSetting(args[0]),args[1:])
 	addon.setSetting(args[0],json.dumps(result))
-	return result
+	return getkeys(result,args[1:])
 
 def set(*args):
 	#arg0: setting name to set
 	#arg1 to n-1, path strings.
 	#argn, value to set
-	result=dictate(json.loads(addon.getSetting(args[0])),args[1:-1])
-	setketys(result,args[1:-1],args[-1])
+	result=dictate(addon.getSetting(args[0]),args[1:-1])
+	setkeys(result,args[1:-1],args[-1])
 	addon.setSetting(args[0],json.dumps(result))
 
 def set_view(ctype,ccat):
