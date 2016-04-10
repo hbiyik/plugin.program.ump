@@ -22,6 +22,16 @@ def get_skin_view(ctype):
 		if not (label == '' or label == None): break
 	return xbmc.getSkinDir(),view
 
+def settingActive(set):
+	ret=False
+	addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )	
+	res=minidom.parse(os.path.join(addon_dir,"resources","settings.xml"))
+	for setting in res.getElementsByTagName("setting"):
+		if setting.getAttribute("id") == set and not setting.getAttribute("visible").lower()=="false":
+			ret=True
+			break
+	return ret
+	
 def setkeys(d,k,v):
 	s="d"
 	for key in k:

@@ -4,7 +4,8 @@ import re
 
 domain="http://musicmp3.ru"
 encoding="utf-8"
-tunnel="random"
+tunnel=["cookie"]
+#tunnel="disabled"
 		
 def run(ump):
 	globals()['ump'] = ump
@@ -41,7 +42,7 @@ def run(ump):
 				if ump.is_same(artist[1],i["artist"]):
 					ump.add_log("musicmp3 matched Artist: %s"%artist[1])
 					if not a_old==artist[0]:
-						a_page=ump.get_page(domain+artist[0],encoding,tunnel=tunnel)
+						a_page=ump.get_page(ump.absuri(domain,artist[0]),encoding,tunnel=tunnel)
 					a_old=artist[0]
 					albums=re.findall('<a class="album_report__link" href="(.*?)".*?class="album_report__name">(.*?)</span>',a_page)
 					break
@@ -51,7 +52,7 @@ def run(ump):
 			if (not i["album"]=="" and ump.is_same(album[1],i["album"])) or (i["album"]=="" and ump.is_same(i["artist"],album[2]) and ump.is_same(i["title"],album[1])):
 				ump.add_log("musicmp3 matched Artist: %s, Album : %s"%(i["artist"],album[1]))
 				if not t_old==album[0]:
-					t_page=ump.get_page(domain+album[0],encoding,tunnel=tunnel)
+					t_page=ump.get_page(ump.absuri(domain,album[0]),encoding,tunnel=tunnel)
 				t_old=album[0]
 				tracks=re.findall('<tr class="song" id="(.*?)".*?rel="(.*?)".*?<span itemprop="name">(.*?)</span>',t_page)
 				for track in tracks:

@@ -52,7 +52,13 @@
 		<setting default="false" id="overrideua" label="Don't use random User-Agent string and use below" type="bool"/>
 		<setting default="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36" id="useragent" label="Browser User-Agent" type="text"/>
         <setting label="ENABLED WEB TUNNELS:" type="lsep"/>
-		<setting default="true" id="entn_proxyduck" label="ProxyDuck" type="bool"/>
+		<setting default="true" id="entn_buka" label="buka.link" type="bool" visible="true"/>
+		<setting default="true" id="entn_multiweb" label="multiwebproxy.com" type="bool" visible="true"/>
+		<setting default="true" id="entn_muchbest" label="hide.muchproxy.com (Auto Best)" type="bool" visible="true"/>
+		<setting default="true" id="entn_muchfr" label="fr.muchproxy.com (France)" type="bool" visible="true"/>
+		<setting default="true" id="entn_muchus" label="us.muchproxy.com (USA)" type="bool" visible="true"/>
+		<setting default="true" id="entn_muchsg" label="sg.muchproxy.com (Singapore)" type="bool" visible="true"/>
+		<setting default="true" id="entn_muchid" label="in.muchproxy.com (Indonesia)" type="bool" visible="true"/>
 	</category>
     <category id="index" label="Index Providers">
 	<setting default="true" id="audio_index_lastfm" label="AUDIO:Lastfm" type="bool"/><setting default="true" id="image_index_baka" label="IMAGE:Baka" type="bool"/><setting default="true" id="ump_index_bookmarks" label="UMP:Bookmarks" type="bool"/><setting default="true" id="video_index_ann" label="VIDEO:Ann" type="bool"/><setting default="true" id="video_index_imdb" label="VIDEO:Imdb" type="bool"/><setting default="true" id="video_index_rt" label="VIDEO:Rt" type="bool"/><setting default="true" id="video_index_tvdb" label="VIDEO:Tvdb" type="bool"/></category>

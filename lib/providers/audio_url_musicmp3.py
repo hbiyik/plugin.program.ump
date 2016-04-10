@@ -25,7 +25,13 @@ def boo(d):
 
 
 def run(hash,ump,referer=""):
+	session=None
 	for cookie in ump.cj:
 		if "musicmp3.ru" in cookie.domain and cookie.name.lower()=="sessionid":
 			session=cookie.value
+			break
+#	if session is None:
+#		for cookie in ump.cj:
+#			if cookie.name=="c[musicmp3.ru][/][SessionId]":
+#				session=cookie.value
 	return {"url":{"url":"%s/%s/%s"%(domain,boo(referer[5:]+session[8:]),hash),"referer":"https://musicmp3.ru/"}}

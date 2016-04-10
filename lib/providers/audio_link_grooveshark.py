@@ -5,7 +5,7 @@ import re
 
 domain="http://groovesharks.org"
 encoding="utf-8"
-tunnel="proxyduck"
+tunnel=["cookie"]
 
 def run(ump):
 	globals()['ump'] = ump
@@ -39,6 +39,7 @@ def run(ump):
 						album_page=ump.get_page("%s/music/getAlbums/"%domain,encoding,query={"csrf_yme":"","artist":artist},referer=domain,tunnel=tunnel)
 					old_artalbum=i["artist"]
 					albums=re.findall('title="Album Info" onclick="getTracksAlbum\(\'(.*?)\'',album_page)
+					if not len(albums):	albums=re.findall('<h4 class="truncate">(.*?)</h4>',album_page) #nojs for webtunnels
 					for album in albums:
 						if match:break
 						if ump.is_same(i["album"],album):
@@ -46,10 +47,15 @@ def run(ump):
 								tralbum_page=ump.get_page("%s/music/getTracksAlbums/"%domain,encoding,query={"csrf_yme":"","artist":artist,"album":album},referer=domain,tunnel=tunnel)
 							old_tralbum=album
 							tracks=re.findall('onclick="addPlayList\(\'(.*?)\',\'(.*?)\',\'.*?\'\);"><i class="fa fa-plus">',tralbum_page)
+							if not len(tracks):
+								tracks=re.findall('</i>.(.*?)\s*?<div class="btn-group pull-right">',tralbum_page)
+								tracks=[(x,i["artist"]) for x in tracks]
 							match=True
 		else:
 			page=ump.get_page("%s/music/search/"%domain,encoding,query={"csrf_yme":"","query":"%s %s"%(i["artist"],i["title"])},referer=domain,tunnel=tunnel)
 			tracks=re.findall('"Add to Playlist" onclick="addPlayList\(\'(.*?)\',\'(.*?)\'',page)
+			if not len(tracks):
+				tracks=re.findall('data-track="(.*?)"  data-cover=".*?" data-artist="(.*?)"',page) #nojs
 			match=True
 		for track in tracks:
 			match=False

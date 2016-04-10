@@ -30,13 +30,10 @@ from ump import task
 from ump import ui
 from ump import webtunnel
 from ump import prefs 
+from ump import http
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
-
-class HeadRequest(urllib2.Request):
-	def get_method(self):
-		return "HEAD"
 
 def humanint(size,precision=2):
 	suffixes=['B','KB','MB','GB','TB']
@@ -75,7 +72,6 @@ class ump():
 		self.urlval_d_tout=1.5
 		self.tm_conc=int(float(addon.getSetting("conc")))
 		self.player=None
-		self.tunnel=webtunnel.tunnel()
 		self.mirrors=[]
 		self.terminate=False
 		self.dialog=xbmcgui.Dialog()
@@ -87,7 +83,7 @@ class ump():
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
 		socket.socket = proxy.getsocket()
-		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True)
+		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True, strict_rfc2965_unverifiable=False)
 		if not os.path.exists( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump')):
 			os.makedirs(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'))
 		self.cj=cookielib.LWPCookieJar(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie"))
@@ -97,13 +93,14 @@ class ump():
 				self.cj.load()
 			except cookielib.LoadError:
 				pass
-		self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
+		self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj))
 		if addon.getSetting("overrideua")=="true":
 			self.ua=addon.getSetting("useragent")
 		else:
 			from ump import useragents
 			self.ua=choice(useragents.all)
 		self.opener.addheaders = [('User-agent', self.ua)]
+		self.tunnel=webtunnel.tunnel(self.opener)
 		query=sys.argv[2][1:]
 		result=parse_qs(query)
 		[self.module]= result.get('module', ["ump"])
@@ -127,6 +124,20 @@ class ump():
 			self.dialogpg.close()
 			sys.exit()
 		return kb.isConfirmed(),kb.getText()
+		
+	def absuri(self,pre,post):
+		if pre.startswith("//"):
+			pre="http:"+pre
+		if pre.endswith("/"):
+			pre=pre[:-1]
+		if post.startswith("http://") or post.startswith("https://"):
+			return post
+		elif post.startswith("/"):
+			d=pre.split("/")
+			return d[0]+"//"+d[2]+post
+		else:
+			return pre+post
+
 		
 	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True):
 		if page=="urlselect":isFolder=False
@@ -299,16 +310,16 @@ class ump():
 			for k,v in header.iteritems():
 				headers[k]=v
 		if head==True:
-			req=HeadRequest(url,headers=headers)
+			req=http.HeadRequest(url,headers=headers)
 		else:
 			if not range is None : headers["Range"]="bytes=%d-%d"%(range)
 			req=urllib2.Request(url,headers=headers)
 		if not head:
 			self.tunnel.set_tunnel(tunnel)
-			self.tunnel.pre(req)
+			self.tunnel.pre(req,self.cj)
 		response = cloudfare.ddos_open(self.opener, req, data,timeout=tout)
-		
-		
+		self.tunnel.cook(self.cj,self.cj.make_cookies(response,req))
+			
 		if head :return response
 		
 		stream=cloudfare.readzip(response)
