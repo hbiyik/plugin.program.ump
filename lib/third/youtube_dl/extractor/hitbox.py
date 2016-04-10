@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     clean_html,
     parse_iso8601,
@@ -11,7 +12,6 @@ from ..utils import (
     compat_str,
     determine_ext,
 )
-from .common import InfoExtractor
 
 
 class HitboxIE(InfoExtractor):

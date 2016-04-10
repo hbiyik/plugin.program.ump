@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 import hashlib
 import time
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     sanitized_Request,
 )
-from .common import InfoExtractor
 
 
 def _get_api_key(api_path):
@@ -30,7 +30,7 @@ class StreamCZIE(InfoExtractor):
         'info_dict': {
             'id': '765767',
             'ext': 'mp4',
-            'title': 'Peklo na talíři: É�?ka pro děti',
+            'title': 'Peklo na talíři: Éčka pro děti',
             'description': 'Taška s grónskou pomazánkou a další pekelnosti ZDE',
             'thumbnail': 're:^http://im.stream.cz/episode/52961d7e19d423f8f06f0100',
             'duration': 256,

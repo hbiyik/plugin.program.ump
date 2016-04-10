@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     remove_end,
 )
-from .common import InfoExtractor
 
 
 class MailRuIE(InfoExtractor):
@@ -22,7 +22,7 @@ class MailRuIE(InfoExtractor):
             'info_dict': {
                 'id': '46301138_76',
                 'ext': 'mp4',
-                'title': '�?овый Человек-Паук. Вы�?окое напр�?жение. Во�?�?тание Электро',
+                'title': 'Новый Человек-Паук. Высокое напряжение. Восстание Электро',
                 'timestamp': 1393232740,
                 'upload_date': '20140224',
                 'uploader': 'sonypicturesrus',

@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 import itertools
 import re
 
+from .common import SearchInfoExtractor
 from ..compat import (
     compat_urllib_parse,
 )
-from .common import SearchInfoExtractor
 
 
 class GoogleSearchIE(SearchInfoExtractor):

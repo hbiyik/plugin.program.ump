@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from ..utils import ExtractorError
 from .common import InfoExtractor
+from ..utils import ExtractorError
 
 
 class ZingMp3BaseInfoExtractor(InfoExtractor):
@@ -95,7 +95,7 @@ class ZingMp3AlbumIE(ZingMp3BaseInfoExtractor):
         'info_dict': {
             '_type': 'playlist',
             'id': 'ZWZBWDAF',
-            'title': 'Lâu �?ài Tình �?i - Bằng Ki�?u ft. Minh Tuyết | Album 320 lossless',
+            'title': 'Lâu Đài Tình Ái - Bằng Kiều ft. Minh Tuyết | Album 320 lossless',
         },
         'playlist_count': 10,
     }, {

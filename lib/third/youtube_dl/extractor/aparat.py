@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     HEADRequest,
 )
-from .common import InfoExtractor
 
 
 class AparatIE(InfoExtractor):

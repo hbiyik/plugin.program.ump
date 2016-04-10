@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_chr,
     compat_ord,
@@ -11,7 +12,6 @@ from ..utils import (
     int_or_none,
     parse_filesize,
 )
-from .common import InfoExtractor
 
 
 class XMinusIE(InfoExtractor):
@@ -22,7 +22,7 @@ class XMinusIE(InfoExtractor):
         'info_dict': {
             'id': '4542',
             'ext': 'mp3',
-            'title': 'Леонид �?гутин-Пе�?енка шофера',
+            'title': 'Леонид Агутин-Песенка шофера',
             'duration': 156,
             'tbr': 320,
             'filesize_approx': 5900000,

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import json
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_str,
     compat_urlparse,
@@ -12,7 +13,6 @@ from ..utils import (
     float_or_none,
     int_or_none,
 )
-from .common import InfoExtractor
 
 
 class BandcampIE(InfoExtractor):

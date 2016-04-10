@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import json
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     parse_iso8601,
     sanitized_Request,
 )
-from .common import InfoExtractor
 
 
 class VesselIE(InfoExtractor):

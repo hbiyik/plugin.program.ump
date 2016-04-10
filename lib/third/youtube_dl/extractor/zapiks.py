@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     parse_duration,
     parse_iso8601,
@@ -10,7 +11,6 @@ from ..utils import (
     xpath_text,
     int_or_none,
 )
-from .common import InfoExtractor
 
 
 class ZapiksIE(InfoExtractor):

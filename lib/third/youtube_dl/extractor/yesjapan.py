@@ -1,12 +1,12 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..utils import (
     HEADRequest,
     get_element_by_attribute,
     parse_iso8601,
 )
-from .common import InfoExtractor
 
 
 class YesJapanIE(InfoExtractor):

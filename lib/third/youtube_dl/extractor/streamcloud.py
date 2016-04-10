@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class StreamcloudIE(InfoExtractor):

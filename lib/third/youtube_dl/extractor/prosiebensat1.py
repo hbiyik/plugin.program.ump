@@ -1,9 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from hashlib import sha1
 import re
 
+from hashlib import sha1
+from .common import InfoExtractor
 from ..compat import compat_urllib_parse_urlencode
 from ..utils import (
     ExtractorError,
@@ -12,7 +13,6 @@ from ..utils import (
     int_or_none,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class ProSiebenSat1IE(InfoExtractor):

@@ -2,11 +2,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     sanitized_Request,
     url_basename,
 )
-from .common import InfoExtractor
 
 
 class KeezMoviesIE(InfoExtractor):

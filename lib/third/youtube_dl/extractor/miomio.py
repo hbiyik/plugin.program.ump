@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 
 import random
 
+from .common import InfoExtractor
 from ..utils import (
     xpath_text,
     int_or_none,
     ExtractorError,
     sanitized_Request,
 )
-from .common import InfoExtractor
 
 
 class MioMioIE(InfoExtractor):
@@ -22,14 +22,14 @@ class MioMioIE(InfoExtractor):
         'info_dict': {
             'id': '88912',
             'ext': 'flv',
-            'title': '�?SKY】字幕 铠武昭和VS平�? �?��?�骑士大战FEAT战队 魔星字幕组 字幕',
+            'title': '【SKY】字幕 铠武昭和VS平成 假面骑士大战FEAT战队 魔星字幕组 字幕',
             'duration': 5923,
         },
     }, {
         'url': 'http://www.miomio.tv/watch/cc184024/',
         'info_dict': {
             'id': '43729',
-            'title': '《动漫�?�人�?�画绘制》',
+            'title': '《动漫同人插画绘制》',
         },
         'playlist_mincount': 86,
         'skip': 'This video takes time too long for retrieving the URL',

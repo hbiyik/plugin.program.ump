@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     unified_strdate,
     int_or_none,
 )
-from .common import InfoExtractor
 
 
 class Puls4IE(InfoExtractor):

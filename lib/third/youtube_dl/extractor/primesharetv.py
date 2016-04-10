@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     sanitized_Request,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class PrimeShareTVIE(InfoExtractor):

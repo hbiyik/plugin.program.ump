@@ -1,9 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     ExtractorError,
@@ -15,9 +16,8 @@ from ..utils import (
     unified_strdate,
     urlencode_postdata,
 )
-from .common import InfoExtractor
-from .pladform import PladformIE
 from .vimeo import VimeoIE
+from .pladform import PladformIE
 
 
 class VKIE(InfoExtractor):
@@ -43,7 +43,7 @@ class VKIE(InfoExtractor):
             'info_dict': {
                 'id': '162222515',
                 'ext': 'flv',
-                'title': 'ProtivoGunz - Хуёва�? пе�?н�?',
+                'title': 'ProtivoGunz - Хуёвая песня',
                 'uploader': 're:(?:Noize MC|Alexander Ilyashenko).*',
                 'duration': 195,
                 'upload_date': '20120212',
@@ -87,7 +87,7 @@ class VKIE(InfoExtractor):
                 'id': '164049491',
                 'ext': 'mp4',
                 'uploader': 'Триллеры',
-                'title': '► Бойцов�?кий клуб / Fight Club 1999 [HD 720]',
+                'title': '► Бойцовский клуб / Fight Club 1999 [HD 720]',
                 'duration': 8352,
                 'upload_date': '20121218',
                 'view_count': int,
@@ -100,7 +100,7 @@ class VKIE(InfoExtractor):
             'info_dict': {
                 'id': '168067957',
                 'ext': 'mp4',
-                'uploader': 'Киномани�? - лучшее из мира кино',
+                'uploader': 'Киномания - лучшее из мира кино',
                 'title': ' ',
                 'duration': 7291,
                 'upload_date': '20140328',
@@ -114,7 +114,7 @@ class VKIE(InfoExtractor):
             'info_dict': {
                 'id': '60690',
                 'ext': 'mp4',
-                'title': 'Книга Ила�?',
+                'title': 'Книга Илая',
                 'duration': 6771,
                 'upload_date': '20140626',
                 'view_count': int,
@@ -158,7 +158,7 @@ class VKIE(InfoExtractor):
                 'id': '171782105',
                 'ext': 'mp4',
                 'title': 'S-Dance, репетиции к The way show',
-                'uploader': 'THE WAY SHOW | 17 апрел�?',
+                'uploader': 'THE WAY SHOW | 17 апреля',
                 'upload_date': '20160207',
                 'view_count': int,
             },
@@ -241,7 +241,7 @@ class VKIE(InfoExtractor):
                 expected=True)
 
         ERRORS = {
-            r'>Видеозапи�?ь .*? была изъ�?та из публичного до�?тупа в �?в�?зи �? обращением правообладател�?.<':
+            r'>Видеозапись .*? была изъята из публичного доступа в связи с обращением правообладателя.<':
             'Video %s has been removed from public access due to rightholder complaint.',
 
             r'<!>Please log in or <':
@@ -251,7 +251,7 @@ class VKIE(InfoExtractor):
             r'<!>Unknown error':
             'Video %s does not exist.',
 
-            r'<!>Видео временно недо�?тупно':
+            r'<!>Видео временно недоступно':
             'Video %s is temporarily unavailable.',
 
             r'<!>Access denied':

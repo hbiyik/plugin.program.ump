@@ -2,13 +2,13 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     parse_duration,
     int_or_none,
     qualities,
     determine_ext,
 )
-from .common import InfoExtractor
 
 
 class SunPornoIE(InfoExtractor):

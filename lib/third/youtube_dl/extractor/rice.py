@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_parse_qs
 from ..utils import (
     xpath_text,
@@ -11,7 +12,6 @@ from ..utils import (
     parse_iso8601,
     ExtractorError,
 )
-from .common import InfoExtractor
 
 
 class RICEIE(InfoExtractor):

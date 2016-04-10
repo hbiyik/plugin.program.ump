@@ -3,10 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
-from ..compat import (
-    compat_etree_fromstring,
-    compat_HTTPError,
-)
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     float_or_none,
@@ -15,7 +12,10 @@ from ..utils import (
     parse_iso8601,
     unescapeHTML,
 )
-from .common import InfoExtractor
+from ..compat import (
+    compat_etree_fromstring,
+    compat_HTTPError,
+)
 
 
 class BBCCoUkIE(InfoExtractor):

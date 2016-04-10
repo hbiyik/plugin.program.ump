@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from ..utils import ExtractorError
 from .common import InfoExtractor
+from ..utils import ExtractorError
 
 
 class Sport5IE(InfoExtractor):
@@ -16,7 +16,7 @@ class Sport5IE(InfoExtractor):
                 'id': 's5-Y59xx1-GUh2',
                 'ext': 'mp4',
                 'title': 'ולנסיה-קורדובה 0:3',
-                'description': '�?לק�?סר, ג�?ייה ופגולי סידרו לקבוצה של נונו ניצחון על קורדובה ו�?ת המקו�? הר�?שון בליגה',
+                'description': 'אלקאסר, גאייה ופגולי סידרו לקבוצה של נונו ניצחון על קורדובה ואת המקום הראשון בליגה',
                 'duration': 228,
                 'categories': list,
             },

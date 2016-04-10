@@ -1,9 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import itertools
 import re
+import itertools
 
+from .common import InfoExtractor
 from ..compat import (
     compat_str,
 )
@@ -11,7 +12,6 @@ from ..utils import (
     determine_ext,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class RutubeIE(InfoExtractor):
@@ -97,9 +97,9 @@ class RutubeEmbedIE(InfoExtractor):
             'ext': 'mp4',
             'upload_date': '20131223',
             'uploader_id': '297833',
-            'description': 'Видео группы ★http://vk.com/foxkidsreset★ музей Fox Kids и Jetix<br/><br/> во�?�?тановлено и �?делано в шикоформате subziro89 http://vk.com/subziro89',
+            'description': 'Видео группы ★http://vk.com/foxkidsreset★ музей Fox Kids и Jetix<br/><br/> восстановлено и сделано в шикоформате subziro89 http://vk.com/subziro89',
             'uploader': 'subziro89 ILya',
-            'title': 'Ми�?тиче�?кий городок Эйри в Индиан 5 �?ери�? озвучка subziro89',
+            'title': 'Мистический городок Эйри в Индиан 5 серия озвучка subziro89',
         },
         'params': {
             'skip_download': 'Requires ffmpeg',

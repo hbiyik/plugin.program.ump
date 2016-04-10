@@ -1,9 +1,10 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import hashlib
 import re
+import hashlib
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     ExtractorError,
@@ -12,7 +13,6 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class YandexMusicBaseIE(InfoExtractor):
@@ -30,7 +30,7 @@ class YandexMusicBaseIE(InfoExtractor):
 
 class YandexMusicTrackIE(YandexMusicBaseIE):
     IE_NAME = 'yandexmusic:track'
-    IE_DESC = 'Яндек�?.Музыка - Трек'
+    IE_DESC = 'Яндекс.Музыка - Трек'
     _VALID_URL = r'https?://music\.yandex\.(?:ru|kz|ua|by)/album/(?P<album_id>\d+)/track/(?P<id>\d+)'
 
     _TEST = {
@@ -95,7 +95,7 @@ class YandexMusicPlaylistBaseIE(YandexMusicBaseIE):
 
 class YandexMusicAlbumIE(YandexMusicPlaylistBaseIE):
     IE_NAME = 'yandexmusic:album'
-    IE_DESC = 'Яндек�?.Музыка - �?льбом'
+    IE_DESC = 'Яндекс.Музыка - Альбом'
     _VALID_URL = r'https?://music\.yandex\.(?:ru|kz|ua|by)/album/(?P<id>\d+)/?(\?|$)'
 
     _TEST = {
@@ -126,14 +126,14 @@ class YandexMusicAlbumIE(YandexMusicPlaylistBaseIE):
 
 class YandexMusicPlaylistIE(YandexMusicPlaylistBaseIE):
     IE_NAME = 'yandexmusic:playlist'
-    IE_DESC = 'Яндек�?.Музыка - Плейли�?т'
+    IE_DESC = 'Яндекс.Музыка - Плейлист'
     _VALID_URL = r'https?://music\.yandex\.(?:ru|kz|ua|by)/users/[^/]+/playlists/(?P<id>\d+)'
 
     _TESTS = [{
         'url': 'http://music.yandex.ru/users/music.partners/playlists/1245',
         'info_dict': {
             'id': '1245',
-            'title': 'Что �?лушают Enter Shikari',
+            'title': 'Что слушают Enter Shikari',
             'description': 'md5:3b9f27b0efbe53f2ee1e844d07155cc9',
         },
         'playlist_count': 6,

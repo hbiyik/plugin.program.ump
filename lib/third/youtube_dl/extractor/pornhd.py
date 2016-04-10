@@ -1,14 +1,14 @@
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     js_to_json,
     qualities,
 )
-from .common import InfoExtractor
 
 
 class PornHdIE(InfoExtractor):

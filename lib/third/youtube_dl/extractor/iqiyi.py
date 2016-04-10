@@ -10,6 +10,7 @@ import re
 import time
 import uuid
 
+from .common import InfoExtractor
 from ..compat import (
     compat_parse_qs,
     compat_str,
@@ -25,7 +26,6 @@ from ..utils import (
     urlencode_postdata,
     url_basename,
 )
-from .common import InfoExtractor
 
 
 def md5_text(text):
@@ -181,55 +181,55 @@ class IqiyiIE(InfoExtractor):
         'url': 'http://www.iqiyi.com/v_19rrhnnclk.html',
         'info_dict': {
             'id': 'e3f585b550a280af23c98b6cb2be19fb',
-            'title': '�??侦探柯�?�第752集',
+            'title': '名侦探柯南第752集',
         },
         'playlist': [{
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part1',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }, {
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part2',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }, {
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part3',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }, {
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part4',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }, {
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part5',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }, {
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part6',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }, {
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part7',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }, {
             'info_dict': {
                 'id': 'e3f585b550a280af23c98b6cb2be19fb_part8',
                 'ext': 'f4v',
-                'title': '�??侦探柯�?�第752集',
+                'title': '名侦探柯南第752集',
             },
         }],
         'params': {
@@ -250,19 +250,19 @@ class IqiyiIE(InfoExtractor):
         'url': 'http://www.iqiyi.com/v_19rrny4w8w.html',
         'info_dict': {
             'id': 'f3cf468b39dddb30d676f89a91200dc1',
-            'title': '泰�?�尼克�?�',
+            'title': '泰坦尼克号',
         },
         'playlist': [{
             'info_dict': {
                 'id': 'f3cf468b39dddb30d676f89a91200dc1_part1',
                 'ext': 'f4v',
-                'title': '泰�?�尼克�?�',
+                'title': '泰坦尼克号',
             },
         }, {
             'info_dict': {
                 'id': 'f3cf468b39dddb30d676f89a91200dc1_part2',
                 'ext': 'f4v',
-                'title': '泰�?�尼克�?�',
+                'title': '泰坦尼克号',
             },
         }],
         'expected_warnings': ['Needs a VIP account for full video'],
@@ -270,7 +270,7 @@ class IqiyiIE(InfoExtractor):
         'url': 'http://www.iqiyi.com/a_19rrhb8ce1.html',
         'info_dict': {
             'id': '202918101',
-            'title': '�?�篮高手 国语版',
+            'title': '灌篮高手 国语版',
         },
         'playlist_count': 101,
     }]

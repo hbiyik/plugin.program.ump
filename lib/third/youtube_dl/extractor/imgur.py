@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     int_or_none,
@@ -9,7 +10,6 @@ from ..utils import (
     mimetype2ext,
     ExtractorError,
 )
-from .common import InfoExtractor
 
 
 class ImgurIE(InfoExtractor):

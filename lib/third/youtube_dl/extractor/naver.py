@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_urlparse,
@@ -10,7 +11,6 @@ from ..compat import (
 from ..utils import (
     ExtractorError,
 )
-from .common import InfoExtractor
 
 
 class NaverIE(InfoExtractor):
@@ -21,8 +21,8 @@ class NaverIE(InfoExtractor):
         'info_dict': {
             'id': '81652',
             'ext': 'mp4',
-            'title': '[9월 모�?�고사 해설강�?�][수학_김�?�?�] 수학 A형 16~20번',
-            'description': '합격불변�?� 법칙 메가스터디 | 메가스터디 수학 김�?�?� 선�?님�?� 9월 모�?�고사 수학A형 16번�?서 20번까지 해설강�?�를 공개합니다.',
+            'title': '[9월 모의고사 해설강의][수학_김상희] 수학 A형 16~20번',
+            'description': '합격불변의 법칙 메가스터디 | 메가스터디 수학 김상희 선생님이 9월 모의고사 수학A형 16번에서 20번까지 해설강의를 공개합니다.',
             'upload_date': '20130903',
         },
     }, {
@@ -31,7 +31,7 @@ class NaverIE(InfoExtractor):
         'info_dict': {
             'id': '395837',
             'ext': 'mp4',
-            'title': '9년�?� 지나�?� 아픈 기억, 전효성�?� 아버지',
+            'title': '9년이 지나도 아픈 기억, 전효성의 아버지',
             'description': 'md5:5bf200dcbf4b66eb1b350d1eb9c753f7',
             'upload_date': '20150519',
         },

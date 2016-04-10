@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
-import hashlib
-import hmac
-import re
 import time
+import hmac
+import hashlib
+import re
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     ExtractorError,
@@ -14,7 +15,6 @@ from ..utils import (
     urlencode_postdata,
     xpath_text,
 )
-from .common import InfoExtractor
 
 
 class AtresPlayerIE(InfoExtractor):

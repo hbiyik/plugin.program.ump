@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..compat import compat_urllib_parse_unquote
 from ..utils import (
     xpath_text,
@@ -7,7 +8,6 @@ from ..utils import (
     int_or_none,
     parse_iso8601,
 )
-from .common import InfoExtractor
 
 
 class BetIE(InfoExtractor):

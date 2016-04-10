@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 
 import os
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_unquote,
     compat_urlparse,
 )
 from ..utils import url_basename
-from .common import InfoExtractor
 
 
 class RtmpIE(InfoExtractor):

@@ -3,17 +3,17 @@ from __future__ import unicode_literals
 
 import base64
 
+from .common import InfoExtractor
 from ..compat import compat_urllib_parse_unquote
 from ..utils import (
     ExtractorError,
     parse_iso8601,
     parse_duration,
 )
-from .common import InfoExtractor
 
 
 class XuiteIE(InfoExtractor):
-    IE_DESC = '隨�?窩Xuite影音'
+    IE_DESC = '隨意窩Xuite影音'
     _REGEX_BASE64 = r'(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?'
     _VALID_URL = r'https?://vlog\.xuite\.net/(?:play|embed)/(?P<id>%s)' % _REGEX_BASE64
     _TESTS = [{
@@ -23,7 +23,7 @@ class XuiteIE(InfoExtractor):
         'info_dict': {
             'id': '3860914',
             'ext': 'mp3',
-            'title': '孤單�?��?��?�-�?德陽',
+            'title': '孤單南半球-歐德陽',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 247.246,
             'timestamp': 1314932940,
@@ -57,12 +57,12 @@ class XuiteIE(InfoExtractor):
             'id': '21301170',
             'ext': 'mp4',
             'title': '暗殺教室 02',
-            'description': '字幕:�?極影字幕社】',
+            'description': '字幕:【極影字幕社】',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 1384.907,
             'timestamp': 1421481240,
             'upload_date': '20150117',
-            'uploader': '我�?�是想�?真點',
+            'uploader': '我只是想認真點',
             'uploader_id': '242127761',
             'categories': ['電玩動漫'],
         },

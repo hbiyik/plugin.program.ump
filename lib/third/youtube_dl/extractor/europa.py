@@ -1,6 +1,7 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     int_or_none,
@@ -10,7 +11,6 @@ from ..utils import (
     unified_strdate,
     xpath_text
 )
-from .common import InfoExtractor
 
 
 class EuropaIE(InfoExtractor):

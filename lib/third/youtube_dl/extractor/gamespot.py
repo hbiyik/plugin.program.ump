@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_unquote,
     compat_urlparse,
@@ -10,7 +11,6 @@ from ..compat import (
 from ..utils import (
     unescapeHTML,
 )
-from .common import InfoExtractor
 
 
 class GameSpotIE(InfoExtractor):

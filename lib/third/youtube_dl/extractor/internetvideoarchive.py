@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urlparse,
     compat_urllib_parse_urlencode,
@@ -9,7 +10,6 @@ from ..compat import (
 from ..utils import (
     xpath_with_ns,
 )
-from .common import InfoExtractor
 
 
 class InternetVideoArchiveIE(InfoExtractor):

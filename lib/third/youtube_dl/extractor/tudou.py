@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     int_or_none,
@@ -9,7 +10,6 @@ from ..utils import (
     float_or_none,
     unescapeHTML,
 )
-from .common import InfoExtractor
 
 
 class TudouIE(InfoExtractor):
@@ -21,10 +21,10 @@ class TudouIE(InfoExtractor):
         'info_dict': {
             'id': '159448201',
             'ext': 'f4v',
-            'title': '�?�马乔国足开大脚长传冲�?�集锦',
+            'title': '卡马乔国足开大脚长传冲吊集锦',
             'thumbnail': 're:^https?://.*\.jpg$',
             'timestamp': 1372113489000,
-            'description': '�?�马乔�?�家军，开大脚先进战术�?完全集锦�?',
+            'description': '卡马乔卡家军，开大脚先进战术不完全集锦！',
             'duration': 289.04,
             'view_count': int,
             'filesize': int,

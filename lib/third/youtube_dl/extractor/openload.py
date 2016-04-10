@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_chr
 from ..utils import (
     encode_base_n,
     ExtractorError,
 )
-from .common import InfoExtractor
 
 
 class OpenloadIE(InfoExtractor):

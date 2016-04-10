@@ -1,11 +1,11 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
-from ..compat import compat_urllib_parse_unquote_plus
 from .common import InfoExtractor
+from ..compat import compat_urllib_parse_unquote_plus
 
 
 class YnetIE(InfoExtractor):
@@ -16,7 +16,7 @@ class YnetIE(InfoExtractor):
             'info_dict': {
                 'id': 'L-11659-99244',
                 'ext': 'flv',
-                'title': '�?יש ל�? יודע מ�?יפה ב�?נו',
+                'title': 'איש לא יודע מאיפה באנו',
                 'thumbnail': 're:^https?://.*\.jpg',
             }
         }, {

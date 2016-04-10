@@ -1,13 +1,13 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse,
 )
 from ..utils import (
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class UrortIE(InfoExtractor):

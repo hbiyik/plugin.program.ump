@@ -7,6 +7,7 @@ import hashlib
 import re
 import time
 
+from .common import InfoExtractor
 from ..compat import (
     compat_ord,
     compat_str,
@@ -23,11 +24,10 @@ from ..utils import (
     str_or_none,
     url_basename,
 )
-from .common import InfoExtractor
 
 
 class LeIE(InfoExtractor):
-    IE_DESC = '�?视网'
+    IE_DESC = '乐视网'
     _VALID_URL = r'https?://www\.le\.com/ptv/vplay/(?P<id>\d+)\.html'
 
     _URL_TEMPLATE = 'http://www.le.com/ptv/vplay/%s.html'
@@ -38,7 +38,7 @@ class LeIE(InfoExtractor):
         'info_dict': {
             'id': '22005890',
             'ext': 'mp4',
-            'title': '第87届奥斯�?��?奖礼完美�?�幕 《鸟人》�?最大赢家',
+            'title': '第87届奥斯卡颁奖礼完美落幕 《鸟人》成最大赢家',
             'description': 'md5:a9cb175fd753e2962176b7beca21a47c',
         },
         'params': {
@@ -181,7 +181,7 @@ class LeIE(InfoExtractor):
                 urls.append(url_info_dict)
 
         publish_time = parse_iso8601(self._html_search_regex(
-            r'�?�布时间&nbsp;([^<>]+) ', page, 'publish time', default=None),
+            r'发布时间&nbsp;([^<>]+) ', page, 'publish time', default=None),
             delimiter=' ', timezone=datetime.timedelta(hours=8))
         description = self._html_search_meta('description', page, fatal=False)
 
@@ -252,7 +252,7 @@ class LePlaylistIE(InfoExtractor):
 class LetvCloudIE(InfoExtractor):
     # Most of *.letv.com is changed to *.le.com on 2016/01/02
     # but yuntv.letv.com is kept, so also keep the extractor name
-    IE_DESC = '�?视云'
+    IE_DESC = '乐视云'
     _VALID_URL = r'https?://yuntv\.letv\.com/bcloud.html\?.+'
 
     _TESTS = [{

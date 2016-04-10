@@ -2,9 +2,10 @@
 
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     clean_html,
@@ -13,7 +14,6 @@ from ..utils import (
     parse_duration,
     determine_ext,
 )
-from .common import InfoExtractor
 from .dailymotion import DailymotionCloudIE
 
 

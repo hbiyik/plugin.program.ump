@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
-import collections
+import re
 import json
 import random
-import re
+import collections
 
+from .common import InfoExtractor
 from ..compat import (
     compat_str,
     compat_urlparse,
@@ -17,7 +18,6 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class PluralsightBaseIE(InfoExtractor):

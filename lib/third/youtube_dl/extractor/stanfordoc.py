@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     orderedSet,
     unescapeHTML,
 )
-from .common import InfoExtractor
 
 
 class StanfordOpenClassroomIE(InfoExtractor):

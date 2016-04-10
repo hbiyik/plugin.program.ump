@@ -1,14 +1,14 @@
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..utils import (
     unescapeHTML,
     qualities,
     int_or_none,
 )
-from .common import InfoExtractor
 
 
 class GiantBombIE(InfoExtractor):

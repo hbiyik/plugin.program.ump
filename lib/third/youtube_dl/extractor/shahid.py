@@ -1,13 +1,13 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..compat import compat_urllib_parse_urlencode
 from ..utils import (
     ExtractorError,
     int_or_none,
     parse_iso8601,
 )
-from .common import InfoExtractor
 
 
 class ShahidIE(InfoExtractor):
@@ -18,7 +18,7 @@ class ShahidIE(InfoExtractor):
             'id': '90574',
             'ext': 'mp4',
             'title': 'الملك عبدالله الإنسان الموسم 1 كليب 3',
-            'description': 'ال�?يلم الوثائقي - الملك عبد الله الإنسان',
+            'description': 'الفيلم الوثائقي - الملك عبد الله الإنسان',
             'duration': 2972,
             'timestamp': 1422057420,
             'upload_date': '20150123',

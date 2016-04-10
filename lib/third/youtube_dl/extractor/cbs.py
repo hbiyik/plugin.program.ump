@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..utils import (
     sanitized_Request,
     smuggle_url,
 )
-from .common import InfoExtractor
 
 
 class CBSIE(InfoExtractor):

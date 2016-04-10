@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     clean_html,
     ExtractorError,
@@ -10,7 +11,6 @@ from ..utils import (
     parse_iso8601,
     sanitized_Request,
 )
-from .common import InfoExtractor
 
 
 class TapelyIE(InfoExtractor):

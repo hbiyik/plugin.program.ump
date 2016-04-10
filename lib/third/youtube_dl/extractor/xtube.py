@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import itertools
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_urllib_parse_unquote
 from ..utils import (
     int_or_none,
@@ -10,7 +11,6 @@ from ..utils import (
     sanitized_Request,
     str_to_int,
 )
-from .common import InfoExtractor
 
 
 class XTubeIE(InfoExtractor):

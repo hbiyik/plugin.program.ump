@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     ExtractorError,
@@ -9,7 +10,6 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class NovaMovIE(InfoExtractor):

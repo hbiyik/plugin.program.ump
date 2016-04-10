@@ -1,9 +1,10 @@
 from __future__ import unicode_literals
 
+import re
 import json
 import os
-import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urlparse,
     compat_urllib_parse_urlencode,
@@ -12,7 +13,6 @@ from ..compat import (
 from ..utils import (
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class NHLBaseInfoExtractor(InfoExtractor):

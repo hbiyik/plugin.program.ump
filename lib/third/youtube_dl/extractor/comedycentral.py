@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .mtv import MTVServicesInfoExtractor
 from ..compat import (
     compat_str,
     compat_urllib_parse_urlencode,
@@ -11,7 +12,6 @@ from ..utils import (
     float_or_none,
     unified_strdate,
 )
-from .mtv import MTVServicesInfoExtractor
 
 
 class ComedyCentralIE(MTVServicesInfoExtractor):

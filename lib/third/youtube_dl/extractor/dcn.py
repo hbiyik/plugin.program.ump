@@ -1,9 +1,10 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import base64
 import re
+import base64
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_str,
@@ -16,7 +17,6 @@ from ..utils import (
     unsmuggle_url,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class DCNIE(InfoExtractor):

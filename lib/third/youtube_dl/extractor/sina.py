@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_urllib_parse_urlencode
 from ..utils import sanitized_Request
-from .common import InfoExtractor
 
 
 class SinaIE(InfoExtractor):
@@ -25,7 +25,7 @@ class SinaIE(InfoExtractor):
             'info_dict': {
                 'id': '110028898',
                 'ext': 'flv',
-                'title': '《中国新闻》 �?鲜�?求巴拿马立�?�释放被扣船员',
+                'title': '《中国新闻》 朝鲜要求巴拿马立即释放被扣船员',
             }
         },
         {
@@ -33,7 +33,7 @@ class SinaIE(InfoExtractor):
             'info_dict': {
                 'id': '101314253',
                 'ext': 'flv',
-                'title': '军方�??高对�?情报监视级别',
+                'title': '军方提高对朝情报监视级别',
             },
         },
     ]

@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 
-import itertools
 import re
+import itertools
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     ExtractorError,
@@ -11,7 +12,6 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class BambuserIE(InfoExtractor):

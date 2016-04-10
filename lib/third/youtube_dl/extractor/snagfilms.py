@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     clean_html,
@@ -10,7 +11,6 @@ from ..utils import (
     js_to_json,
     parse_duration,
 )
-from .common import InfoExtractor
 
 
 class SnagFilmsEmbedIE(InfoExtractor):

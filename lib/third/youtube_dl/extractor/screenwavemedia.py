@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     unified_strdate,
     js_to_json,
 )
-from .common import InfoExtractor
 
 
 class ScreenwaveMediaIE(InfoExtractor):

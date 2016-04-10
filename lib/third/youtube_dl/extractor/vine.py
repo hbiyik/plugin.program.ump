@@ -1,14 +1,14 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import itertools
 import re
+import itertools
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class VineIE(InfoExtractor):
@@ -66,7 +66,7 @@ class VineIE(InfoExtractor):
         'info_dict': {
             'id': 'e192BnZnZ9V',
             'ext': 'mp4',
-            'title': 'ยิ้ม~ เขิน~ อาย~ น่าร้า�?อ้ะ >//< @n_whitewo @orlameena #lovesicktheseries  #lovesickseason2',
+            'title': 'ยิ้ม~ เขิน~ อาย~ น่าร้ากอ้ะ >//< @n_whitewo @orlameena #lovesicktheseries  #lovesickseason2',
             'alt_title': 'Vine by Pimry_zaa',
             'upload_date': '20150705',
             'uploader': 'Pimry_zaa',

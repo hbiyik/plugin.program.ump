@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import itertools
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_parse_qs,
     compat_urlparse,
@@ -12,7 +13,6 @@ from ..utils import (
     unified_strdate,
     qualities,
 )
-from .common import InfoExtractor
 
 
 class WDRIE(InfoExtractor):

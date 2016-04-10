@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 import re
 
-from ..utils import str_or_none
 from .common import InfoExtractor
+from ..utils import str_or_none
 
 
 class ReverbNationIE(InfoExtractor):

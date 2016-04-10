@@ -3,16 +3,16 @@ from __future__ import unicode_literals
 
 import base64
 import binascii
-import json
 import re
+import json
 
-from ..compat import compat_ord
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     qualities,
     determine_ext,
 )
-from .common import InfoExtractor
+from ..compat import compat_ord
 
 
 class TeamcocoIE(InfoExtractor):
@@ -45,7 +45,7 @@ class TeamcocoIE(InfoExtractor):
             'info_dict': {
                 'id': '88748',
                 'ext': 'mp4',
-                'title': 'Timothy Olyphant Raises A Toast To “Justified�?',
+                'title': 'Timothy Olyphant Raises A Toast To “Justified”',
                 'description': 'md5:15501f23f020e793aeca761205e42c24',
             },
             'params': {

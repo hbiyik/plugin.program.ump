@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse,
     compat_urlparse,
@@ -14,7 +15,6 @@ from ..utils import (
     int_or_none,
     xpath_text,
 )
-from .common import InfoExtractor
 
 
 class RaiTVIE(InfoExtractor):

@@ -5,6 +5,7 @@ import itertools
 import json
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     int_or_none,
@@ -13,7 +14,6 @@ from ..utils import (
     sanitized_Request,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class SandiaIE(InfoExtractor):

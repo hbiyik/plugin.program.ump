@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-from ..utils import smuggle_url
 from .common import InfoExtractor
+from ..utils import smuggle_url
 
 
 class FoxSportsIE(InfoExtractor):

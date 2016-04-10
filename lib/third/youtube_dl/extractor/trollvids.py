@@ -15,7 +15,7 @@ class TrollvidsIE(NuevoBaseIE):
         'info_dict': {
             'id': '2349002',
             'ext': 'mp4',
-            'title': '�?MMD R-18】ガールフレンド carry_me_off',
+            'title': '【MMD R-18】ガールフレンド carry_me_off',
             'age_limit': 18,
             'duration': 216.78,
         },

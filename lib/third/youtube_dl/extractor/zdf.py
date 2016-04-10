@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import functools
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     unified_strdate,
@@ -14,7 +15,6 @@ from ..utils import (
     float_or_none,
     ExtractorError,
 )
-from .common import InfoExtractor
 
 
 class ZDFIE(InfoExtractor):

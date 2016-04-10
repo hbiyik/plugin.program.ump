@@ -1,11 +1,11 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..utils import (
     xpath_text,
     xpath_with_ns,
 )
-from .common import InfoExtractor
 from .youtube import YoutubeIE
 
 

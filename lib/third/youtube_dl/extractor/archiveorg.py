@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-from ..utils import unified_strdate
 from .common import InfoExtractor
+from ..utils import unified_strdate
 
 
 class ArchiveOrgIE(InfoExtractor):

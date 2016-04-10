@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     determine_ext,
     ExtractorError,
     float_or_none,
     xpath_text,
 )
-from .common import InfoExtractor
 
 
 class AdultSwimIE(InfoExtractor):

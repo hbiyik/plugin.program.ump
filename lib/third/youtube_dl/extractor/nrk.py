@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urlparse,
     compat_urllib_parse_unquote,
@@ -14,7 +15,6 @@ from ..utils import (
     parse_duration,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class NRKIE(InfoExtractor):

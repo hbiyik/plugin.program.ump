@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     float_or_none,
@@ -10,11 +11,10 @@ from ..utils import (
     ExtractorError,
     get_element_by_attribute,
 )
-from .common import InfoExtractor
 
 
 class YamIE(InfoExtractor):
-    IE_DESC = '蕃薯藤yam天空部�?�'
+    IE_DESC = '蕃薯藤yam天空部落'
     _VALID_URL = r'https?://mymedia.yam.com/m/(?P<id>\d+)'
 
     _TESTS = [{
@@ -24,8 +24,8 @@ class YamIE(InfoExtractor):
         'info_dict': {
             'id': '2283921',
             'ext': 'mp3',
-            'title': '發�?� - 趙薇 京�?�煙雲主題曲',
-            'description': '發�?� - 趙薇 京�?�煙雲主題曲',
+            'title': '發現 - 趙薇 京華煙雲主題曲',
+            'description': '發現 - 趙薇 京華煙雲主題曲',
             'uploader_id': 'princekt',
             'upload_date': '20080807',
             'duration': 313.0,
@@ -41,7 +41,7 @@ class YamIE(InfoExtractor):
             'uploader': '新莊社大瑜伽社',
             'description': 'md5:11e2e405311633ace874f2e6226c8b17',
             'uploader_id': '2323agoy',
-            'title': '20090412陽明山二�?�?�-1',
+            'title': '20090412陽明山二子坪-1',
         },
         'skip': 'Video does not exist',
     }, {
@@ -64,7 +64,7 @@ class YamIE(InfoExtractor):
         'info_dict': {
             'id': '2373534',
             'ext': 'mp3',
-            'title': '林俊傑&蔡�?��?-�?酒窩',
+            'title': '林俊傑&蔡卓妍-小酒窩',
             'description': 'md5:904003395a0fcce6cfb25028ff468420',
             'upload_date': '20080928',
             'uploader_id': 'onliner2',
@@ -77,7 +77,7 @@ class YamIE(InfoExtractor):
 
         # Check for errors
         system_msg = self._html_search_regex(
-            r'系統訊�?�(?:<br>|\n|\r)*([^<>]+)<br>', page, 'system message',
+            r'系統訊息(?:<br>|\n|\r)*([^<>]+)<br>', page, 'system message',
             default=None)
         if system_msg:
             raise ExtractorError(system_msg, expected=True)

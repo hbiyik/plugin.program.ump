@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import re
 
-from ..utils import js_to_json
 from .common import InfoExtractor
+from ..utils import js_to_json
 
 
 class C56IE(InfoExtractor):
@@ -24,7 +24,7 @@ class C56IE(InfoExtractor):
         'md5': '',
         'info_dict': {
             'id': '82247482',
-            'title': '爱的诅咒之�?�鹃花开',
+            'title': '爱的诅咒之杜鹃花开',
         },
         'playlist_count': 7,
         'add_ie': ['Sohu'],

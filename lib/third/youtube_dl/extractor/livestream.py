@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 
-import itertools
 import re
+import itertools
 
+from .common import InfoExtractor
 from ..compat import (
     compat_str,
     compat_urlparse,
@@ -19,7 +20,6 @@ from ..utils import (
     parse_iso8601,
     determine_ext,
 )
-from .common import InfoExtractor
 
 
 class LivestreamIE(InfoExtractor):

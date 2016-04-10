@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     clean_html,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class NovaIE(InfoExtractor):
@@ -19,7 +19,7 @@ class NovaIE(InfoExtractor):
             'id': '1608920',
             'display_id': 'co-na-sebe-sportaci-praskli-vime-jestli-pujde-hrdlicka-na-materskou',
             'ext': 'flv',
-            'title': 'Duel: Michal Hrdli�?ka a Petr Suchoň',
+            'title': 'Duel: Michal Hrdlička a Petr Suchoň',
             'description': 'md5:d0cc509858eee1b1374111c588c6f5d5',
             'thumbnail': 're:^https?://.*\.(?:jpg)',
         },
@@ -34,7 +34,7 @@ class NovaIE(InfoExtractor):
             'id': '1757139',
             'display_id': 'tajemstvi-ukryte-v-podzemi-specialni-nemocnice-v-prazske-krci',
             'ext': 'mp4',
-            'title': 'Podzemní nemocnice v pražské Kr�?i',
+            'title': 'Podzemní nemocnice v pražské Krči',
             'description': 'md5:f0a42dd239c26f61c28f19e62d20ef53',
             'thumbnail': 're:^https?://.*\.(?:jpg)',
         }
@@ -70,7 +70,7 @@ class NovaIE(InfoExtractor):
         'info_dict': {
             'id': '1753621',
             'ext': 'mp4',
-            'title': 'Zaklína�? 3: Divoký hon',
+            'title': 'Zaklínač 3: Divoký hon',
             'description': 're:.*Pokud se stejně jako my nemůžete.*',
             'thumbnail': 're:https?://.*\.jpg(\?.*)?',
             'upload_date': '20150521',

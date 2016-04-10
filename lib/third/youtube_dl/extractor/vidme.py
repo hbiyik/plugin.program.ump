@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import itertools
 
+from .common import InfoExtractor
 from ..compat import compat_HTTPError
 from ..utils import (
     ExtractorError,
@@ -9,7 +10,6 @@ from ..utils import (
     float_or_none,
     parse_iso8601,
 )
-from .common import InfoExtractor
 
 
 class VidmeIE(InfoExtractor):

@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..utils import (
     qualities,
 )
-from .common import InfoExtractor
 
 
 class ImdbIE(InfoExtractor):

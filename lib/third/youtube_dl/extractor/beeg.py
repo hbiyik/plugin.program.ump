@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..compat import (
     compat_chr,
     compat_ord,
@@ -9,7 +10,6 @@ from ..utils import (
     int_or_none,
     parse_iso8601,
 )
-from .common import InfoExtractor
 
 
 class BeegIE(InfoExtractor):

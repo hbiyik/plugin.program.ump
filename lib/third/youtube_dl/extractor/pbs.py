@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_HTTPError
 from ..utils import (
     ExtractorError,
@@ -13,7 +14,6 @@ from ..utils import (
     unified_strdate,
     US_RATINGS,
 )
-from .common import InfoExtractor
 
 
 class PBSIE(InfoExtractor):

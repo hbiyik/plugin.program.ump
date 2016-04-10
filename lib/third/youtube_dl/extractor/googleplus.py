@@ -1,11 +1,11 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import codecs
 import re
+import codecs
 
-from ..utils import unified_strdate
 from .common import InfoExtractor
+from ..utils import unified_strdate
 
 
 class GooglePlusIE(InfoExtractor):
@@ -17,7 +17,7 @@ class GooglePlusIE(InfoExtractor):
         'info_dict': {
             'id': 'ZButuJc6CtH',
             'ext': 'flv',
-            'title': '嘆�??�?�天使 �?臨',
+            'title': '嘆きの天使 降臨',
             'upload_date': '20120613',
             'uploader': '井上ヨシマサ',
         }

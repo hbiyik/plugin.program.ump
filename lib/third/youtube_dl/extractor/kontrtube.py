@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     parse_duration,
 )
-from .common import InfoExtractor
 
 
 class KontrTubeIE(InfoExtractor):
@@ -22,7 +22,7 @@ class KontrTubeIE(InfoExtractor):
             'id': '2678',
             'display_id': 'nad-olimpiyskoy-derevney-v-sochi-podnyat-rossiyskiy-flag',
             'ext': 'mp4',
-            'title': '�?ад олимпий�?кой деревней в Сочи подн�?т ро�?�?ий�?кий флаг',
+            'title': 'Над олимпийской деревней в Сочи поднят российский флаг',
             'description': 'md5:80edc4c613d5887ae8ccf1d59432be41',
             'thumbnail': 'http://www.kontrtube.ru/contents/videos_screenshots/2000/2678/preview.mp4.jpg',
             'duration': 270,
@@ -47,12 +47,12 @@ class KontrTubeIE(InfoExtractor):
             'description', webpage, 'description')
 
         duration = self._search_regex(
-            r'Длительно�?ть: <em>([^<]+)</em>', webpage, 'duration', fatal=False)
+            r'Длительность: <em>([^<]+)</em>', webpage, 'duration', fatal=False)
         if duration:
-            duration = parse_duration(duration.replace('мин', 'min').replace('�?ек', 'sec'))
+            duration = parse_duration(duration.replace('мин', 'min').replace('сек', 'sec'))
 
         view_count = self._search_regex(
-            r'Про�?мотров: <em>([^<]+)</em>',
+            r'Просмотров: <em>([^<]+)</em>',
             webpage, 'view count', fatal=False)
         if view_count:
             view_count = int_or_none(view_count.replace(' ', ''))

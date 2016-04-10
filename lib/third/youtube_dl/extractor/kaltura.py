@@ -1,9 +1,10 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import base64
 import re
+import base64
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_urlparse,
@@ -15,7 +16,6 @@ from ..utils import (
     int_or_none,
     unsmuggle_url,
 )
-from .common import InfoExtractor
 
 
 class KalturaIE(InfoExtractor):

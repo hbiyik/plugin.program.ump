@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     float_or_none,
     srt_subtitles_timecode,
 )
-from .common import InfoExtractor
 
 
 class KanalPlayIE(InfoExtractor):

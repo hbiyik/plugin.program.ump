@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-import random
 import re
+import random
 
 from .common import InfoExtractor
 

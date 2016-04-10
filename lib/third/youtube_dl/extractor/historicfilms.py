@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-from ..utils import parse_duration
 from .common import InfoExtractor
+from ..utils import parse_duration
 
 
 class HistoricFilmsIE(InfoExtractor):

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     HEADRequest,
@@ -11,7 +12,6 @@ from ..utils import (
     qualities,
     int_or_none,
 )
-from .common import InfoExtractor
 
 
 class CanalplusIE(InfoExtractor):

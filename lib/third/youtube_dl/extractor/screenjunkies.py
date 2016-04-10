@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     int_or_none,
     parse_age_limit,
 )
-from .common import InfoExtractor
 
 
 class ScreenJunkiesIE(InfoExtractor):

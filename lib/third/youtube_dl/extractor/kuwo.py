@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     get_element_by_id,
     clean_html,
@@ -10,7 +11,6 @@ from ..utils import (
     InAdvancePagedList,
     remove_start,
 )
-from .common import InfoExtractor
 
 
 class KuwoBaseIE(InfoExtractor):
@@ -54,7 +54,7 @@ class KuwoBaseIE(InfoExtractor):
 
 class KuwoIE(KuwoBaseIE):
     IE_NAME = 'kuwo:song'
-    IE_DESC = '酷我音�?'
+    IE_DESC = '酷我音乐'
     _VALID_URL = r'https?://www\.kuwo\.cn/yinyue/(?P<id>\d+?)'
     _TESTS = [{
         'url': 'http://www.kuwo.cn/yinyue/635632/',
@@ -90,7 +90,7 @@ class KuwoIE(KuwoBaseIE):
         webpage = self._download_webpage(
             url, song_id, note='Download song detail info',
             errnote='Unable to get song detail info')
-        if '对�?起，该歌曲由于版�?�问题已被下线，将返回网站首页' in webpage:
+        if '对不起，该歌曲由于版权问题已被下线，将返回网站首页' in webpage:
             raise ExtractorError('this song has been offline because of copyright issues', expected=True)
 
         song_name = self._html_search_regex(
@@ -116,7 +116,7 @@ class KuwoIE(KuwoBaseIE):
                 errnote='Unable to get album detail info')
 
             publish_time = self._html_search_regex(
-                r'�?�行时间：(\d{4}-\d{2}-\d{2})', album_info_page,
+                r'发行时间：(\d{4}-\d{2}-\d{2})', album_info_page,
                 'publish time', fatal=False)
             if publish_time:
                 publish_time = publish_time.replace('-', '')
@@ -133,7 +133,7 @@ class KuwoIE(KuwoBaseIE):
 
 class KuwoAlbumIE(InfoExtractor):
     IE_NAME = 'kuwo:album'
-    IE_DESC = '酷我音�? - 专辑'
+    IE_DESC = '酷我音乐 - 专辑'
     _VALID_URL = r'https?://www\.kuwo\.cn/album/(?P<id>\d+?)/'
     _TEST = {
         'url': 'http://www.kuwo.cn/album/502294/',
@@ -169,7 +169,7 @@ class KuwoAlbumIE(InfoExtractor):
 
 class KuwoChartIE(InfoExtractor):
     IE_NAME = 'kuwo:chart'
-    IE_DESC = '酷我音�? - 排行榜'
+    IE_DESC = '酷我音乐 - 排行榜'
     _VALID_URL = r'https?://yinyue\.kuwo\.cn/billboard_(?P<id>[^.]+).htm'
     _TEST = {
         'url': 'http://yinyue.kuwo.cn/billboard_香港中文龙虎榜.htm',
@@ -194,7 +194,7 @@ class KuwoChartIE(InfoExtractor):
 
 class KuwoSingerIE(InfoExtractor):
     IE_NAME = 'kuwo:singer'
-    IE_DESC = '酷我音�? - 歌手'
+    IE_DESC = '酷我音乐 - 歌手'
     _VALID_URL = r'https?://www\.kuwo\.cn/mingxing/(?P<id>[^/]+)'
     _TESTS = [{
         'url': 'http://www.kuwo.cn/mingxing/bruno+mars/',
@@ -250,14 +250,14 @@ class KuwoSingerIE(InfoExtractor):
 
 class KuwoCategoryIE(InfoExtractor):
     IE_NAME = 'kuwo:category'
-    IE_DESC = '酷我音�? - 分类'
+    IE_DESC = '酷我音乐 - 分类'
     _VALID_URL = r'https?://yinyue\.kuwo\.cn/yy/cinfo_(?P<id>\d+?).htm'
     _TEST = {
         'url': 'http://yinyue.kuwo.cn/yy/cinfo_86375.htm',
         'info_dict': {
             'id': '86375',
-            'title': '八�??年代精选',
-            'description': '这些都是属于八�??年代的回忆�?',
+            'title': '八十年代精选',
+            'description': '这些都是属于八十年代的回忆！',
         },
         'playlist_count': 30,
     }
@@ -287,7 +287,7 @@ class KuwoCategoryIE(InfoExtractor):
 
 class KuwoMvIE(KuwoBaseIE):
     IE_NAME = 'kuwo:mv'
-    IE_DESC = '酷我音�? - MV'
+    IE_DESC = '酷我音乐 - MV'
     _VALID_URL = r'https?://www\.kuwo\.cn/mv/(?P<id>\d+?)/'
     _TEST = {
         'url': 'http://www.kuwo.cn/mv/6480076/',

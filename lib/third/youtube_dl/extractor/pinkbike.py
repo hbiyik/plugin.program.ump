@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     remove_end,
@@ -10,7 +11,6 @@ from ..utils import (
     str_to_int,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class PinkbikeIE(InfoExtractor):

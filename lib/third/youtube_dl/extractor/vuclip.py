@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlparse,
 )
@@ -10,7 +11,6 @@ from ..utils import (
     parse_duration,
     qualities,
 )
-from .common import InfoExtractor
 
 
 class VuClipIE(InfoExtractor):

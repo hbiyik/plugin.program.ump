@@ -1,16 +1,16 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-from ..compat import compat_str
-from ..utils import (
-    ExtractorError,
-    sanitized_Request,
-)
 from .brightcove import (
     BrightcoveLegacyIE,
     BrightcoveNewIE,
 )
 from .common import InfoExtractor
+from ..compat import compat_str
+from ..utils import (
+    ExtractorError,
+    sanitized_Request,
+)
 
 
 class NownessBaseIE(InfoExtractor):

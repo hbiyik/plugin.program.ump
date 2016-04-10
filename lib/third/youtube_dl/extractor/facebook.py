@@ -4,6 +4,7 @@ import json
 import re
 import socket
 
+from .common import InfoExtractor
 from ..compat import (
     compat_etree_fromstring,
     compat_http_client,
@@ -20,7 +21,6 @@ from ..utils import (
     get_element_by_id,
     clean_html,
 )
-from .common import InfoExtractor
 
 
 class FacebookIE(InfoExtractor):

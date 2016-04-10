@@ -5,12 +5,12 @@ from ..compat import (
     compat_urllib_parse_unquote,
     compat_urllib_parse_urlencode,
 )
+from .common import InfoExtractor
 from ..utils import (
     parse_duration,
     int_or_none,
     ExtractorError,
 )
-from .common import InfoExtractor
 
 
 class Porn91IE(InfoExtractor):
@@ -22,7 +22,7 @@ class Porn91IE(InfoExtractor):
         'md5': '6df8f6d028bc8b14f5dbd73af742fb20',
         'info_dict': {
             'id': '7e42283b4f5ab36da134',
-            'title': '18�?大一漂亮学妹，水嫩性感，�?爽一次�?',
+            'title': '18岁大一漂亮学妹，水嫩性感，再爽一次！',
             'ext': 'mp4',
             'duration': 431,
             'age_limit': 18,
@@ -36,7 +36,7 @@ class Porn91IE(InfoExtractor):
         webpage = self._download_webpage(
             'http://91porn.com/view_video.php?viewkey=%s' % video_id, video_id)
 
-        if '作为游客，你�?天�?��?�观看10个视频' in webpage:
+        if '作为游客，你每天只可观看10个视频' in webpage:
             raise ExtractorError('91 Porn says: Daily limit 10 videos exceeded', expected=True)
 
         title = self._search_regex(

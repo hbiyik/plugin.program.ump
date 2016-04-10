@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_unquote,
     compat_urllib_parse_urlparse,
@@ -13,7 +14,6 @@ from ..utils import (
     sanitized_Request,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class CeskaTelevizeIE(InfoExtractor):
@@ -37,7 +37,7 @@ class CeskaTelevizeIE(InfoExtractor):
         'info_dict': {
             'id': '61924494876844374',
             'ext': 'mp4',
-            'title': 'První republika: Zpěva�?ka z Dupárny Bobina',
+            'title': 'První republika: Zpěvačka z Dupárny Bobina',
             'description': 'Sága mapující atmosféru první republiky od r. 1918 do r. 1945.',
             'thumbnail': 're:^https?://.*\.jpg',
             'duration': 88.4,
@@ -52,7 +52,7 @@ class CeskaTelevizeIE(InfoExtractor):
         'info_dict': {
             'id': '215562210900007-bogotart',
             'title': 'Queer: Bogotart',
-            'description': 'Alternativní průvodce sou�?asným queer světem',
+            'description': 'Alternativní průvodce současným queer světem',
         },
         'playlist': [{
             'info_dict': {

@@ -1,15 +1,15 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     int_or_none,
     sanitized_Request,
 )
-from .common import InfoExtractor
 
 
 class IviIE(InfoExtractor):
@@ -25,7 +25,7 @@ class IviIE(InfoExtractor):
             'info_dict': {
                 'id': '53141',
                 'ext': 'mp4',
-                'title': 'Иван Ва�?ильевич мен�?ет профе�?�?ию',
+                'title': 'Иван Васильевич меняет профессию',
                 'description': 'md5:b924063ea1677c8fe343d8a72ac2195f',
                 'duration': 5498,
                 'thumbnail': 're:^https?://.*\.jpg$',
@@ -39,11 +39,11 @@ class IviIE(InfoExtractor):
             'info_dict': {
                 'id': '9549',
                 'ext': 'mp4',
-                'title': 'Двое из ларца - Дело Гольдберга (1 ча�?ть)',
+                'title': 'Двое из ларца - Дело Гольдберга (1 часть)',
                 'series': 'Двое из ларца',
                 'season': 'Сезон 1',
                 'season_number': 1,
-                'episode': 'Дело Гольдберга (1 ча�?ть)',
+                'episode': 'Дело Гольдберга (1 часть)',
                 'episode_number': 1,
                 'duration': 2655,
                 'thumbnail': 're:^https?://.*\.jpg$',
@@ -151,7 +151,7 @@ class IviCompilationIE(InfoExtractor):
         'url': 'http://www.ivi.ru/watch/dvoe_iz_lartsa/season1',
         'info_dict': {
             'id': 'dvoe_iz_lartsa/season1',
-            'title': 'Двое из ларца (2006 - 2008) 1 �?езон',
+            'title': 'Двое из ларца (2006 - 2008) 1 сезон',
         },
         'playlist_mincount': 12,
     }]

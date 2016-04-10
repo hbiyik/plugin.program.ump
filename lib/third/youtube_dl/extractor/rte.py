@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     float_or_none,
     parse_iso8601,
     unescapeHTML,
 )
-from .common import InfoExtractor
 
 
 class RteIE(InfoExtractor):

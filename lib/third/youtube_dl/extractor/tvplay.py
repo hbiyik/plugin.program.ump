@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     parse_iso8601,
     qualities,
 )
-from .common import InfoExtractor
 
 
 class TVPlayIE(InfoExtractor):
@@ -35,8 +35,8 @@ class TVPlayIE(InfoExtractor):
             'info_dict': {
                 'id': '418113',
                 'ext': 'flv',
-                'title': 'K�?di ir īri? - Viņas melo lab�?k',
-                'description': 'Baiba apsmej īrus, k�?di tie ir un ko viņi dara.',
+                'title': 'Kādi ir īri? - Viņas melo labāk',
+                'description': 'Baiba apsmej īrus, kādi tie ir un ko viņi dara.',
                 'duration': 25,
                 'timestamp': 1406097056,
                 'upload_date': '20140723',
@@ -180,7 +180,7 @@ class TVPlayIE(InfoExtractor):
             'info_dict': {
                 'id': '624952',
                 'ext': 'flv',
-                'title': 'Здравей, Българи�? (12.06.2015 г.) ',
+                'title': 'Здравей, България (12.06.2015 г.) ',
                 'description': 'md5:99f3700451ac5bb71a260268b8daefd7',
                 'duration': 8838,
                 'timestamp': 1434100372,

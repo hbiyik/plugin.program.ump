@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_HTTPError,
     compat_urllib_parse_urlencode,
@@ -18,7 +19,6 @@ from ..utils import (
     unescapeHTML,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class UdemyIE(InfoExtractor):

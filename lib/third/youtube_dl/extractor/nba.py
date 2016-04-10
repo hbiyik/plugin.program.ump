@@ -4,6 +4,7 @@ import functools
 import os.path
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_urllib_parse_urlencode,
     compat_urlparse,
@@ -16,7 +17,6 @@ from ..utils import (
     xpath_text,
     xpath_attr,
 )
-from .common import InfoExtractor
 
 
 class NBAIE(InfoExtractor):

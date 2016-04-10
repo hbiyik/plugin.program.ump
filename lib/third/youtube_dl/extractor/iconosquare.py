@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..utils import (
     int_or_none,
     get_element_by_id,
     remove_end,
 )
-from .common import InfoExtractor
 
 
 class IconosquareIE(InfoExtractor):

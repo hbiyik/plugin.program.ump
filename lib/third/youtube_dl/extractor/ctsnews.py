@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from ..utils import parse_iso8601, ExtractorError
 from .common import InfoExtractor
+from ..utils import parse_iso8601, ExtractorError
 
 
 class CtsNewsIE(InfoExtractor):
-    IE_DESC = '�?�視新�?�'
+    IE_DESC = '華視新聞'
     # https connection failed (Connection reset)
     _VALID_URL = r'https?://news\.cts\.com\.tw/[a-z]+/[a-z]+/\d+/(?P<id>\d+)\.html'
     _TESTS = [{
@@ -15,7 +15,7 @@ class CtsNewsIE(InfoExtractor):
         'info_dict': {
             'id': '201501291578109',
             'ext': 'mp4',
-            'title': '以色列.真主黨交�?� 3人死亡',
+            'title': '以色列.真主黨交火 3人死亡',
             'description': 'md5:95e9b295c898b7ff294f09d450178d7d',
             'timestamp': 1422528540,
             'upload_date': '20150129',
@@ -27,7 +27,7 @@ class CtsNewsIE(InfoExtractor):
         'info_dict': {
             'id': '201309031304098',
             'ext': 'mp4',
-            'title': '韓國31歲童�?男 貌如�??多歲�?孩',
+            'title': '韓國31歲童顏男 貌如十多歲小孩',
             'description': 'md5:f183feeba3752b683827aab71adad584',
             'thumbnail': 're:^https?://.*\.jpg$',
             'timestamp': 1378205880,
@@ -46,7 +46,7 @@ class CtsNewsIE(InfoExtractor):
             'thumbnail': 're:^https?://.*\.jpg$',
             'upload_date': '20150128',
             'uploader_id': 'TBSCTS',
-            'uploader': '中�?�電視公�?�',
+            'uploader': '中華電視公司',
         }
     }]
 

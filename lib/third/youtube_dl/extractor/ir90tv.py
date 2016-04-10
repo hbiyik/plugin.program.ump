@@ -1,8 +1,8 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from ..utils import remove_start
 from .common import InfoExtractor
+from ..utils import remove_start
 
 
 class Ir90TvIE(InfoExtractor):
@@ -13,7 +13,7 @@ class Ir90TvIE(InfoExtractor):
         'info_dict': {
             'id': '95719',
             'ext': 'mp4',
-            'title': 'شایعات نقل و انتقالات مهم �?وتبال اروپا 94/02/18',
+            'title': 'شایعات نقل و انتقالات مهم فوتبال اروپا 94/02/18',
             'thumbnail': 're:^https?://.*\.jpg$',
         }
     }, {

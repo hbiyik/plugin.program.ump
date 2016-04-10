@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import compat_str
 from ..utils import (
     float_or_none,
     int_or_none,
     clean_html,
 )
-from .common import InfoExtractor
 
 
 class DBTVIE(InfoExtractor):

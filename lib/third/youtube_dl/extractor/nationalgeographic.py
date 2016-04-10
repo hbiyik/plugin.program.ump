@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
 from ..utils import (
     smuggle_url,
     url_basename,
 )
-from .common import InfoExtractor
 
 
 class NationalGeographicIE(InfoExtractor):

@@ -2,11 +2,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     get_element_by_attribute,
     clean_html,
 )
-from .common import InfoExtractor
 
 
 class TechTalksIE(InfoExtractor):

@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     unified_strdate,
     parse_duration,
     int_or_none,
 )
-from .common import InfoExtractor
 
 
 class SexyKarmaIE(InfoExtractor):

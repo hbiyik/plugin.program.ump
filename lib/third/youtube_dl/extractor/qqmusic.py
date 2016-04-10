@@ -2,9 +2,10 @@
 from __future__ import unicode_literals
 
 import random
-import re
 import time
+import re
 
+from .common import InfoExtractor
 from ..utils import (
     sanitized_Request,
     strip_jsonp,
@@ -12,12 +13,11 @@ from ..utils import (
     clean_html,
     ExtractorError,
 )
-from .common import InfoExtractor
 
 
 class QQMusicIE(InfoExtractor):
     IE_NAME = 'qqmusic'
-    IE_DESC = 'QQ音�?'
+    IE_DESC = 'QQ音乐'
     _VALID_URL = r'https?://y.qq.com/#type=song&mid=(?P<id>[0-9A-Za-z]+)'
     _TESTS = [{
         'url': 'http://y.qq.com/#type=song&mid=004295Et37taLD',
@@ -25,9 +25,9 @@ class QQMusicIE(InfoExtractor):
         'info_dict': {
             'id': '004295Et37taLD',
             'ext': 'mp3',
-            'title': '�?�惜没如果',
+            'title': '可惜没如果',
             'release_date': '20141227',
-            'creator': '林俊�?�',
+            'creator': '林俊杰',
             'description': 'md5:d327722d0361576fde558f1ac68a7065',
             'thumbnail': 're:^https?://.*\.jpg$',
         }
@@ -40,7 +40,7 @@ class QQMusicIE(InfoExtractor):
             'ext': 'mp3',
             'title': '如果',
             'release_date': '20050626',
-            'creator': '�?�季美',
+            'creator': '李季美',
             'description': 'md5:46857d5ed62bc4ba84607a805dccf437',
             'thumbnail': 're:^https?://.*\.jpg$',
         }
@@ -86,7 +86,7 @@ class QQMusicIE(InfoExtractor):
             r"songname:\s*'([^']+)'", detail_info_page, 'song name')
 
         publish_time = self._html_search_regex(
-            r'�?�行时间：(\d{4}-\d{2}-\d{2})', detail_info_page,
+            r'发行时间：(\d{4}-\d{2}-\d{2})', detail_info_page,
             'publish time', default=None)
         if publish_time:
             publish_time = publish_time.replace('-', '')
@@ -171,13 +171,13 @@ class QQPlaylistBaseIE(InfoExtractor):
 
 class QQMusicSingerIE(QQPlaylistBaseIE):
     IE_NAME = 'qqmusic:singer'
-    IE_DESC = 'QQ音�? - 歌手'
+    IE_DESC = 'QQ音乐 - 歌手'
     _VALID_URL = r'https?://y.qq.com/#type=singer&mid=(?P<id>[0-9A-Za-z]+)'
     _TEST = {
         'url': 'http://y.qq.com/#type=singer&mid=001BLpXF2DyJe2',
         'info_dict': {
             'id': '001BLpXF2DyJe2',
-            'title': '林俊�?�',
+            'title': '林俊杰',
             'description': 'md5:870ec08f7d8547c29c93010899103751',
         },
         'playlist_count': 12,
@@ -216,7 +216,7 @@ class QQMusicSingerIE(QQPlaylistBaseIE):
 
 class QQMusicAlbumIE(QQPlaylistBaseIE):
     IE_NAME = 'qqmusic:album'
-    IE_DESC = 'QQ音�? - 专辑'
+    IE_DESC = 'QQ音乐 - 专辑'
     _VALID_URL = r'https?://y.qq.com/#type=album&mid=(?P<id>[0-9A-Za-z]+)'
 
     _TESTS = [{
@@ -259,7 +259,7 @@ class QQMusicAlbumIE(QQPlaylistBaseIE):
 
 class QQMusicToplistIE(QQPlaylistBaseIE):
     IE_NAME = 'qqmusic:toplist'
-    IE_DESC = 'QQ音�? - 排行榜'
+    IE_DESC = 'QQ音乐 - 排行榜'
     _VALID_URL = r'https?://y\.qq\.com/#type=toplist&p=(?P<id>(top|global)_[0-9]+)'
 
     _TESTS = [{
@@ -274,10 +274,10 @@ class QQMusicToplistIE(QQPlaylistBaseIE):
         'info_dict': {
             'id': 'top_3',
             'title': '巅峰榜·欧美',
-            'description': 'QQ音�?巅峰榜·欧美根�?�用户收�?�行为自动生�?，集结当下最�?行的欧美新歌�?:更新时间：�?周四22点|统'
-                           '计周期：一周（上周四至本周三）|统计对象：三个月内�?�行的欧美歌曲|统计数�?：100首|统计算法：根�?�'
-                           '歌曲在一周内的有效播放次数，由高到低�?��?100�??（�?�一歌手最多�?许5首歌曲�?�时上榜）|有效播放次数：'
-                           '登录用户完整播放一首歌曲，记为一次有效播放；�?�一用户收�?��?�一首歌曲，�?天记录为1次有效播放'
+            'description': 'QQ音乐巅峰榜·欧美根据用户收听行为自动生成，集结当下最流行的欧美新歌！:更新时间：每周四22点|统'
+                           '计周期：一周（上周四至本周三）|统计对象：三个月内发行的欧美歌曲|统计数量：100首|统计算法：根据'
+                           '歌曲在一周内的有效播放次数，由高到低取前100名（同一歌手最多允许5首歌曲同时上榜）|有效播放次数：'
+                           '登录用户完整播放一首歌曲，记为一次有效播放；同一用户收听同一首歌曲，每天记录为1次有效播放'
         },
         'playlist_count': 100,
     }, {
@@ -313,7 +313,7 @@ class QQMusicToplistIE(QQPlaylistBaseIE):
 
 class QQMusicPlaylistIE(QQPlaylistBaseIE):
     IE_NAME = 'qqmusic:playlist'
-    IE_DESC = 'QQ音�? - 歌�?�'
+    IE_DESC = 'QQ音乐 - 歌单'
     _VALID_URL = r'https?://y\.qq\.com/#type=taoge&id=(?P<id>[0-9]+)'
 
     _TESTS = [{
@@ -329,8 +329,8 @@ class QQMusicPlaylistIE(QQPlaylistBaseIE):
         'url': 'http://y.qq.com/#type=taoge&id=1374105607',
         'info_dict': {
             'id': '1374105607',
-            'title': '易入人心的�?�语民谣',
-            'description': '民谣的歌曲易于传唱�?�?歌�?朗朗伤�?��?旋律简�?�温馨。属于那�?�?入耳孔。�?�上心头的感觉。没有太多的�?�?�情绪。简�?�而直接地表达�?者的情绪，就是这样的简�?��?易入人心。',
+            'title': '易入人心的华语民谣',
+            'description': '民谣的歌曲易于传唱、、歌词朗朗伤口、旋律简单温馨。属于那种才入耳孔。却上心头的感觉。没有太多的复杂情绪。简单而直接地表达乐者的情绪，就是这样的简单才易入人心。',
         },
         'playlist_count': 20,
     }]

@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     float_or_none,
     int_or_none,
     parse_age_limit,
 )
-from .common import InfoExtractor
 
 
 class TvigleIE(InfoExtractor):
@@ -38,7 +38,7 @@ class TvigleIE(InfoExtractor):
             'info_dict': {
                 'id': '5142516',
                 'ext': 'flv',
-                'title': 'Ведущий телепрограммы «60 минут» (СШ�?) о Владимире Вы�?оцком',
+                'title': 'Ведущий телепрограммы «60 минут» (США) о Владимире Высоцком',
                 'description': 'md5:027f7dc872948f14c96d19b4178428a4',
                 'duration': 186.080,
                 'age_limit': 0,

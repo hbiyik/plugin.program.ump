@@ -1,8 +1,8 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from ..utils import int_or_none
 from .theplatform import ThePlatformIE
+from ..utils import int_or_none
 
 
 class CNETIE(ThePlatformIE):

@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 
 import json
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     float_or_none,
     sanitized_Request,
 )
-from .common import InfoExtractor
 
 
 class AzubuIE(InfoExtractor):

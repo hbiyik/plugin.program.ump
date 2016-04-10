@@ -1,12 +1,12 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
+from .common import InfoExtractor
+from .theplatform import ThePlatformIE
 from ..utils import (
     parse_duration,
     find_xpath_attr,
 )
-from .common import InfoExtractor
-from .theplatform import ThePlatformIE
 
 
 class CBSNewsIE(ThePlatformIE):

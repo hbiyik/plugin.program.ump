@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..compat import (
     compat_HTTPError,
     compat_str,
@@ -12,7 +13,6 @@ from ..utils import (
     ExtractorError,
     qualities,
 )
-from .common import InfoExtractor
 
 
 class AddAnimeIE(InfoExtractor):

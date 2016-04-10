@@ -1,14 +1,14 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from ..compat import compat_str
+from .common import InfoExtractor
 from ..utils import (
     get_element_by_attribute,
     parse_duration,
     update_url_query,
     ExtractorError,
 )
-from .common import InfoExtractor
+from ..compat import compat_str
 
 
 class USATodayIE(InfoExtractor):

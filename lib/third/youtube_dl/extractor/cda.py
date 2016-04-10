@@ -3,12 +3,12 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     decode_packed_codes,
     ExtractorError,
     parse_duration
 )
-from .common import InfoExtractor
 
 
 class CDAIE(InfoExtractor):

@@ -1,14 +1,14 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-import hashlib
 import re
+import hashlib
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     unified_strdate,
 )
-from .common import InfoExtractor
 
 
 class WatIE(InfoExtractor):
