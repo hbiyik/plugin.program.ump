@@ -2,14 +2,13 @@
 from __future__ import unicode_literals
 
 import re
-
+from .common import InfoExtractor
 from ..compat import compat_urlparse
 from ..utils import (
     get_element_by_attribute,
     qualities,
     unescapeHTML,
 )
-from .common import InfoExtractor
 
 
 class OraTVIE(InfoExtractor):

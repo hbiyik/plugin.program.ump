@@ -1,10 +1,11 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import itertools
 import json
 import re
+import itertools
 
+from .common import InfoExtractor
 from ..compat import (
     compat_HTTPError,
     compat_urlparse,
@@ -24,7 +25,6 @@ from ..utils import (
     unescapeHTML,
     parse_filesize,
 )
-from .common import InfoExtractor
 
 
 class VimeoBaseInfoExtractor(InfoExtractor):
@@ -517,8 +517,8 @@ class VimeoOndemandIE(VimeoBaseInfoExtractor):
         'info_dict': {
             'id': '105442900',
             'ext': 'mp4',
-            'title': 'המעבדה - במ�?י יות�? פלדמן',
-            'uploader': 'ג�? סרטי�?',
+            'title': 'המעבדה - במאי יותם פלדמן',
+            'uploader': 'גם סרטים',
             'uploader_url': 're:https?://(?:www\.)?vimeo\.com/gumfilms',
             'uploader_id': 'gumfilms',
         },

@@ -1,9 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import json
 import re
+import json
 
+from .common import InfoExtractor
 from ..compat import (
     compat_etree_fromstring,
     compat_parse_qs,
@@ -26,7 +27,6 @@ from ..utils import (
     unsmuggle_url,
     update_url_query,
 )
-from .common import InfoExtractor
 
 
 class BrightcoveLegacyIE(InfoExtractor):
@@ -43,7 +43,7 @@ class BrightcoveLegacyIE(InfoExtractor):
             'info_dict': {
                 'id': '2371591881001',
                 'ext': 'mp4',
-                'title': 'Xavier Sala i Martín: “Un banc que no presta és un banc zombi que no serveix per a res�?',
+                'title': 'Xavier Sala i Martín: “Un banc que no presta és un banc zombi que no serveix per a res”',
                 'uploader': '8TV',
                 'description': 'md5:a950cc4285c43e44d763d036710cd9cd',
             }

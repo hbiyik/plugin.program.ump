@@ -1,10 +1,9 @@
 from __future__ import unicode_literals
 
-import hashlib
 import re
+import hashlib
 
 from .common import InfoExtractor
-
 
 _md5 = lambda s: hashlib.md5(s.encode('utf-8')).hexdigest()
 

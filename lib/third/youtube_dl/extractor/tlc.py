@@ -1,11 +1,10 @@
 # encoding: utf-8
 from __future__ import unicode_literals
-
 import re
 
-from ..compat import compat_parse_qs
-from .brightcove import BrightcoveLegacyIE
 from .common import InfoExtractor
+from .brightcove import BrightcoveLegacyIE
+from ..compat import compat_parse_qs
 
 
 class TlcDeIE(InfoExtractor):

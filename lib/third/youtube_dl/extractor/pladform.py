@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     int_or_none,
     xpath_text,
     qualities,
 )
-from .common import InfoExtractor
 
 
 class PladformIE(InfoExtractor):
@@ -32,8 +32,8 @@ class PladformIE(InfoExtractor):
         'info_dict': {
             'id': '100183293',
             'ext': 'mp4',
-            'title': 'Тайны перевала Д�?тлова • 1 �?ери�? 2 ча�?ть',
-            'description': 'Документальный �?ериал-ра�?�?ледование одной из �?амых жутких тайн ХХ века',
+            'title': 'Тайны перевала Дятлова • 1 серия 2 часть',
+            'description': 'Документальный сериал-расследование одной из самых жутких тайн ХХ века',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 694,
             'age_limit': 0,

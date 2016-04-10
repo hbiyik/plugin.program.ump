@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     int_or_none
 )
-from .common import InfoExtractor
 
 
 class RUTVIE(InfoExtractor):
@@ -25,7 +25,7 @@ class RUTVIE(InfoExtractor):
             'info_dict': {
                 'id': '774471',
                 'ext': 'mp4',
-                'title': 'Монологи на в�?е времена',
+                'title': 'Монологи на все времена',
                 'description': 'md5:18d8b5e6a41fb1faa53819471852d5d5',
                 'duration': 2906,
             },
@@ -39,7 +39,7 @@ class RUTVIE(InfoExtractor):
             'info_dict': {
                 'id': '774016',
                 'ext': 'mp4',
-                'title': 'Чужой в �?емье Сталина',
+                'title': 'Чужой в семье Сталина',
                 'description': '',
                 'duration': 2539,
             },
@@ -53,7 +53,7 @@ class RUTVIE(InfoExtractor):
             'info_dict': {
                 'id': '766888',
                 'ext': 'mp4',
-                'title': 'Ве�?ти.net: интернет-гиганты начали перет�?гивание программных "оде�?л"',
+                'title': 'Вести.net: интернет-гиганты начали перетягивание программных "одеял"',
                 'description': 'md5:65ddd47f9830c4f42ed6475f8730c995',
                 'duration': 279,
             },
@@ -67,7 +67,7 @@ class RUTVIE(InfoExtractor):
             'info_dict': {
                 'id': '771852',
                 'ext': 'mp4',
-                'title': 'Пр�?мой �?фир. Жертвы загадочной болезни: �?мерть от �?таро�?ти в 17 лет',
+                'title': 'Прямой эфир. Жертвы загадочной болезни: смерть от старости в 17 лет',
                 'description': 'md5:b81c8c55247a4bd996b43ce17395b2d8',
                 'duration': 3096,
             },
@@ -81,7 +81,7 @@ class RUTVIE(InfoExtractor):
             'info_dict': {
                 'id': '51499',
                 'ext': 'flv',
-                'title': 'Сочи-2014. Биатлон. Индивидуальна�? гонка. Мужчины ',
+                'title': 'Сочи-2014. Биатлон. Индивидуальная гонка. Мужчины ',
                 'description': 'md5:9e0ed5c9d2fa1efbfdfed90c9a6d179c',
             },
             'skip': 'Translation has finished',
@@ -91,7 +91,7 @@ class RUTVIE(InfoExtractor):
             'info_dict': {
                 'id': '21',
                 'ext': 'mp4',
-                'title': 're:^Ро�?�?и�? 24. Пр�?мой �?фир [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
+                'title': 're:^Россия 24. Прямой эфир [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
                 'is_live': True,
             },
             'params': {

@@ -1,11 +1,12 @@
 # encoding: utf-8
 from __future__ import unicode_literals
 
-import hashlib
-import json
 import re
+import json
+import hashlib
 import uuid
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     int_or_none,
@@ -13,7 +14,6 @@ from ..utils import (
     unified_strdate,
     urlencode_postdata,
 )
-from .common import InfoExtractor
 
 
 class SmotriIE(InfoExtractor):
@@ -30,7 +30,7 @@ class SmotriIE(InfoExtractor):
             'info_dict': {
                 'id': 'v261036632ab',
                 'ext': 'mp4',
-                'title': 'ката�?трофа �? камер видеонаблюдени�?',
+                'title': 'катастрофа с камер видеонаблюдения',
                 'uploader': 'rbc2008',
                 'uploader_id': 'rbc08',
                 'upload_date': '20131118',
@@ -76,7 +76,7 @@ class SmotriIE(InfoExtractor):
             'info_dict': {
                 'id': 'v6984858774',
                 'ext': 'mp4',
-                'title': 'Дача Солженицина П�?РОЛЬ 223322',
+                'title': 'Дача Солженицина ПАРОЛЬ 223322',
                 'uploader': 'psavari1',
                 'uploader_id': 'psavari1',
                 'upload_date': '20081103',
@@ -93,7 +93,7 @@ class SmotriIE(InfoExtractor):
             'info_dict': {
                 'id': 'v15408898bcf',
                 'ext': 'flv',
-                'title': '�?тот ролик не покажут по ТВ',
+                'title': 'этот ролик не покажут по ТВ',
                 'uploader': 'zzxxx',
                 'uploader_id': 'ueggb',
                 'upload_date': '20101001',
@@ -113,7 +113,7 @@ class SmotriIE(InfoExtractor):
                 'id': 'v7780025814',
                 'ext': 'mp4',
                 'title': 'Sexy Beach (пароль 123)',
-                'uploader': 'в�?�?�?',
+                'uploader': 'вАся',
                 'uploader_id': 'asya_prosto',
                 'upload_date': '20081218',
                 'thumbnail': 're:^https?://.*\.jpg$',
@@ -229,7 +229,7 @@ class SmotriIE(InfoExtractor):
             adult_content = False
 
         view_count = self._html_search_regex(
-            'Общее количе�?тво про�?мотров.*?<span class="Number">(\\d+)</span>',
+            'Общее количество просмотров.*?<span class="Number">(\\d+)</span>',
             webpage, 'view count', fatal=False, flags=re.MULTILINE | re.DOTALL)
 
         return {
@@ -271,7 +271,7 @@ class SmotriCommunityIE(InfoExtractor):
 
         description_text = rss.find('./channel/description').text
         community_title = self._html_search_regex(
-            '^Видео �?ообще�?тва "([^"]+)"$', description_text, 'community title')
+            '^Видео сообщества "([^"]+)"$', description_text, 'community title')
 
         return self.playlist_result(entries, community_id, community_title)
 
@@ -301,7 +301,7 @@ class SmotriUserIE(InfoExtractor):
 
         description_text = rss.find('./channel/description').text
         user_nickname = self._html_search_regex(
-            '^Видео режи�?�?ера (.*)$', description_text,
+            '^Видео режиссера (.*)$', description_text,
             'user nickname')
 
         return self.playlist_result(entries, user_id, user_nickname)
@@ -319,7 +319,7 @@ class SmotriBroadcastIE(InfoExtractor):
         broadcast_url = 'http://' + mobj.group('url')
         broadcast_page = self._download_webpage(broadcast_url, broadcast_id, 'Downloading broadcast page')
 
-        if re.search('>Режи�?�?ер �? логином <br/>"%s"<br/> <span>не �?уще�?твует<' % broadcast_id, broadcast_page) is not None:
+        if re.search('>Режиссер с логином <br/>"%s"<br/> <span>не существует<' % broadcast_id, broadcast_page) is not None:
             raise ExtractorError(
                 'Broadcast %s does not exist' % broadcast_id, expected=True)
 
@@ -343,7 +343,7 @@ class SmotriBroadcastIE(InfoExtractor):
             broadcast_page = self._download_webpage(
                 request, broadcast_id, 'Logging in and confirming age')
 
-            if re.search('>�?еверный логин или пароль<', broadcast_page) is not None:
+            if re.search('>Неверный логин или пароль<', broadcast_page) is not None:
                 raise ExtractorError('Unable to log in: bad username or password', expected=True)
 
             adult_content = True

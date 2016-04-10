@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 
+from .common import InfoExtractor
 from ..utils import (
     ExtractorError,
     sanitized_Request,
@@ -10,8 +11,6 @@ from ..utils import (
     xpath_text,
     xpath_with_ns,
 )
-from .common import InfoExtractor
-
 
 _x = lambda p: xpath_with_ns(p, {'xspf': 'http://xspf.org/ns/0/'})
 

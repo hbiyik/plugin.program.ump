@@ -3,10 +3,9 @@ from __future__ import unicode_literals
 
 import hashlib
 import time
-
-from ..compat import (compat_str, compat_basestring)
-from ..utils import (ExtractorError, unescapeHTML)
 from .common import InfoExtractor
+from ..utils import (ExtractorError, unescapeHTML)
+from ..compat import (compat_str, compat_basestring)
 
 
 class DouyuTVIE(InfoExtractor):
@@ -18,7 +17,7 @@ class DouyuTVIE(InfoExtractor):
             'id': '17732',
             'display_id': 'iseven',
             'ext': 'flv',
-            'title': 're:^清晨醒脑�?T-ara根本�?��?下�?��? [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
+            'title': 're:^清晨醒脑！T-ara根本停不下来！ [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
             'description': 'md5:f34981259a03e980a3c6404190a3ed61',
             'thumbnail': 're:^https?://.*\.jpg$',
             'uploader': '7师傅',
@@ -34,10 +33,10 @@ class DouyuTVIE(InfoExtractor):
             'id': '85982',
             'display_id': '85982',
             'ext': 'flv',
-            'title': 're:^�?漠从零�?�排记�?——CSOL2躲猫猫 [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
+            'title': 're:^小漠从零单排记！——CSOL2躲猫猫 [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
             'description': 'md5:746a2f7a253966a06755a912f0acc0d2',
             'thumbnail': 're:^https?://.*\.jpg$',
-            'uploader': 'douyu�?漠',
+            'uploader': 'douyu小漠',
             'uploader_id': '3769985',
             'is_live': True,
         },
@@ -51,7 +50,7 @@ class DouyuTVIE(InfoExtractor):
             'id': '17732',
             'display_id': '17732',
             'ext': 'flv',
-            'title': 're:^清晨醒脑�?T-ara根本�?��?下�?��? [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
+            'title': 're:^清晨醒脑！T-ara根本停不下来！ [0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$',
             'description': 'md5:f34981259a03e980a3c6404190a3ed61',
             'thumbnail': 're:^https?://.*\.jpg$',
             'uploader': '7师傅',

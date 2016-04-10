@@ -26,7 +26,7 @@ class MyviIE(SprutoBaseIE):
         'info_dict': {
             'id': 'f16b2bbd-cde8-481c-a981-7cd48605df43',
             'ext': 'mp4',
-            'title': 'хоз�?ин жизни',
+            'title': 'хозяин жизни',
             'thumbnail': 're:^https?://.*\.jpg$',
             'duration': 25,
         },

@@ -6,6 +6,8 @@ import os
 import re
 import sys
 
+from .common import InfoExtractor
+from .youtube import YoutubeIE
 from ..compat import (
     compat_etree_fromstring,
     compat_urllib_parse_unquote,
@@ -32,34 +34,32 @@ from .brightcove import (
     BrightcoveLegacyIE,
     BrightcoveNewIE,
 )
-from .common import InfoExtractor
-from .condenast import CondeNastIE
-from .dailymotion import DailymotionCloudIE
-from .digiteka import DigitekaIE
-from .googledrive import GoogleDriveIE
-from .instagram import InstagramIE
-from .jwplatform import JWPlatformIE
-from .mtv import MTVServicesEmbeddedIE
-from .myvi import MyviIE
 from .nbc import NBCSportsVPlayerIE
-from .onionstudios import OnionStudiosIE
 from .ooyala import OoyalaIE
-from .pladform import PladformIE
-from .pornhub import PornHubIE
 from .rutv import RUTVIE
-from .screenwavemedia import ScreenwaveMediaIE
-from .senateisvp import SenateISVPIE
-from .smotri import SmotriIE
-from .snagfilms import SnagFilmsEmbedIE
-from .sportbox import SportBoxEmbedIE
-from .svt import SVTIE
-from .tnaflix import TNAFlixNetworkEmbedIE
 from .tvc import TVCIE
+from .sportbox import SportBoxEmbedIE
+from .smotri import SmotriIE
+from .myvi import MyviIE
+from .condenast import CondeNastIE
 from .udn import UDNEmbedIE
-from .videomore import VideomoreIE
-from .vimeo import VimeoIE
+from .senateisvp import SenateISVPIE
+from .svt import SVTIE
+from .pornhub import PornHubIE
 from .xhamster import XHamsterEmbedIE
-from .youtube import YoutubeIE
+from .tnaflix import TNAFlixNetworkEmbedIE
+from .vimeo import VimeoIE
+from .dailymotion import DailymotionCloudIE
+from .onionstudios import OnionStudiosIE
+from .snagfilms import SnagFilmsEmbedIE
+from .screenwavemedia import ScreenwaveMediaIE
+from .mtv import MTVServicesEmbeddedIE
+from .pladform import PladformIE
+from .videomore import VideomoreIE
+from .googledrive import GoogleDriveIE
+from .jwplatform import JWPlatformIE
+from .digiteka import DigitekaIE
+from .instagram import InstagramIE
 
 
 class GenericIE(InfoExtractor):
@@ -359,8 +359,8 @@ class GenericIE(InfoExtractor):
             'info_dict': {
                 'id': '3414141473001',
                 'ext': 'mp4',
-                'title': 'Видео. Удаление Дзагоева (ЦСК�?)',
-                'description': 'Онлайн-тран�?л�?ци�? матча ЦСК�? - "Волга"',
+                'title': 'Видео. Удаление Дзагоева (ЦСКА)',
+                'description': 'Онлайн-трансляция матча ЦСКА - "Волга"',
                 'uploader': 'Championat',
             },
         },
@@ -452,7 +452,7 @@ class GenericIE(InfoExtractor):
             'info_dict': {
                 'id': '776940',
                 'ext': 'mp4',
-                'title': 'Охот�?кое море �?тало целиком ро�?�?ий�?ким',
+                'title': 'Охотское море стало целиком российским',
                 'description': 'md5:5ed62483b14663e2a95ebbe115eb8f43',
             },
             'params': {
@@ -466,7 +466,7 @@ class GenericIE(InfoExtractor):
             'info_dict': {
                 'id': '55304',
                 'ext': 'mp4',
-                'title': 'Дошкольное во�?питание',
+                'title': 'Дошкольное воспитание',
             },
         },
         # SportBox embed
@@ -474,24 +474,24 @@ class GenericIE(InfoExtractor):
             'url': 'http://www.vestifinance.ru/articles/25753',
             'info_dict': {
                 'id': '25753',
-                'title': 'Ве�?ти Экономика ― Пр�?мые тран�?л�?ции �? Форума-вы�?тавки "Го�?заказ-2013"',
+                'title': 'Вести Экономика ― Прямые трансляции с Форума-выставки "Госзаказ-2013"',
             },
             'playlist': [{
                 'info_dict': {
                     'id': '370908',
-                    'title': 'Го�?заказ. День 3',
+                    'title': 'Госзаказ. День 3',
                     'ext': 'mp4',
                 }
             }, {
                 'info_dict': {
                     'id': '370905',
-                    'title': 'Го�?заказ. День 2',
+                    'title': 'Госзаказ. День 2',
                     'ext': 'mp4',
                 }
             }, {
                 'info_dict': {
                     'id': '370902',
-                    'title': 'Го�?заказ. День 1',
+                    'title': 'Госзаказ. День 1',
                     'ext': 'mp4',
                 }
             }],
@@ -506,7 +506,7 @@ class GenericIE(InfoExtractor):
             'info_dict': {
                 'id': 'f4dafcad-ff21-423d-89b5-146cfd89fa1e',
                 'ext': 'mp4',
-                'title': 'Ужа�?тики, ру�?�?кий трейлер (2015)',
+                'title': 'Ужастики, русский трейлер (2015)',
                 'thumbnail': 're:^https?://.*\.jpg$',
                 'duration': 153,
             }
@@ -893,7 +893,7 @@ class GenericIE(InfoExtractor):
             'info_dict': {
                 'id': '227304',
                 'ext': 'mp4',
-                'title': '�?авальный вышел на �?вободу',
+                'title': 'Навальный вышел на свободу',
                 'description': 'md5:d97861ac9ae77377f3f20eaf9d04b4f5',
                 'thumbnail': 're:^https?://.*\.jpg$',
                 'duration': 87,
@@ -919,8 +919,8 @@ class GenericIE(InfoExtractor):
             'info_dict': {
                 'id': '100183293',
                 'ext': 'mp4',
-                'title': 'Тайны перевала Д�?тлова • 1 �?ери�? 2 ча�?ть',
-                'description': 'Документальный �?ериал-ра�?�?ледование одной из �?амых жутких тайн ХХ века',
+                'title': 'Тайны перевала Дятлова • 1 серия 2 часть',
+                'description': 'Документальный сериал-расследование одной из самых жутких тайн ХХ века',
                 'thumbnail': 're:^https?://.*\.jpg$',
                 'duration': 694,
                 'age_limit': 0,
@@ -1117,7 +1117,7 @@ class GenericIE(InfoExtractor):
             'info_dict': {
                 'id': 'playlist',
                 'ext': 'mp4',
-                'title': 'Случайный прохожий поймал автоугонщика в Мурман�?ке. ВИДЕО | РЕ�? ТВ',
+                'title': 'Случайный прохожий поймал автоугонщика в Мурманске. ВИДЕО | РЕН ТВ',
                 'uploader': 'ren.tv',
             },
             'params': {
