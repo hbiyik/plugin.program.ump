@@ -7,6 +7,7 @@ except:
 import os
 from xml.dom import minidom
 import json
+addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
 def get_skin_view(ctype):
 	xmls={"video":"MyVideoNav.xml","audio":"MyMusicNav.xml","image":"MyPics.xml"}
@@ -24,7 +25,6 @@ def get_skin_view(ctype):
 
 def settingActive(set):
 	ret=False
-	addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )	
 	res=minidom.parse(os.path.join(addon_dir,"resources","settings.xml"))
 	for setting in res.getElementsByTagName("setting"):
 		if setting.getAttribute("id") == set and not setting.getAttribute("visible").lower()=="false":
@@ -32,6 +32,19 @@ def settingActive(set):
 			break
 	return ret
 	
+def set_setting_attr(name,set,val):
+	ret=False
+	res=minidom.parse(os.path.join(addon_dir,"resources","settings.xml"))
+	for setting in res.getElementsByTagName("setting"):
+		if setting.getAttribute("id") == name:
+			setting.setAttribute(set,val)
+			ret=True
+			break
+	if ret:
+		res.writexml( open(os.path.join(addon_dir,"resources","settings.xml"), 'w'),encoding="UTF-8")
+		res.unlink()
+	return ret
+
 def setkeys(d,k,v):
 	s="d"
 	for key in k:

@@ -288,7 +288,7 @@ class ump():
 			query[keep]=json.dumps(getattr(self,keep))
 		return sys.argv[0] + '?' + urlencode(query)
 
-	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled"):
+	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False):
 		
 		if self.terminate:
 			raise task.killbill
@@ -315,7 +315,7 @@ class ump():
 			if not range is None : headers["Range"]="bytes=%d-%d"%(range)
 			req=urllib2.Request(url,headers=headers)
 		if not head:
-			self.tunnel.set_tunnel(tunnel)
+			self.tunnel.set_tunnel(tunnel,force=forcetunnel)
 			self.tunnel.pre(req,self.cj)
 		response = cloudfare.ddos_open(self.opener, req, data,timeout=tout)
 		self.tunnel.cook(self.cj,self.cj.make_cookies(response,req))
