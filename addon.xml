@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><addon id="plugin.program.ump" name="UMP : Universal Media Provider" provider-name="boogiepop" version="0.0.32">
+<?xml version="1.0" encoding="UTF-8"?><addon id="plugin.program.ump" name="UMP : Universal Media Provider" provider-name="boogiepop" version="0.0.57">
     <requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 	</requires>
