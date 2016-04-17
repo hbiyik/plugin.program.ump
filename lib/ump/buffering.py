@@ -54,7 +54,7 @@ def get():
 		nw=getchild(res,adv,"network")
 		bm=getchild(res,nw,"buffermode")
 		ret=bm.lastChild.data
+		res.unlink()
 	else:
 		ret="0"
-	res.unlink()
 	return ret

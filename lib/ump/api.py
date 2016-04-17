@@ -116,6 +116,7 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+	
 	def get_keyboard(self,*args):
 		kb = xbmc.Keyboard(*args)
 		kb.setDefault("")

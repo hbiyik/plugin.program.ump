@@ -121,16 +121,16 @@ def dictate(boot,path):
 
 def get(*args):
 	#args: path to prefernce dict key
-	result=dictate(prefs("a+"),args)
-	prefs("w",json.dumps(result))
+	result=dictate(prefs("r"),args)
+	prefs("wb",json.dumps(result))
 	return getkeys(result,args)
 
 def set(*args):
 	#args: path to prefernce dict key
 	#args(n): set object
-	result=dictate(prefs("a+"),args[:-1])
+	result=dictate(prefs("r"),args[:-1])
 	setkeys(result,args[:-1],args[-1])
-	prefs("w",json.dumps(result))
+	prefs("wb",json.dumps(result))
 
 def set_view(ctype,ccat):
 	sid,vid=get_skin_view(ctype)
