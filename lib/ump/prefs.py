@@ -12,6 +12,8 @@ addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 preffile=os.path.join(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'),"prefs.json")
 
 def prefs(mode,data=None):
+	if data is None and not os.path.exists(preffile):
+		return ""
 	with open(preffile, mode) as pref:
 		if data is None:
 			ret=pref.read()
