@@ -53,7 +53,8 @@ def get():
 		adv=getchild(res,res,"advancedsettings")
 		nw=getchild(res,adv,"network")
 		bm=getchild(res,nw,"buffermode")
-		return bm.lastChild.data
+		ret=bm.lastChild.data
 	else:
-		return "0"
+		ret="0"
 	res.unlink()
+	return ret

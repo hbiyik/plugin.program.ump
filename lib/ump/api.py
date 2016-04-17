@@ -72,6 +72,8 @@ class ump():
 		self.urlval_d_tout=1.5
 		self.tm_conc=int(float(addon.getSetting("conc")))
 		self.player=None
+		self.cfagents=prefs.get("cfagents")
+		self.cflocks={}
 		self.mirrors=[]
 		self.terminate=False
 		self.dialog=xbmcgui.Dialog()
@@ -302,8 +304,7 @@ class ump():
 		#change timeout
 		if tout is None:
 			tout=int(float(addon.getSetting("tout")))
-		#if self.dialogpg.isFinished():
-		#	self.dialogpg.update(100,"UMP has Downloaded",url)
+
 		headers={'Accept-encoding':'gzip'}
 		if not referer is None : headers["Referer"]=referer
 		if not header is None :
@@ -315,15 +316,15 @@ class ump():
 			if not range is None : headers["Range"]="bytes=%d-%d"%(range)
 			req=urllib2.Request(url,headers=headers)
 		if not head:
-			self.tunnel.set_tunnel(tunnel,force=forcetunnel)
-			self.tunnel.pre(req,self.cj)
-		response = cloudfare.ddos_open(self.opener, req, data,timeout=tout)
-		self.tunnel.cook(self.cj,self.cj.make_cookies(response,req))
+			tmode=self.tunnel.set_tunnel(tunnel,force=forcetunnel)
+			req=self.tunnel.pre(req,tmode,self.cj)
+		response = cloudfare.ddos_open(url,self.opener, req, data,tout,self.cj,self.cfagents,self.cflocks,self.tunnel,tmode)
+		self.tunnel.cook(self.cj,self.cj.make_cookies(response,req),tmode)
 			
 		if head :return response
 		
 		stream=cloudfare.readzip(response)
-		stream=self.tunnel.post(stream)
+		stream=self.tunnel.post(stream,tmode)
 
 		if encoding is None:
 			#binary data
@@ -565,6 +566,7 @@ class ump():
 
 	def shut(self,play=False,noblock=0):
 		self.terminate=True
+		prefs.set("cfagents",self.cfagents)
 		self.tm.s.set()
 		if hasattr(self,"dialogpg"):
 			self.dialogpg.close()

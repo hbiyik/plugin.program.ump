@@ -90,11 +90,10 @@ def ren(name,thumb,data):
 			if not newname==name or newname=="":
 				fav.setAttribute("name", newname)
 				res.writexml( open(xbmc.translatePath('special://home/userdata/favourites.xml'), 'w'),encoding="UTF-8")
-				res.unlink()
 				xbmc.executebuiltin("Container.Refresh")
 				dialog.ok('UMP', '%s has been to %s'%(name,newname))
 			break
-
+	res.unlink()
 
 def rem(name,thumb,data):
 	res,favs=load()
@@ -113,10 +112,10 @@ def rem(name,thumb,data):
 			break
 	if found:
 		res.writexml( open(xbmc.translatePath('special://home/userdata/favourites.xml'), 'w'),encoding="UTF-8")
-		res.unlink()
 		xbmc.executebuiltin("Container.Refresh")
 	else:
 		dialog.ok('UMP', '%s can not be found in bookmarks!'%name)
+	res.unlink()
 
 
 def add(isFolder,content_type,name,thumb,uri):

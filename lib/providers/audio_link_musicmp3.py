@@ -25,6 +25,7 @@ def run(ump):
 		mname="%s - %s" %(ump.info["artist"],ump.info["title"])
 	for item in playlist:
 		i=item["info"]
+		albums=[]
 		ump.add_log("musicmp3 is searching %s"%i["artist"])
 		if not i["album"]=="":
 			s_query=i["artist"]

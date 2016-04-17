@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-
+from urllib2 import HTTPError
 domain="http://redmp3.su"
 encoding="utf-8"
 tunnel=("redmp3",)
@@ -36,14 +36,26 @@ def run(ump):
 		playlist=[{"info":ump.info,"art":ump.art}]
 		mname="%s - %s" %(ump.info["artist"],ump.info["title"])
 	for item in playlist:
+		found=False
 		i=item["info"]
 		ump.add_log("redmp3 is searching track: %s - %s"%(i["artist"],i["title"]))
-		for result in crawl_search(i["artist"] + " " + i["title"]):
+		try:
+			results=crawl_search(i["artist"] + " " + i["title"])
+		except HTTPError,e:
+			if e.code==404:
+				ump.add_log("Redmp3 content is copyrighted")
+				continue
+			else:
+				raise e
+		for result in results:
 			id,artist,title,album=result
 			if ump.is_same(artist,i["artist"]) and ump.is_same(title,i["title"]):
+				found=True
 				ump.add_log("redmp3 found track: %s - %s"%(i["artist"],i["title"]))
 				parts.append({"url_provider_name":"redmp3", "url_provider_hash":id,"referer":domain,"partname":"%s - %s" %(i["artist"],i["title"])})
 				break
+		if not found:
+			ump.add_log("Redmp3 cant find %s - %s"%(i["artist"], i["title"]))
 
 	if len(parts):
 		if len(parts)==1:

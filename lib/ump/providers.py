@@ -50,6 +50,7 @@ def update_settings():
 				newnode.setAttribute("default", "true")
 				xcat.appendChild(newnode)
 	res.writexml( open(os.path.join(addon_dir,"resources","settings.xml"), 'w'),encoding="UTF-8")
+	res.unlink()
 	return lst2
 
 def find(cat,type):

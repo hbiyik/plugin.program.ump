@@ -3,7 +3,19 @@ import gzip
 import re
 import time
 import urllib2
+from socket import setdefaulttimeout
+from third import recaptcha
+from urlparse import urlparse
 
+noredirs=["/cdn-cgi/l/chk_jschl","/cdn-cgi/l/chk_captcha"]
+try:
+	import xbmc 
+	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
+except AttributeError:
+	#backwards compatability
+	language="en"
+
+max_sleep=30
 
 def dec(s):
 	offset=1 if s[0]=='+' else 0
@@ -18,11 +30,44 @@ def readzip(err):
 		stream=err.read()
 	return stream
 
-def ddos_open(opener,req,data,timeout):
+def cflogin(new_url,ua,req,opener,tunnel,tmode,cj,cfagents,up):
+	r2=urllib2.Request(new_url,headers={"Referer":req._Request__original,"User-agent":ua})
+	r2=tunnel.pre(r2,tmode,cj)
+	res=opener.open(r2)
+	cookies=cj.make_cookies(res,r2)
+	for cookie in cookies:
+		cj.set_cookie(cookie)
+	tunnel.cook(cj,cookies,tmode)
+	cj.add_cookie_header(req)
+	cfagents[up.netloc]={tmode:ua}
+	
+	
+def check_cfagent(cj,up,tmode,cfagents):
+	cval=None
+	agent=None
+	for cookie in cj:
+		if up.netloc in cookie.domain and cookie.name=="cf_clearance":
+			cval=cookie.value
+	if cval:
+		agent=cfagents.get(up.netloc,{}).get(tmode,None)
+	return agent	
+
+def ddos_open(url,opener,req,data,timeout,cj,cfagents,cflocks,tunnel,tmode):
+	up=urlparse(url)	
+	cfagent=check_cfagent(cj,up,tmode,cfagents)
+	if cfagent:
+		req.add_header("User-agent",cfagent)
+	setdefaulttimeout(timeout)
 	try:
 		response=opener.open(req,data,timeout)
 	except urllib2.HTTPError, err:
-		body=readzip(err)
+		body=tunnel.post(readzip(err),tmode)
+		ua=req.unredirected_hdrs.get("User-agent","")
+		for p in ["Content-length","Cookie"]:
+			if p in req.headers:
+				req.headers.pop(p)
+			if p in req.unredirected_hdrs:
+				req.unredirected_hdrs.pop(p)
 		if err.code == 503 and "/cdn-cgi/l/chk_jschl" in body:
 			try:
 				challenge = re.search(r'name="jschl_vc" value="(\w+)"', body).group(1)
@@ -37,28 +82,22 @@ def ddos_open(opener,req,data,timeout):
 			res=dec(m)
 			for op in ops:
 				res=eval("res"+op[0]+"dec('"+op[1]+"')")
-			u=re.sub("https?://","",err.url)
+			u=re.sub("https?://","",url)
 			u=u.split("/")[0]
 			answer= str(res+len(u))
 			waittime=float(re.findall("\}\,\s([0-9]*?)\)\;",body)[0])/1000
 			print "%s has been stalled for %d seconds due to cloudfare protection"%(err.url,waittime)
 			time.sleep(waittime)
-			new_headers=dict(req.header_items())
-			new_headers["referer"]=req.get_full_url()
-			new_url="%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&pass=%s&jschl_answer=%s"%(req.get_type(),u,challenge,challenge_pass,answer)
-			for key in new_headers.keys():
-				if key in ["Cookie","Host"]:
-					new_headers.pop(key)
-			new_req=urllib2.Request(new_url,headers=new_headers,data=req.get_data())
-			del req
-			response=opener.open(new_req,data,timeout)
+			new_url="%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&pass=%s&jschl_answer=%s"%(up.scheme,up.netloc,challenge,challenge_pass,answer)
+			cflogin(new_url,ua,req,opener,tunnel,tmode,cj,cfagents,up)
+			response=opener.open(req,data,timeout)
 		elif err.code == 403 and "/cdn-cgi/l/chk_captcha" in body:
-			hash=re.findall('noscript\?k\=(.*?)"',body)[0]
-			url="https://www.google.com/recaptcha/api/challenge?k="+hash+"&ajax=1"
-			script=opener.open(urllib2.Request(url,headers={"Referer":err.url})).read()
-			challenge=re.findall("challenge : '(.*?)'",script)
-			url="https://www.google.com/recaptcha/api/image?c=%s"%(challenge[0])
-			raise Exception("Cloudfare Recaptcha")
+			hash=re.findall('data-sitekey="(.*?)"',body)[0]
+			solver=recaptcha.UnCaptchaReCaptcha()
+			token=solver.processCaptcha(hash, language, opener,ua,up.netloc+" requires Cloudfare Recaptcha")
+			u=up.scheme+"://"+up.netloc+"/cdn-cgi/l/chk_captcha?g-recaptcha-response="+token
+			cflogin(u,ua,req,opener,tunnel,tmode,cj,cfagents,up)
+			response=opener.open(req,data,timeout)
 		else:
 			response=opener.open(req,data,timeout)
 	return response

@@ -13,45 +13,67 @@ noredirs=["buka.link/includes/process.php","multiwebproxy.com/includes/process.p
 addon = xbmcaddon.Addon('plugin.program.ump')
 testpage="http://cdn.rawgit.com/boogiekodi/distro/a60947c9adcc2b5933cdd418aa33ec0a2a1db5d2/dataserver/ump/htdocs/test.html"
 tunnels={
-		"proxyduck":("cookie","referer","malformedcookie"),
-		"buka":("cookie"),
-		"multiwebproxy":("cookie"),
-		"muchproxy_bestserver":("cookie"),
-		"muchproxy_france":("cookie"),
-		"muchproxy_usa":("cookie","redmp3"),
+		"proxyduck":("cookie","referer"),
+		"buka":("cookie",),
+		"multiwebproxy":("cookie",),
+		"muchproxy_bestserver":("cookie",),
+		"muchproxy_france":("cookie",),
+		"muchproxy_usa":("cookie",),
 		"muchproxy_singapore":("cookie","redmp3"),
 		"muchproxy_indonesia":("cookie","redmp3"),
 		}
 
-def check_health(ump):
+def check_health(ump,force=False):
 	if addon.getSetting("disabletunnels").lower()=="true":	return
+	if addon.getSetting("tn_chk_en").lower()=="false" and not force:	return
+	tout=1
+	t1=time()
+	try:
+		page=ump.get_page(testpage,"utf-8",tunnel="disabled",tout=1)
+		basetime=time()-t1
+	except Exception,e:
+		ump.dialogpg.update(message="[COLOR red]Tunnel test page is down[/COLOR]")
+		return 
+	
 	import prefs
 	interval=int(addon.getSetting("tn_chk_prd"))
 	for tunnel in tunnels.keys():
 		lasttime=prefs.get("tunnelstates",tunnel,"lastcheck")
-		if isinstance(lasttime,float) and time()-lasttime<interval*60*60 :
+		if isinstance(lasttime,float) and time()-lasttime<interval*60*60 and not force:
 			continue
+		prefs.set("tunnelstates",tunnel,"lastcheck",time())		
 		page=""
+		reason="Tunnel Error"
 		t1=time()
+		ping=tout*1000
 		try:
-			page=ump.get_page(testpage,"utf-8",tunnel=tunnel,tout=0.5,forcetunnel=True)
+			page=ump.get_page(testpage,"utf-8",tunnel=tunnel,tout=tout,forcetunnel=True)
+			ping=int((time()-t1-basetime)*1000)
+			reason=str(ping)
 		except Exception,e:
+			reason=str(e.message)
 			pass
 		name=tunnel.replace("_"," ").title()
 		if page=="<html>ump</html>":
-			msg="%s: [COLOR green]active[/COLOR] Ping: %d ms"%(name,(time()-t1)*1000)
-			ump.dialogpg.update(message=msg)
-			visible="true"
+			state="[COLOR green]up[/COLOR]"
+			msg="Ping: %s ms"%reason
+			en="true"
 		else:
-			msg="%s: [COLOR red]dead[/COLOR] Reason: %s"%(name,str(e.message))
-			ump.dialogpg.update(message=msg)
-			visible="false"
-		
-		prefs.set_setting_attr("entn_%s"%tunnel,"label","%s,%s"%(msg,ctime()))
-		prefs.set_setting_attr("entn_%s"%tunnel,"visible",visible)
-		prefs.set("tunnelstates",tunnel,"lastcheck",time())		
+			state="[COLOR red]down[/COLOR]"
+			msg="Reason: %s"%reason
+			en="false"
+		if ping<500:
+			en="true"
+		elif not "down" in state:
+			state="[COLOR orange]slow[/COLOR]"
+			en="false"
+			reason=str(ping)
+		msg="%s : %s %s,%s"%(name,state,msg,ctime())
+		ump.dialogpg.update(message=msg)
+		addon.setSetting("entn_%s"%tunnel,en)
+		prefs.set_setting_attr("entn_%s"%tunnel,"label",msg)
 
-def much_pre(domain,process,data,request,opener,cj,keyname=None,rediruri=None,encoded=False,session="s",timeout=86400):
+def much_pre(domain,process,data,request,opener,cj,keyname=None,rediruri=None,session="s",timeout=86400):
 	if keyname is None:
 		keyname="u"
 	if rediruri is None:
@@ -96,25 +118,26 @@ def much_post(stream,browse):
 	stream=re.sub("(\"|\'|\()\/"+browse+"\?(.*?)(\"|\'|\))", clean, stream)		
 	return stream
 
-def much_cook(cj,cookies,encoded=False):
-		for cookie in cookies:
-			try:
-				newcook=copy.copy(cookie)
-				if not encoded:
-					[(domain,name)]=re.findall("c\[(.*?)\]\[\/\]\[(.*?)\]",cookie.name)
-				else:
-					[(val)]=re.findall("c\[(.*?)\]",unquote(cookie.name))
-					domain,name=val.decode("base-64").split(" / ")
-					newcook.value=unquote(cookie.value).decode("base-64")
-				newcook.domain=domain
-				newcook.name=name
-				cj.set_cookie(newcook)
-			except:
-					print "cant cook cookie : %s" % str(vars(cookie))
+def much_cook(cj,cookies):
+	for cookie in cookies:
+		try:
+			newcook=copy.copy(cookie)
+			cooks=re.findall("c\[(.*?)\]\[\/\]\[(.*?)\]",cookie.name)
+			if len(cooks):
+				[(domain,name)]=cooks
+				newcook.value=unquote(cookie.value)
+			else:
+				[(val)]=re.findall("c\[(.*?)\]",unquote(cookie.name))
+				domain,name=val.decode("base-64").split(" / ")
+				newcook.value=unquote(cookie.value).decode("base-64")
+			newcook.domain=domain
+			newcook.name=name
+			cj.set_cookie(newcook)
+		except:
+			print "cant cook cookie: %s"%str(cookie.name)
 
 class tunnel():
 	def __init__(self,opener):
-		self.mode="disabled"
 		self.entunnels={}
 		self.opener=opener
 		for tunnel in tunnels.keys():
@@ -122,15 +145,16 @@ class tunnel():
 				self.entunnels[tunnel]=tunnels[tunnel]
 		
 	def set_tunnel(self,mode,force):
+		tmode="disabled"
 		if addon.getSetting("disabletunnels").lower()=="true":
-			self.mode="disabled"
+			tmode="disabled"
 		elif isinstance(mode,str):
 			if force:
-				self.mode=mode 
+				tmode=mode 
 			elif mode in self.entunnels.keys():
-				self.mode=mode
+				tmode=mode
 			else:
-				self.mode="disabled"
+				tmode="disabled"
 		elif isinstance(mode,list) or isinstance(mode,tuple):
 			capables=[]
 			for k,v in self.entunnels.iteritems():
@@ -142,44 +166,45 @@ class tunnel():
 				if capable:
 					capables.append(k)
 			if len(capables):
-				self.mode=random.choice(capables)
+				tmode=random.choice(capables)
 			else:
-				self.mode="disabled"
+				tmode="disabled"
 		
-		print "#################################"
-		print self.mode
-		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+		#print "#################################"
+		#print tmode
+		#print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+		return tmode
 		
-	def pre(self,request,cj):
-		if self.mode == "disabled":
+	def pre(self,request,tmode,cj):
+		if tmode == "disabled":
 			return request
-		elif self.mode == "proxyduck":
+		elif tmode == "proxyduck":
 			r="norefer"
 			if request.has_header("Referer"):
 				r=request.get_header("Referer")
 			request._Request__original="http://proxyduck.net/proxy/browse.php?%s"%urlencode({"u":request.get_full_url(),"f":r})
 			return request
-		elif self.mode == "buka":
+		elif tmode == "buka":
 			return much_pre("http://buka.link","includes/process.php?action=update",{},request,self.opener,cj)
-		elif self.mode == "multiwebproxy":
+		elif tmode == "multiwebproxy":
 			return much_pre("http://multiwebproxy.com","includes/process.php?action=update",{},request,self.opener,cj)
-		elif self.mode == "muchproxy_bestserver":
+		elif tmode == "muchproxy_bestserver":
 			return much_pre("http://muchproxy.com","",{"server":"1","submit":"GO !"},request,self.opener,cj,"url","http://hide.muchproxy.com/browse.php",True)
-		elif self.mode == "muchproxy_france":
+		elif tmode == "muchproxy_france":
 			return much_pre("http://muchproxy.com","",{"server":"2","submit":"GO !"},request,self.opener,cj,"url","http://fr.muchproxy.com/browse.php",True)
-		elif self.mode == "muchproxy_usa":
+		elif tmode == "muchproxy_usa":
 			return much_pre("http://muchproxy.com","",{"server":"3","submit":"GO !"},request,self.opener,cj,"url","http://us.muchproxy.com/browse.php",True)
-		elif self.mode == "muchproxy_singapore":
+		elif tmode == "muchproxy_singapore":
 			return much_pre("http://muchproxy.com","",{"server":"4","submit":"GO !"},request,self.opener,cj,"url","http://sg.muchproxy.com/browse.php",True)
-		elif self.mode == "muchproxy_indonesia":
+		elif tmode == "muchproxy_indonesia":
 			return much_pre("http://muchproxy.com","",{"server":"5","submit":"GO !"},request,self.opener,cj,"url","http://id.muchproxy.com/browse.php",True)
 			
 
-	def post(self,stream):
-		if self.mode == "disabled":
+	def post(self,stream,tmode):
+		if tmode == "disabled":
 			return stream
 		
-		elif self.mode == "proxyduck":
+		elif tmode == "proxyduck":
 			stream=re.sub("\n.*?ginf={url:'http://proxyduck.net/proxy'.*?</script>","",stream)
 			stream=re.sub('\n.*?<script type="text/javascript" src="http://proxyduck.net/proxy/includes.*?</script>',"",stream)
 			stream=re.sub('\s*?<!-- PopAds.net Popunder Code for proxyduck.net -->.*?<!-- PopAds.net Popunder Code End -->',"\n",stream,flags=re.DOTALL)
@@ -188,11 +213,9 @@ class tunnel():
 			stream=re.sub("(\"|\')\/proxy\/browse\.php\?(.*?)(\"|\')", clean, stream)
 			return stream
 		
-		elif self.mode in ["buka","multiwebproxy","muchproxy_bestserver","muchproxy_france","muchporxy_usa","muchproxy_singapore","muchproxy_indonesia"]:
+		elif tmode in ["buka","multiwebproxy","muchproxy_bestserver","muchproxy_france","muchproxy_usa","muchproxy_singapore","muchproxy_indonesia"]:
 			return much_post(stream,"browse\.php")
 	
-	def cook(self,cj,cookies):
-		if self.mode in ["buka","multiwebproxy"]:
+	def cook(self,cj,cookies,tmode):
+		if tmode in ["buka","multiwebproxy","muchproxy_bestserver","muchproxy_france","muchproxy_usa","muchproxy_singapore","muchproxy_indonesia"]:
 			much_cook(cj, cookies)
-		elif self.mode in ["muchproxy_bestserver","muchproxy_france","muchporxy_usa","muchproxy_singapore","muchproxy_indonesia"]:
-			much_cook(cj,cookies,True)

@@ -5,10 +5,11 @@ def run(ump):
 		from ump.providers import update_settings
 		# syncronize providers to settings.xml
 		update_settings()
-		
-		#sync webtunnel states
-		from webtunnel import check_health
-		check_health(ump)
 	else:
 		#runs on each addon run
 		pass
+
+	if not ump.handle=="-1":
+		#runs on each time addon is browsed
+		from webtunnel import check_health
+		check_health(ump)

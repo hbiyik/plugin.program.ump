@@ -9,6 +9,16 @@ from xml.dom import minidom
 import json
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
+preffile=os.path.join(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'),"prefs.json")
+
+def prefs(mode,data=None):
+	with open(preffile, mode) as pref:
+		if data is None:
+			ret=pref.read()
+		else:
+			ret=pref.write(data)
+	return ret
+
 def get_skin_view(ctype):
 	xmls={"video":"MyVideoNav.xml","audio":"MyMusicNav.xml","image":"MyPics.xml"}
 	res=minidom.parse(os.path.join(xbmc.translatePath('special://skin/'),"addon.xml"))
@@ -30,7 +40,30 @@ def settingActive(set):
 		if setting.getAttribute("id") == set and not setting.getAttribute("visible").lower()=="false":
 			ret=True
 			break
+	res.unlink()
 	return ret
+
+def setSetting(key,val):
+	addondir=xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump')
+	setfile=os.path.join(addondir,"settings.xml")
+	if not os.path.exists(addondir):
+		os.makedirs(addondir)
+	if os.path.exists(setfile):
+		res=minidom.parse(setfile)
+	else:
+		res=minidom.parseString("<settings></settings>")
+	found=False
+	for setting in res.getElementsByTagName("setting"):
+		if setting.getAttribute("id")==key:
+			setting.setAttribute("value",val)
+			found=True
+	if not found:
+		newnode = res.createElement("setting")
+		newnode.setAttribute("id", key)		
+		newnode.setAttribute("value", val)
+		res.getElementsByTagName("settings")[0].appendChild(newnode)
+	res.writexml( open(setfile, 'w'),encoding="UTF-8")
+	res.unlink()
 	
 def set_setting_attr(name,set,val):
 	ret=False
@@ -42,7 +75,7 @@ def set_setting_attr(name,set,val):
 			break
 	if ret:
 		res.writexml( open(os.path.join(addon_dir,"resources","settings.xml"), 'w'),encoding="UTF-8")
-		res.unlink()
+	res.unlink()
 	return ret
 
 def setkeys(d,k,v):
@@ -87,19 +120,17 @@ def dictate(boot,path):
 	return boot	
 
 def get(*args):
-	#arg0: setting name to get
-	#arg1 to n, path strings.
-	result=dictate(addon.getSetting(args[0]),args[1:])
-	addon.setSetting(args[0],json.dumps(result))
-	return getkeys(result,args[1:])
+	#args: path to prefernce dict key
+	result=dictate(prefs("a+"),args)
+	prefs("w",json.dumps(result))
+	return getkeys(result,args)
 
 def set(*args):
-	#arg0: setting name to set
-	#arg1 to n-1, path strings.
-	#argn, value to set
-	result=dictate(addon.getSetting(args[0]),args[1:-1])
-	setkeys(result,args[1:-1],args[-1])
-	addon.setSetting(args[0],json.dumps(result))
+	#args: path to prefernce dict key
+	#args(n): set object
+	result=dictate(prefs("a+"),args[:-1])
+	setkeys(result,args[:-1],args[-1])
+	prefs("w",json.dumps(result))
 
 def set_view(ctype,ccat):
 	sid,vid=get_skin_view(ctype)

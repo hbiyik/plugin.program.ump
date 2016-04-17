@@ -1,8 +1,10 @@
 import urllib2
 from webtunnel import noredirs
-
 noredirects=[]
 noredirects.extend(noredirs)
+from cloudfare import noredirs
+noredirects.extend(noredirs)
+
 
 class HeadRequest(urllib2.Request):
 	def get_method(self):

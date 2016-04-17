@@ -73,7 +73,7 @@
 		<!-- List -->
 		<control type="list" id="6">
 			<left>510</left>
-			<top>60</top>
+			<top>75</top>
 			<width>1230</width>
 			<height>460</height>
 			<onup>noop</onup>
@@ -86,24 +86,29 @@
 			<itemlayout width="1230" height="36">
 				<control type="label">
 					<left>80</left>
-					<top>0</top>
+					<top>2</top>
 					<width>1030</width>
 					<height>26</height>
 					<textcolor>0xFFFFFFFF</textcolor>
 					<label>$INFO[ListItem.Label]</label>
-					<animation effect="slide" end="0,18" condition="IsEmpty(ListItem.Property(Addon.Summary))">Conditional</animation>
 				</control>
 			</itemlayout>
 
 			<focusedlayout width="1230" height="36">
+				<control type="image">
+					<left>60</left>
+					<top>0</top>
+					<width>680</width>
+					<height>36</height>
+					<texture>progressbar.png</texture>
+				</control>
 				<control type="label">
 					<left>80</left>
-					<top>0</top>
+					<top>2</top>
 					<width>1030</width>
-					<height>36</height>
-					<textcolor>0xFFFFFF00</textcolor>
+					<height>26</height>
+					<textcolor>black</textcolor>
 					<label>$INFO[ListItem.Label]</label>
-					<animation effect="slide" end="0,18" condition="IsEmpty(ListItem.Property(Addon.Summary))">Conditional</animation>
 				</control>
 			</focusedlayout>
 

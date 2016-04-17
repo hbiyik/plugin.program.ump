@@ -19,8 +19,11 @@ def getsocket():
 		if not get_set(gen_set,"usehttpproxy").lower() == "false":
 			s=[3,1,1,2,2][int(get_set(gen_set,"httpproxytype"))]
 			socks.setdefaultproxy(s, get_set(gen_set,"httpproxyserver"), int(get_set(gen_set,"httpproxyport")),int(get_set(gen_set,"httpproxytype"))==4,get_set(gen_set,"httpproxyusername"),get_set(gen_set,"httpproxypassword"))
-			return socks.socksocket
+			ret= socks.socksocket
 		else:
-			return socket.socket
+			ret= socket.socket
 	except:
-		return socket.socket
+		ret= socket.socket
+	if gen_set:
+		gen_set.unlink()
+	return ret

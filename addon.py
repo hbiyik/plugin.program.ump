@@ -15,6 +15,7 @@ sys.path.append(os.path.join(addon_dir,"lib"))
 
 from ump import api
 from ump import prerun
+from ump import postrun
 from ump import providers
 from ump import ui
 
@@ -45,7 +46,9 @@ if ump.module == "ump":
 			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
 		ump.set_content(ump.defs.CC_ALBUMS)
 elif ump.page== "urlselect":
-#	threads=[]
+	if not addon.getSetting("tn_chk_url_en").lower()=="false":
+		from ump import webtunnel
+		webtunnel.check_health(ump,True)
 	if len(link_providers)==0:
 		ump.dialog.notification("ERROR","There is no available providers for %s"%ump.content_type)
 	else:
@@ -68,7 +71,8 @@ elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==2:
 		providers.load("ump","index",ump.module).run(ump)
 	except Exception,e:
 		ump.notify_error(e)
-		
+
+postrun.run(ump)		
 ump.shut()
 print "CONTENT_CAT  : " + str(ump.content_cat)
 del gc.garbage[:]
