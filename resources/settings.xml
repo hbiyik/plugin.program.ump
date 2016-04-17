@@ -57,13 +57,13 @@
        	<setting default="1" id="tn_chk_prd" label="Auto Check Webtunnel Health Each n Hours" option="int" range="1,1,48" type="slider" visible="eq(-1,true)"/>
        	<setting default="true" id="tn_chk_url_en" label="Check Webttunels Health on each URL Selection " type="bool"/>
        	<setting label="WEB TUNNELS:" type="lsep"/>
-		<setting default="true" id="entn_buka" label="Buka : [COLOR green]up[/COLOR] Ping: 40 ms,Sun Apr 17 18:14:00 2016" type="bool" visible="true"/>
-		<setting default="true" id="entn_multiwebproxy" label="Multiwebproxy : [COLOR green]up[/COLOR] Ping: 212 ms,Sun Apr 17 18:14:00 2016" type="bool" visible="true"/>
-		<setting default="true" id="entn_muchproxy_bestserver" label="Muchproxy Bestserver : [COLOR red]down[/COLOR] Reason: timed out,Sun Apr 17 18:14:05 2016" type="bool" visible="true"/>
-		<setting default="false" id="entn_muchproxy_france" label="Muchproxy France : [COLOR red]down[/COLOR] Reason: timed out,Sun Apr 17 18:14:02 2016" type="bool" visible="true"/>
-		<setting default="false" id="entn_muchproxy_usa" label="Muchproxy Usa : [COLOR orange]slow[/COLOR] Ping: 772 ms,Sun Apr 17 18:14:01 2016" type="bool" visible="true"/>
-		<setting default="false" id="entn_muchproxy_singapore" label="Muchproxy Singapore : [COLOR red]down[/COLOR] Reason: timed out,Sun Apr 17 18:14:04 2016" type="bool" visible="true"/>
-		<setting default="false" id="entn_muchproxy_indonesia" label="Muchproxy Indonesia : [COLOR red]down[/COLOR] Reason: timed out,Sun Apr 17 18:14:06 2016" type="bool" visible="true"/>
+		<setting default="true" id="entn_buka" label="Buka : [COLOR green]up[/COLOR] Ping: 217 ms,Sun Apr 17 18:37:28 2016" type="bool" visible="true"/>
+		<setting default="true" id="entn_multiwebproxy" label="Multiwebproxy : [COLOR green]up[/COLOR] Ping: 134 ms,Sun Apr 17 18:37:28 2016" type="bool" visible="true"/>
+		<setting default="true" id="entn_muchproxy_bestserver" label="Muchproxy Bestserver : [COLOR orange]slow[/COLOR] Ping: 1180 ms,Sun Apr 17 18:37:42 2016" type="bool" visible="true"/>
+		<setting default="false" id="entn_muchproxy_france" label="Muchproxy France : [COLOR orange]slow[/COLOR] Ping: 1042 ms,Sun Apr 17 18:37:32 2016" type="bool" visible="true"/>
+		<setting default="false" id="entn_muchproxy_usa" label="Muchproxy Usa : [COLOR orange]slow[/COLOR] Ping: 1559 ms,Sun Apr 17 18:37:30 2016" type="bool" visible="true"/>
+		<setting default="false" id="entn_muchproxy_singapore" label="Muchproxy Singapore : [COLOR orange]slow[/COLOR] Ping: 1827 ms,Sun Apr 17 18:37:39 2016" type="bool" visible="true"/>
+		<setting default="false" id="entn_muchproxy_indonesia" label="Muchproxy Indonesia : [COLOR orange]slow[/COLOR] Ping: 1808 ms,Sun Apr 17 18:37:44 2016" type="bool" visible="true"/>
 	</category>
     <category id="index" label="Index Providers">
 	<setting default="true" id="audio_index_lastfm" label="AUDIO:Lastfm" type="bool"/><setting default="true" id="image_index_baka" label="IMAGE:Baka" type="bool"/><setting default="true" id="ump_index_bookmarks" label="UMP:Bookmarks" type="bool"/><setting default="true" id="video_index_ann" label="VIDEO:Ann" type="bool"/><setting default="true" id="video_index_imdb" label="VIDEO:Imdb" type="bool"/><setting default="true" id="video_index_rt" label="VIDEO:Rt" type="bool"/><setting default="true" id="video_index_tvdb" label="VIDEO:Tvdb" type="bool"/></category>

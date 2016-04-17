@@ -45,8 +45,11 @@ def cflogin(new_url,ua,req,opener,tunnel,tmode,cj,cfagents,up):
 def check_cfagent(cj,up,tmode,cfagents):
 	cval=None
 	agent=None
+	cdom=up.netloc
+	if len(cdom.split("."))==3:
+		cdom=".".join(cdom.split(".")[1:])
 	for cookie in cj:
-		if up.netloc in cookie.domain and cookie.name=="cf_clearance":
+		if cdom in cookie.domain and cookie.name=="cf_clearance":
 			cval=cookie.value
 	if cval:
 		agent=cfagents.get(up.netloc,{}).get(tmode,None)

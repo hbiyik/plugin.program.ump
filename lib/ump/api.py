@@ -310,6 +310,7 @@ class ump():
 		if not header is None :
 			for k,v in header.iteritems():
 				headers[k]=v
+		tmode="disabled"
 		if head==True:
 			req=http.HeadRequest(url,headers=headers)
 		else:
@@ -358,7 +359,7 @@ class ump():
 		errtype= e.__class__.__name__
 		if not silent:
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
-		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true" or True:
+		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true":
 			print traceback.format_exc()
 
 	def add_log(self,line):

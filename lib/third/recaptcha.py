@@ -53,7 +53,7 @@ class cInputWindow(xbmcgui.WindowDialog):
         ctrlBackgound = xbmcgui.ControlImage(win_x, win_y, win_w, win_h, bg_image)
         self.addControl(ctrlBackgound)
         self.msg = '[COLOR red]%s[/COLOR]' % (kwargs.get('msg'))
-        self.strSiteInfo = xbmcgui.ControlLabel(imgX, imgY -100, imgw, 20, kwargs.get('sitemsg'), 'font13')
+        self.strSiteInfo = xbmcgui.ControlLabel(imgX, imgY -50, imgw, 20, kwargs.get('sitemsg'), 'font13')
         self.strActionInfo = xbmcgui.ControlLabel(imgX, imgY - 30, imgw, 20, self.msg, 'font13')
         self.addControl(self.strActionInfo)
         img = xbmcgui.ControlImage(imgX, imgY, imgw, imgh, kwargs.get('captcha'))
