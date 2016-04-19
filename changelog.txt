@@ -1,3 +1,6 @@
+2016-04-19: ump: fix directory issues, defs: move images to offshore
+2016-04-19: ump: centralize dirs, xml, and definitions to defs
+2016-04-17: 0.0.58 Version Release
 2016-04-17: prefs: handle situation when open mode is "r" but file does not exist
 2016-04-17: cookie: remove old data file
 2016-04-17: buffering: fix unlink, api: recommit, prefs: fix read/write modes for unix likes
