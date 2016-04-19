@@ -1,5 +1,5 @@
 import json
-from os import path
+from os import path as opath
 from re import findall
 from sys import argv
 from urllib import urlencode
@@ -47,9 +47,9 @@ def decode(uri):
 
 def load():
 	favs=[]
-	favsxml=kodi_favxml
-	if path.exists(favsxml):
-		res=minidom.parse(favsxml)
+	
+	if opath.exists(kodi_favxml):
+		res=minidom.parse(kodi_favxml)
 	else:
 		return None,favs
 	for fav in res.getElementsByTagName("favourite"):
@@ -121,10 +121,9 @@ def rem(name,thumb,data):
 
 
 def add(isFolder,content_type,name,thumb,uri):
-	path,cat,module,page,args,info,art=decode(uri)
-	favsxml=kodi_favxml
-	if path.exists(favsxml):
-		res=minidom.parse(favsxml)
+	p,cat,module,page,args,info,art=decode(uri)
+	if opath.exists(kodi_favxml):
+		res=minidom.parse(kodi_favxml)
 	else:
 		res=minidom.parseString("<favourites></favourites>")
 	favs=res.getElementsByTagName("favourites")[0]
@@ -138,7 +137,7 @@ def add(isFolder,content_type,name,thumb,uri):
 		str='RunPlugin("%s")'%link
 	favs.appendChild(newnode)
 	newnode.appendChild(res.createTextNode(str))
-	res.writexml( open(favsxml, 'w'),encoding="UTF-8")
+	res.writexml( open(kodi_favxml, 'w'),encoding="UTF-8")
 	res.unlink()
 	dialog = xbmcgui.Dialog()
 	dialog.ok('UMP', '%s added to bookmarks'%name)

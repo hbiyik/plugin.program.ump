@@ -2,7 +2,6 @@ from os import walk
 from xml.dom import minidom
 
 from defs import addon
-from defs import addon_dir
 from defs import addon_setxml
 from defs import addon_pdir
 from defs import CT_AUDIO

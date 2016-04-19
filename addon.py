@@ -4,12 +4,16 @@ import os
 
 import xbmcgui
 import xbmcplugin
+import xbmcaddon
+import xbmc
 
-from defs import addon
-from defs import addon_ldir
-from defs import arturi
-from defs import CC_ALBUM
+addon = xbmcaddon.Addon('plugin.program.ump')
+addon_ldir = xbmc.translatePath( os.path.join(addon.getAddonInfo('path'),"lib") )
 sys.path.append(addon_ldir)
+from ump.defs import addon_ldir
+from ump.defs import arturi
+from ump.defs import CC_ALBUMS
+
 from ump import api
 from ump import prerun
 from ump import postrun

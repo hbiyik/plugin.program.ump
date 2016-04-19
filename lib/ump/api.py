@@ -89,7 +89,7 @@ class ump():
 		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True, strict_rfc2965_unverifiable=False)
 		self.cj=cookielib.LWPCookieJar(os.path.join(defs.addon_ddir, "cookie"))
 		self.cj.set_policy(policy)
-		if os.path.exists(defs.addon_ddir, "cookie")):
+		if os.path.exists(defs.addon_cookfile):
 			try:
 				self.cj.load()
 			except cookielib.LoadError:
@@ -435,10 +435,10 @@ class ump():
 					self.add_log("mirror dropped, has missing parts: %s"%str(parts))
 					return False
 				elif missing=="ignore":
+					self.add_log("part %s,%s ignored"%(parts[k]["url_provider_name"],parts[k]["url_provider_hash"]))
 					ignores.append(k)
 		
-		for ignore in ignores:
-			self.add_log("part %s,%s ignored"%(parts[ignore]["url_provider_name"],parts[ignore]["url_provider_hash"]))
+		for ignore in sorted(ignores,reverse=True):
 			parts.pop(ignore)
 
 		#if payer is not yet ready init it.
@@ -579,25 +579,25 @@ class ump():
 			if hasattr(self.window,"status"):
 				del(self.window.status)
 			del(self.window)
-		if hasattr(self,"iwindow"):
-			self.iwindow.close()
-			if hasattr(self.iwindow,"img"):
-				del(self.iwindow.img)
-			del(self.iwindow)
 		if hasattr(self,"dialog"):
 			del(self.dialog)
 		try:
 			self.cj.save()
 		except:
 			try:
-				os.remove(os.path.join( defs.addon_ddir, "cookie"))
+				os.remove(defs.addon_cookfile)
 			except:
 				pass
 		if play:
 			self.player.xplay()
 			cnt=0
 		else:
-			cnt="all"
+			cnt="all"	
+		if hasattr(self,"iwindow"):
+			self.iwindow.close()
+			if hasattr(self.iwindow,"img"):
+				del(self.iwindow.img)
+			del(self.iwindow)
 		if hasattr(self,"player"):
 			del(self.player)
 		if self.handle=="-1":

@@ -58,5 +58,5 @@ def run(ump):
 				h="/".join(hash.split("/")[:-1])+"/"+str(page)+".html"
 				parts.append({"url_provider_name":"mangafox","url_provider_hash":"/manga"+h})
 			mname="%s : %s " % (title,desc)
-			ump.add_mirror(parts,mname,0.2)
+			ump.add_mirror(parts,mname,0.2,missing="ignore")
 	return None

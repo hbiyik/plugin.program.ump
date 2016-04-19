@@ -21,4 +21,4 @@ def run(ump):
 						parts=[{"url_provider_name":"mangareader","url_provider_hash":"%s%s/%s"%(domain,dir,chapter)}]
 						for page in pages:
 							parts.append({"url_provider_name":"mangareader","url_provider_hash":"%s%s/%s/%d"%(domain,dir,chapter,page)})
-						ump.add_mirror(parts,chname,0.2)
+						ump.add_mirror(parts,chname,0.2,missing="ignore")

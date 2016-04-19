@@ -1,8 +1,7 @@
 import xbmc
 from defs import addon
 from defs import addon_preffile
-from defs import addon_sdir
-from defs import addon_dir
+from defs import kodi_sdir
 from defs import addon_setxml
 from os import path
 from xml.dom import minidom
@@ -22,10 +21,10 @@ def prefs(mode,data=None):
 
 def get_skin_view(ctype):
 	xmls={"video":"MyVideoNav.xml","audio":"MyMusicNav.xml","image":"MyPics.xml"}
-	res=minidom.parse(path.join(addon_sdir,"addon.xml"))
+	res=minidom.parse(path.join(kodi_sdir,"addon.xml"))
 	dir=res.getElementsByTagName("res")[0].getAttribute("folder")
 	res.unlink()
-	navxml=path.join(addon_sdir,dir,xmls[ctype])
+	navxml=path.join(kodi_sdir,dir,xmls[ctype])
 	res=minidom.parse(navxml)
 	views=res.getElementsByTagName("views")[0].lastChild.data.split(",")
 	res.unlink()

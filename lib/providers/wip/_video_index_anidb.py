@@ -31,7 +31,7 @@ except AttributeError:
 def latinise(text):
 	# some roman chars are rare on daily usage, and everybody uses latin representatives. Dont know how romaji works in details.
 	chars={
-		333:"ou", #�?
+		333:"ou", #�?
 		215:"x", #instead of × 
 		8211:"-", # - instead of –
 		}
@@ -45,7 +45,6 @@ def request_ids(ids):
 	def get_single(id):
 		query={"client":"umpanidb","protover":"1","request":"anime","aid":id}
 		res=ump.get_page("http://api.anidb.net:9001/httpapi",encoding,query=query)
-		print res
 		#no idea why chr 08 causes xml sructure error :/
 		res=minidom.parseString(res.replace(chr(8),""))
 		media=res.getElementsByTagName("anime")[0]
@@ -145,7 +144,7 @@ def request_ids(ids):
 	for i in range(len(ids)):
 		pDialog.update(100*i/len(ids), 'Retrieving Information')
 		ump.tm.add_queue(get_single,(ids[i],),gid=gid)
-	ump.tm.join(gid=gid)
+	ump.tm.join(gid=gid,cnt="all")
 	pDialog.close()
 	return medias
 
@@ -316,7 +315,6 @@ def run(ump):
 #"		http://anidb.net/perl-bin/animedb.pl?show=json&action=search&type=anime&query=ble"
 		pg=ump.get_page("http://anisearch.outrance.pl",encoding,query=q)
 		ids=re.findall('aid="(.*?)"',pg)
-		print ids
 		if len(ids):
 			request_ids(ids)
 	
