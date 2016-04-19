@@ -1,4 +1,21 @@
-CT_AUDIO, CT_IMAGE, CT_VIDEO = "audio", "image","video" ##content types
+import xbmcaddon
+import xbmc
+from os import path
+
+addon = xbmcaddon.Addon('plugin.program.ump')
+addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
+addon_ldir = os.path.join(addon_dir,"lib")
+addon_pdir = os.path.join(addon_ldir ,'providers')
+addon_setxml = path.join(addon_dir,"resources","settings.xml")
+addon_ddir = xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump')
+addon_preffile= path.join(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'),"prefs.json")
+kodi_ddir = xbmc.translatePath('special://home/userdata/')
+kodi_sdir=xbmc.translatePath('special://skin/')
+kodi_setxml = xbmc.translatePath('special://home/userdata/advancedsettings.xml')
+kodi_favxml = xbmc.translatePath('special://home/userdata/favourites.xml')
+kodi_guixml = xbmc.translatePath('special://home/userdata/guisettings.xml')
+arturi = "http://boogie.us.to/dataserver/ump/images/"
+CT_AUDIO, CT_IMAGE, CT_VIDEO, CT_UMP = "audio", "image","video","ump" ##content types
 WID={CT_AUDIO:10502,CT_IMAGE:10002,CT_VIDEO:10025}
 CC_FILES, CC_SONGS, CC_ARTISTS, CC_ALBUMS, CC_MOVIES, CC_TVSHOWS, CC_EPISODES, CC_MUSICVIDEOS = "files", "songs", "artists", "albums", "movies", "tvshows", "episodes", "musicvideos"  ##content categories
 VIEW_MODES={

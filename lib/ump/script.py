@@ -1,21 +1,21 @@
-import sys
+from sys import argv
 
 
-if len(sys.argv)>1:
-	if sys.argv[1]=="addfav":
+if len(argv)>1:
+	if argv[1]=="addfav":
 		from bookmark import add
-		add(sys.argv[2].lower()=="true",sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
-	elif sys.argv[1]=="delfav":
+		add(argv[2].lower()=="true",argv[3],argv[4],argv[5],argv[6])
+	elif argv[1]=="delfav":
 		from bookmark import rem
-		rem(sys.argv[2],sys.argv[3],sys.argv[4])
-	elif sys.argv[1]=="renfav":
+		rem(argv[2],argv[3],argv[4])
+	elif argv[1]=="renfav":
 		from bookmark import ren
-		ren(sys.argv[2],sys.argv[3],sys.argv[4])
-	elif sys.argv[1]=="forcebuf":
+		ren(argv[2],argv[3],argv[4])
+	elif argv[1]=="forcebuf":
 		from buffering import force
-		force(sys.argv[2])
-	elif sys.argv[1]=="setview":
+		force(argv[2])
+	elif argv[1]=="setview":
 		from prefs import set_view
-		#print get_skin_view(sys.argv[2])
-		set_view(sys.argv[2],sys.argv[3])
+		#print get_skin_view(argv[2])
+		set_view(argv[2],argv[3])
 		

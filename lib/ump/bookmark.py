@@ -1,14 +1,16 @@
 import json
-import os
-import re
-import sys
-import urllib
+from os import path
+from re import findall
+from sys import argv
+from urllib import urlencode
 import urlparse
 from xml.dom import minidom
 import zlib
 
 import xbmc
 import xbmcgui
+
+from defs import kodi_favxml
 
 
 try:
@@ -17,16 +19,16 @@ except:
 	from defs import WID
 
 def resolve():
-	if sys.argv[2].startswith("?hash="):
-		sys.argv[2]=zlib.decompress(sys.argv[2][6:].decode("hex"))
+	if argv[2].startswith("?hash="):
+		argv[2]=zlib.decompress(argv[2][6:].decode("hex"))
 
 def create(url=None):
 	if not url is None:
-		return sys.argv[0]+"?hash="+zlib.compress(url).encode("hex")
-	elif not sys.argv[2].startswith("?hash="):
-		return sys.argv[0]+"?hash="+zlib.compress(sys.argv[2]).encode("hex")
+		return argv[0]+"?hash="+zlib.compress(url).encode("hex")
+	elif not argv[2].startswith("?hash="):
+		return argv[0]+"?hash="+zlib.compress(argv[2]).encode("hex")
 	else:
-		return sys.argv[0]+sys.argv[2]
+		return argv[0]+argv[2]
 
 
 def decode(uri):
@@ -45,17 +47,17 @@ def decode(uri):
 
 def load():
 	favs=[]
-	favsxml=xbmc.translatePath('special://home/userdata/favourites.xml')
-	if os.path.exists(favsxml):
+	favsxml=kodi_favxml
+	if path.exists(favsxml):
 		res=minidom.parse(favsxml)
 	else:
 		return None,favs
 	for fav in res.getElementsByTagName("favourite"):
 		cmd=None
 		data=fav.lastChild.data.replace("&quot;",'"')
-		cmd1=re.findall('RunPlugin\((.*?)"\)',data)
-		cmd2=re.findall('PlayMedia\((.*?)"\)',data)
-		cmd3=re.findall('ActivateWindow\(([0-9]*?)\,(.*?)"\,',data)
+		cmd1=findall('RunPlugin\((.*?)"\)',data)
+		cmd2=findall('PlayMedia\((.*?)"\)',data)
+		cmd3=findall('ActivateWindow\(([0-9]*?)\,(.*?)"\,',data)
 		if len(cmd1):
 			cmd=cmd1[0]
 			wid=None
@@ -89,7 +91,7 @@ def ren(name,thumb,data):
 			newname=kb.getText()
 			if not newname==name or newname=="":
 				fav.setAttribute("name", newname)
-				res.writexml( open(xbmc.translatePath('special://home/userdata/favourites.xml'), 'w'),encoding="UTF-8")
+				res.writexml( open(kodi_favxml, 'w'),encoding="UTF-8")
 				xbmc.executebuiltin("Container.Refresh")
 				dialog.ok('UMP', '%s has been to %s'%(name,newname))
 			break
@@ -111,7 +113,7 @@ def rem(name,thumb,data):
 				dialog.ok('UMP', '%s has been removed from bookmarks'%name)
 			break
 	if found:
-		res.writexml( open(xbmc.translatePath('special://home/userdata/favourites.xml'), 'w'),encoding="UTF-8")
+		res.writexml( open(kodi_favxml, 'w'),encoding="UTF-8")
 		xbmc.executebuiltin("Container.Refresh")
 	else:
 		dialog.ok('UMP', '%s can not be found in bookmarks!'%name)
@@ -120,8 +122,8 @@ def rem(name,thumb,data):
 
 def add(isFolder,content_type,name,thumb,uri):
 	path,cat,module,page,args,info,art=decode(uri)
-	favsxml=xbmc.translatePath('special://home/userdata/favourites.xml')
-	if os.path.exists(favsxml):
+	favsxml=kodi_favxml
+	if path.exists(favsxml):
 		res=minidom.parse(favsxml)
 	else:
 		res=minidom.parseString("<favourites></favourites>")
@@ -129,7 +131,7 @@ def add(isFolder,content_type,name,thumb,uri):
 	newnode = res.createElement("favourite")
 	newnode.setAttribute("name", name)
 	newnode.setAttribute("thumb", thumb)
-	link="plugin://plugin.program.ump/?%s"%urllib.urlencode({"module":module,"page":page,"args":json.dumps(args),"info":json.dumps(info),"art":json.dumps(art),"content_type":content_type})
+	link="plugin://plugin.program.ump/?%s"%urlencode({"module":module,"page":page,"args":json.dumps(args),"info":json.dumps(info),"art":json.dumps(art),"content_type":content_type})
 	if isFolder:
 		str='ActivateWindow(%d,"%s",return)'%(WID[content_type],link)
 	else:

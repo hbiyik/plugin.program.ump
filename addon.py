@@ -1,18 +1,15 @@
 ﻿import sys
 import gc
 import os
-import threading
-import time
 
-import xbmc
-import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
-addon = xbmcaddon.Addon('plugin.program.ump')
-addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
-sys.path.append(os.path.join(addon_dir,"lib"))
-
+from defs import addon
+from defs import addon_ldir
+from defs import arturi
+from defs import CC_ALBUM
+sys.path.append(addon_ldir)
 from ump import api
 from ump import prerun
 from ump import postrun
@@ -22,8 +19,6 @@ from ump import ui
 #bookmark.resolve()
 ump=api.ump()
 prerun.run(ump)
-
-import threading
 
 print "HANDLE       : " + str(ump.handle)
 print "MODULE       : " + str(ump.module)
@@ -41,10 +36,10 @@ if ump.module == "ump":
 	if ump.page == "root":
 		for provider in indexers:
 			provider_cat,provider_type,provider_name=provider
-			img="http://boogie.us.to/dataserver/ump/images/"+provider_name+".png"
+			img=arturi+provider_name+".png"
 			li=xbmcgui.ListItem(provider_name.title(), iconImage=img, thumbnailImage=img)
 			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
-		ump.set_content(ump.defs.CC_ALBUMS)
+		ump.set_content(CC_ALBUMS)
 elif ump.page== "urlselect":
 	if not addon.getSetting("tn_chk_url_en").lower()=="false":
 		from ump import webtunnel

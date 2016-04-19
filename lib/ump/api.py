@@ -33,7 +33,6 @@ from ump import prefs
 from ump import http
 
 addon = xbmcaddon.Addon('plugin.program.ump')
-addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
 def humanint(size,precision=2):
 	suffixes=['B','KB','MB','GB','TB']
@@ -55,6 +54,8 @@ def humanres(w,h):
 
 class ump():
 	def __init__(self,pt=False):
+		if not os.path.exists(defs.addon_ddir):
+			os.makedirs(defs.addon_ddir)
 		self.index_items=[]
 		self.settings={}
 		self.buffermode=buffering.get()
@@ -64,8 +65,8 @@ class ump():
 		self.defs=defs
 		self.monitor=xbmc.Monitor()
 		if self.monitor.abortRequested():sys.exit()
-		self.window = ui.listwindow('select.xml', addon_dir,'Default', '720p',ump=self)
-		self.iwindow = ui.imagewindow('picture.xml', addon_dir,"Default","720p")
+		self.window = ui.listwindow('select.xml', defs.addon_dir,'Default', '720p',ump=self)
+		self.iwindow = ui.imagewindow('picture.xml', defs.addon_dir,"Default","720p")
 		self.urlval_en=True
 		self.urlval_tout=30
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
@@ -86,11 +87,9 @@ class ump():
 		self.pt=pt
 		socket.socket = proxy.getsocket()
 		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True, strict_rfc2965_unverifiable=False)
-		if not os.path.exists( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump')):
-			os.makedirs(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'))
-		self.cj=cookielib.LWPCookieJar(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie"))
+		self.cj=cookielib.LWPCookieJar(os.path.join(defs.addon_ddir, "cookie"))
 		self.cj.set_policy(policy)
-		if os.path.exists(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie")):
+		if os.path.exists(defs.addon_ddir, "cookie")):
 			try:
 				self.cj.load()
 			except cookielib.LoadError:
@@ -159,7 +158,7 @@ class ump():
 		coms=[]
 		if adddefault:
 			coms.append(('Detailed Info',"Action(Info)"))
-			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
+			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
 		coms.extend(cmds)
 		if adddefault:
 			coms.append(("Addon Settings","Addon.OpenSettings(plugin.program.ump)"))
@@ -246,7 +245,7 @@ class ump():
 			for u,li,isfolder,adddef,coms,remold in self.index_items:
 				items.append((u,li,isfolder))
 				if adddef:
-					coms.append(('Set current view \"default\" for %s'%content_cat,"RunScript(%s,setview,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),self.content_type,content_cat)))
+					coms.append(('Set current view \"default\" for %s'%content_cat,"RunScript(%s,setview,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.content_type,content_cat)))
 					li.addContextMenuItems(coms,remold)
 			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
 		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
@@ -488,7 +487,7 @@ class ump():
 		item.setProperty("parts",json.dumps(parts))
 		upname=parts[0].get("url_provider_name",None)
 		if not upname is None:
-			item.setIconImage("http://boogie.us.to/dataserver/ump/images/"+parts[0]["url_provider_name"]+".png")
+			item.setIconImage(defs.arturi+parts[0]["url_provider_name"]+".png")
 		#if there is no more mirrors and media does not require a provider directly play it.
 		if autoplay:
 			try:
@@ -591,7 +590,7 @@ class ump():
 			self.cj.save()
 		except:
 			try:
-				os.remove(os.path.join( xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'), "cookie"))
+				os.remove(os.path.join( defs.addon_ddir, "cookie"))
 			except:
 				pass
 		if play:

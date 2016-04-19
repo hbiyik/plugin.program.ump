@@ -1,8 +1,8 @@
-import os
+from os import path
 from xml.dom import minidom
 
-import xbmc
-import xbmcgui
+from xbmcgui import Dialog
+from defs import kodi_setxml
 
 
 logs={
@@ -11,6 +11,8 @@ logs={
 "2":"Only buffer true internet filesystems (streams) (http, etc.)",
 "3":"No buffer"
 }
+
+setxml=kodi_setxml
 
 def addchild(res,parent,child):
 	newnode = res.createElement(child)
@@ -30,8 +32,7 @@ def getchild(res,parent,child):
 
 def force(mode):
 	mode=str(mode)
-	setxml=xbmc.translatePath('special://home/userdata/advancedsettings.xml')
-	if os.path.exists(setxml):
+	if path.exists(setxml):
 		res=minidom.parse(setxml)
 		adv=getchild(res,res,"advancedsettings")
 		nw=getchild(res,adv,"network")
@@ -42,13 +43,12 @@ def force(mode):
 	else:
 		res=minidom.parseString("<advancedsettings><network><buffermode>%s</buffermode></network></advancedsettings>"%mode)
 	res.writexml( open(setxml, 'w'),encoding="UTF-8")
-	dialog = xbmcgui.Dialog()
+	dialog = Dialog()
 	dialog.ok('UMP', 'LibCurl Buffering Mode set to %s'%mode,logs[mode],"YOU NEED TO RESTART KODI TO CHANGES TAKE AFFECT")
 	res.unlink()
 
 def get():
-	setxml=xbmc.translatePath('special://home/userdata/advancedsettings.xml')
-	if os.path.exists(setxml):
+	if path.exists(setxml):
 		res=minidom.parse(setxml)
 		adv=getchild(res,res,"advancedsettings")
 		nw=getchild(res,adv,"network")

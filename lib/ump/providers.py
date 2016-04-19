@@ -1,25 +1,26 @@
-import os
+from os import walk
 from xml.dom import minidom
 
-import xbmc
-import xbmcaddon
+from defs import addon
+from defs import addon_dir
+from defs import addon_setxml
+from defs import addon_pdir
+from defs import CT_AUDIO
+from defs import CT_IMAGE
+from defs import CT_VIDEO
+from defs import CT_UMP
 
-from ump import defs
-
-
-addon = xbmcaddon.Addon('plugin.program.ump')
-addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
-cats=[defs.CT_AUDIO, defs.CT_IMAGE, defs.CT_VIDEO,"ump"]
+cats=[CT_AUDIO, CT_IMAGE, CT_VIDEO,CT_UMP]
 types=["index","link","url"]
 
 def update_settings():
 	lst=[]
-	for root, dirs, files in os.walk(os.path.join(addon_dir, 'lib' ,'providers')):
+	for root, dirs, files in walk(addon_pdir):
 		for file in files:
 			if file.endswith('.py') and len(file.split("_"))==3 and file.split("_")[0] in cats and file.split("_")[1] in types:
 				lst.append(file[:-3].split("_"))
 	#first remove unused providers from settings.xml
-	res=minidom.parse(os.path.join(addon_dir,"resources","settings.xml"))
+	res=minidom.parse(addon_setxml)
 	inxml=[]
 	for xcat in res.getElementsByTagName("category"):
 		if xcat.getAttribute("id").lower() in types:
@@ -49,13 +50,13 @@ def update_settings():
 				newnode.setAttribute("label", "%s:%s"%(prv[0].upper(),prv[2].title()))
 				newnode.setAttribute("default", "true")
 				xcat.appendChild(newnode)
-	res.writexml( open(os.path.join(addon_dir,"resources","settings.xml"), 'w'),encoding="UTF-8")
+	res.writexml( open(addon_setxml, 'w'),encoding="UTF-8")
 	res.unlink()
 	return lst2
 
 def find(cat,type):
 	lst=[]
-	for root, dirs, files in os.walk(os.path.join(addon_dir, 'lib' ,'providers')):
+	for root, dirs, files in walk(addon_pdir):
 		for file in files:
 			if file.endswith('.py') and len(file.split("_"))==3 and file.split("_")[0] in cats and file.split("_")[1] in types:
 				lst.append(file[:-3].split("_"))

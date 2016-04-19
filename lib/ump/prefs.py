@@ -1,18 +1,17 @@
-try:
-	import xbmc
-	import xbmcaddon
-	addon = xbmcaddon.Addon('plugin.program.ump')
-except:
-	pass
-import os
+import xbmc
+from defs import addon
+from defs import addon_preffile
+from defs import addon_sdir
+from defs import addon_dir
+from defs import addon_setxml
+from os import path
 from xml.dom import minidom
 import json
-addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 
-preffile=os.path.join(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'),"prefs.json")
+preffile=addon_preffile
 
 def prefs(mode,data=None):
-	if data is None and not os.path.exists(preffile):
+	if data is None and not path.exists(preffile):
 		return ""
 	with open(preffile, mode) as pref:
 		if data is None:
@@ -23,10 +22,10 @@ def prefs(mode,data=None):
 
 def get_skin_view(ctype):
 	xmls={"video":"MyVideoNav.xml","audio":"MyMusicNav.xml","image":"MyPics.xml"}
-	res=minidom.parse(os.path.join(xbmc.translatePath('special://skin/'),"addon.xml"))
+	res=minidom.parse(path.join(addon_sdir,"addon.xml"))
 	dir=res.getElementsByTagName("res")[0].getAttribute("folder")
 	res.unlink()
-	navxml=os.path.join(xbmc.translatePath('special://skin/'),dir,xmls[ctype])
+	navxml=path.join(addon_sdir,dir,xmls[ctype])
 	res=minidom.parse(navxml)
 	views=res.getElementsByTagName("views")[0].lastChild.data.split(",")
 	res.unlink()
@@ -37,7 +36,7 @@ def get_skin_view(ctype):
 
 def settingActive(set):
 	ret=False
-	res=minidom.parse(os.path.join(addon_dir,"resources","settings.xml"))
+	res=minidom.parse(addon_setxml)
 	for setting in res.getElementsByTagName("setting"):
 		if setting.getAttribute("id") == set and not setting.getAttribute("visible").lower()=="false":
 			ret=True
@@ -45,38 +44,16 @@ def settingActive(set):
 	res.unlink()
 	return ret
 
-def setSetting(key,val):
-	addondir=xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump')
-	setfile=os.path.join(addondir,"settings.xml")
-	if not os.path.exists(addondir):
-		os.makedirs(addondir)
-	if os.path.exists(setfile):
-		res=minidom.parse(setfile)
-	else:
-		res=minidom.parseString("<settings></settings>")
-	found=False
-	for setting in res.getElementsByTagName("setting"):
-		if setting.getAttribute("id")==key:
-			setting.setAttribute("value",val)
-			found=True
-	if not found:
-		newnode = res.createElement("setting")
-		newnode.setAttribute("id", key)		
-		newnode.setAttribute("value", val)
-		res.getElementsByTagName("settings")[0].appendChild(newnode)
-	res.writexml( open(setfile, 'w'),encoding="UTF-8")
-	res.unlink()
-	
 def set_setting_attr(name,set,val):
 	ret=False
-	res=minidom.parse(os.path.join(addon_dir,"resources","settings.xml"))
+	res=minidom.parse(addon_setxml)
 	for setting in res.getElementsByTagName("setting"):
 		if setting.getAttribute("id") == name:
 			setting.setAttribute(set,val)
 			ret=True
 			break
 	if ret:
-		res.writexml( open(os.path.join(addon_dir,"resources","settings.xml"), 'w'),encoding="UTF-8")
+		res.writexml( open(addon_setxml, 'w'),encoding="UTF-8")
 	res.unlink()
 	return ret
 
