@@ -440,6 +440,9 @@ class ump():
 		
 		for ignore in sorted(ignores,reverse=True):
 			parts.pop(ignore)
+		
+		if not len(parts):
+			return None
 
 		#if payer is not yet ready init it.
 		if self.player is None:

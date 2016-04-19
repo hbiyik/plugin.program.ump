@@ -1,3 +1,4 @@
+timeout=60*60*24
 def run(hash,ump,referer=None):
 	u=ump.absuri("http://redmp3.su",hash)
 	while True:

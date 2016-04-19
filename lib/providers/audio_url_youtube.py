@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from third import youtube_dl
 
-
+timeout=60*60*24
 def run(hash,ump,referer=""):
 	ydl = youtube_dl.YoutubeDL({'format': 'bestaudio/best',"quiet":True})
 

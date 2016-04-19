@@ -3,6 +3,7 @@ import ctypes
 
 
 domain="https://listen2.musicmp3.ru"
+timeout=60*60*24
 
 def boo(d):
 	a = 1234554321
