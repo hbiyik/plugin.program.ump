@@ -33,7 +33,12 @@ def create(url=None):
 
 def decode(uri):
 	uri=urlparse.urlparse(uri)
-	result=urlparse.parse_qs(uri.query)
+	#python 2.x version behave diffent about this parsing issue, dont know why
+	if not uri.query=="":
+		q=uri.query
+	else:
+		q=uri.path[2:]
+	result=urlparse.parse_qs(q)
 	[content_cat]=result.get('content_type', ["ump"])
 	[module]= result.get('module', ["ump"])
 	[page]= result.get('page', ["root"])
