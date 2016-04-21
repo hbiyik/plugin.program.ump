@@ -1,3 +1,9 @@
+2016-04-22: addon: workaround for when kodi does not sends content type, get the content type from provider prefix, redmp3: prompt on geoblock, audio_url_youtube: donct check ssl certificates, api: use xbmc.log instead of print, ui: workaround for teamkodi nazisism with players, settings allow users to enable ssl certifacte validation.
+2016-04-19: youtube_dl: fix stdio issue on android
+2016-04-19: bookmark:fix urlparse issues with different versions of pythons
+2016-04-19: ump: fix directory issues, defs: move images to offshore
+2016-04-19: ump: centralize dirs, xml, and definitions to defs
+2016-04-17: 0.0.58 Version Release
 2016-04-17: prefs: handle situation when open mode is "r" but file does not exist
 2016-04-17: cookie: remove old data file
 2016-04-17: buffering: fix unlink, api: recommit, prefs: fix read/write modes for unix likes
