@@ -94,7 +94,11 @@ class ump():
 				self.cj.load()
 			except cookielib.LoadError:
 				pass
-		self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj))
+		
+		if addon.getSetting("verifyssl").lower()=="false":
+			self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj),http.HTTPSHandler)
+		else:
+			self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj))	
 		if addon.getSetting("overrideua")=="true":
 			self.ua=addon.getSetting("useragent")
 		else:
@@ -280,12 +284,12 @@ class ump():
 				name2=name2.replace("%s "%word,"")
 			return filter(predicate,unidecode(name1))==filter(predicate,unidecode(name2))
 	
-	def link_to(self,page=None,args={},module=None):
+	def link_to(self,page=None,args={},module=None,content_type=None):
 		query={}
 		query["module"]=[module,self.module][module is None]
 		query["page"]=[page,self.page][page is None]
 		query["args"]=json.dumps(args)
-		query["content_type"]=self.content_type
+		query["content_type"]=[content_type,self.content_type][content_type is None]
 		for keep in ["info","art"]:
 			query[keep]=json.dumps(getattr(self,keep))
 		return sys.argv[0] + '?' + urlencode(query)
@@ -360,7 +364,7 @@ class ump():
 		if not silent:
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
 		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true":
-			print traceback.format_exc()
+			xbmc.log(traceback.format_exc(),defs.loglevel)
 
 	def add_log(self,line):
 		line=unidecode(line)
@@ -368,7 +372,7 @@ class ump():
 			self.log=line+"\n"+self.log
 			self.window.status.setText(self.log)
 		if addon.getSetting("logtolog")=="true":
-			print line
+			xbmc.log(line,defs.loglevel)
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
 		if not (self.terminate or self.monitor.abortRequested()) and isinstance(parts,list) and len(parts)>0:

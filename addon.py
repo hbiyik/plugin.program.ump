@@ -24,11 +24,11 @@ from ump import ui
 ump=api.ump()
 prerun.run(ump)
 
-print "HANDLE       : " + str(ump.handle)
-print "MODULE       : " + str(ump.module)
-print "PAGE         : " + str(ump.page)
+ump.add_log("HANDLE       : %s"%str(ump.handle))
+ump.add_log("MODULE       : %s"%str(ump.module))
+ump.add_log("PAGE         : %s"%str(ump.page))
 #print "ARGS         : " + str(ump.args)
-print "CONTENT_TYPE : " + str(ump.content_type)
+ump.add_log("CONTENT_TYPE : %s"%str(ump.content_type))
 #print "INFO         : " + str(ump.info)
 #print "ART          : " + str(ump.art)
 
@@ -42,7 +42,11 @@ if ump.module == "ump":
 			provider_cat,provider_type,provider_name=provider
 			img=arturi+provider_name+".png"
 			li=xbmcgui.ListItem(provider_name.title(), iconImage=img, thumbnailImage=img)
-			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(module=provider_name),li,True)
+			if ump.content_type == "ump":
+				content_type=provider_cat
+			else:
+				content_type=ump.content_type
+			xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(content_type=content_type,module=provider_name),li,True)
 		ump.set_content(CC_ALBUMS)
 elif ump.page== "urlselect":
 	if not addon.getSetting("tn_chk_url_en").lower()=="false":
@@ -73,7 +77,7 @@ elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==2:
 
 postrun.run(ump)		
 ump.shut()
-print "CONTENT_CAT  : " + str(ump.content_cat)
+ump.add_log("CONTENT_CAT  : %s"%str(ump.content_cat))
 del gc.garbage[:]
 gc.collect()
-print "EOF"
+ump.add_log("UMP:EOF")

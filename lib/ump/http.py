@@ -4,6 +4,9 @@ noredirects=[]
 noredirects.extend(noredirs)
 from cloudfare import noredirs
 noredirects.extend(noredirs)
+import ssl
+import httplib
+import socket
 
 
 class HeadRequest(urllib2.Request):
@@ -39,3 +42,23 @@ class HTTPErrorProcessor(urllib2.HTTPErrorProcessor):
 				elif no302 in request.get_full_url():
 					return response
 		return urllib2.HTTPErrorProcessor.http_response(self, request, response)
+
+class NoCertSSLCon(httplib.HTTPConnection):
+	default_port = httplib.HTTPS_PORT
+	def __init__(self, *args, **kwargs):
+		httplib.HTTPConnection.__init__(self, *args, **kwargs)
+
+	def connect(self):
+		sock = socket.create_connection((self.host, self.port), self.timeout, self.source_address)
+		
+		if self._tunnel_host:
+			self.sock = sock
+			self._tunnel()
+		self.sock = ssl.wrap_socket(sock,cert_reqs=ssl.CERT_NONE)
+	
+class HTTPSHandler(urllib2.HTTPSHandler):
+	def __init__(self, *args, **kwargs):
+		urllib2.HTTPSHandler.__init__(self, *args, **kwargs)
+
+	def https_open(self, req):
+		return self.do_open(NoCertSSLCon,req)

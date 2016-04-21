@@ -2,6 +2,7 @@ import xbmcaddon
 import xbmc
 from os import path
 
+loglevel=1
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 addon_ldir = path.join(addon_dir,"lib")
