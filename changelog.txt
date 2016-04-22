@@ -1,4 +1,4 @@
-2016-04-17: prefs: handle situation when open mode is "r" but file does not exist
+2016-04-17: prefs: handle situation when open mode is "r" but file does not exist 
 2016-04-17: cookie: remove old data file
 2016-04-17: buffering: fix unlink, api: recommit, prefs: fix read/write modes for unix likes
 2016-04-17: primewire: dont use head requests, recapctha: fix domain position, api: fix tmode on head reuests, cloudfare: ingone subdomain in cookie search
