@@ -3,6 +3,7 @@ import threading
 import traceback
 import uuid
 import xbmc
+from ump import teamkodi
 
 
 #simple task manager but quite handy one
@@ -21,7 +22,7 @@ class manager(object):
 		self.q = [] #queue for the function when concurrency is not available
 		self.p = [] #processed tasks
 		self.g = [] #group ids
-		self.m = xbmc.Monitor()
+		self.m = teamkodi.backwards()
 
 	def task(self,func,args):
 		try:

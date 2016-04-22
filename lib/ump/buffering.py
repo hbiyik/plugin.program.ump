@@ -51,9 +51,15 @@ def get():
 	if path.exists(setxml):
 		res=minidom.parse(setxml)
 		adv=getchild(res,res,"advancedsettings")
+		print adv
 		nw=getchild(res,adv,"network")
+		print nw
 		bm=getchild(res,nw,"buffermode")
-		ret=bm.lastChild.data
+		bm=bm.lastChild
+		if bm is None:
+			ret="0"
+		else:
+			ret=bm.data
 		res.unlink()
 	else:
 		ret="0"

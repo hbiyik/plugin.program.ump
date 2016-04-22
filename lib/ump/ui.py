@@ -204,7 +204,7 @@ class listwindow(xbmcgui.WindowXMLDialog):
 
 	def _update(self,current):
 		while True:
-			if self.ump.terminate or self.ump.monitor.abortRequested():
+			if self.ump.terminate or self.ump.backwards.abortRequested():
 				break
 			q,a,p=self.ump.tm.stats()
 			if not q+a+p-current == 0:

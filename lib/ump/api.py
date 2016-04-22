@@ -31,6 +31,7 @@ from ump import ui
 from ump import webtunnel
 from ump import prefs 
 from ump import http
+from ump import teamkodi
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
@@ -57,14 +58,14 @@ class ump():
 		if not os.path.exists(defs.addon_ddir):
 			os.makedirs(defs.addon_ddir)
 		self.index_items=[]
+		self.backwards=teamkodi.backwards()
 		self.settings={}
 		self.buffermode=buffering.get()
 		self.log=""
 		self.handle = int(sys.argv[1])
 		self.ws_limit=False #web search limit
 		self.defs=defs
-		self.monitor=xbmc.Monitor()
-		if self.monitor.abortRequested():sys.exit()
+		if self.backwards.abortRequested():sys.exit()
 		self.window = ui.listwindow('select.xml', defs.addon_dir,'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', defs.addon_dir,"Default","720p")
 		self.urlval_en=True
@@ -124,9 +125,9 @@ class ump():
 		kb = xbmc.Keyboard(*args)
 		kb.setDefault("")
 		kb.setHiddenInput(False)
-		if not self.monitor.abortRequested():
+		if not self.backwards.abortRequested():
 			kb.doModal()
-		if self.monitor.abortRequested():
+		if self.backwards.abortRequested():
 			self.dialogpg.close()
 			sys.exit()
 		return kb.isConfirmed(),kb.getText()
@@ -265,7 +266,7 @@ class ump():
 			self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
 		elif not mode is None:
 			for i in range(0, 10*60):
-				if self.terminate or self.monitor.abortRequested():
+				if self.terminate or self.backwards.abortRequested():
 					break
 				if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
 					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
@@ -375,7 +376,7 @@ class ump():
 			xbmc.log(line,defs.loglevel)
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
-		if not (self.terminate or self.monitor.abortRequested()) and isinstance(parts,list) and len(parts)>0:
+		if not (self.terminate or self.backwards.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				upname=part.get("url_provider_name",None)
 				uphash=part.get("url_provider_hash",None)
@@ -548,6 +549,14 @@ class ump():
 			if not isinstance(part["urls"],dict):
 				part["urls"]={}
 			for key in part["urls"].keys():
+				if not isinstance(key,str):
+					try:
+						part["urls"][str(key)]=part["urls"].pop(key)
+						key=str(key)
+					except:
+						self.add_log("unsupport url key type '%s' in url provider %s"%(type(key),part["url_provider_name"]))
+						part["urls"].pop(key)
+						continue
 				try:
 					u=part["urls"][key]
 					#overide the referer from url provider when it sends dict mirrors
@@ -579,7 +588,7 @@ class ump():
 		if hasattr(self,"dialogpg"):
 			self.dialogpg.close()
 			del(self.dialogpg)
-		if self.monitor.abortRequested():
+		if self.backwards.abortRequested():
 			return None
 		if hasattr(self,"window"):
 			self.window.close()
