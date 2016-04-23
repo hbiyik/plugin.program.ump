@@ -397,7 +397,12 @@ class ump():
 				#if first time, create list dynamically
 					self.checked_uids[self.content_type][upname]=[]
 				self.checked_uids[self.content_type][upname].append(uphash)
-			self.tm.add_queue(target=self._on_new_id, args=(parts,name,wait,missing),pri=5)
+			try:
+				caller = inspect.getframeinfo(inspect.stack()[1][0])
+				lpname=os.path.split(caller.filename)[-1].split(".")[0].split("_")[2]
+			except:
+				lpname=None
+			self.tm.add_queue(target=self._on_new_id, args=(lpname,parts,name,wait,missing),pri=5)
 		else:
 			return False
 
@@ -429,7 +434,7 @@ class ump():
 			max_s+=part_s
 		return max_key,max_w,max_h,max_s
 
-	def _on_new_id(self,parts,name,wait,missing):
+	def _on_new_id(self,lpname,parts,name,wait,missing):
 		##validate media providers url first before adding
 		self._validateparts(parts,wait)
 		ignores=[]
@@ -493,9 +498,15 @@ class ump():
 		item.setLabel(mname)
 		item.setLabel2(self.info["title"])
 		item.setProperty("parts",json.dumps(parts))
+		item.setProperty("lpname",lpname)
 		upname=parts[0].get("url_provider_name",None)
+		art={}
 		if not upname is None:
-			item.setIconImage(defs.arturi+parts[0]["url_provider_name"]+".png")
+			art["icon"]=defs.arturi+parts[0]["url_provider_name"]+".png"
+		if not lpname is None:
+			#art["thumb"]=defs.arturi+lpname+".png"
+			item.setProperty("lpimg",defs.arturi+lpname+".png")
+		item.setArt(art)
 		#if there is no more mirrors and media does not require a provider directly play it.
 		if autoplay:
 			try:

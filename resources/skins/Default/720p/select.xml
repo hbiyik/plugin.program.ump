@@ -84,6 +84,14 @@
 			<scrolltime tween="sine" easing="out">240</scrolltime>
 
 			<itemlayout width="1230" height="36">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>60</width>
+					<height>36</height>
+					<texture>$INFO[ListItem.Property(lpimg)]</texture>
+					<aspectratio aligny="center">keep</aspectratio>
+				</control>
 				<control type="label">
 					<left>80</left>
 					<top>2</top>
@@ -95,6 +103,14 @@
 			</itemlayout>
 
 			<focusedlayout width="1230" height="36">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>60</width>
+					<height>36</height>
+					<texture>$INFO[ListItem.Property(lpimg)]</texture>
+					<aspectratio aligny="center">keep</aspectratio>
+				</control>
 				<control type="image">
 					<left>60</left>
 					<top>0</top>
