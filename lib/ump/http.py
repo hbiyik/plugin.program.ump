@@ -49,7 +49,11 @@ class NoCertSSLCon(httplib.HTTPConnection):
 		httplib.HTTPConnection.__init__(self, *args, **kwargs)
 
 	def connect(self):
-		sock = socket.create_connection((self.host, self.port), self.timeout, self.source_address)
+		#google app engine does not have source adress. r u drunk??
+		if hasattr(self,"source_address"):
+			sock = socket.create_connection((self.host, self.port), self.timeout, self.source_address)
+		else:
+			sock = socket.create_connection((self.host, self.port), self.timeout)
 		
 		if self._tunnel_host:
 			self.sock = sock

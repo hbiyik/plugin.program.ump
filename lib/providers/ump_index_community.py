@@ -33,11 +33,10 @@ def run(ump):
         page=ump.get_page(domain+"boogie-s-kodi-repo",encoding)
         threads=re.findall('<a class="title.*?href="(.*?)" id="(.*?)">(.*?)</a>.*?</span>\s*?<a href="(.*?)" class="lastpostdate',page,re.DOTALL)
         for link,id,title,lastlink in threads:
-            print lastlink
             ump.index_item(title,"showthread",args={"link":ump.absuri(domain,lastlink),"label":title},isFolder=False)
         ump.set_content(ump.defs.CC_FILES)
     elif ump.page=="showthread":
-        page=ump.get_page(ump.args["link"]+"?mode=threaded",encoding)
+        page=ump.get_page(ump.args["link"].split("#")[0]+"?mode=threaded",encoding)
         text=""
         for post in sorted(re.findall("pd\[.*?\] = \'(.*?)\'\;",page),reverse=True):
             text+=strip(post)
