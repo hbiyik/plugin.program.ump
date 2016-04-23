@@ -81,7 +81,6 @@ class ump():
 		self.dialog=xbmcgui.Dialog()
 		self.dialogpg=xbmcgui.DialogProgressBG()
 		self.dialogpg.create("UMP")
-		self.dialogpg.update(100)
 		self.tm=task.manager(self.dialogpg,self.tm_conc)
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
@@ -120,6 +119,8 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+		if self.page=="urlselect":
+			self.dialogpg.close()
 	
 	def get_keyboard(self,*args):
 		kb = xbmc.Keyboard(*args)
