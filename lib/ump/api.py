@@ -504,6 +504,7 @@ class ump():
 		art={}
 		if not upname is None:
 			art["icon"]=defs.arturi+parts[0]["url_provider_name"]+".png"
+			item.setIconImage(defs.arturi+parts[0]["url_provider_name"]+".png")
 		if not lpname is None:
 			#art["thumb"]=defs.arturi+lpname+".png"
 			item.setProperty("lpimg",defs.arturi+lpname+".png")
