@@ -24,7 +24,7 @@ def write(xname,res):
     
 def check(xname,backup):
     if not read(xname):
-        shutil.copy2(backup, xname)
+        shutil.copy(backup, xname)
         dialog=xbmcgui.Dialog()
         (head,tail)=split(xname)
         dialog.ok("UMP Recovery","Ump has succesfully recoverd broken xml file",head,tail)
