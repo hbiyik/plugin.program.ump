@@ -52,7 +52,7 @@ def run(ump):
 			if ump.is_same(artist,i["artist"]) and ump.is_same(title,i["title"]):
 				found=True
 				ump.add_log("redmp3 found track: %s - %s"%(i["artist"],i["title"]))
-				parts.append({"url_provider_name":"redmp3", "url_provider_hash":id,"referer":domain,"partname":"%s - %s" %(i["artist"],i["title"])})
+				parts.append({"url_provider_name":"redmp3", "url_provider_hash":id,"referer":domain,"partname":"%s - %s" %(i["artist"],i["title"]),"info":i})
 				break
 		if not found:
 			ump.add_log("Redmp3 cant find %s - %s"%(i["artist"], i["title"]))

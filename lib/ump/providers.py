@@ -1,5 +1,4 @@
 from os import walk
-from xml.dom import minidom
 
 from defs import addon
 from defs import addon_setxml
@@ -8,6 +7,7 @@ from defs import CT_AUDIO
 from defs import CT_IMAGE
 from defs import CT_VIDEO
 from defs import CT_UMP
+import dom
 
 cats=[CT_AUDIO, CT_IMAGE, CT_VIDEO,CT_UMP]
 types=["index","link","url"]
@@ -19,7 +19,7 @@ def update_settings():
 			if file.endswith('.py') and len(file.split("_"))==3 and file.split("_")[0] in cats and file.split("_")[1] in types:
 				lst.append(file[:-3].split("_"))
 	#first remove unused providers from settings.xml
-	res=minidom.parse(addon_setxml)
+	res=dom.read(addon_setxml)
 	inxml=[]
 	for xcat in res.getElementsByTagName("category"):
 		if xcat.getAttribute("id").lower() in types:
@@ -49,8 +49,7 @@ def update_settings():
 				newnode.setAttribute("label", "%s:%s"%(prv[0].upper(),prv[2].title()))
 				newnode.setAttribute("default", "true")
 				xcat.appendChild(newnode)
-	res.writexml( open(addon_setxml, 'w'),encoding="UTF-8")
-	res.unlink()
+	dom.write(addon_setxml,res)
 	return lst2
 
 def find(cat,type):

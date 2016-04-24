@@ -64,12 +64,14 @@ class xplayer(xbmc.Player):
 			for key in ["uptime","urls","url_provider_hash","url_provider_name"]:
 				if key in parts[i].keys():
 					listitem.setProperty(key,json.dumps(parts[i][key]))
-			listitem.setInfo(self.ump.content_type,self.ump.info)
-			try:
-				listitem.setArt(self.ump.art)
-			except AttributeError:
-				#backwards compatability
-				pass
+			info=parts[i].get("info",None)
+			art=parts[i].get("art",None)
+			if info is None:
+				info=self.ump.info
+			if art is None:
+				art=self.ump.art
+			listitem.setInfo(self.ump.defs.LI_CTS[self.ump.content_type],info)
+			listitem.setArt(art)
 			if "partname" in parts[i].keys():
 				listitem.setLabel(parts[i]["partname"])
 			else:
@@ -190,6 +192,7 @@ class listwindow(xbmcgui.WindowXMLDialog):
 		self.items=[]
 
 	def onInit(self):
+		self.ump.dialogpg.close()
 		q,a,p=self.ump.tm.stats()
 		self.percent=0
 		self.progress=self.getControl(2)

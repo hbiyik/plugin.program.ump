@@ -1,6 +1,6 @@
 from os import path
 from xml.dom import minidom
-
+import dom
 from xbmcgui import Dialog
 from defs import kodi_setxml
 
@@ -33,7 +33,7 @@ def getchild(res,parent,child):
 def force(mode):
 	mode=str(mode)
 	if path.exists(setxml):
-		res=minidom.parse(setxml)
+		res=dom.read(setxml)
 		adv=getchild(res,res,"advancedsettings")
 		nw=getchild(res,adv,"network")
 		bm=getchild(res,nw,"buffermode")
@@ -42,18 +42,15 @@ def force(mode):
 		bm.appendChild(res.createTextNode(mode))
 	else:
 		res=minidom.parseString("<advancedsettings><network><buffermode>%s</buffermode></network></advancedsettings>"%mode)
-	res.writexml( open(setxml, 'w'),encoding="UTF-8")
+	dom.write(setxml,res)
 	dialog = Dialog()
 	dialog.ok('UMP', 'LibCurl Buffering Mode set to %s'%mode,logs[mode],"YOU NEED TO RESTART KODI TO CHANGES TAKE AFFECT")
-	res.unlink()
 
 def get():
 	if path.exists(setxml):
-		res=minidom.parse(setxml)
+		res=dom.read(setxml)
 		adv=getchild(res,res,"advancedsettings")
-		print adv
 		nw=getchild(res,adv,"network")
-		print nw
 		bm=getchild(res,nw,"buffermode")
 		bm=bm.lastChild
 		if bm is None:

@@ -119,8 +119,6 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
-		if self.page=="urlselect":
-			self.dialogpg.close()
 	
 	def get_keyboard(self,*args):
 		kb = xbmc.Keyboard(*args)
@@ -160,7 +158,7 @@ class ump():
 		u=self.link_to(page,args,module)
 		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
 		li.setArt(art)
-		li.setInfo(self.content_type,info)
+		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if adddefault:
 			coms.append(('Detailed Info',"Action(Info)"))
@@ -550,7 +548,7 @@ class ump():
 		if not "uptime" in part.keys() or time.time()-part["uptime"]>timeout:
 
 			try:
-				self.add_log("validating %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
+				self.add_log("retrieving url from %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
 				part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
 			except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
 				self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
@@ -588,7 +586,7 @@ class ump():
 				except Exception,e:
 					self.notify_error(e)
 					part["urls"].pop(key)
-					self.add_log("key removed : %s, %s"%(key,part["url_provider_name"]))
+					self.add_log("validation failed: key removed : %s, %s"%(key,part["url_provider_name"]))
 			part["uptime"]=time.time()
 			k,w,h,s=self.max_meta([part])
 			part["defmir"]=k

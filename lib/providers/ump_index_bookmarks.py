@@ -24,7 +24,7 @@ def run(ump):
 			u=ump.link_to(page,args,module)
 			li=xbmcgui.ListItem(name, iconImage=thumb, thumbnailImage=thumb)
 			li.setArt(art)
-			li.setInfo(cat,info)
+			li.setInfo(ump.defs.LI_CTS[cat],info)
 			commands=[
 			('Detailed Info', 'Action(Info)'),
 			('Rename Bookmark',"RunScript(%s,renfav,%s,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),json.dumps(name),json.dumps(thumb),json.dumps(data))),

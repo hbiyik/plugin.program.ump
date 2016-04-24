@@ -222,13 +222,13 @@ def run(ump):
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		results=js.get("topalbums",{"album":[]})["album"]
 		audio={}
-		audio["info"]={"year":"","tracknumber":-1,"duration":"","album":"","artist":name,"title":"","code":ambid}
+		audio["info"]={"year":"","duration":"","album":"","artist":name,"title":"","code":ambid}
 		audio["art"]={"thumb":artim,"poster":artim}
 		playlist=[]
 		q={"method":"artist.getTopTracks","mbid":ambid,"api_key":apikey,"format":"json"}
 		for track in json.loads(ump.get_page(mirror,None,query=q)).get("toptracks",{"track":[]})["track"]:
 			item={}
-			item["info"]={"year":"","tracknumber":-1,"duration":"",	"album":"",	"artist":track["artist"]["name"],"title":track["name"],	"code":track.get("mbid","-1")}
+			item["info"]={"year":"","duration":"",	"album":"",	"artist":track["artist"]["name"],"title":track["name"],	"code":track.get("mbid","-1")}
 			im=get_img(track.get("image",[]))
 			item["art"]={"thumb":im,"poster":im}
 			playlist.append(item)
@@ -240,10 +240,10 @@ def run(ump):
 			im=get_img(result.get("image",[]))
 			if im == "":
 				continue
-			audio["info"]={"year":"","tracknumber":-1,"duration":"","album":result["name"],"artist":name,"title":"","code":mbid}
+			audio["info"]={"year":"","duration":"","album":result["name"],"artist":name,"title":"","code":mbid}
 			audio["art"]={"thumb":im,"poster":im}
 			ump.index_item(name + " - " +result["name"],"album",args={"artist":name,"album":result["name"]},icon=im,thumb=im,info=audio["info"],art=audio["art"])
-		ump.set_content(ump.defs.CC_ARTISTS)		
+		ump.set_content(ump.defs.CC_ALBUMS)		
 
 
 	elif ump.page == "album":

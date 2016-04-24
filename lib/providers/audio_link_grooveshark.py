@@ -66,7 +66,7 @@ def run(ump):
 				ump.add_log("grooveshark found track: %s - %s"%(i["artist"],i["title"]))
 				id=links["id"]
 				if not id in ids:
-					parts.append({"url_provider_name":"youtube", "url_provider_hash":id,"referer":domain,"partname":"%s - %s" %(artist,title)})
+					parts.append({"url_provider_name":"youtube", "url_provider_hash":id,"referer":domain,"partname":"%s - %s" %(artist,title),"info":i})
 					ids.append(id)
 				break
 	if len(parts):

@@ -1,6 +1,6 @@
 from socket import socket
-from xml.dom import minidom
 from defs import kodi_guixml
+import dom
 
 from third.socksipy import socks
 
@@ -14,7 +14,7 @@ def get_set(genset,n):
 
 def getsocket():
 	try:
-		gen_set=minidom.parse(kodi_guixml)
+		gen_set=dom.read(kodi_guixml)
 		if not get_set(gen_set,"usehttpproxy").lower() == "false":
 			s=[3,1,1,2,2][int(get_set(gen_set,"httpproxytype"))]
 			socks.setdefaultproxy(s, get_set(gen_set,"httpproxyserver"), int(get_set(gen_set,"httpproxyport")),int(get_set(gen_set,"httpproxytype"))==4,get_set(gen_set,"httpproxyusername"),get_set(gen_set,"httpproxypassword"))

@@ -4,7 +4,7 @@ from urllib import urlencode
 from urllib import unquote
 import urlparse
 import urllib2
-from prefs import settingActive
+from prefs import settingsActive
 import copy
 from time import time,ctime
 
@@ -37,6 +37,7 @@ def check_health(ump,force=False):
 	
 	import prefs
 	interval=int(addon.getSetting("tn_chk_prd"))
+	attrs=[]
 	for tunnel in tunnels.keys():
 		lasttime=prefs.get("tunnelstates",tunnel,"lastcheck")
 		if isinstance(lasttime,float) and time()-lasttime<interval*60*60 and not force:
@@ -71,7 +72,8 @@ def check_health(ump,force=False):
 		msg="%s : %s %s,%s"%(name,state,msg,ctime())
 		ump.dialogpg.update(message=msg)
 		addon.setSetting("entn_%s"%tunnel,en)
-		prefs.set_setting_attr("entn_%s"%tunnel,"label",msg)
+		attrs.append(("entn_%s"%tunnel,"label",msg))
+	prefs.set_setting_attrs(attrs)
 
 def much_pre(domain,process,data,request,opener,cj,keyname=None,rediruri=None,session="s",timeout=86400):
 	if keyname is None:
@@ -140,8 +142,9 @@ class tunnel():
 	def __init__(self,opener):
 		self.entunnels={}
 		self.opener=opener
+		self.activetunnels=settingsActive(["entn_%s"%x for x in tunnels.keys()])
 		for tunnel in tunnels.keys():
-			if addon.getSetting("entn_%s"%tunnel)=="true" and settingActive("entn_%s"%tunnel):
+			if addon.getSetting("entn_%s"%tunnel)=="true" and "entn_%s"%tunnel in self.activetunnels:
 				self.entunnels[tunnel]=tunnels[tunnel]
 		
 	def set_tunnel(self,mode,force):

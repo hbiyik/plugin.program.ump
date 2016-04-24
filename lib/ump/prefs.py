@@ -4,8 +4,8 @@ from defs import addon_preffile
 from defs import kodi_sdir
 from defs import addon_setxml
 from os import path
-from xml.dom import minidom
 import json
+import dom
 
 preffile=addon_preffile
 
@@ -21,11 +21,11 @@ def prefs(mode,data=None):
 
 def get_skin_view(ctype):
 	xmls={"video":"MyVideoNav.xml","audio":"MyMusicNav.xml","image":"MyPics.xml"}
-	res=minidom.parse(path.join(kodi_sdir,"addon.xml"))
+	res=dom.read(path.join(kodi_sdir,"addon.xml"))
 	dir=res.getElementsByTagName("res")[0].getAttribute("folder")
 	res.unlink()
 	navxml=path.join(kodi_sdir,dir,xmls[ctype])
-	res=minidom.parse(navxml)
+	res=dom.read(navxml)
 	views=res.getElementsByTagName("views")[0].lastChild.data.split(",")
 	res.unlink()
 	for view in views:
@@ -33,27 +33,28 @@ def get_skin_view(ctype):
 		if not (label == '' or label == None): break
 	return xbmc.getSkinDir(),view
 
-def settingActive(set):
-	ret=False
-	res=minidom.parse(addon_setxml)
-	for setting in res.getElementsByTagName("setting"):
-		if setting.getAttribute("id") == set and not setting.getAttribute("visible").lower()=="false":
-			ret=True
-			break
+def settingsActive(sets):
+	res=dom.read(addon_setxml)
+	actives=[]
+	for set in sets:
+		for setting in res.getElementsByTagName("setting"):
+			if setting.getAttribute("id") == set and not setting.getAttribute("visible").lower()=="false":
+				actives.append(set)
+				break
 	res.unlink()
-	return ret
+	return actives
 
-def set_setting_attr(name,set,val):
+def set_setting_attrs(attrs):
 	ret=False
-	res=minidom.parse(addon_setxml)
-	for setting in res.getElementsByTagName("setting"):
-		if setting.getAttribute("id") == name:
-			setting.setAttribute(set,val)
-			ret=True
-			break
+	res=dom.read(addon_setxml)
+	for name,set,val in attrs:
+		for setting in res.getElementsByTagName("setting"):
+			if setting.getAttribute("id") == name:
+				setting.setAttribute(set,val)
+				ret=True
+				break
 	if ret:
-		res.writexml( open(addon_setxml, 'w'),encoding="UTF-8")
-	res.unlink()
+		dom.write(addon_setxml,res)
 	return ret
 
 def setkeys(d,k,v):

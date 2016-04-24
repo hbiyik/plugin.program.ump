@@ -6,6 +6,7 @@ from urllib import urlencode
 import urlparse
 from xml.dom import minidom
 import zlib
+import dom
 
 import xbmc
 import xbmcgui
@@ -54,7 +55,7 @@ def load():
 	favs=[]
 	
 	if opath.exists(kodi_favxml):
-		res=minidom.parse(kodi_favxml)
+		res=dom.read(kodi_favxml)
 	else:
 		return None,favs
 	for fav in res.getElementsByTagName("favourite"):
@@ -96,11 +97,10 @@ def ren(name,thumb,data):
 			newname=kb.getText()
 			if not newname==name or newname=="":
 				fav.setAttribute("name", newname)
-				res.writexml( open(kodi_favxml, 'w'),encoding="UTF-8")
+				dom.write(kodi_favxml,res)
 				xbmc.executebuiltin("Container.Refresh")
 				dialog.ok('UMP', '%s has been to %s'%(name,newname))
 			break
-	res.unlink()
 
 def rem(name,thumb,data):
 	res,favs=load()
@@ -118,7 +118,7 @@ def rem(name,thumb,data):
 				dialog.ok('UMP', '%s has been removed from bookmarks'%name)
 			break
 	if found:
-		res.writexml( open(kodi_favxml, 'w'),encoding="UTF-8")
+		dom.write(kodi_favxml,res)
 		xbmc.executebuiltin("Container.Refresh")
 	else:
 		dialog.ok('UMP', '%s can not be found in bookmarks!'%name)
@@ -128,7 +128,7 @@ def rem(name,thumb,data):
 def add(isFolder,content_type,name,thumb,uri):
 	p,cat,module,page,args,info,art=decode(uri)
 	if opath.exists(kodi_favxml):
-		res=minidom.parse(kodi_favxml)
+		res=dom.read(kodi_favxml)
 	else:
 		res=minidom.parseString("<favourites></favourites>")
 	favs=res.getElementsByTagName("favourites")[0]
@@ -142,7 +142,6 @@ def add(isFolder,content_type,name,thumb,uri):
 		str='RunPlugin("%s")'%link
 	favs.appendChild(newnode)
 	newnode.appendChild(res.createTextNode(str))
-	res.writexml( open(kodi_favxml, 'w'),encoding="UTF-8")
-	res.unlink()
+	dom.write(kodi_favxml,res)
 	dialog = xbmcgui.Dialog()
 	dialog.ok('UMP', '%s added to bookmarks'%name)

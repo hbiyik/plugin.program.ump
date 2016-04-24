@@ -10,16 +10,16 @@ import xbmc
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_ldir = xbmc.translatePath( os.path.join(addon.getAddonInfo('path'),"lib") )
 sys.path.append(addon_ldir)
+from ump import prerun
+prerun.direct()
 from ump.defs import addon_ldir
 from ump.defs import arturi
 from ump.defs import CC_ALBUMS
 
 from ump import api
-from ump import prerun
 from ump import postrun
 from ump import providers
 from ump import ui
-
 #bookmark.resolve()
 ump=api.ump()
 prerun.run(ump)

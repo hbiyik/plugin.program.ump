@@ -60,7 +60,7 @@ def run(ump):
 					trackid,rel,tn=track
 					if ump.is_same(i["title"],tn):
 						if not rel+trackid in ids:
-							parts.append({"url_provider_name":"musicmp3", "url_provider_hash":rel,"partname":i["artist"]+" - "+tn,"referer":trackid})
+							parts.append({"url_provider_name":"musicmp3", "url_provider_hash":rel,"partname":i["artist"]+" - "+tn,"referer":trackid,"info":i})
 							ump.add_log("musicmp3 matched Artist: %s, Track : %s"%(i["artist"],tn))
 							ids.append(rel+trackid)
 				break
