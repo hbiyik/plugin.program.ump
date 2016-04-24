@@ -1,3 +1,7 @@
+2016-04-24: dom: dont replace copy2 with copy
+2016-04-24: backup: add backup xmls
+2016-04-24: api: redesign xml parser, implement xml recoveries, fix listitem setinfo bug
+2016-04-23: 0.0.66 Version Release
 2016-04-23: http: workaround for android platform issue with socket conn does not have source addr, community: fixurls
 2016-04-23: api: iconimage backwards xbmc13 compat.
 2016-04-23: community: nuw ump indexer that shows the comments in tvaddons forums
