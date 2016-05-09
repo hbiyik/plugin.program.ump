@@ -61,7 +61,7 @@ elif ump.page== "urlselect":
 			except Exception, e:
 				ump.notify_error(e)
 				continue
-			ump.tm.add_queue(provider.run, (ump,),pri=10)
+			ump.add_task(provider.run, (ump,),pri=10)
 		ump.window.doModal()
 elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==1:
 	try:

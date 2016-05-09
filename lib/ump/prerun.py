@@ -3,8 +3,10 @@ def direct():
 	query=argv[2][1:]
 	#run only on root
 	if not "module=" in query and not "page=" in query:
+		import os
 		from dom import check
-		from defs import addon_setxml,addon_bsetxml,kodi_setxml,kodi_bsetxml,kodi_favxml,kodi_bfavxml
+		from defs import addon_setxml,addon_bsetxml,kodi_setxml,kodi_bsetxml,kodi_favxml,kodi_bfavxml,addon_ddir
+		if not os.path.exists(addon_ddir):os.makedirs(addon_ddir)
 		check(addon_setxml,addon_bsetxml)
 		check(kodi_setxml,kodi_bsetxml)
 		check(kodi_favxml,kodi_bfavxml)

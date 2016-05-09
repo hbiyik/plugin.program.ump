@@ -1,17 +1,14 @@
-import cookielib
 import inspect
 import json
 import os
 from random import choice
 import re
-import socket
+from urlparse import parse_qs
 from string import punctuation
 import sys
 import time
 import traceback
 from urllib import urlencode
-import urllib2
-from urlparse import parse_qs
 
 import xbmc
 import xbmcaddon
@@ -19,21 +16,12 @@ import xbmcgui
 import xbmcplugin
 
 from quality import meta
-from third.unescape import unescape
 from third.unidecode import unidecode
-from ump import buffering
-from ump import cloudfare
-from ump import defs
-from ump import providers
-from ump import proxy
-from ump import task
-from ump import ui
-from ump import webtunnel
-from ump import prefs 
-from ump import http
-from ump import teamkodi
 
-addon = xbmcaddon.Addon('plugin.program.ump')
+from ump import buffering
+from ump import defs
+from ump import prefs 
+from ump import teamkodi
 
 def humanint(size,precision=2):
 	suffixes=['B','KB','MB','GB','TB']
@@ -55,57 +43,35 @@ def humanres(w,h):
 
 class ump():
 	def __init__(self,pt=False):
-		if not os.path.exists(defs.addon_ddir):
-			os.makedirs(defs.addon_ddir)
 		self.index_items=[]
-		self.backwards=teamkodi.backwards()
-		self.settings={}
-		self.buffermode=buffering.get()
 		self.log=""
-		self.handle = int(sys.argv[1])
 		self.ws_limit=False #web search limit
-		self.defs=defs
-		if self.backwards.abortRequested():sys.exit()
-		self.window = ui.listwindow('select.xml', defs.addon_dir,'Default', '720p',ump=self)
-		self.iwindow = ui.imagewindow('picture.xml', defs.addon_dir,"Default","720p")
-		self.urlval_en=True
-		self.urlval_tout=30
-		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
-		self.urlval_d_tout=1.5
-		self.tm_conc=int(float(addon.getSetting("conc")))
-		self.player=None
-		self.cfagents=prefs.get("cfagents")
-		self.cflocks={}
-		self.mirrors=[]
+		#to do: clear
+		self.backwards=teamkodi.backwards()
+		self.buffermode=buffering.get()
+		if self.backwards.abortRequested():sys.exit()	
+		self.urlval_tout=30#time in seconds that url needs to be revalidated
+		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.terminate=False
+		#cosmetics below
 		self.dialog=xbmcgui.Dialog()
 		self.dialogpg=xbmcgui.DialogProgressBG()
 		self.dialogpg.create("UMP")
-		self.tm=task.manager(self.dialogpg,self.tm_conc)
-		self.loaded_uprv={}
-		self.checked_uids={"video":{},"audio":{},"image":{}}
-		self.pt=pt
-		socket.socket = proxy.getsocket()
-		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True, strict_rfc2965_unverifiable=False)
-		self.cj=cookielib.LWPCookieJar(os.path.join(defs.addon_ddir, "cookie"))
-		self.cj.set_policy(policy)
-		if os.path.exists(defs.addon_cookfile):
-			try:
-				self.cj.load()
-			except cookielib.LoadError:
-				pass
+		#navigation directors
+		self.__init_nav()
+		self.loadable_uprv=None
+		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+		self.__is_ui_init=False
+		self.__is_browser_init=False
+		self.__is_tm_init=False
+	
+	def __init_ui(self):
+		from ump import ui
+		self.window = ui.listwindow('select.xml', defs.addon_dir,'Default', '720p',ump=self)
+		self.iwindow = ui.imagewindow('picture.xml', defs.addon_dir,"Default","720p")
 		
-		if addon.getSetting("verifyssl").lower()=="false":
-			self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj),http.HTTPSHandler)
-		else:
-			self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj))	
-		if addon.getSetting("overrideua")=="true":
-			self.ua=addon.getSetting("useragent")
-		else:
-			from ump import useragents
-			self.ua=choice(useragents.all)
-		self.opener.addheaders = [('User-agent', self.ua)]
-		self.tunnel=webtunnel.tunnel(self.opener)
+	def __init_nav(self):
+		self.handle = int(sys.argv[1])		
 		query=sys.argv[2][1:]
 		result=parse_qs(query)
 		[self.module]= result.get('module', ["ump"])
@@ -117,8 +83,43 @@ class ump():
 			setattr(self,keep,json.loads(lst))
 		[self.content_type]= result.get('content_type', ["ump"])
 		[self.content_cat]= result.get('content_cat', ["ump"])
-		self.loadable_uprv=providers.find(self.content_type,"url")
-		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+			
+	def __init_browser(self):
+		import cookielib
+		import socket
+		import urllib2
+		from ump import proxy
+		from ump import webtunnel
+		from ump import http
+		from ump import cloudfare
+		from third.unescape import unescape
+		
+		self.cfagents=prefs.get("cfagents")
+		self.cflocks={}
+		socket.socket = proxy.getsocket()
+		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True, strict_rfc2965_unverifiable=False)
+		self.cj=cookielib.LWPCookieJar(os.path.join(defs.addon_ddir, "cookie"))
+		self.cj.set_policy(policy)
+		if os.path.exists(defs.addon_cookfile):
+			try:
+				self.cj.load()
+			except cookielib.LoadError:
+				pass
+		if defs.addon.getSetting("verifyssl").lower()=="false":
+			self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj),http.HTTPSHandler)
+		else:
+			self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj))	
+		if defs.addon.getSetting("overrideua")=="true":
+			self.ua=defs.addon.getSetting("useragent")
+		else:
+			from ump import useragents
+			self.ua=choice(useragents.all)
+		self.opener.addheaders = [('User-agent', self.ua)]
+		self.tunnel=webtunnel.tunnel(self.opener)
+	
+	def __init_tm(self):
+		from ump import task
+		self.tm=task.manager(self.dialogpg,int(float(defs.addon.getSetting("conc"))))
 	
 	def get_keyboard(self,*args):
 		kb = xbmc.Keyboard(*args)
@@ -158,7 +159,7 @@ class ump():
 		u=self.link_to(page,args,module)
 		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
 		li.setArt(art)
-		li.setInfo(self.defs.LI_CTS[self.content_type],info)
+		li.setInfo(defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if adddefault:
 			coms.append(('Detailed Info',"Action(Info)"))
@@ -253,14 +254,14 @@ class ump():
 					li.addContextMenuItems(coms,remold)
 			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
 		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
-		wmode=addon.getSetting("view_"+content_cat).lower()
+		wmode=defs.addon.getSetting("view_"+content_cat).lower()
 		if wmode=="":wmode="default"
 		if not wmode == "default":
-			mode=self.defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
+			mode=defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
 		else:
 			mode=prefs.get("pref_views",content_cat,xbmc.getSkinDir())
 			if mode=={}: mode=None
-		if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
+		if self.content_type==defs.CT_AUDIO and content_cat in [defs.CC_MOVIES,defs.CC_SONGS,defs.CC_ARTISTS,defs.CC_ALBUMS]:
 			#issue #38
 			self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
 		elif not mode is None:
@@ -293,10 +294,20 @@ class ump():
 		for keep in ["info","art"]:
 			query[keep]=json.dumps(getattr(self,keep))
 		return sys.argv[0] + '?' + urlencode(query)
-
+	
+	def add_task(self,target,args,gid=0,pri=0):
+		if not self.__is_tm_init: self.__init_tm()
+		self.tm.add_task(target,args,gid,pri)
+		
+	def join_tm(self,*args,**kwargs):
+		if self.__is_tm_init:
+			self.tm.join(*args,**kwargs)
+	
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False):
 		
-		if self.terminate:
+		if not self.__is_browser_init: self.__init_browser()
+		
+		if self.terminate and self.__is_tm_init:
 			raise task.killbill
 
 		#python cant handle unicode urlencoding so needs to get dirty below.
@@ -307,7 +318,7 @@ class ump():
 			data=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
 		#change timeout
 		if tout is None:
-			tout=int(float(addon.getSetting("tout")))
+			tout=int(float(defs.addon.getSetting("tout")))
 
 		headers={'Accept-encoding':'gzip'}
 		if not referer is None : headers["Referer"]=referer
@@ -363,7 +374,7 @@ class ump():
 		errtype= e.__class__.__name__
 		if not silent:
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
-		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true":
+		if not errtype=="killbill" and defs.addon.getSetting("tracetolog")=="true":
 			xbmc.log(traceback.format_exc(),defs.loglevel)
 
 	def add_log(self,line):
@@ -371,10 +382,13 @@ class ump():
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.log=line+"\n"+self.log
 			self.window.status.setText(self.log)
-		if addon.getSetting("logtolog")=="true":
+		if defs.addon.getSetting("logtolog")=="true":
 			xbmc.log(line,defs.loglevel)
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
+		if self.loadable_uprv is None:
+			from ump import providers
+			providers.find(self.content_type,"url")
 		if not (self.terminate or self.backwards.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				upname=part.get("url_provider_name",None)
@@ -401,7 +415,7 @@ class ump():
 				lpname=os.path.split(caller.filename)[-1].split(".")[0].split("_")[2]
 			except:
 				lpname=None
-			self.tm.add_queue(target=self._on_new_id, args=(lpname,parts,name,wait,missing),pri=5)
+			self.add_task(target=self._on_new_id, args=(lpname,parts,name,wait,missing),pri=5)
 		else:
 			return False
 
@@ -468,14 +482,14 @@ class ump():
 		mname=prefix_q+prefix_s+name
 		
 		autoplay=False
-		if self.content_type==self.defs.CT_VIDEO and addon.getSetting("auto_en_video")=="true":
-			if addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"]:
-				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(float(addon.getSetting("min_vid_res"))):
+		if self.content_type==defs.CT_VIDEO and defs.addon.getSetting("auto_en_video")=="true":
+			if defs.addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"]:
+				if unicode(prefix_q[3:-2]).isnumeric() and int(prefix_q[3:-2])>=int(float(defs.addon.getSetting("min_vid_res"))):
 					autoplay=True
-			if addon.getSetting("video_val_method")=="Check if Alive Only" or addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"] and autoplay:
+			if defs.addon.getSetting("video_val_method")=="Check if Alive Only" or defs.addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"] and autoplay:
 				tags=re.findall("\[(.*?)\]",name)
-				required=addon.getSetting("require_tag").split(",")
-				filtered=addon.getSetting("dont_require_tag").split(",")
+				required=defs.addon.getSetting("require_tag").split(",")
+				filtered=defs.addon.getSetting("dont_require_tag").split(",")
 				autoplay=True
 				for tag in tags:
 					if not tag=="" and tag.lower().replace(" ","") in [x.lower().replace(" ","") for x in filtered]:
@@ -487,10 +501,10 @@ class ump():
 						autoplay=False
 						break
 				
-		if self.content_type==self.defs.CT_AUDIO and addon.getSetting("auto_en_audio")=="true" and addon.getSetting("audio_val_method")=="Check if Alive Only":
+		if self.content_type==defs.CT_AUDIO and defs.addon.getSetting("auto_en_audio")=="true" and defs.addon.getSetting("audio_val_method")=="Check if Alive Only":
 			autoplay=True
 
-		if self.content_type==self.defs.CT_IMAGE and addon.getSetting("auto_en_image")=="true" and addon.getSetting("audio_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"]:
+		if self.content_type==defs.CT_IMAGE and defs.addon.getSetting("auto_en_image")=="true" and defs.addon.getSetting("audio_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"]:
 			autoplay=True
 
 		item=xbmcgui.ListItem()
@@ -518,7 +532,7 @@ class ump():
 				self.notify_error(e)
 
 		self.window.addListItem(item)
-		if False and self.content_type==self.defs.CT_VIDEO and addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"] and len(parts)==1:
+		if False and self.content_type==defs.CT_VIDEO and defs.addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"] and len(parts)==1:
 			from ump import globaldb
 			tags=re.findall("\[(.*?)\]",mname)
 			hs=fs=d=""
@@ -529,14 +543,13 @@ class ump():
 			globaldb.sync(self,parts[0]["url_provider_name"],parts[0]["url_provider_hash"],parts[0]["urls"][max_k]["url"],humanres(max_w,max_h),max_w,max_h,hs,fs,d,float(max_s)/1000000)
 
 	def _validateparts(self,parts,wait):
-		gid=self.tm.create_gid()
 		def wrap(i):
 			parts[i]=self._validatepart(parts[i])
-
+		gid=time.time()
 		for k in range(len(parts)):
-			self.tm.add_queue(wrap,(k,),gid=gid,pri=5)
+			self.add_task(wrap,(k,),gid=gid,pri=5)
 			time.sleep(wait)
-		self.tm.join(gid)
+		self.join_tm(gid)
 
 	def _validatepart(self,part):
 		metaf=getattr(meta,self.content_type)
@@ -575,7 +588,7 @@ class ump():
 						part["urls"][key]={}
 						part["urls"][key]["referer"]=part.get("referer","")
 						part["urls"][key]["url"]=u
-					method=addon.getSetting(self.content_type+"_val_method")
+					method=defs.addon.getSetting(self.content_type+"_val_method")
 					m=metaf("",method,self.get_page,part["urls"][key]["url"],part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
 #				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
@@ -595,7 +608,8 @@ class ump():
 	def shut(self,play=False,noblock=0):
 		self.terminate=True
 		prefs.set("cfagents",self.cfagents)
-		self.tm.s.set()
+		if self.__is_tm_init:
+			self.tm.s.set()
 		if hasattr(self,"dialogpg"):
 			self.dialogpg.close()
 			del(self.dialogpg)
@@ -627,5 +641,4 @@ class ump():
 			del(self.iwindow)
 		if hasattr(self,"player"):
 			del(self.player)
-		if self.handle=="-1":
-			self.tm.join(noblock=noblock,cnt=cnt)
+		self.join_tm(noblock=noblock,cnt=cnt)
