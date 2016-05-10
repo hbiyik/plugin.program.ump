@@ -4,63 +4,39 @@ import os
 from random import choice
 import re
 from urlparse import parse_qs
-from string import punctuation
+
 import sys
 import time
 import traceback
 from urllib import urlencode
 
-import xbmc
-import xbmcaddon
 import xbmcgui
-import xbmcplugin
 
 from quality import meta
-from third.unidecode import unidecode
 
 from ump import buffering
 from ump import defs
 from ump import prefs 
-from ump import teamkodi
-
-def humanint(size,precision=2):
-	suffixes=['B','KB','MB','GB','TB']
-	suffixIndex = 0
-	while size > 1024:
-		suffixIndex += 1 #increment the index of the suffix
-		size = size/1024.0 #apply the division
-	return "%.*f %s"%(precision,size,suffixes[suffixIndex])
-
-def humanres(w,h):
-	res=""
-	heights=[240,360,480,576,720,1080,2160,4320]
-	if h == 0 or w == 0 :
-		return "???p"
-	for height in heights:
-		if h>=height*height/w:
-			res=str(height)+"p"
-	return res
+from ump import providers
 
 class ump():
-	def __init__(self,pt=False):
+	def __init__(self,backend="kodi"):
+		if isinstance(backend,str):
+			self.backend=__import__("backend",fromlist=[backend]).interface()
+		else:
+			self.backend=backend
 		self.index_items=[]
 		self.log=""
 		self.ws_limit=False #web search limit
-		#to do: clear
-		self.backwards=teamkodi.backwards()
 		self.buffermode=buffering.get()
-		if self.backwards.abortRequested():sys.exit()	
+		if self.backend.abortRequested():sys.exit()	
 		self.urlval_tout=30#time in seconds that url needs to be revalidated
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.terminate=False
-		#cosmetics below
-		self.dialog=xbmcgui.Dialog()
-		self.dialogpg=xbmcgui.DialogProgressBG()
-		self.dialogpg.create("UMP")
 		#navigation directors
 		self.__init_nav()
 		self.loadable_uprv=None
-		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+		self.backend.dialogbg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
 		self.__is_ui_init=False
 		self.__is_browser_init=False
 		self.__is_tm_init=False
@@ -69,9 +45,9 @@ class ump():
 		from ump import ui
 		self.window = ui.listwindow('select.xml', defs.addon_dir,'Default', '720p',ump=self)
 		self.iwindow = ui.imagewindow('picture.xml', defs.addon_dir,"Default","720p")
+		self.__is_ui_init=True
 		
-	def __init_nav(self):
-		self.handle = int(sys.argv[1])		
+	def __init_nav(self):	
 		query=sys.argv[2][1:]
 		result=parse_qs(query)
 		[self.module]= result.get('module', ["ump"])
@@ -116,36 +92,59 @@ class ump():
 			self.ua=choice(useragents.all)
 		self.opener.addheaders = [('User-agent', self.ua)]
 		self.tunnel=webtunnel.tunnel(self.opener)
-	
+		self.__is_browser_init=True
+		
 	def __init_tm(self):
 		from ump import task
-		self.tm=task.manager(self.dialogpg,int(float(defs.addon.getSetting("conc"))))
+		self.tm=task.manager(self.backend.dialogbg,int(float(defs.addon.getSetting("conc"))))
+		self.__is_tm_init=True
 	
-	def get_keyboard(self,*args):
-		kb = xbmc.Keyboard(*args)
-		kb.setDefault("")
-		kb.setHiddenInput(False)
-		if not self.backwards.abortRequested():
-			kb.doModal()
-		if self.backwards.abortRequested():
-			self.dialogpg.close()
-			sys.exit()
-		return kb.isConfirmed(),kb.getText()
-		
-	def absuri(self,pre,post):
-		if pre.startswith("//"):
-			pre="http:"+pre
-		if pre.endswith("/"):
-			pre=pre[:-1]
-		if post.startswith("http://") or post.startswith("https://"):
-			return post
-		elif post.startswith("/"):
-			d=pre.split("/")
-			return d[0]+"//"+d[2]+post
+	def list_indexers(self,content_type=None):
+		if content_type is None: content_type = self.content_type
+		for provider in providers.find(content_type,"index"):
+			provider_cat,provider_type,provider_name=provider
+			img=defs.arturi+provider_name+".png"
+			if self.content_type == "ump":
+				content_type=provider_cat
+			elif content_type is None:
+				content_type=self.content_type
+			self.index_item(provider_name.title(),content_type=content_type,module=provider_name, icon=img, thumb=img)
+		self.set_content(defs.CC_ALBUMS)		
+	
+	def url_select(self,content_type=None):
+		if content_type is None: content_type=self.content_type
+		link_providers=providers.find(content_type,"url")
+		if not defs.addon.getSetting("tn_chk_url_en").lower()=="false":
+			from ump import webtunnel
+			webtunnel.check_health(self,True)
+		if len(link_providers)==0:
+			self.backend.dialog.notification("ERROR","There is no available providers for %s"%content_type)
 		else:
-			return pre+post
-
-		
+			for provider in link_providers:
+				try:
+					provider=providers.load(content_type,"link",provider[2])
+				except Exception, e:
+					self.notify_error(e)
+					continue
+				self.add_task(provider.run, (self,),pri=10)
+			self.window.doModal()
+			
+	def load_indexer(self,content_type=None,module=None):
+		if content_type is None: content_type=self.content_type
+		if module is None: module = self.module
+		indexers=providers.find(content_type,"index")
+		if	providers.is_loadable(content_type,"index",module,indexers)==1:
+			try:
+				providers.load(content_type,"index",module).run(self)
+			except Exception,e:
+				self.notify_error(e)
+				
+		elif providers.is_loadable(content_type,"index",module,indexers)==2:
+			try:
+				providers.load("ump","index",module).run(self)
+			except Exception,e:
+				self.notify_error(e)
+	
 	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True):
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
@@ -157,135 +156,16 @@ class ump():
 		self.info=info
 		self.art=art
 		u=self.link_to(page,args,module)
-		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
-		li.setArt(art)
-		li.setInfo(defs.LI_CTS[self.content_type],info)
-		coms=[]
-		if adddefault:
-			coms.append(('Detailed Info',"Action(Info)"))
-			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
-		coms.extend(cmds)
-		if adddefault:
-			coms.append(("Addon Settings","Addon.OpenSettings(plugin.program.ump)"))
-		li.addContextMenuItems(coms,removeold)
-		self.index_items.append((u,li,isFolder,adddefault,coms,removeold))
-		return li
+		return self.backend.add_index_item(name,u,page,args,module,thumb,icon,info,art,cmds,adddefault,removeold,isFolder)
 
 	def view_text(self,label,text):
-		try:
-			id = 10147
-			xbmc.executebuiltin('ActivateWindow(%d)' % id)
-			xbmc.sleep(100)
-			win = xbmcgui.Window(id)
-			retry = 50
-			while (retry > 0):
-				try:
-					xbmc.sleep(10)
-					win.getControl(1).setLabel(label)
-					win.getControl(5).setText(text)
-					retry = 0
-				except:
-					retry -= 1
-		except:
-			pass
-
-
-	def match_cast(self,casting):
-		match_cast=False
-		if len(casting)>0:
-			infocasting=self.info["cast"]
-			cast_found=0
-			for cast in casting:
-				for icast in infocasting:
-					if self.is_same(cast,icast):
-						cast_found+=1
-						continue
-
-			if len(casting)==cast_found or (len(infocasting)==cast_found and len(casting)>len(infocasting)) or (len(casting)==cast_found and len(casting)<len(infocasting)):
-				match_cast=True
-		return match_cast
-
-	def check_codes(self,codes):
-		have=False
-		for cnum in codes:
-			if "code%d"%cnum in self.info.keys() and not (self.info["code%d"%cnum ] == "" or self.info["code%d"%cnum ]== " " ):
-				have=True
-				break
-
-		return have
-
-	def get_vidnames(self,max=5,org_first=True):
-		is_serie="tvshowtitle" in self.info.keys() and not self.info["tvshowtitle"].replace(" ","") == ""
-		names=[]
-		if is_serie:
-			ww=self.info["tvshowtitle"]
-		else:
-			ww=self.info["title"]
-		if org_first:
-			names.append(self.info["originaltitle"])
-			names.append(ww)
-		else:
-			names.append(ww)
-			names.append(self.info["originaltitle"])
-		names.append(self.info["localtitle"])
-		names.extend(self.info["alternates"])
-		names2=[]
-		for name in names:
-			if not name in names2:
-				names2.append(name)
-
-		if max==0:
-			return is_serie,names2
-		else:
-			return is_serie,names2[:max]
+		return self.backend.view_text(label,text)
 
 	def set_content(self,content_cat="ump",enddir=True):
-		if content_cat=="N/A":
-			content_cat=self.content_cat
-		else:
-			self.content_cat=content_cat
-		xbmcplugin.setContent(self.handle, content_cat)
-		items=[]
-		if len(self.index_items):
-			for u,li,isfolder,adddef,coms,remold in self.index_items:
-				items.append((u,li,isfolder))
-				if adddef:
-					coms.append(('Set current view \"default\" for %s'%content_cat,"RunScript(%s,setview,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.content_type,content_cat)))
-					li.addContextMenuItems(coms,remold)
-			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
-		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
-		wmode=defs.addon.getSetting("view_"+content_cat).lower()
-		if wmode=="":wmode="default"
-		if not wmode == "default":
-			mode=defs.VIEW_MODES[wmode].get(xbmc.getSkinDir(),None)
-		else:
-			mode=prefs.get("pref_views",content_cat,xbmc.getSkinDir())
-			if mode=={}: mode=None
-		if self.content_type==defs.CT_AUDIO and content_cat in [defs.CC_MOVIES,defs.CC_SONGS,defs.CC_ARTISTS,defs.CC_ALBUMS]:
-			#issue #38
-			self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
-		elif not mode is None:
-			for i in range(0, 10*60):
-				if self.terminate or self.backwards.abortRequested():
-					break
-				if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
-					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
-					break
-				xbmc.sleep(100)
+		self.content_cat=content_cat
+		self.backend.end_index_items(self,self.index_items,self.content_type,content_cat="ump",enddir=True)
 				
-	def is_same(self,name1,name2,strict=False):
-		predicate = lambda x:x not in punctuation+" "
-		if strict:
-			return filter(predicate,name1.lower())==filter(predicate,name2.lower())
-		else:
-			name1=name1.lower()
-			name2=name2.lower()
-			for word in ["the"]:
-				name1=name1.replace("%s "%word,"")
-				name2=name2.replace("%s "%word,"")
-			return filter(predicate,unidecode(name1))==filter(predicate,unidecode(name2))
-	
-	def link_to(self,page=None,args={},module=None,content_type=None):
+	def __link_to(self,page=None,args={},module=None,content_type=None):
 		query={}
 		query["module"]=[module,self.module][module is None]
 		query["page"]=[page,self.page][page is None]
@@ -372,10 +252,8 @@ class ump():
 		mod = inspect.getmodule(frm[0])
 		modname = mod.__name__ if mod else frm[1]
 		errtype= e.__class__.__name__
-		if not silent:
-			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
 		if not errtype=="killbill" and defs.addon.getSetting("tracetolog")=="true":
-			xbmc.log(traceback.format_exc(),defs.loglevel)
+			self.backend.log(traceback.format_exc(),defs.loglevel)
 
 	def add_log(self,line):
 		line=unidecode(line)
@@ -383,13 +261,12 @@ class ump():
 			self.log=line+"\n"+self.log
 			self.window.status.setText(self.log)
 		if defs.addon.getSetting("logtolog")=="true":
-			xbmc.log(line,defs.loglevel)
+			self.backend.log(line,defs.loglevel)
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
 		if self.loadable_uprv is None:
-			from ump import providers
 			providers.find(self.content_type,"url")
-		if not (self.terminate or self.backwards.abortRequested()) and isinstance(parts,list) and len(parts)>0:
+		if not (self.terminate or self.backend.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				upname=part.get("url_provider_name",None)
 				uphash=part.get("url_provider_hash",None)
@@ -418,36 +295,49 @@ class ump():
 			self.add_task(target=self._on_new_id, args=(lpname,parts,name,wait,missing),pri=5)
 		else:
 			return False
+		
+	def get_keyboard(self,*args,**kwargs):
+		return self.backend.get_input(*args,**kwargs)
 
-	def max_meta(self,parts):
-		#get the highest quality info from each part and mirror
-		q=0
-		max_w=0
-		max_h=0
-		max_s=0
-		part_s=0
-		max_key=""
-		for part in parts:
-			ss=0
-			part_s=0
-			for key,mirror in part["urls"].iteritems():
-				if not part["urls"][key]["meta"] == {}:
-					t=part["urls"][key]["meta"]["type"]
-					w=part["urls"][key]["meta"]["width"]
-					h=part["urls"][key]["meta"]["height"]
-					s=part["urls"][key]["meta"]["size"]
-					if not (w is None or h is None) and w*h>=q:
-						max_w=w
-						max_h=h
-						q=w*h
-					if not s is None and s>ss:
-						max_key=key
-						part_s=s
-						ss=s
-			max_s+=part_s
-		return max_key,max_w,max_h,max_s
+	def shut(self,play=False,noblock=0):
+		self.terminate=True
+		prefs.set("cfagents",self.cfagents)
+		if self.__is_tm_init:
+			self.tm.s.set()
+		if hasattr(self,"dialogpg"):
+			self.backend.dialogpg.close()
+			del(self.backend.dialogpg)
+		if self.backend.abortRequested():
+			return None
+		if hasattr(self,"window"):
+			self.window.close()
+			if hasattr(self.window,"status"):
+				del(self.window.status)
+			del(self.window)
+		if hasattr(self,"dialog"):
+			del(self.backend.dialog)
+		try:
+			self.cj.save()
+		except:
+			try:
+				os.remove(defs.addon_cookfile)
+			except:
+				pass
+		if play:
+			self.player.xplay()
+			cnt=0
+		else:
+			cnt="all"	
+		if hasattr(self,"iwindow"):
+			self.iwindow.close()
+			if hasattr(self.iwindow,"img"):
+				del(self.iwindow.img)
+			del(self.iwindow)
+		if hasattr(self,"player"):
+			del(self.player)
+		self.join_tm(noblock=noblock,cnt=cnt)
 
-	def _on_new_id(self,lpname,parts,name,wait,missing):
+	def __on_new_id(self,lpname,parts,name,wait,missing):
 		##validate media providers url first before adding
 		self._validateparts(parts,wait)
 		ignores=[]
@@ -542,7 +432,7 @@ class ump():
 				if tag.startswith("D:"): d=tag.split("D:")[1]
 			globaldb.sync(self,parts[0]["url_provider_name"],parts[0]["url_provider_hash"],parts[0]["urls"][max_k]["url"],humanres(max_w,max_h),max_w,max_h,hs,fs,d,float(max_s)/1000000)
 
-	def _validateparts(self,parts,wait):
+	def __validateparts(self,parts,wait):
 		def wrap(i):
 			parts[i]=self._validatepart(parts[i])
 		gid=time.time()
@@ -551,7 +441,7 @@ class ump():
 			time.sleep(wait)
 		self.join_tm(gid)
 
-	def _validatepart(self,part):
+	def __validatepart(self,part):
 		metaf=getattr(meta,self.content_type)
 		timeout=self.urlval_tout
 		provider=providers.load(self.content_type,"url",part["url_provider_name"])
@@ -604,41 +494,3 @@ class ump():
 			k,w,h,s=self.max_meta([part])
 			part["defmir"]=k
 		return part
-
-	def shut(self,play=False,noblock=0):
-		self.terminate=True
-		prefs.set("cfagents",self.cfagents)
-		if self.__is_tm_init:
-			self.tm.s.set()
-		if hasattr(self,"dialogpg"):
-			self.dialogpg.close()
-			del(self.dialogpg)
-		if self.backwards.abortRequested():
-			return None
-		if hasattr(self,"window"):
-			self.window.close()
-			if hasattr(self.window,"status"):
-				del(self.window.status)
-			del(self.window)
-		if hasattr(self,"dialog"):
-			del(self.dialog)
-		try:
-			self.cj.save()
-		except:
-			try:
-				os.remove(defs.addon_cookfile)
-			except:
-				pass
-		if play:
-			self.player.xplay()
-			cnt=0
-		else:
-			cnt="all"	
-		if hasattr(self,"iwindow"):
-			self.iwindow.close()
-			if hasattr(self.iwindow,"img"):
-				del(self.iwindow.img)
-			del(self.iwindow)
-		if hasattr(self,"player"):
-			del(self.player)
-		self.join_tm(noblock=noblock,cnt=cnt)
