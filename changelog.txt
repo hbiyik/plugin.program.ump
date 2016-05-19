@@ -1,3 +1,7 @@
+2016-05-19: lastfm: use musicbrainz json data instead of regex
+2016-05-19: tvdb: limit context menues with 4 actors, api: workaround for issue:38
+2016-05-19: lastfm: manual synch albums&tracks with musicbrainz, grooveshark: search artist-track even site does not match, api: fix icons/thums not shown in kodi favs, dom: fix for android 4.0.4 copy is restricted by os. task: fix for android 4.0.4 causes dead lock with python uuid module.
+2016-04-24: 0.0.68 Version Release
 2016-04-24: dom: dont replace copy2 with copy
 2016-04-24: backup: add backup xmls
 2016-04-24: api: redesign xml parser, implement xml recoveries, fix listitem setinfo bug
