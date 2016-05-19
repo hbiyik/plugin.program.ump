@@ -89,8 +89,8 @@ except Exception,e:
 	addon_ldir = xbmc.translatePath( os.path.join(addon.getAddonInfo('path'),"lib") )
 	sys.path.append(addon_ldir)
 	from ump import cloud
-	try:
+	if "ump" in globals():
 		umplog=ump.log
-	except:
+	else:
 		umplog="UMP has not initialized yet"
 	cloud.collect_log("UMPCRASH","OOPS!","It looks like UMP has crashed, do you want to send logs to developer?",umplog,e)
