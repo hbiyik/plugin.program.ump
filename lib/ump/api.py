@@ -269,16 +269,19 @@ class ump():
 		else:
 			mode=prefs.get("pref_views",content_cat,xbmc.getSkinDir())
 			if mode=={}: mode=None
-		if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
-			#issue #38
-			self.add_log("UMP issue #38 %s skippied view: %s"%(content_cat,wmode))
-		elif not mode is None:
-			for i in range(0, 10*60):
+		if not mode is None:
+			for i in range(0, 10*20):
 				if self.terminate or self.backwards.abortRequested():
 					break
-				if xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
+				if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
+					#issue #38
+					xbmc.sleep(300)
 					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
 					break
+				elif xbmc.getCondVisibility('Container.Content(%s)' % content_cat) or True:
+					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
+					break
+				print i
 				xbmc.sleep(100)
 				
 	def is_same(self,name1,name2,strict=False):
