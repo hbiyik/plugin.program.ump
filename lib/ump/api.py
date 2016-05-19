@@ -375,13 +375,16 @@ class ump():
 		errtype= e.__class__.__name__
 		if not silent:
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
-		if not errtype=="killbill" and addon.getSetting("tracetolog")=="true":
-			xbmc.log(traceback.format_exc(),defs.loglevel)
+		if not errtype=="killbill":
+			log=traceback.format_exc()
+			self.log=log+"\n"+self.log
+			if not addon.getSetting("tracetolog")=="true":
+				xbmc.log(log,defs.loglevel)
 
 	def add_log(self,line):
 		line=unidecode(line)
+		self.log=line+"\n"+self.log
 		if hasattr(self,"window") and hasattr(self.window,"status"):
-			self.log=line+"\n"+self.log
 			self.window.status.setText(self.log)
 		if addon.getSetting("logtolog")=="true":
 			xbmc.log(line,defs.loglevel)
