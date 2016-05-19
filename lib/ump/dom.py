@@ -1,5 +1,5 @@
 from xml.dom import minidom
-import shutil
+import xbmcvfs
 import xbmcgui
 from os.path import split
 
@@ -24,7 +24,7 @@ def write(xname,res):
     
 def check(xname,backup):
     if not read(xname):
-        shutil.copy(backup, xname)
+        xbmcvfs.copy(backup, xname)
         dialog=xbmcgui.Dialog()
         (head,tail)=split(xname)
         dialog.ok("UMP Recovery","Ump has succesfully recoverd broken xml file",head,tail)

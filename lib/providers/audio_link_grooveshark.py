@@ -56,6 +56,8 @@ def run(ump):
 			tracks=re.findall('"Add to Playlist" onclick="addPlayList\(\'(.*?)\',\'(.*?)\'',page)
 			if not len(tracks):
 				tracks=re.findall('data-track="(.*?)"  data-cover=".*?" data-artist="(.*?)"',page) #nojs
+			if not len(tracks):
+				tracks=[(i["title"],i["artist"])]
 			match=True
 		for track in tracks:
 			match=False

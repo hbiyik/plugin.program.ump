@@ -151,12 +151,21 @@ class ump():
 		if info is None:info={} 
 		if art == {}:art=self.art
 		if art is None: art={}
+		if thumb == "DefaultFolder.png":
+			if "thumb" in art:thumb=art["thumb"]
+			elif "poster" in art:thumb=art["poster"]
+		if icon == "DefaultFolder.png":
+			if "poster" in art:icon=art["poster"]
+			elif "thumb" in art:icon=art["thumb"]
+			
 		#if thumb == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":thumb=art["thumb"]
 		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
 		self.info=info
 		self.art=art
 		u=self.link_to(page,args,module)
 		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
+		li.setIconImage(icon)
+		li.setThumbnailImage(thumb)
 		li.setArt(art)
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
@@ -308,7 +317,7 @@ class ump():
 		#change timeout
 		if tout is None:
 			tout=int(float(addon.getSetting("tout")))
-
+		
 		headers={'Accept-encoding':'gzip'}
 		if not referer is None : headers["Referer"]=referer
 		if not header is None :

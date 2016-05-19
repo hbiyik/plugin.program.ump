@@ -1,6 +1,7 @@
 import json
 
 import xbmc
+import re
 
 from ump import countries
 
@@ -27,6 +28,44 @@ def get_img(ops,default="DefaultFolder.png"):
 			im=image["#text"]
 			break
 	return im
+
+def get_mbalbums(ambid):
+	mbalbumsd={}
+	if not ambid == "":
+		mbalbums=ump.get_page("https://musicbrainz.org/artist/%s/releases"%ambid,encoding)
+		mbalbums=re.findall('<td><a href="(/release.*?)"><bdi>(.*?)</bdi></a></td>\s*?<td><a href=".*?" title="(.*?)">',mbalbums,re.DOTALL)
+		mbalbums=[[x[0].split("/")[-1],x[1],x[2]] for x in mbalbums]
+		mbalbumsd={}
+		albums=[]
+		for mbalbum in mbalbums:
+			if mbalbum[1] in albums:
+				continue
+			else:
+				albums.append(mbalbum[1])
+			albumid=mbalbum.pop(0)
+			#album name,artist
+			mbalbumsd[albumid]=mbalbum
+		mbalbumsd=dict(mbalbumsd)
+	return mbalbumsd
+
+def get_mbtracks(almbid):
+	mbtracks=[]
+	if not almbid == "":
+		mbtracks=ump.get_page("https://musicbrainz.org/release/%s"%almbid,encoding)
+		mbtracks=re.findall('"application/ld\+json">(.*?)</script>',mbtracks)[0]
+		mbtracks=mbtracks.replace('"@id"','"mbid"')
+		mbtracks=mbtracks.replace('"@type"','"type"')
+		mbtracks=mbtracks.replace('https://musicbrainz.org/recording/','')
+		mbtracks=json.loads(mbtracks)["track"]
+		for mbtrack in mbtracks:
+			duration=mbtrack.get("duration","")
+			ds=0
+			k=0
+			for digit in sorted(re.findall("\d+",duration),reverse=True):
+				ds+=int(digit)*pow(60,k)
+				k+=1
+			mbtrack["duration"]=ds
+	return mbtracks
 
 def run(ump):
 	globals()['ump'] = ump
@@ -221,21 +260,37 @@ def run(ump):
 		q={"method":"artist.getTopAlbums","mbid":ambid,"api_key":apikey,"format":"json"}
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		results=js.get("topalbums",{"album":[]})["album"]
+		if not len(results):
+			q={"method":"artist.getTopAlbums","artist":name,"api_key":apikey,"format":"json"}
+			js=json.loads(ump.get_page(mirror,None,query=q))
+			results=js.get("topalbums",{"album":[]})["album"]
 		audio={}
 		audio["info"]={"year":"","duration":"","album":"","artist":name,"title":"","code":ambid}
 		audio["art"]={"thumb":artim,"poster":artim}
 		playlist=[]
 		q={"method":"artist.getTopTracks","mbid":ambid,"api_key":apikey,"format":"json"}
-		for track in json.loads(ump.get_page(mirror,None,query=q)).get("toptracks",{"track":[]})["track"]:
+		toptracks=json.loads(ump.get_page(mirror,None,query=q)).get("toptracks",{"track":[]})["track"]
+		if not len(toptracks):
+			q={"method":"artist.getTopTracks","artist":name,"api_key":apikey,"format":"json"}
+			toptracks=json.loads(ump.get_page(mirror,None,query=q)).get("toptracks",{"track":[]})["track"]
+		for track in toptracks:
 			item={}
 			item["info"]={"year":"","duration":"",	"album":"",	"artist":track["artist"]["name"],"title":track["name"],	"code":track.get("mbid","-1")}
 			im=get_img(track.get("image",[]))
 			item["art"]={"thumb":im,"poster":im}
 			playlist.append(item)
 		ump.index_item("Play Top Tracks from: %s"%name,"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"Top Tracks from: %s"%name})
-
+		
+		mbalbums=get_mbalbums(ambid)
+			
 		for result in results:
 			audio={}
+			mbid=result.get("mbid","")
+			#sync mbalbums with lastfm albums
+			for k in mbalbums.keys():
+				if ump.is_same(result["name"],mbalbums[k][0]):
+					mbalbums.pop(k)
+					if mbid=="":result["mbid"]=k
 			mbid=result.get("mbid","")
 			im=get_img(result.get("image",[]))
 			if im == "":
@@ -243,21 +298,29 @@ def run(ump):
 			audio["info"]={"year":"","duration":"","album":result["name"],"artist":name,"title":"","code":mbid}
 			audio["art"]={"thumb":im,"poster":im}
 			ump.index_item(name + " - " +result["name"],"album",args={"artist":name,"album":result["name"]},icon=im,thumb=im,info=audio["info"],art=audio["art"])
+			#todo also list albums which in mb but not on last fm
 		ump.set_content(ump.defs.CC_ALBUMS)		
 
 
 	elif ump.page == "album":
-		if not ump.info["code"]=="":
+		alb=None
+		if not ump.info["code"] == "":
 			q={"method":"album.getinfo","mbid":ump.info["code"],"api_key":apikey,"format":"json"}
-		else:
+			js=json.loads(ump.get_page(mirror,None,query=q))
+			alb=js.get("album",None)
+		if alb is None:
 			q={"method":"album.getinfo","artist":ump.args["artist"],"album":ump.args["album"],"api_key":apikey,"format":"json"}
-		js=json.loads(ump.get_page(mirror,None,query=q))
-		tracks=js.get("album",None)
-		alb=js.get("album",None)
+			js=json.loads(ump.get_page(mirror,None,query=q))
+			alb=js.get("album",None)
 		if alb:
 			relyear=2000
 			albumimage=get_img(alb.get("image",[]))
-			results=alb.get("tracks",{"track":[]})["track"]
+			#first try mb tracks then lastfm
+			results=get_mbtracks(ump.info["code"])
+			if not len(results):
+				results=alb.get("tracks",{"track":[]})["track"]
+			if not len(results):
+				return None
 			tracks=[x["name"] for x in results]
 			i=0
 			audio={}

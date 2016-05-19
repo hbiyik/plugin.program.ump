@@ -1,7 +1,7 @@
 from operator import itemgetter
 import threading
 import traceback
-import uuid
+import time
 import xbmc
 from ump import teamkodi
 
@@ -87,7 +87,7 @@ class manager(object):
 		return q,a,p
 	
 	def	create_gid(self):
-		return uuid.uuid4().hex
+		return time.time()
 		
 	def stats(self,gid=None):
 		q=0 #on queue
