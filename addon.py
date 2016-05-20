@@ -76,7 +76,6 @@
 			providers.load("ump","index",ump.module).run(ump)
 		except Exception,e:
 			ump.notify_error(e)
-	
 	postrun.run(ump)		
 	ump.shut()
 	ump.add_log("CONTENT_CAT  : %s"%str(ump.content_cat))

@@ -4,15 +4,15 @@ import xbmcgui
 def upload(content,name,overwrite=True):
     dropbox.client.DropboxClient("oDWx2zTSXZAAAAAAAAAACCD5aQr2FgS-fe33WMr7moiZr9aHAp0gpuvUyXtiDHX5").put_file("/%s"%name, content,overwrite=overwrite)
     
-def upload_log(head,msg,name,locals,errlog,kodilog,umplog):
+def upload_log(head,msg,name,locals,errlog,kodilog,umplog,extra):
     dialog = xbmcgui.Dialog()
     if(dialog.yesno(head,msg)):
-        content="LOCAL INFO:\r\n%s\r\nERROR LOG:\r\n%s\r\nKODI LOG:\r\n%s\r\nUMP LOG:\r\n%s"%(locals,errlog,kodilog,umplog)
+        content="LOCAL INFO:\r\n%s\r\nERROR LOG:\r\n%s\r\nKODI LOG:\r\n%s\r\nUMP LOG:\r\n%s\r\n%s"%(locals,errlog,kodilog,umplog,extra)
         upload(content,name)
     else:
         print errlog
         
-def collect_log(logtype,head,msg,umplog,e=None):
+def collect_log(logtype,head,msg,umplog,e=None,more=True):
     errlog=""
     fname=logtype
     umplog=umplog.split("\n")
@@ -46,4 +46,15 @@ def collect_log(logtype,head,msg,umplog,e=None):
     localdata+="\r\n"
     fname=fname.replace(" ","_").replace("/","-").replace(":","-").replace("?","-").replace(".","-")
     fname+=".log"
-    upload_log(head,msg,fname,localdata,errlog,kodilog,umplog)
+    from ump import defs
+    extra=""
+    if more:
+        others={"working_xml":os.path.join(defs.addon_ddir,"settings.xml"),"addon_xml":defs.addon_setxml,"addon_prefs":defs.addon_preffile,"addon_cookies":defs.addon_cookfile,"kodi_advanced":defs.kodi_setxml}
+        for k,v in others.iteritems():
+            if os.path.exists(v):
+                f=open(v)
+                extra+="\r\n%s : \r\n %s"%(k.upper(),f.read().replace("\n","\r\n"))
+                f.close()
+            else:
+                extra+="\r\n%s : %s does not exist"%(k.upper(),v)
+    upload_log(head,msg,fname,localdata,errlog,kodilog,umplog,extra)
