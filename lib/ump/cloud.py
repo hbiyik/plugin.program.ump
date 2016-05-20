@@ -49,7 +49,7 @@ def collect_log(logtype,head,msg,umplog,e=None,more=True):
     from ump import defs
     extra=""
     if more:
-        others={"working_xml":os.path.join(defs.addon_ddir,"settings.xml"),"addon_xml":defs.addon_setxml,"addon_prefs":defs.addon_preffile,"addon_cookies":defs.addon_cookfile,"kodi_advanced":defs.kodi_setxml}
+        others={"working_xml":os.path.join(defs.addon_ddir,"settings.xml"),"addon_xml":defs.addon_setxml,"addon_prefs":defs.addon_preffile,"addon_cookies":defs.addon_cookfile,"kodi_advanced":defs.kodi_setxml,"guisettings":defs.kodi_guixml}
         for k,v in others.iteritems():
             if os.path.exists(v):
                 f=open(v)

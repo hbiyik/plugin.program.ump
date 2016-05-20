@@ -8,7 +8,12 @@ def read(xname):
         f=open(xname,"r")
         data=f.read()
         f.close()
-        return minidom.parseString(data)
+        #ignore wihtespace befaor '<' character. some android versions suspected to put chars in front of xmls 
+        c=0
+        for c in range(len(data)):
+            if data[c]=="<":
+                break     
+        return minidom.parseString(data[c:])
     except:
         return
 

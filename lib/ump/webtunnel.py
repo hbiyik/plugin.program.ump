@@ -36,7 +36,7 @@ def check_health(ump,force=False):
 		return 
 	
 	import prefs
-	interval=int(addon.getSetting("tn_chk_prd"))
+	interval=int(float(addon.getSetting("tn_chk_prd")))
 	attrs=[]
 	for tunnel in tunnels.keys():
 		lasttime=prefs.get("tunnelstates",tunnel,"lastcheck")

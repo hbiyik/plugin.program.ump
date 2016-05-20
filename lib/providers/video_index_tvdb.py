@@ -306,7 +306,7 @@ def run(ump):
 			commands=[]
 			commands.append(('Search on IMDB : %s'%names[id]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":names[id]["tvshowtitle"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS},module="imdb")))
 			commands.append(('Search on ANN : %s'%names[id]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":names[id]["tvshowtitle"]},module="ann")))
-			for person in data[id]["info"].get("cast","")[:4]:
+			for person in data[id]["info"].get("cast","")[:3]:
 				if not person=="":
 					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
 			ump.index_item(suggest+names[id]["localtitle"],"seasons",{"tvdbid":id},info=names[id],art=data[id]["art"],cmds=commands)
@@ -337,7 +337,7 @@ def run(ump):
 			commands=[]
 			commands.append(('Search on IMDB : %s'%epis["episode"][epno]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":epis["episode"][epno]["info"]["tvshowtitle"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS},module="imdb")))
 			commands.append(('Search on ANN : %s'%epis["episode"][epno]["info"]["tvshowtitle"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":epis["episode"][epno]["info"]["tvshowtitle"]},module="ann")))
-			for person in epis["episode"][epno]["info"].get("cast","")[:4]:
+			for person in epis["episode"][epno]["info"].get("cast","")[:3]:
 				if not person=="":
 					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
 			for person in epis["episode"][epno]["info"].get("director","").split(","):

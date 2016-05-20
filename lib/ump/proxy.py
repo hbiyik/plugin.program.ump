@@ -13,6 +13,7 @@ def get_set(genset,n):
 		return nd.lastChild.data
 
 def getsocket():
+	gen_set=None
 	try:
 		gen_set=dom.read(kodi_guixml)
 		if not get_set(gen_set,"usehttpproxy").lower() == "false":
