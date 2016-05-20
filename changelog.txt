@@ -1,3 +1,12 @@
+2016-05-21: tvdb: limit cats searches, cloud: collect guisettings.xml also, dom: workaround for illegal whitespace chars ins xml on some android platforms, proxy: fix gen_set, webtunnel: fix for android kodi returns xml strings in float format.
+2016-05-20: settings: fix ident
+2016-05-20: cloud: collect working settings.xml, settings.xml, advancedsettings.xml, preferences.json, cookies. Need more data to debug some problems.
+2016-05-20: addon: dont raise another exception and check globals if ump has inited
+2016-05-19: dropbox: new third party lib, logviewer: new third party module, urllib3: new third party lib, cloud: new function to send logs to dropbox, addon: handle all api crashes, api: cache all logs, settings: forward debug messages to log file by default,
+2016-05-19: lastfm: use musicbrainz json data instead of regex
+2016-05-19: tvdb: limit context menues with 4 actors, api: workaround for issue:38
+2016-05-19: lastfm: manual synch albums&tracks with musicbrainz, grooveshark: search artist-track even site does not match, api: fix icons/thums not shown in kodi favs, dom: fix for android 4.0.4 copy is restricted by os. task: fix for android 4.0.4 causes dead lock with python uuid module.
+2016-04-24: 0.0.68 Version Release
 2016-04-24: dom: dont replace copy2 with copy
 2016-04-24: backup: add backup xmls
 2016-04-24: api: redesign xml parser, implement xml recoveries, fix listitem setinfo bug
