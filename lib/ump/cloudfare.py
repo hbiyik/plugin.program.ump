@@ -6,6 +6,7 @@ import urllib2
 from socket import setdefaulttimeout
 from third import recaptcha
 from urlparse import urlparse
+import urllib
 
 noredirs=["/cdn-cgi/l/chk_jschl","/cdn-cgi/l/chk_captcha"]
 try:
@@ -17,10 +18,13 @@ except AttributeError:
 
 max_sleep=30
 
-def dec(s):
-	offset=1 if s[0]=='+' else 0
-	return int(eval(s.replace('!+[]','1').replace('!![]','1').replace('[]','0').replace('(','str(')[offset:]))
-
+def solve_equation(equation):
+	try:
+		offset = 1 if equation[0] == '+' else 0
+		return int(eval(equation.replace('!+[]', '1').replace('!![]', '1').replace('[]', '0').replace('(', 'str(')[offset:]))
+	except:
+		pass
+	
 def readzip(err):
 	if err.info().get('Content-Encoding') == 'gzip':
 		buf = StringIO(err.read())
@@ -72,26 +76,43 @@ def ddos_open(url,opener,req,data,timeout,cj,cfagents,cflocks,tunnel,tmode):
 			if p in req.unredirected_hdrs:
 				req.unredirected_hdrs.pop(p)
 		if err.code == 503 and "/cdn-cgi/l/chk_jschl" in body:
-			try:
-				challenge = re.search(r'name="jschl_vc" value="(\w+)"', body).group(1)
-				challenge_pass = re.search(r'name="pass" value="(.+?)"', body).group(1)
-				builder = re.search(r"setTimeout\(function\(\){\s+(var t,r,a,f.+?\r?\n[\s\S]+?a\.value =.+?)\r?\n", body).group(1)
-				builder = re.sub(r"a\.value =(.+?) \+ .+?;", r"\1", builder)
-				builder = re.sub(r"\s{3,}[a-z](?: = |\.).+", "", builder)
-			except Exception as e:
-				raise
-			d,k,m=re.findall(',\s(.*?)={"(.*?)":(.*?)}',builder)[0]
-			ops=re.findall(d+"\."+k+"(.)\=(.*?)\;",builder)
-			res=dec(m)
-			for op in ops:
-				res=eval("res"+op[0]+"dec('"+op[1]+"')")
-			u=re.sub("https?://","",url)
-			u=u.split("/")[0]
-			answer= str(res+len(u))
+			#new algo is credited to tknorris
+			solver_pattern = 'var (?:s,t,o,p,b,r,e,a,k,i,n,g|t,r,a),f,\s*([^=]+)={"([^"]+)":([^}]+)};.+challenge-form\'\);.*?\n.*?;(.*?);a\.value'
+			vc_pattern = 'input type="hidden" name="jschl_vc" value="([^"]+)'
+			pass_pattern = 'input type="hidden" name="pass" value="([^"]+)'
+			init_match = re.search(solver_pattern, body, re.DOTALL)
+			vc_match = re.search(vc_pattern, body)
+			pass_match = re.search(pass_pattern, body)
+			init_dict, init_var, init_equation, equations = init_match.groups()
+			vc = vc_match.group(1)
+			password = pass_match.group(1)
+			varname = (init_dict, init_var)
+			result = int(solve_equation(init_equation.rstrip()))
+			for equation in equations.split(';'):
+					equation = equation.rstrip()
+					if equation[:len('.'.join(varname))] != '.'.join(varname):
+							print 'Equation does not start with varname |%s|' % equation
+					else:
+							equation = equation[len('.'.join(varname)):]
+		
+					expression = equation[2:]
+					operator = equation[0]
+					if operator not in ['+', '-', '*', '/']:
+						print 'Unknown operator: |%s|' % (equation)
+						continue
+						
+					result = int(str(eval(str(result) + operator + str(solve_equation(expression)))))
+					print 'intermediate: %s = %s' % (equation, result)
+			
+			scheme = up.scheme
+			domain = up.hostname
+			result += len(domain)
+			#credit ends here :)
+			print 'Final Result: |%s|' % (result)			
 			waittime=float(re.findall("\}\,\s([0-9]*?)\)\;",body)[0])/1000
 			print "%s has been stalled for %d seconds due to cloudfare protection"%(err.url,waittime)
 			time.sleep(waittime)
-			new_url="%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&pass=%s&jschl_answer=%s"%(up.scheme,up.netloc,challenge,challenge_pass,answer)
+			new_url = '%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s&pass=%s' % (scheme, domain, vc, result, urllib.quote(password))
 			cflogin(new_url,ua,req,opener,tunnel,tmode,cj,cfagents,up)
 			response=opener.open(req,data,timeout)
 		elif err.code == 403 and "/cdn-cgi/l/chk_captcha" in body:
