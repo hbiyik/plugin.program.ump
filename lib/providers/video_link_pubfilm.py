@@ -80,22 +80,16 @@ def run(ump):
 		ump.add_log("pubfilm can't match %s"%name)
 		return None
 
-	link1=re.findall('"(http://player.pubfilm.com/.*?)"',page)
+	link1=re.findall('"(http://player.pubfilm.com/api.*?)"',page)
 	for link in link1:
 		page=ump.get_page(link,encoding,referer=mlink)
-		link2=re.findall('link:"(.*?)"',page)
-		if len(link2)>0:
-			page=ump.get_page("http://player.pubfilm.com/smplayer/plugins/gkphp/plugins/gkpluginsphp.php",encoding,data={"link":link2[0]},referer=link1)
-			links=json.loads(page)
+		try:
+			data=eval(re.findall("sources\:(.*?\])",page)[0])
 			mparts={}
-			if not "link" in links.keys():
-				continue
-			if not isinstance(links["link"],list):
-				mparts["video"]=links["link"]
-			else:
-				for link in links["link"]:
-					mparts[link["label"]]=link["link"]
+			for link in data:
+				mparts[link["label"]]=link["file"]
 			parts=[{"url_provider_name":"google", "url_provider_hash":mparts,"referer":link1}]
-			ump.add_mirror(parts,"%s %s"%(prefix,name))
-			ump.add_log("pubfilm decoded google : %s"%name)
+			ump.add_mirror(parts,"%s %s"%(prefix,name))			
+		except:
+			ump.add_log("pubfilm cant scrape %s"%link)
 			

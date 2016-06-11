@@ -53,6 +53,7 @@ def decode(encoded):
 
 def run(hash,ump,referer=None):
 	data=ump.get_page(domain+"embed/"+hash,None)
+	# decodeOpenLoad made by mortael, please leave this line for proper credit :)
 	aastring = re.compile("<script[^>]+>(ﾟωﾟﾉ[^<]+)<", re.DOTALL | re.IGNORECASE).findall(data)
 	haha = re.compile(r"welikekodi_ya_rly = (\d+) - (\d+)", re.DOTALL | re.IGNORECASE).findall(data)
 	haha = int(haha[0][0]) - int(haha[0][1])
