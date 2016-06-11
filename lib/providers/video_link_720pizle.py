@@ -53,20 +53,42 @@ def run(ump):
 	for name in names:
 		if match:break
 		ump.add_log("720pizle is searching %s" % name)
-		results=json.loads(ump.get_page(domain+"/api/autocompletesearch.asp",encoding,query={"limit":"10","q":name}))
-		if len(results)==0 or len(results)==1 and "orgfilmadi" in results[0].keys() and "Bulunamad" in results[0]["orgfilmadi"] : 
-			ump.add_log("720pizle can't find any links for %s"%name)
-			continue
+		results=ump.get_page("%s/ara.asp"%domain,encoding,query={"a":name})
+		results=re.findall('<span class="oval">(.*?)</span>.*?<a class="sayfa\-icerik\-baslik" href="(.*?)">',results,re.DOTALL)
+		print results
+		#results=json.loads(ump.get_page(domain+"/api/autocompletesearch.asp",encoding,query={"limit":"10","q":name}))
+		#if len(results)==0 or len(results)==1 and "orgfilmadi" in results[0].keys() and "Bulunamad" in results[0]["orgfilmadi"] : 
+		#	ump.add_log("720pizle can't find any links for %s"%name)
+		#	continue
 
 		for result in results:
-			if result["imdbid"]==i["code"]:
-				ump.add_log("720pizle matched %s with imdb:%s" % (i["title"],result["imdbid"]))
-				match=result["url"]
-				break
-			elif ump.is_same(result["orgfilmadi"],name) and ump.is_same(result["yil"],i["year"]):
-				ump.add_log("720pizle matched %s in %s" % (name,result["yil"]))
-				match=result["url"]
-				break
+			#if result["imdbid"]==i["code"]:
+			#	ump.add_log("720pizle matched %s with imdb:%s" % (i["title"],result["imdbid"]))
+			#	match=result["url"]
+			#	break
+			#elif ump.is_same(result["orgfilmadi"],name) and ump.is_same(result["yil"],i["year"]):
+			#	ump.add_log("720pizle matched %s in %s" % (name,result["yil"]))
+			#	match=result["url"]
+			#	break
+			[(u'Matrix Reloaded - The Matrix Reloaded (2003)', u'/detay/the-matrix-reloaded.html'), (u'Matrix Revolutions - The Matrix Revolutions (2003)', u'/detay/the-matrix-revolutions.html'), (u'Matrix - The Matrix (1999)', u'/detay/the-matrix.html')]
+			sub=result[0].split("(")
+			link=result[1]
+			year=0
+			if len(sub) and len(sub[1])==5:
+					year=int(sub[1][:-1])
+					fnames=sub[0].split("-")
+			else:
+				fnames=result[0].split["-"]
+			for fname in fnames:
+				if ump.is_same(name,fname):
+					if year>0 and i["year"]==year:
+						ump.add_log("720pizle matched %s in %d" % (name,year))
+						match=link
+						break
+					elif year==0:
+						ump.add_log("720pizle matched %s "%name)
+						match=link
+						break
 		time.sleep(1)
 
 	if not match:

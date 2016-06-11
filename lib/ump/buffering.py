@@ -49,6 +49,10 @@ def force(mode):
 def get():
 	if path.exists(setxml):
 		res=dom.read(setxml)
+		if not res:
+			#minidom weirdness
+			res.unlink()
+			return "0" 
 		adv=getchild(res,res,"advancedsettings")
 		nw=getchild(res,adv,"network")
 		bm=getchild(res,nw,"buffermode")
