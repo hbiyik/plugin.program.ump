@@ -59,8 +59,10 @@ def scrape_epi(page,elink):
 	etitle=re.findall("<mark class='original-title'>(.*?)</mark>",page)
 	if not len(etitle):
 		return True
-	etype=re.findall("selected='selected'>(.*?)</option>",page)[0]
-	ops=re.findall("value='(.*?)'>(.*?)</option>",page)
+	pagination=re.findall("(<a class='woca-current-page'.*?>.*?)</div>",page)[0]
+	links=re.findall("href=.(.*?).>(.*?)<",pagination)
+	etype=links[0][1]
+	ops=links[1:]
 	try:
 		prefix,parts=scrape_page(page,etype.lower())
 	except:
