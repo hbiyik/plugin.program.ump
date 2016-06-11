@@ -378,7 +378,7 @@ class ump():
 		if not errtype=="killbill":
 			log=traceback.format_exc()
 			self.log=log+"\n"+self.log
-			if not addon.getSetting("tracetolog")=="true":
+			if addon.getSetting("tracetolog")=="true":
 				xbmc.log(log,defs.loglevel)
 
 	def add_log(self,line):
