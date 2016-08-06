@@ -1,5 +1,6 @@
 from third import dropbox
 import xbmcgui
+import sys
 
 def upload(content,name,overwrite=True):
     dropbox.client.DropboxClient("oDWx2zTSXZAAAAAAAAAACCD5aQr2FgS-fe33WMr7moiZr9aHAp0gpuvUyXtiDHX5").put_file("/%s"%name, content,overwrite=overwrite)
@@ -7,7 +8,7 @@ def upload(content,name,overwrite=True):
 def upload_log(head,msg,name,locals,errlog,kodilog,umplog,extra):
     dialog = xbmcgui.Dialog()
     if(dialog.yesno(head,msg)):
-        content="LOCAL INFO:\r\n%s\r\nERROR LOG:\r\n%s\r\nKODI LOG:\r\n%s\r\nUMP LOG:\r\n%s\r\n%s"%(locals,errlog,kodilog,umplog,extra)
+        content="SYS ARGV:%s\r\nLOCAL INFO:\r\n%s\r\nERROR LOG:\r\n%s\r\nKODI LOG:\r\n%s\r\nUMP LOG:\r\n%s\r\n%s"%(str(sys.argv)+"\r\n",locals,errlog,kodilog,umplog,extra)
         upload(content,name)
     else:
         print errlog
