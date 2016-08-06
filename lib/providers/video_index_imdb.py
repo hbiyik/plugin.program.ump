@@ -51,80 +51,77 @@ def scrape_imdb_names(page):
 
 def scrape_imdb_search(page):
 	m1=[]
-	trs=re.findall('detailed"\>(.*?)\</tr\>',page,re.DOTALL)
-	for tr in trs:
+	trs=re.findall('<div class="lister-list">(.*?)<div id="sidebar">',page,re.DOTALL)
+	if not len(trs):
+		return 0,0,0,m1
+	for tr in trs[0].split("lister-item mode-advanced")[1:]:
 		#image
-		poster=re.findall('img src="(.*?)"',tr)
+		poster=re.findall('img.*?loadlate="(.*?)"',tr,re.DOTALL)
 		if len(poster)>0:
 			poster=poster[0].split("._")[0]
+		#title
+		title=re.findall('img.*?alt="(.*?)"',tr,re.DOTALL)[0]
 		
-		#name/id
-		title=re.findall('href="/title/tt([0-9]*?)/"\>(.*?)\</a\>',tr)
-		if len(title)>0:
-			id="tt"+str(title[0][0])
-			title=title[0][1]
-		else:
-			title=""
-			id=""
-		
+		#id
+		id=re.findall('img.*?data-tconst="(.*?)"',tr,re.DOTALL)[0]
+
 		#outline
-		outline=re.findall('class="outline"\>(.*?)\</span',tr)
-		if len(outline)>0 :
+		outline=re.findall('<p class="text-muted">\n(.*?)<',tr,re.DOTALL)
+		if len(outline):
 			outline=outline[0]
 		else:
 			outline=""
 
-		#director
-		dirs=re.findall('Dir:(.*?)\\n',tr)
+		#director/casting
 		dir=""
-		if len(dirs)>0:
-			dirs=re.findall("\>(.*?)\<",dirs[0])
-			for dr in dirs:
-				dir+=dr
-
-		#cast
-		cast=re.findall('With:(.*?)\\n',tr)
-		if len(cast)>0:
-			cast=re.findall('"\>(.*?)\</a',cast[0])
-		else:
-			cast=[]
-
+		cast=[]
+		dir_stars=re.findall('Directors?:(.*?)</p',tr,re.DOTALL)
+		if not len(dir_stars):
+			dir_stars=re.findall('(Stars:.*?)</p',tr,re.DOTALL)
+		if len(dir_stars):
+			if "Stars:" in dir_stars[0]:
+				dirs,stars=dir_stars[0].split("Stars:")
+			else:
+				dirs=dir_stars[0]
+				stars=""
+			dir=", ".join(re.findall("\n>(.*?)</a",dirs,re.DOTALL))
+			cast=re.findall("\n>(.*?)</a",stars,re.DOTALL)
+		
 		#genre
-		gen=""
-		genres=re.findall('class="genre"\>(.*?)\</span',tr)
-		if len(genres)>0:
-			genres=re.findall("\>(.*?)\<",genres[0])
-			for genre in genres:
-				gen+=genre
-				
+		gen=re.findall('class="genre"\>\n(.*?)\</span',tr)
+		if len(gen):
+			gen=gen[0]
+		else:
+			gen=""
+
 		#year
-		year=re.findall('class="year_type"\>\(([0-9]{4})',tr)
+		year=re.findall('<span class="lister-item-year text-muted unbold">\(([0-9]{4})',tr)
 		if len(year)>0:
 			year=int(year[0])
 		else:
-			year=""
-		
+			year=0
+
 		#duration
-		runtime=re.findall('class="runtime"\>([0-9].*?)\s',tr)
-		if len(runtime)>0:
-			runtime=str(runtime[0])
+		runtime=re.findall('class="runtime">([0-9].*?)\s',tr)
+		if len(runtime):
+			runtime=int(runtime[0])*60
 		else:
-			runtime=""
+			runtime=0
 
 		#mpaa
-		mpaa=re.findall('class="certificate"\>\<span title="(.*?)"',tr)
+		mpaa=re.findall('class="certificate">(.*?)</span',tr)
 		if len(mpaa)>0:
 			mpaa=mpaa[0]
 		else:
 			mpaa=""
-		
+
 		#rating
 		rating=re.findall('class="value"\>(.*?)\</span',tr)
 		if len(rating)>0:
 			if "-" in rating[0][0]:
 				rating=float(0)
 			else:
-				rating=float(rating[0])
+				rating=float(rating[0].replace(",","."))
 		else:
 			rating=float(0)
 
@@ -182,7 +179,6 @@ def scrape_imdb_search(page):
 			"clearlogo":"",
 			"landscape":""
 			}
-
 		m1.append(movie)
 	
 	def alternate(key,id):
