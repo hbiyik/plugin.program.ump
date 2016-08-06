@@ -281,7 +281,6 @@ class ump():
 				elif xbmc.getCondVisibility('Container.Content(%s)' % content_cat) or True:
 					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
 					break
-				print i
 				xbmc.sleep(100)
 				
 	def is_same(self,name1,name2,strict=False):
@@ -339,7 +338,6 @@ class ump():
 		self.tunnel.cook(self.cj,self.cj.make_cookies(response,req),tmode)
 			
 		if head :return response
-		
 		stream=cloudfare.readzip(response)
 		stream=self.tunnel.post(stream,tmode)
 
@@ -352,8 +350,10 @@ class ump():
 		return src
 	
 	def web_search(self,query):
+		#to do: implement a new search engine that is not money greedy,this service is down
+		return []
 		if self.ws_limit:
-			return None
+			return []
 		urls=[]
 		query={"v":"1.0","q":query}
 		j=json.loads(self.get_page("http://ajax.googleapis.com/ajax/services/search/web","utf-8",query=query))
@@ -562,15 +562,15 @@ class ump():
 		#if urls require validation and url is not validated or timed out
 		if not "uptime" in part.keys() or time.time()-part["uptime"]>timeout:
 
-			try:
-				self.add_log("retrieving url from %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
-				part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
-			except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
-				self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
-				part["urls"]={}
-			except Exception,e:
-				self.notify_error(e)
-				part["urls"]={}
+			#try:
+			self.add_log("retrieving url from %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
+			part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
+			#except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
+			#	self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
+			#	part["urls"]={}
+			#except Exception,e:
+			#	self.notify_error(e)
+			#	part["urls"]={}
 			#validate url by downloading header (and check quality)
 			if not isinstance(part["urls"],dict):
 				part["urls"]={}

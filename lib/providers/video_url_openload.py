@@ -101,5 +101,4 @@ def run(hash,ump,referer=None):
 	response = urllib2.urlopen(request)
 	url = response.geturl()
 	response.close()
-	print url
 	return {"url":url,"referer":url}

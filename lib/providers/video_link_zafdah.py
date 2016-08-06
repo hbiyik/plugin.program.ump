@@ -92,7 +92,7 @@ def run(ump):
 	if not exact:
 		ump.add_log("afdah can't match %s"%names[0])
 		return None
-	mirrors=re.findall('href="(.*?)" target="_blank">',page,re.DOTALL)
+	mirrors=re.findall('<a rel="nofollow" href="(.*?)" target="_blank">',page,re.DOTALL)
 	embeds=re.findall('href="(http://afdah.tv/embed.*?)" target\="new">',page,re.DOTALL)
 
 
@@ -102,6 +102,8 @@ def run(ump):
 		mname=name
 
 	for embed in embeds:
+		continue
+		#to do fix encription
 		src=ump.get_page(embed,encoding)
 		encoded=re.findall('draw\("(.*?)"\)\;',src)
 		if len(encoded):
@@ -150,7 +152,6 @@ def run(ump):
 			ump.add_mirror(parts,mname)
 
 	for mirror in mirrors:
-		continue
 		uri = urlparse.urlparse(mirror)
 		prv=uri.hostname.split(".")[-2]
 		hash=codify(prv,uri.path)
