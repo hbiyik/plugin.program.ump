@@ -1,112 +1,105 @@
 # -*- coding: utf-8 -*-
 
+import urllib2
+import base64
+import math
 import re
-
+from third import png
 domain="https://www.openload.co/"
-
-def base10toN(num,n):
-	num_rep={10:'a',
-		11:'b',
-		12:'c',
-		13:'d',
-		14:'e',
-		15:'f',
-		16:'g',
-		17:'h',
-		18:'i',
-		19:'j',
-		20:'k',
-		21:'l',
-		22:'m',
-		23:'n',
-		24:'o',
-		25:'p',
-		26:'q',
-		27:'r',
-		28:'s',
-		29:'t',
-		30:'u',
-		31:'v',
-		32:'w',
-		33:'x',
-		34:'y',
-		35:'z'}
-	new_num_string=''
-	current=num
-	while current!=0:
-		remainder=current%n
-		if 36>remainder>9:
-			remainder_string=num_rep[remainder]
-		elif remainder>=36:
-			remainder_string='('+str(remainder)+')'
-		else:
-			remainder_string=str(remainder)
-		new_num_string=remainder_string+new_num_string
-		current=current/n
-	return new_num_string
-
-def decode(encoded):
-	for octc in (c for c in re.findall(r'\\(\d{2,3})', encoded)):
-		encoded = encoded.replace(r'\%s' % octc, chr(int(octc, 8)))
-	return encoded.decode('utf8')
-
-
+encoding="utf-8"
 def run(hash,ump,referer=None):
-	data=ump.get_page(domain+"embed/"+hash,None)
-	# decodeOpenLoad made by mortael, please leave this line for proper credit :)
-	aastring = re.compile("<script[^>]+>(ﾟωﾟﾉ[^<]+)<", re.DOTALL | re.IGNORECASE).findall(data)
-	haha = re.compile(r"welikekodi_ya_rly = (\d+) - (\d+)", re.DOTALL | re.IGNORECASE).findall(data)
-	haha = int(haha[0][0]) - int(haha[0][1])
-	
-	aastring = aastring[haha]
+	url=domain+"embed/"+hash
+	HTTP_HEADER = {
+		'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+		'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+		'Accept-Encoding': 'none',
+		'Accept-Language': 'en-US,en;q=0.8',
+		'Referer': url}  # 'Connection': 'keep-alive'
 
-	aastring = aastring.replace("(ﾟДﾟ)[ﾟεﾟ]+(oﾟｰﾟo)+ ((c^_^o)-(c^_^o))+ (-~0)+ (ﾟДﾟ) ['c']+ (-~-~1)+","")
-	aastring = aastring.replace("((ﾟｰﾟ) + (ﾟｰﾟ) + (ﾟΘﾟ))", "9")
-	aastring = aastring.replace("((ﾟｰﾟ) + (ﾟｰﾟ))","8")
-	aastring = aastring.replace("((ﾟｰﾟ) + (o^_^o))","7")
-	aastring = aastring.replace("((o^_^o) +(o^_^o))","6")
-	aastring = aastring.replace("((ﾟｰﾟ) + (ﾟΘﾟ))","5")
-	aastring = aastring.replace("(ﾟｰﾟ)","4")
-	aastring = aastring.replace("((o^_^o) - (ﾟΘﾟ))","2")
-	aastring = aastring.replace("(o^_^o)","3")
-	aastring = aastring.replace("(ﾟΘﾟ)","1")
-	aastring = aastring.replace("(+!+[])","1")
-	aastring = aastring.replace("(c^_^o)","0")
-	aastring = aastring.replace("(0+0)","0")
-	aastring = aastring.replace("(ﾟДﾟ)[ﾟεﾟ]","\\")
-	aastring = aastring.replace("(3 +3 +0)","6")
-	aastring = aastring.replace("(3 - 1 +0)","2")
-	aastring = aastring.replace("(!+[]+!+[])","2")
-	aastring = aastring.replace("(-~-~2)","4")
-	aastring = aastring.replace("(-~-~1)","3")
-	aastring = aastring.replace("(-~0)","1")
-	aastring = aastring.replace("(-~1)","2")
-	aastring = aastring.replace("(-~3)","4")
-	aastring = aastring.replace("(0-0)","0")
-	
-	decodestring = re.search(r"\\\+([^(]+)", aastring, re.DOTALL | re.IGNORECASE).group(1)
-	decodestring = "\\+"+ decodestring
-	decodestring = decodestring.replace("+","")
-	decodestring = decodestring.replace(" ","")
-	
-	decodestring = decode(decodestring)
-	decodestring = decodestring.replace("\\/","/")
-	
-	if 'toString' in decodestring:
-		base = re.compile(r"toString\(a\+(\d+)", re.DOTALL | re.IGNORECASE).findall(decodestring)[0]
-		base = int(base)
-		match = re.compile(r"(\(\d[^)]+\))", re.DOTALL | re.IGNORECASE).findall(decodestring)
-		for repl in match:
-			match1 = re.compile(r"(\d+),(\d+)", re.DOTALL | re.IGNORECASE).findall(repl)
-			base2 = base + int(match1[0][0])
-			repl2 = base10toN(int(match1[0][1]),base2)
-			decodestring = decodestring.replace(repl,repl2)
-		decodestring = decodestring.replace("+","")
-		decodestring = decodestring.replace("\"","")
-		videourl = re.search(r"(http[^\}]+)", decodestring, re.DOTALL | re.IGNORECASE).group(1)
-	else:
-		videourl = re.search(r"vr\s?=\s?\"|'([^\"']+)", decodestring, re.DOTALL | re.IGNORECASE).group(1)
-	
-#	headers = { 'User-Agent' : ump.ua,"Referer":domain+"embed/"+hash }
-#	req = urllib2.Request(url, None, headers)
-	return {"url":{"url":videourl,"referer":domain+"embed/"+hash}}
+	data = ump.get_page(url, encoding,header=HTTP_HEADER)
+
+	# If you want to use the code for openload please at least put the info from were you take it:
+	# for example: "Code take from plugin IPTVPlayer: "https://gitlab.com/iptvplayer-for-e2/iptvplayer-for-e2/"
+	# It will be very nice if you send also email to me samsamsam@o2.pl and inform were this code will be used
+
+	# get image data
+	imageData = re.search('''<img[^>]*?id="linkimg"[^>]*?src="([^"]+?)"''', data, re.IGNORECASE).group(1)
+
+	imageData = base64.b64decode(imageData.split('base64,')[-1])
+	_x, _y, pixel, _meta = png.Reader(bytes=imageData).read()
+
+	imageData = None
+	imageStr = ''
+	try:
+		for item in pixel:
+			for p in item:
+				# common.log_utils.log_notice('openload resolve : 1.7 %s' % p)
+				imageStr += chr(p)
+	except:
+		pass
+
+	# split image data
+	imageTabs = []
+	i = -1
+	for idx in range(len(imageStr)):
+		if imageStr[idx] == '\0':
+			break
+		if 0 == (idx % (12 * 20)):
+			imageTabs.append([])
+			i += 1
+			j = -1
+		if 0 == (idx % (20)):
+			imageTabs[i].append([])
+			j += 1
+		imageTabs[i][j].append(imageStr[idx])
+
+	# get signature data
+	# sts, data = self.cm.getPage('https://openload.co/assets/js/obfuscator/numbers.js', {'header': HTTP_HEADER})
+	data = ump.get_page('https://openload.co/assets/js/obfuscator/n.js',encoding, header=HTTP_HEADER)
+
+	signStr = re.search('''['"]([^"^']+?)['"]''', data, re.IGNORECASE).group(1)
+
+	# split signature data
+	signTabs = []
+	i = -1
+	for idx in range(len(signStr)):
+		if signStr[idx] == '\0':
+			break
+		if 0 == (idx % (11 * 26)):
+			signTabs.append([])
+			i += 1
+			j = -1
+		if 0 == (idx % (26)):
+			signTabs[i].append([])
+			j += 1
+		signTabs[i][j].append(signStr[idx])
+
+	# get link data
+	linkData = {}
+	for i in [2, 3, 5, 7]:
+		linkData[i] = []
+		tmp = ord('c')
+		for j in range(len(signTabs[i])):
+			for k in range(len(signTabs[i][j])):
+				if tmp > 122:
+					tmp = ord('b')
+				if signTabs[i][j][k] == chr(int(math.floor(tmp))):
+					if len(linkData[i]) > j:
+						continue
+					tmp += 2.5
+					if k < len(imageTabs[i][j]):
+						linkData[i].append(imageTabs[i][j][k])
+	res = []
+	for idx in linkData:
+		res.append(''.join(linkData[idx]).replace(',', ''))
+
+	res = res[3] + '~' + res[1] + '~' + res[2] + '~' + res[0]
+	videoUrl = 'https://openload.co/stream/{0}?mime=true'.format(res)
+	dtext = videoUrl.replace('https', 'http')
+	request = urllib2.Request(dtext, None, HTTP_HEADER)
+	response = urllib2.urlopen(request)
+	url = response.geturl()
+	response.close()
+	print url
+	return {"url":url,"referer":url}
