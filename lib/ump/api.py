@@ -8,6 +8,7 @@ import socket
 from string import punctuation
 import sys
 import time
+import datetime
 import traceback
 from urllib import urlencode
 import urllib2
@@ -394,13 +395,13 @@ class ump():
 			self.dialog.notification("ERROR","%s : %s"%(modname, errtype))
 		if not errtype=="killbill":
 			log=traceback.format_exc()
-			self.log=log+"\n"+self.log
+			#self.err_log=datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]+": "+log+"\n"+self.err_log
 			if addon.getSetting("tracetolog")=="true":
 				xbmc.log(log,defs.loglevel)
 
 	def add_log(self,line):
 		line=unidecode(unicode(line))
-		self.log=line+"\n"+self.log
+		self.log=datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]+": "+line+"\n"+self.log
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.window.status.setText(self.log)
 		if addon.getSetting("logtolog")=="true":
@@ -579,15 +580,15 @@ class ump():
 		#if urls require validation and url is not validated or timed out
 		if not "uptime" in part.keys() or time.time()-part["uptime"]>timeout:
 
-			#try:
-			self.add_log("retrieving url from %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
-			part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
-			#except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
-			#	self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
-			#	part["urls"]={}
-			#except Exception,e:
-			#	self.notify_error(e)
-			#	part["urls"]={}
+			try:
+				self.add_log("retrieving url from %s:%s"%(part["url_provider_name"],part["url_provider_hash"]))
+				part["urls"]=provider.run(part["url_provider_hash"],self,part.get("referer",""))
+			except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
+				self.add_log("dismissed due to timeout: %s " % part["url_provider_name"])
+				part["urls"]={}
+			except Exception,e:
+				self.notify_error(e)
+				part["urls"]={}
 			#validate url by downloading header (and check quality)
 			if not isinstance(part["urls"],dict):
 				part["urls"]={}
