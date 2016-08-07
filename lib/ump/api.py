@@ -110,11 +110,17 @@ class ump():
 		result=parse_qs(query)
 		[self.module]= result.get('module', ["ump"])
 		[self.page]= result.get('page', ["root"])
-		[args]= result.get('args', ["{}"])
-		self.args=json.loads(args)
+		[args]= result.get('args', ["e30="])
+		try:
+			self.args=json.loads(args.decode("base64"))
+		except:
+			self.args=json.loads(args) # old url formatting
 		for keep in ["info","art"]:
-			[lst]=result.get(keep, ["{}"])
-			setattr(self,keep,json.loads(lst))
+			[lst]=result.get(keep, ["e30="])
+			try:
+				setattr(self,keep,json.loads(lst.decode("base64")))
+			except:
+				setattr(self,keep,json.loads(lst))
 		[self.content_type]= result.get('content_type', ["ump"])
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
@@ -299,10 +305,10 @@ class ump():
 		query={}
 		query["module"]=[module,self.module][module is None]
 		query["page"]=[page,self.page][page is None]
-		query["args"]=json.dumps(args)
+		query["args"]=json.dumps(args).encode("base64")
 		query["content_type"]=[content_type,self.content_type][content_type is None]
 		for keep in ["info","art"]:
-			query[keep]=json.dumps(getattr(self,keep))
+			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
 		return sys.argv[0] + '?' + urlencode(query)
 
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False):

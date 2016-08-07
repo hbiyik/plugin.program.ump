@@ -43,12 +43,21 @@ def decode(uri):
 	[content_cat]=result.get('content_type', ["ump"])
 	[module]= result.get('module', ["ump"])
 	[page]= result.get('page', ["root"])
-	[args]= result.get('args', ["{}"])
-	args=json.loads(args.encode("utf-8"))
-	[info]=result.get("info", ["{}"])
-	info=json.loads(info.encode("utf-8"))
-	[art]=result.get("art", ["{}"])
-	art=json.loads(art.encode("utf-8"))
+	[args]= result.get('args', ["e30="])
+	try:
+		args=json.loads(args.decode("base64"))
+	except:
+		args=json.loads(args.encode("utf-8")) #old url encoding format
+	[info]=result.get("info", ["e30="])
+	try:
+		info=json.loads(info.decode("base64"))
+	except:
+		info=json.loads(info.encode("utf-8"))
+	[art]=result.get("art", ["e30="])
+	try:
+		art=json.loads(art.decode("base64"))
+	except:
+		art=json.loads(art.encode("utf-8"))
 	return uri.path,content_cat.encode("utf-8"),module.encode("utf-8"),page.encode("utf-8"),args,info,art
 
 def load():
@@ -135,7 +144,7 @@ def add(isFolder,content_type,name,thumb,uri):
 	newnode = res.createElement("favourite")
 	newnode.setAttribute("name", name)
 	newnode.setAttribute("thumb", thumb)
-	link="plugin://plugin.program.ump/?%s"%urlencode({"module":module,"page":page,"args":json.dumps(args),"info":json.dumps(info),"art":json.dumps(art),"content_type":content_type})
+	link="plugin://plugin.program.ump/?%s"%urlencode({"module":module,"page":page,"args":json.dumps(args).encode("base64"),"info":json.dumps(info).encode("base64"),"art":json.dumps(art).encode("base64"),"content_type":content_type})
 	if isFolder:
 		str='ActivateWindow(%d,"%s",return)'%(WID[content_type],link)
 	else:
