@@ -7,7 +7,7 @@
 	import xbmcplugin
 	import xbmcaddon
 	import xbmc
-	
+
 	addon = xbmcaddon.Addon('plugin.program.ump')
 	addon_ldir = xbmc.translatePath( os.path.join(addon.getAddonInfo('path'),"lib") )
 	sys.path.append(addon_ldir)
@@ -33,7 +33,6 @@
 	ump.add_log("CONTENT_TYPE : %s"%str(ump.content_type))
 	#print "INFO         : " + str(ump.info)
 	#print "ART          : " + str(ump.art)
-	
 	indexers=providers.find(ump.content_type,"index")
 	url_providers=providers.find(ump.content_type,"url")
 	link_providers=providers.find(ump.content_type,"link")
@@ -76,6 +75,7 @@
 			providers.load("ump","index",ump.module).run(ump)
 		except Exception,e:
 			ump.notify_error(e)
+	
 	postrun.run(ump)		
 	ump.shut()
 	ump.add_log("CONTENT_CAT  : %s"%str(ump.content_cat))

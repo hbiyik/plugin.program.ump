@@ -2,7 +2,7 @@ import json
 import re
 
 
-domain="https://kissanime.to"
+domain="http://kissanime.to"
 encoding="utf-8"
 
 def match_uri(results,refnames):
@@ -57,9 +57,9 @@ def run(ump):
 	ump.get_page(domain,encoding)
 	for name in names:
 		ump.add_log("kissanime is searching %s on %s"%(name,"sitesearch"))
-		u="%s/AdvanceSearch"%domain
-		f={"animeName":name,"genres":0,"status":""}
-		page=ump.get_page(u,encoding,data=f)
+		u="%s/Search/Anime"%domain
+		f={"keyword":name}
+		page=ump.get_page(u,encoding,data=f,referer="%s/AdvanceSearch"%domain)
 		urls=re.findall('class="bigChar" href="(.*?)"',page)
 		found,res=match_uri([domain+url for url in urls],names)	
 		if found:break
@@ -83,7 +83,7 @@ def run(ump):
 			jq_limit=True
 		else:
 			for page in pages:
-				urls.append(page["url"])
+				urls.append(page["url"].replace("kissanime.com","kissanime.to"))
 			found,res=match_uri(urls,names)
 		
 	if not found:

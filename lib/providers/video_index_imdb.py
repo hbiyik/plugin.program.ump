@@ -353,11 +353,7 @@ def run(ump):
 	elif ump.page == "results_name":
 		name=ump.args.get("name","")
 		if name=="?":
-			kb = xbmc.Keyboard('default', 'Name', True)
-			kb.setDefault("")
-			kb.setHiddenInput(False)
-			kb.doModal()
-			name=kb.getText()
+			conf,name=ump.get_keyboard("default","Name",True)
 			ump.args["name"]=name
 		ids=[]
 		
@@ -380,11 +376,8 @@ def run(ump):
 		title=ump.args.get("title","")
 		ctype=ump.defs.CC_MOVIES
 		if title=="?":
-			kb = xbmc.Keyboard('default', 'Title', True)
-			kb.setDefault("")
-			kb.setHiddenInput(False)
-			kb.doModal()
-			ump.args["title"]=kb.getText()
+			conf,title=ump.get_keyboard("default","Title",True)
+			ump.args["title"]=title
 		page=ump.get_page("http://www.imdb.com/search/title","utf-8",query=ump.args,header={"Accept-Language":"tr"})#hack imdb to give me original title with my unstandart language header
 		start,end,total,movies=scrape_imdb_search(page)
 		suggest=""

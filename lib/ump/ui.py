@@ -9,6 +9,7 @@ import xbmcaddon
 import xbmcgui
 
 from ump import providers
+import prefs
 
 
 addon = xbmcaddon.Addon('plugin.program.ump')
@@ -92,6 +93,7 @@ class xplayer(xbmc.Player):
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
 			self.play(self.playlist)
 			xbmcgui.Window(10000).setProperty('script.trakt.ids', json.dumps({u'imdb': self.ump.info["code"]}))
+			prefs.set("play","flag",True)
 		else:
 			self.ump.iwindow.playlist=self.playlist
 			self.ump.iwindow.doModal()

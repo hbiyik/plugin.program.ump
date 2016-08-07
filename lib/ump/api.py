@@ -125,8 +125,15 @@ class ump():
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+		if prefs.get("play","flag"):
+			self.refreshing=True
+			prefs.set("play","flag",False)
+		else:
+			self.refreshing=False
 	
 	def get_keyboard(self,*args):
+		if self.refreshing:
+			return True,prefs.get("play","keyboard") 
 		kb = xbmc.Keyboard(*args)
 		kb.setDefault("")
 		kb.setHiddenInput(False)
@@ -135,7 +142,9 @@ class ump():
 		if self.backwards.abortRequested():
 			self.dialogpg.close()
 			sys.exit()
-		return kb.isConfirmed(),kb.getText()
+		text=kb.getText()
+		prefs.set("play","keyboard",json.dumps(text))
+		return kb.isConfirmed(),text
 		
 	def absuri(self,pre,post):
 		if pre.startswith("//"):
@@ -175,6 +184,8 @@ class ump():
 		li.setArt(art)
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
+		if isFolder==False:
+			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
 			coms.append(('Detailed Info',"Action(Info)"))
 			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
@@ -320,8 +331,8 @@ class ump():
 		if not query is None:
 			query=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in query.items())) 
 			url=url+"?"+query
-		if not data is None:
-			data=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
+		if not data is None and isinstance(data,dict):
+				data=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
 		#change timeout
 		if tout is None:
 			tout=int(float(addon.getSetting("tout")))
@@ -388,7 +399,7 @@ class ump():
 				xbmc.log(log,defs.loglevel)
 
 	def add_log(self,line):
-		line=unidecode(line)
+		line=unidecode(unicode(line))
 		self.log=line+"\n"+self.log
 		if hasattr(self,"window") and hasattr(self.window,"status"):
 			self.window.status.setText(self.log)
