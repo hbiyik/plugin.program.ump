@@ -378,4 +378,13 @@ def run(ump):
 			info["season"]=1
 			info["absolute_number"]=epi
 			ump.index_item("%d %s"%(epi,episodes[epi]["title"]),"urlselect",info=info)
+		ump.index_item("Custom Episode Number","customepi",info=info,isFolder=False)
 		ump.set_content(ump.defs.CC_EPISODES)
+
+	elif ump.page=="customepi":
+		conf,what=ump.get_keyboard('default', 'Episode Number', True)
+		if what.isdigit():
+			ump.info["episode"]=int(what)
+			ump.info["absolute_number"]=int(what)
+			ump.info["season"]=1
+			xbmc.executebuiltin("Container.Update(%s)"%ump.link_to("urlselect"))
