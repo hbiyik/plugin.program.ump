@@ -384,6 +384,7 @@ def run(ump):
 	elif ump.page=="customepi":
 		conf,what=ump.get_keyboard('default', 'Episode Number', True)
 		if what.isdigit():
+			ump.info["title"]="Episode %s"%what
 			ump.info["episode"]=int(what)
 			ump.info["absolute_number"]=int(what)
 			ump.info["season"]=1
