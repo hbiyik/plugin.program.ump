@@ -1,24 +1,54 @@
 import json
 import re
+from third.dateutil import parser
 
 
 domain="http://kissanime.to"
 encoding="utf-8"
 
+def get_alts(page):
+	pages={}
+	related=re.findall('subdub.png.*<a href="(.*?)"><b>(.*?)</b></a>',page)
+	if len(related)>0:
+		if "(Sub)" in related[0][1]:
+			pages["[HS:EN]"]=ump.get_page("%s%s"%(domain,related[0][0]),encoding)
+			pages["[D:EN]"]=page
+		elif "(Dub)" in related[0][1]:
+			pages["[D:EN]"]=ump.get_page("%s%s"%(domain,related[0][0]),encoding)
+			pages["[HS:EN]"]=page
+	else:
+		pages["[HS:EN]"]=page
+	return pages
+
 def match_uri(results,refnames):
 	matched=False
-	pages={}
+	datematch=False
+	page=""
 	for result in results:
 		if matched: break
 		depth=result.replace("%s/Anime/"%domain,"").split("/")
 		if len(depth)>1:
 			continue
 		page=ump.get_page(result,encoding)
+		if "aired" in ump.info and "startdate" in ump.info:
+			daired=re.findall("Date aired:</span>\xa0(.*?)\n",page)
+			if len(daired):
+				datematch=True
+				if " to" in daired[0]:
+					adate=daired[0].split(" to")[0]
+					idate=ump.info["startdate"]
+				else:
+					adate=daired[0]
+					idate=ump.info["aired"]
+				if parser.parse(adate)==parser.parse(idate):
+					ump.add_log("kissanime found %s "%refnames[0])
+					return True,page
+		if datematch:
+			continue
 		orgname=re.findall('<a Class="bigChar".*?>(.*?)</a>',page)
 		orgname=orgname[0].split("(")[0]
 		names=[orgname]
 		namesdiv=re.findall('class="info">Other name\:</span>(.*?)\n',page)
-		
 		for div in namesdiv:
 			names.extend(re.findall('">(.*?)</a>',div))
 
@@ -26,31 +56,19 @@ def match_uri(results,refnames):
 			if matched: break
 			for name1 in names:
 				if ump.is_same(name1,name,strict=False):
-					related=re.findall('subdub.png.*<a href="(.*?)"><b>(.*?)</b></a>',page)
-					if len(related)>0:
-						if "(Sub)" in related[0][1]:
-							pages["[HS:EN]"]=ump.get_page("%s%s"%(domain,related[0][0]),encoding)
-							pages["[D:EN]"]=page
-						elif "(Dub)" in related[0][1]:
-							pages["[D:EN]"]=ump.get_page("%s%s"%(domain,related[0][0]),encoding)
-							pages["[HS:EN]"]=page
-					else:
-						pages["[HS:EN]"]=page
-					ump.add_log("kissanime found %s %s"%(name,"".join(pages.keys())))
+					ump.add_log("kissanime found %s"%name)
 					matched=True
 					break
-	return matched,pages
+	return matched,page
 
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-
-	is_anime=ump.check_codes([3,4])
+	is_anime=ump.check_codes([3,4,6])
 	if not is_anime:
 		return None
 
 	is_serie,names=ump.get_vidnames(org_first = not is_anime)
-
 	urls=[]	
 	jq_limit=False
 	found=False
@@ -60,9 +78,14 @@ def run(ump):
 		u="%s/Search/Anime"%domain
 		f={"keyword":name}
 		page=ump.get_page(u,encoding,data=f,referer="%s/AdvanceSearch"%domain)
-		urls=re.findall('class="bigChar" href="(.*?)"',page)
-		found,res=match_uri([domain+url for url in urls],names)	
-		if found:break
+		direct=re.findall('<span class="info">Other name',page)
+		if len(direct):
+			found=True
+			res=page
+		else:
+			urls=re.findall('class="bigChar" href="(.*?)"',page)
+			found,res=match_uri([domain+url for url in urls],names)	
+			if found:break
 	
 	if not found:
 		ump.add_log("kissanime is searching %s on %s"%(names[0],"google"))
@@ -90,23 +113,50 @@ def run(ump):
 		ump.add_log("Kissanime can't find %s"%names[0])
 		return None
 	else:
+		res=get_alts(res)
 		found=False
 		for dub,page in sorted(res.iteritems(),reverse=True):
 			table=re.findall('<table class="listing">(.*?)</table>',page,re.DOTALL)
 			if len(table)<1:
 				continue
-			epis=re.findall('href="(/Anime/.*?)"',table[0])
+			epilinks=re.findall('href="(/Anime/.*?)"',table[0])
 			epinames=re.findall('title="Watch anime (.*?)">',table[0])
-			for epi,epiname in zip(epis,epinames):
+			epis={}
+			epinums=[]
+			for epilink,epirow in zip(epilinks,epinames):
+				if "_" in epirow.lower():
+					continue
+				epinum=re.findall("([0-9]*?) online",epirow)
 				if is_serie:
-					epinum=re.findall("([0-9]*?) online",epiname)
-					if not len(epinum)==1 or epinum[0]=="" or not int(epinum[0])==int(i["absolute_number"]):
+					if (not len(epinum) or epinum=="" or not epinum[0].isdigit()):
+						continue
+					epinum=int(epinum[0])
+					epinums.append(epinum)
+					ekey=epinum
+				else:
+					ekey=epirow
+					epinum=-1
+				fs=None
+				fansub=re.findall("\[(.*?)\]",epirow)
+				if len(fansub):
+					fs=fansub[0]
+				epis[ekey]={"fansub":fs,"link":epilink,"abs":epinum}
+			
+			if len(epinums):
+				absoffset=min(epinums)-1
+			else:
+				absoffset=0
+			for ekey in epis.keys():
+				epis[ekey]["rel"]=epis[ekey]["abs"]-absoffset
+			
+			for ekey,epi in epis.iteritems():
+				if is_serie:
+					if not epi["rel"]==int(i["absolute_number"]):
 						continue
 				ump.add_log("kissanime is  loading %s"%i["title"])
-				epipage=ump.get_page(domain+epi,encoding)
-				fansub=re.findall("\[(.*?)\]",epiname)
-				if len(fansub)==1:
-					prefix="%s[FS:%s]"%(dub,fansub[0])
+				epipage=ump.get_page(domain+epi["link"],encoding)
+				if not epi["fansub"] is None:
+					prefix="%s[FS:%s]"%(dub,epi["fansub"])
 				else:
 					prefix=dub
 				links=re.findall('<select id="selectQuality">(.*?)\n',epipage)

@@ -161,7 +161,7 @@ class ump():
 			return pre+post
 
 		
-	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True):
+	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False):
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
 		if info is None:info={} 
@@ -173,16 +173,18 @@ class ump():
 		if icon == "DefaultFolder.png":
 			if "poster" in art:icon=art["poster"]
 			elif "thumb" in art:icon=art["thumb"]
-			
+		if noicon:
+			icon=thumb="DefaultFolder.png"
+		else:
+			self.art=art
 		#if thumb == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":thumb=art["thumb"]
 		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
 		self.info=info
-		self.art=art
 		u=self.link_to(page,args,module)
 		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
-		li.setArt(art)
+		if not noicon:li.setArt(art)
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if isFolder==False:

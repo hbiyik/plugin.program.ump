@@ -9,7 +9,7 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 
-	is_anime=ump.check_codes([3,4])
+	is_anime=ump.check_codes([3,4,6])
 	if not is_anime:
 		return None
 
