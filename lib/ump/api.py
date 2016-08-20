@@ -121,7 +121,12 @@ class ump():
 			try:
 				setattr(self,keep,json.loads(lst.decode("base64")))
 			except:
-				setattr(self,keep,json.loads(lst))
+				try:
+					setattr(self,keep,json.loads(lst))
+				except:
+					self.dialog.ok("Address Error","UMP can not translate the navigation URL you have provided\n\n This is mainly because you are trying to access with old favorites. To fix it delete your bookmark and add again.\n\n Another cause is because you are calling UMP from another third party addonn with wrong syntax. If so please fix your it in the addon you are calling from.")
+					self.shut()
+					sys.exit()
 		[self.content_type]= result.get('content_type', ["ump"])
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
