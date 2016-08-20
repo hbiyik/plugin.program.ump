@@ -1,3 +1,8 @@
+2016-08-20: api: warn if ump called incorrectly
+2016-08-20: anidb: new indexer for animes because ann updates their episodes too late, anidb uses extreeme caching, be batient at first, it will get super fast by time, vshare: new url provider, kissanime: match by releases date, api: index item force no icons,
+2016-08-08: ann: add title for custom episode number
+2016-08-08: ann: allow to enter custom episode number since ann is always slow to update theier episodes
+2016-08-07: 0.0.78 Version Release
 2016-08-07: api: enable exception handling, dont push errrors to log,
 2016-08-07: imdb: use keyboard from ump api, kissanime: fix search, api: workaround for unspported protocol warnings, workaorund for detection of container update after video playback, workaround for cache keyboard entry and use old one if container is refereshed,
 2016-08-07: api,bookmark: base64 encode args,info,art data, urlencoding does not comply with all stdio, specificly weird android versions
