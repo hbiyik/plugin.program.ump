@@ -618,9 +618,9 @@ class ump():
 					method=addon.getSetting(self.content_type+"_val_method")
 					m=metaf("",method,self.get_page,part["urls"][key]["url"],part["urls"][key]["referer"])
 					part["urls"][key]["meta"]=m
-#				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
-#					part["urls"].pop(key)
-#					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
+				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
+					part["urls"].pop(key)
+					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
 #					print part
 #					print e
 				except Exception,e:

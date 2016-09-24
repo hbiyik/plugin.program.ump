@@ -1,41 +1,54 @@
 import json
 import re
 import string
+import urlparse
 
 from third import unidecode
 
 
-domain="http://www.moviesub.net"
+domain="http://moviesub.org"
 encoding="utf-8"
 
-def decode_link(prv,link):
-	page=ump.get_page(link,encoding,referer=domain)
-	if prv=="google":
-		hash=re.findall('Htplugins_Make_Player\("(.*?)"',page)
+def decode_link(link):
+	prv=parts=None
+	if isinstance(link,list):
+		prv="google"
+		vlinks={}
+		for file in link:
+			vlinks[file["quality"]]=file["files"]
+		parts=[{"url_provider_name":"google", "url_provider_hash":vlinks}]
+	else:
+		try:
+			up=urlparse.urlparse(link)
+		except:
+			return prv,parts
+	
+	if "thevideo." in link:
+		hash=up.path.split("-")[-1].split(".")[0]
+		prv="thevideo"
 		if len(hash)>0:
-			links=json.loads(ump.get_page("%s/Htplugins/Loader.php"%domain,encoding,data={"data":hash[0]}))
-			if len(links["l"])>0:
-				vlinks={}
-				for i in range(len(links["l"])):
-					vlinks[links["q"][i]]=links["l"][i]
-				parts=[{"url_provider_name":"google", "url_provider_hash":vlinks,"referer":link}]
-				return parts
-	elif prv=="videomega":
-		hash=re.findall('iframe\.php\?ref\=(.*?)"',page)
+			parts=[{"url_provider_name":prv,"url_provider_hash":hash,"referer":link}]
+	
+	elif "videomega." in link:
+		hash=urlparse.parse_qs(up.query).get("ref",[""])[0]
+		prv="videomega"
 		if len(hash)>0:
-			return [{"url_provider_name":prv,"url_provider_hash":hash[0],"referer":link}]
-	elif prv=="vid":
-		hash=re.findall('vid\.ag/(.*?)"',page)
+			parts=[{"url_provider_name":prv,"url_provider_hash":hash,"referer":link}]
+
+	elif "openload." in link:
+		hash=up.path.split("/")[2]
+		prv="openload"
 		if len(hash)>0:
-			return [{"url_provider_name":prv,"url_provider_hash":hash[0],"referer":link}]
-	elif prv=="openload":
-		hash=re.findall("openload\.co\/embed\/(.*?)\/",page)
+			parts=[{"url_provider_name":prv,"url_provider_hash":hash}]
+	
+	elif "vodlocker." in link:
+		hash= up.path.split("-")[1]
+		prv="vodlocker"
 		if len(hash)>0:
-			return [{"url_provider_name":prv,"url_provider_hash":hash[0]}]
-	elif prv=="vodlocker":
-		hash=re.findall('vodlocker\.com/embed\-(.*?)\-',page)
-		if len(hash)>0:
-			return [{"url_provider_name":prv,"url_provider_hash":hash[0],"referer":link}]
+			parts=[{"url_provider_name":prv,"url_provider_hash":hash,"referer":link}]
+	
+
+	return prv,parts
 
 def filtertext(text,space=True,rep=""):
 	str=string.punctuation
@@ -46,16 +59,12 @@ def filtertext(text,space=True,rep=""):
 	return text.lower()
 
 def match_results(page,names,info):
-	match_name,match_year,subpage,camrip=False,False,"",""
-	results=re.findall('data-rel=".*?" href="(http://www.moviesub.net/watch/.*?)" title="(.*?)">(.*?)</div',page,re.DOTALL)
+	match_name,match_year,subpage,qual=False,False,"",""
+	results=re.findall('<p class="title"><a href="(.*?)" title="(.*?)">.*?</a></p>\s*?</div>\s*?<div class="quality">(.*?)</div>',page,re.DOTALL)
 	for result in results:
 		if match_year:
 			break
-		link,title,rest=result
-		if "mark-8" in rest:
-			camrip="[CAM]"
-		else:
-			camrip=""
+		link,title,qual=result
 		for name in names:
 			if ump.is_same(title,name):
 				match_name=True
@@ -65,7 +74,11 @@ def match_results(page,names,info):
 			year=re.findall('Release\sYear\:(.*?)\<\/p',subpage)[0]
 			year=str(int(re.sub("\<.*?\>","",year)))
 			match_year=info["year"]==int(year)
-	return camrip,match_year,subpage
+	if qual=="HD":
+		qual=""
+	else:
+		qual="[%s]"%qual
+	return qual,match_year,subpage
 
 def run(ump):
 	globals()['ump'] = ump
@@ -89,21 +102,15 @@ def run(ump):
 	if not match_year:
 		return None
 		
-	links={}
-	trs=re.findall('<tr>(.*?)</tr>',page)
-	for tr in trs:
-		lname=re.findall('size="2">Server\s(.*?)\:',tr)[0].lower()
-		if lname=="vid.ag":
-			lname="vid"
-		slinks=re.findall('href="(http://www.moviesub.net/watch/.*?)"',tr)
-		links[lname]=slinks
-	if not len(links)>0:
-		ump.add_log("moviesub can't find any links for %s"%names[0])
-		return None
-
-	for prv,links in links.iteritems():
-		for link in links:
-			parts=decode_link(prv,link)
-			if not parts is None:
-				ump.add_log("moviesub decoded: %s"%prv)
-				ump.add_mirror(parts,"%s%s" % (camrip,names[0]))
+	medias=re.findall('<div class="swiper-slide.*?"><a data-film="([0-9]*?)" data-name="([0-9]*?)" data-server="([0-9]*?)"',page)
+	for media in medias:
+		try:
+			dfilm,dname,dserver=media
+			resp=json.loads(ump.get_page("%s/ip.temp/swf/plugins/ipplugins.php"%domain,None,data={"ipplugins":1,"ip_film":dfilm,"ip_server":dserver,"ip_name":dname},referer=domain))
+			url=json.loads(ump.get_page("%s/ip.temp/swf/ipplayer/ipplayer.php"%domain,None,data={"w":"100%","h":"450","s":dserver,"u":resp["s"]},referer=domain))
+		except:
+			continue
+		prv,parts=decode_link(url["data"])
+		if not parts is None:
+			ump.add_log("moviesub decoded: %s"%url["data"])
+			ump.add_mirror(parts,"%s%s" % (camrip,names[0]))

@@ -1,7 +1,6 @@
 import re
 import urlparse
 
-
 domain="http://www.alphavid.to/"
 
 def run(hash,ump,referer=None):

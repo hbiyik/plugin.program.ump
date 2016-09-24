@@ -53,7 +53,7 @@ def scrape_imdb_search(page):
 	m1=[]
 	trs=re.findall('<div class="lister-list">(.*?)<div id="sidebar">',page,re.DOTALL)
 	if not len(trs):
-		return 0,0,0,m1
+		return []
 	for tr in trs[0].split("lister-item mode-advanced")[1:]:
 		#image
 		poster=re.findall('img.*?loadlate="(.*?)"',tr,re.DOTALL)
@@ -95,7 +95,7 @@ def scrape_imdb_search(page):
 			gen=""
 
 		#year
-		year=re.findall('<span class="lister-item-year text-muted unbold">\(([0-9]{4})',tr)
+		year=re.findall('<span class="lister-item-year text-muted unbold">.*?\(([0-9]{4})',tr)
 		if len(year)>0:
 			year=int(year[0])
 		else:
