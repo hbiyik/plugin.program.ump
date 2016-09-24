@@ -9,5 +9,5 @@ def run(hash,ump,referer=None):
 	videos=js["sprutoData"]["playlist"]
 	opts={}
 	for video in videos:
-		opts[video["title"]]=video["video"][0]["url"]
+		opts[video["videoId"]]=video["video"][0]["url"]
 	return opts

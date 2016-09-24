@@ -51,19 +51,16 @@ def run(hash,ump,referer=None):
 		encoded = match.group(1)
 		match = re.search("(ﾟωﾟﾉ.*?\('_'\);)", encoded, re.DOTALL)
 		if match:
-			print 1
 			decode = AADecoder(match.group(1)).decode()
 			decodes.append(decode)
 			
 		match = re.search('(.=~\[\].*\(\);)', encoded, re.DOTALL)
 		if match:
-			print 2
 			decode = JJDecoder(match.group(1)).decode()
 			decodes.append(decode)
 		
 		match = re.search(r'=\s*\$\("#([^"]+)"', decode, re.DOTALL | re.IGNORECASE)
 		if match:
-			print 3
 			hidden_id = match.group(1)
 	
 	match = re.search(r'<span[^>]+id\s*="%s"[^>]*>([^<]+)' % (hidden_id), html, re.DOTALL | re.IGNORECASE)
