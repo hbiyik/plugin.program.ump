@@ -6,7 +6,6 @@ def run(hash,ump,referer=None):
 	src=ump.get_page("http://www.bitvid.sx/file/"+hash,"utf-8")
 	sk=re.findall('<input type="hidden" name="stepkey" value="(.*?)">',src)[0]
 	src=ump.get_page("http://www.bitvid.sx/file/"+hash,"utf-8",data={"stepkey":sk,"submit":"submit"},referer="http://www.bitvid.sx/file/"+hash)
-	#print src.encode("ascii","replace")
 	domain=re.findall('flashvars.domain="(.*?)"',src)
 	file=re.findall('flashvars.file="(.*?)"',src)
 	key=re.findall('flashvars.filekey="(.*?)"',src)
