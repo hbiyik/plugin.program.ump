@@ -9,5 +9,5 @@ def run(hash, ump, referer=None):
 		pf = re.findall('val\("(.*?)"\+', src)
 		data = {validator[0][0]:pf[0] + validator[0][1]}
 		src = ump.get_page(domain + "l/" + hash, "utf8", data=data, referer=domain + "l/" + hash, header=header)
-	files = re.findall("url: '(.*?)'", src, re.DOTALL)
+	files = re.findall('src:\s*"(.*?)"', src, re.DOTALL)
 	return {"video":{"url":files[0], "referer":domain + "l/" + hash}}
