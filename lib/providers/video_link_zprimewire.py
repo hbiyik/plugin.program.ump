@@ -7,26 +7,24 @@ matches=[]
 max_match=3
 max_pages=10
 
+newdoms={"wholecloud":"movshare","cloudtime":"divxstage"}
 def codify(prv,path,query=""):
+	if prv in newdoms:prv=newdoms[prv]
+
 	try:
 		path=path.replace(" ","")
-		if prv in ["movshare","vodlocker","novamov","nowvideo","divxstage","sharerepo","videoweed","thefile","stagevu","vidxden","vidbull","ishared","vidup","thevideo","vid","vidto","vidzi","promptfile","sharesix"]:
+		if prv in ["movshare","vodlocker","nowvideo","divxstage","videoweed","thefile","vidup","thevideo","vidto","vidzi","promptfile","vshare"]:
 			hash=path.split("/")[-1]
 			hash=hash.replace(".html","")
+			hash=hash.replace(".htm","")
 			if hash not in ["embed.php"]:
-				return hash
-		if prv in ["zalaa","uploadc","mightyupload","vidlockers"]:
-			return path.split("/")[-2]
-
-		if prv in ["filenuke"]:
-			return path.split("/")[2]	
-
-		if prv in ["movshare"]:
-			return query.split("=")[1].replace("&","")
+				return prv,hash
+		if prv in ["openload","nowvideo"]:
+			return prv,path.split("/")[2]
 	except:
-		return None
+		return prv,None
 	
-	return None
+	return prv,None
 
 def match_results(results,names):
 	exact,page,result=False,None,None
@@ -115,7 +113,7 @@ def run(ump):
 		else:
 			mname="[%s] %s" % (external[0].upper(),name)
 		prv=uri.hostname.split(".")[-2]
-		hash=codify(prv,uri.path, uri.query)
+		prv,hash=codify(prv,uri.path, uri.query)
 		if hash is None: 
 			ump.add_log("Primewire cant codify %s" % external[1])
 			continue
