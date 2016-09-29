@@ -621,8 +621,8 @@ class ump():
 				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
 					part["urls"].pop(key)
 					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
-#					print part
-#					print e
+					print part
+					print e
 				except Exception,e:
 					self.notify_error(e)
 					part["urls"].pop(key)

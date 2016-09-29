@@ -463,11 +463,12 @@ def run(ump):
 		episodes=re.findall('<meta itemprop="episodeNumber" content="([0-9]*?)"/>',res)
 		episodes=[int(x) for x in episodes]
 		plots=re.findall('<div class="item_description" itemprop="description">(.*?)</div>',res,re.DOTALL)
-		dates=re.findall('<div class="airdate">\n(.*?)\n',res)
+		dates=re.findall('<div class="airdate">\n\s*(.*?)\n',res)
 		episodes=zip(episodes,dates,plots,*zip(*title_img))
 		episodes.sort(key=operator.itemgetter(0), reverse=True)
 		info=ump.info
 		info["tvshowtitle"]=info["title"]
+		info["season"]=season
 		art=ump.art
 		for episode in episodes:
 			epi,dat,plot,title,img=list(episode)
