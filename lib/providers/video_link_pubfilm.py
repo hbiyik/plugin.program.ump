@@ -3,7 +3,7 @@ import re
 import socket
 import time
 
-domain="http://movie.pubfilmno1.com"
+domain="http://pidtv.com/"
 encoding="utf-8"
 
 def match_results(link,inf,names):
@@ -11,7 +11,7 @@ def match_results(link,inf,names):
 	submatch=False
 	subpage=ump.get_page(link,encoding,referer=domain)
 	imdbid=re.findall('"(http://www.imdb.com/title/tt.*?)"',subpage)
-	if len(imdbid)>0:
+	if len(imdbid)>0 :
 		imdbid=imdbid[0]
 		if imdbid.endswith("/"):
 			imdbid=imdbid[:-1]
@@ -28,7 +28,7 @@ def match_results(link,inf,names):
 					year=re.findall('\>([0-9]{4})\s',subpage)
 					if len(year)>0:
 						submatch=inf["year"]==int(year[0])
-	prefix0=re.findall("itemprop='title'>.*?\((.*?)\)</span>",subpage)
+	prefix0=re.findall("itemprop=\"name\">.*?\((.*?)\)</span>",subpage)
 	if len(prefix0)>0:
 		prefix=prefix0[0].upper()
 		if "HD" == prefix:
@@ -43,51 +43,33 @@ def run(ump):
 	i=ump.info
 	is_serie,names=ump.get_vidnames()
 	match=False
-
-	mlink=""
+	if is_serie: return None
 	prefix=""
 
-	if is_serie:
-		return None
-
-	try:
-		for name in names:
-			ump.add_log("pubfilm is searching %s" % name)
-			data={"alt":"json-in-script","max-results":9999,"callback":"showResult","q":name}
-			page=ump.get_page(domain+"/feeds/posts/summary",encoding,data=data,referer=domain)
-			js=re.findall("showResult\((.*?)\);",page)
-			if len(js)>0:
-				js=json.loads(js[0])
-				if "entry" in js["feed"].keys():
-					for feed in js["feed"]["entry"]:
-						if match: break
-						for link in feed["link"]:
-							if match: break
-							if link["rel"]=="alternate":
-								prefix,match,page=match_results(link["href"],i,names)
-								mlink=link["href"]
-				else:
-					time.sleep(1)
-					continue
-			if match: break
-	except socket.timeout:
-		ump.add_log("pubfilm sitesearch is down, trying google")
-		for u in ump.web_search("site:movie.pubfilmno1.com \"%s\""%name):
-			if match: break
-			prefix,match,page=match_results(link["href"],i,names)
+	for name in names[:2]:
+		ump.add_log("pubfilm is searching %s" % name)
+		data={"options":"qtranslate_lang=0&set_intitle=None&customset%5B%5D=post","action":"ajaxsearchpro_search","aspp":name,"asid":"1","asp_inst_id":"1_1"}
+		page=ump.get_page(domain+"/wp-admin/admin-ajax.php",encoding,data=data,referer=domain)
+		results=re.findall('<a class="asp_res_url" href=\'(.*?)\'>',page)
+		for result in results[:3]:
+			prefix,match,page=match_results(result,i,names)
+			if match : break
+		if match:break
 
 	if not match:
 		ump.add_log("pubfilm can't match %s"%name)
 		return None
 
-	link1=re.findall('"(http://player.pubfilm.com/api.*?)"',page)
+	link1=re.findall('"(http://player\..*\.com/api.*?)"',page)
 	for link in link1:
-		page=ump.get_page(link,encoding,referer=mlink)
+		page=ump.get_page(link,encoding,referer=result)
 		try:
 			data=eval(re.findall("sources\:(.*?\])",page)[0])
 			mparts={}
+			k=0
 			for link in data:
-				mparts[link["label"]]=link["file"]
+				k+=1
+				mparts[link.get("label",str(k))]=link["file"]
 			parts=[{"url_provider_name":"google", "url_provider_hash":mparts,"referer":link1}]
 			ump.add_mirror(parts,"%s %s"%(prefix,name))			
 		except:
