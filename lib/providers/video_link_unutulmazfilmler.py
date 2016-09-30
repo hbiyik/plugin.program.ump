@@ -67,6 +67,8 @@ def run(ump):
 		
 	for plyr,urls in medias.iteritems():
 		umpparts=[]
+		prefix=""
+		if len(urls)>1:prefix="[MP]"
 		for url in urls:
 			if plyr=="pub":
 				src=ump.get_page(url,encoding,referer=domain)
@@ -78,4 +80,4 @@ def run(ump):
 				umpparts.append({"url_provider_name":"okru", "url_provider_hash":url.split("/")[-1],"referer":domain})
 		
 		if len(umpparts):
-			ump.add_mirror(umpparts,"[HS:TR]%s" % name)
+			ump.add_mirror(umpparts,"[HS:TR]%s%s" % (prefix,name))
