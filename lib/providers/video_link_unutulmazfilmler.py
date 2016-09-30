@@ -5,24 +5,15 @@ import string
 domain="http://www.unutulmazfilmler.co"
 encoding="utf-8"
 
-def filtertext(text,space=True,rep=""):
-	str=string.punctuation
-	if space:
-		str+=" "
-	for c in str:
-		text=text.replace(c,rep)
-	return text.lower()
-
 def match_results(page,names,info):
 	match_name,match_year,link=False,False,""
-	results=re.findall('<div class="leftflmbg_right_name"><a href="(.*?)">(.*?)</a></div>.*?<div class="leftflmbg_right_content_r">([0-9]{4})',page,re.DOTALL)
+	results=re.findall('<h2 class="content-title">\s*?<a href="(.*?)" title=".*?" class="link-unstyled">(.*?)\s\-.*?</a>\s*?<small>\(([0-9]{4})\s|-',page,re.DOTALL)
 	for result in results:
 		if match_year:
 			break
-		link,alt,year=result
-		alt=filtertext(alt).encode("ascii","ignore")
+		link,fname,year=result
 		for name in names:
-			if filtertext(name).encode("ascii","ignore") in alt:
+			if ump.is_same(fname,name):
 				match_name=True
 				break
 		if match_name:
@@ -40,8 +31,7 @@ def run(ump):
 
 	for name in names:
 		ump.add_log("UnutulmazFilmler is searching %s" % name)
-		query={"arama":filtertext(name,False," ")}
-		page=ump.get_page(domain+"/arama.php",encoding,query=query)
+		page=ump.get_page(domain,encoding,query={"s":name})
 		match_name,match_year,link=match_results(page,names,i)
 		if match_year:
 			break
@@ -55,31 +45,37 @@ def run(ump):
 	if not match_year:
 		ump.add_log("UntulmazFilmler can't match %s"%name)
 		return None
+
+	ump.add_log("UntulmazFilmler matched %s"%name)
 	page=ump.get_page(link,encoding)
-	params=re.findall('webscripti\("(.*?)", "(.*?)", "(.*?)"\)\;',page)
-	if not len(params)>0:
-		ump.add_log("UntulmazFilmler can't find any links for %s"%name)
-		return None
-	vid,kaynak,kisim=params[0]
-	boot=ump.get_page(domain+"/playerayar.php",encoding,data={"vid":vid,"kisim":kisim,"kaynak":kaynak},referer=domain)
-	googles=re.findall('href=".*?sgplus\.html"',boot)
-	if not len(googles) > 0 :
-		#mailru and ok.ru videos are down only for gvideos
-		ump.add_log("UntulmazFilmler can't find any links for %s"%name)
-		return None
-	mails=re.findall('href=".*?smailru\.html"',boot)
-	parts={"gplus":googles,"mailru":mails}
-	for ptype,parts in parts.iteritems():
-		k=0
-		plinks=[]
+	players=re.findall('ul class=".*?player-list.*?"(.*?)</ul>',page,re.DOTALL)
+	players=re.findall('class="menu-link">(.*?)<',players[0])
+	medias={}
+	for player in players:
+		if "pub" in player.lower():	plyr="pub"
+		elif "odno" in player.lower():	plyr="odkl"
+		else: plyr=player.lower()
+		medias[plyr]=[]
+		playerpages=[ump.get_page(link+"?player=%s"%plyr,encoding)]
+		parts=re.findall("<\!-- part list -->(.*?)</ul>",playerpages[0],re.DOTALL)
+		if len(parts):
+			parts=re.findall('<li class="menu-item"><a href="(.*?)" class="menu-link">',parts[0])
 		for part in parts:
-			k+=1
-			src=ump.get_page(domain+"/playerayar.php",encoding,data={"vid":vid,"kisim":k,"kaynak":ptype},referer=domain)
-			if ptype=="gplus":
-				plinks.extend(re.findall('src="(http://unutulmazfilmler.co/player/.*?)"',src))
+			playerpages.append(ump.get_page(part,encoding))
+		for playerpage in playerpages:
+			medias[plyr].extend(re.findall('<div class="embed-responsive-item video-wrapper">\s*?<iframe width=".*?" height=".*?" src="(.*?)" fram',playerpage))
+		
+	for plyr,urls in medias.iteritems():
 		umpparts=[]
-		if ptype=="gplus":
-			for plink in plinks:
-				umpparts.append({"url_provider_name":"google", "url_provider_hash":plink,"referer":domain})
-			if len(umpparts)>0:
-				ump.add_mirror(umpparts,"[HS:TR]%s" % name)	
+		for url in urls:
+			if plyr=="pub":
+				src=ump.get_page(url,encoding,referer=domain)
+				mirrors=re.findall('{"file": "(.*?)", "label": "(.*?)"',src)
+				hash={}
+				for mirror in mirrors:hash[mirror[1]]=mirror[0]
+				umpparts.append({"url_provider_name":"google", "url_provider_hash":hash,"referer":domain})
+			elif plyr=="odkl":
+				umpparts.append({"url_provider_name":"okru", "url_provider_hash":url.split("/")[-1],"referer":domain})
+		
+		if len(umpparts):
+			ump.add_mirror(umpparts,"[HS:TR]%s" % name)
