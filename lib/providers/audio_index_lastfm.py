@@ -17,9 +17,12 @@ def get_country():
 	for country in countries.all:
 		if language == country[2]:
 			found=True
-			return country[0]
+			if country[0]=="United States of America":
+				return "United Kingdom"
+			else:
+				return country[0]
 	if not found:
-		return "USA"
+		return "United Kingdom"
 
 def get_img(ops,default="DefaultFolder.png"):
 	im=default
@@ -86,14 +89,10 @@ def run(ump):
 		ump.index_item("Top Artists","topartist")
 		ump.index_item("Top Tracks","toptrack")
 		ump.index_item("Top Artists in %s"%get_country(),"geoartist",args={"country":get_country()})
-		if not get_country() == "USA":
-			ump.index_item("Top Artists in USA","geoartist",args={"country":"United States"})
 		if not get_country() == "United Kingdom":
 			ump.index_item("Top Artists in UK","geoartist",args={"country":"United Kingdom"})
 		ump.index_item("Top Artists in Countries","country",args={"page":"geoartist"})
 		ump.index_item("Top Tracks in %s"%get_country(),"geotrack",args={"country":get_country()})
-		if not get_country() == "USA":
-			ump.index_item("Top Tracks in USA","geotrack",args={"country":"United States"})
 		if not get_country() == "United Kingdom":
 			ump.index_item("Top Artist in UK","geotrack",args={"country":"United Kingdom"})
 		ump.index_item("Top Artist in Countries","country",args={"page":"geotrack"})
@@ -113,6 +112,7 @@ def run(ump):
 		q={"method":"tag.getTopArtists","api_key":apikey,"format":"json","limit":100,"tag":ump.args["tag"]}
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		for result in js["topartists"]["artist"]:
+			if not "mbid" in result: continue
 			im=get_img(result.get("image",[]))
 			if im=="":
 				continue
@@ -179,7 +179,7 @@ def run(ump):
 		ump.args.pop("page")
 		processed=[]
 		for country in countries.all:
-			if country[0] in ["USA","United Kingdom",get_country() ] or "," in country[0]:
+			if country[0] in ["United States of America","United Kingdom",get_country() ] or "," in country[0]:
 				continue
 			if not country[0] in processed:
 				ump.args["country"]=country[0]

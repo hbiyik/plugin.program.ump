@@ -8,7 +8,6 @@ from .utils import (
     ExtractorError,
 )
 
-
 _OPERATORS = [
     ('|', operator.or_),
     ('^', operator.xor),
@@ -233,7 +232,7 @@ class JSInterpreter(object):
     def extract_function(self, funcname):
         func_m = re.search(
             r'''(?x)
-                (?:function\s+%s|[{;,]%s\s*=\s*function|var\s+%s\s*=\s*function)\s*
+                (?:function\s+%s|[{;,]\s*%s\s*=\s*function|var\s+%s\s*=\s*function)\s*
                 \((?P<args>[^)]*)\)\s*
                 \{(?P<code>[^}]+)\}''' % (
                 re.escape(funcname), re.escape(funcname), re.escape(funcname)),

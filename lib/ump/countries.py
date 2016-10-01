@@ -130,7 +130,7 @@ all=[
 ("Ukraine","Ukrainian","uk","UA"),
 ("United Kingdom","Scottish Gaelic","gd","GB"),
 ("United Kingdom","Welsh","cy","GB"),
-("USA"," English","en","US"),
+("United States of America"," English","en","US"),
 ("Uzbekistan","Uzbek (Cyrillic)","uz","UZ"),
 ("Vietnam","Vietnamese","vi","VN"),
 ("Yemen","Arabic","ar","YE")

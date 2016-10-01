@@ -18,8 +18,10 @@ def get_localtitle(alts,original):
 	local=original
 	ww=original
 	for country in countries.all:
-		if language == country[2] and country[0].lower() in alts.keys():
-			local=alts[country[0].lower()]
+		cntry=country[0].lower()
+		if cntry =="united states of america":cntry="usa"
+		if language == country[2] and cntry in alts.keys():
+			local=alts[cntry]
 	for key in alts.keys():
 		if ump.is_same("master",key):
 			ww=alts[key]		
@@ -220,7 +222,7 @@ def scrape_name(id,lean=False):
 		pcountry=[]
 		for td in range(1,len(tds),2):
 			country=tds[td-1]
-			if any(word in country for word in ["fake","informal","version","literal","promotional"]):
+			if any(word in country for word in ["fake","informal","version","literal","promotional","working"]) or ("USA" in country and "title" in country):
 				continue
 			country=re.sub("\s\(.*\)","",tds[td-1]).lower()
 			if country in pcountry:
