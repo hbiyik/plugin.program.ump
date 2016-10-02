@@ -85,6 +85,7 @@ class clicky():
             "custom[osname]":self.os_human,
             "custom[kodiversion]":xbmc.getInfoLabel( "System.BuildVersion" ),
             "custom[pythonversion]":platform.python_version(),
+            "custom[addonversion]":addon.getAddonInfo('version'),
             }
 
         if mode in ["download","click"]:
