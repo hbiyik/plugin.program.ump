@@ -62,7 +62,7 @@ class xplayer(xbmc.Player):
 		parts=json.loads(it.getProperty("parts"))
 		for i in range(len(parts)):
 			listitem = xbmcgui.ListItem()
-			for key in ["uptime","urls","url_provider_hash","url_provider_name"]:
+			for key in ["uptime","urls","url_provider_hash","url_provider_name","link_provider_name"]:
 				if key in parts[i].keys():
 					listitem.setProperty(key,json.dumps(parts[i][key]))
 			info=parts[i].get("info",None)
@@ -86,6 +86,7 @@ class xplayer(xbmc.Player):
 			else:
 				#not sure even this is possible :) gotta clean this sometime
 				self.ump.add_log("Part Vanished!!!")
+		self.ump.stat.query("download",parts[0]["url_provider_name"],parts[0]["link_provider_name"])
 		dialog.close()
 		return True
 		

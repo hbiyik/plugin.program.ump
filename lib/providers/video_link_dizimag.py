@@ -25,6 +25,9 @@ def run(ump):
 			t=serie["d"]
 			if ump.is_same(t,name):
 				url=domain+l+str(i["season"])+"-sezon-"+str(i["episode"])+"-bolum-izle-dizi"
+				print serie
+				print l
+				print url
 				try:
 					epage=ump.get_page(url+".html",encoding)
 				except HTTPError, err:

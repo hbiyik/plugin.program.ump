@@ -33,6 +33,7 @@ from ump import webtunnel
 from ump import prefs 
 from ump import http
 from ump import teamkodi
+from ump import clicky
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
@@ -136,6 +137,8 @@ class ump():
 			prefs.set("play","flag",False)
 		else:
 			self.refreshing=False
+		self.stat=clicky.clicky(self)
+		self.stat.query()
 	
 	def get_keyboard(self,*args):
 		if self.refreshing:
@@ -150,6 +153,8 @@ class ump():
 			sys.exit()
 		text=kb.getText()
 		prefs.set("play","keyboard",json.dumps(text))
+		if kb.isConfirmed():
+			self.stat.query(search=text)
 		return kb.isConfirmed(),text
 		
 	def absuri(self,pre,post):
@@ -415,8 +420,10 @@ class ump():
 			xbmc.log(line,defs.loglevel)
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
+		link_provider=inspect.getframeinfo(inspect.stack()[1][0]).filename.split(os.path.sep)[-1].split(".py")[0]
 		if not (self.terminate or self.backwards.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
+				part["link_provider_name"]=link_provider
 				upname=part.get("url_provider_name",None)
 				uphash=part.get("url_provider_hash",None)
 				#sanity check
@@ -506,7 +513,6 @@ class ump():
 		if max_s>0: 
 			prefix_s="[F:%s]"%humanint(max_s)
 		mname=prefix_q+prefix_s+name
-		
 		autoplay=False
 		if self.content_type==self.defs.CT_VIDEO and addon.getSetting("auto_en_video")=="true":
 			if addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"]:
@@ -558,16 +564,8 @@ class ump():
 				self.notify_error(e)
 
 		self.window.addListItem(item)
-		if False and self.content_type==self.defs.CT_VIDEO and addon.getSetting("video_val_method") in ["Check if Alive & Quality","Check if Alive + Quality"] and len(parts)==1:
-			from ump import globaldb
-			tags=re.findall("\[(.*?)\]",mname)
-			hs=fs=d=""
-			for tag in tags:
-				if tag.startswith("HS:"): hs=tag.split("HS:")[1]
-				if tag.startswith("FS:"): fs=tag.split("FS:")[1]
-				if tag.startswith("D:"): d=tag.split("D:")[1]
-			globaldb.sync(self,parts[0]["url_provider_name"],parts[0]["url_provider_hash"],parts[0]["urls"][max_k]["url"],humanres(max_w,max_h),max_w,max_h,hs,fs,d,float(max_s)/1000000)
-
+		self.stat._query("click",parts[0]["url_provider_name"],parts[0]["link_provider_name"])
+		
 	def _validateparts(self,parts,wait):
 		gid=self.tm.create_gid()
 		def wrap(i):
@@ -621,8 +619,8 @@ class ump():
 				except (socket.timeout,urllib2.URLError,urllib2.HTTPError),e:
 					part["urls"].pop(key)
 					self.add_log(" dismissed due to network error: %s" % part["url_provider_name"])
-					print part
-					print e
+					#print part
+					#print e
 				except Exception,e:
 					self.notify_error(e)
 					part["urls"].pop(key)
