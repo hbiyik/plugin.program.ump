@@ -36,7 +36,6 @@
 	indexers=providers.find(ump.content_type,"index")
 	url_providers=providers.find(ump.content_type,"url")
 	link_providers=providers.find(ump.content_type,"link")
-	
 	if ump.module == "ump":
 		if ump.page == "root":
 			for provider in indexers:

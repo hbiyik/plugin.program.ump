@@ -34,6 +34,7 @@ from ump import prefs
 from ump import http
 from ump import teamkodi
 from ump import clicky
+#from ump import throttle
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
@@ -137,7 +138,8 @@ class ump():
 			prefs.set("play","flag",False)
 		else:
 			self.refreshing=False
-		self.stat=clicky.clicky(self)
+		if not self.page=="urlselect":
+			self.stat=clicky.clicky(self)
 		self.stat.query()
 	
 	def get_keyboard(self,*args):
@@ -335,11 +337,17 @@ class ump():
 			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
 		return sys.argv[0] + '?' + urlencode(query)
 
-	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False):
+	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None):
 		
 		if self.terminate:
 			raise task.killbill
-
+		
+		#tid=None
+		#if cache and not head and not range:
+		#	tid=throttle.id(encoding,query,referer,header)
+		#	if not throttle.check(tid,cache):
+		#		return throttle.get(tid)
+			
 		#python cant handle unicode urlencoding so needs to get dirty below.
 		if not query is None:
 			query=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in query.items())) 
