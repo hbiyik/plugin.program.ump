@@ -141,7 +141,7 @@ class ump():
 		if not self.page=="urlselect":
 			self.stat=clicky.clicky(self)
 		self.stat.query()
-	
+	 
 	def get_keyboard(self,*args):
 		if self.refreshing:
 			return True,prefs.get("play","keyboard") 
