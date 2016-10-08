@@ -1,6 +1,13 @@
 from third import dropbox
 import xbmcgui
+import xbmcaddon
 import sys
+from xml.dom import minidom
+import urllib2
+from distutils.version import LooseVersion
+from ump import defs
+
+addon = xbmcaddon.Addon('plugin.program.ump')
 
 def upload(content,name,overwrite=True):
     dropbox.client.DropboxClient("oDWx2zTSXZAAAAAAAAAACCD5aQr2FgS-fe33WMr7moiZr9aHAp0gpuvUyXtiDHX5").put_file("/%s"%name, content,overwrite=overwrite)
@@ -8,11 +15,22 @@ def upload(content,name,overwrite=True):
 def upload_log(head,msg,name,locals,errlog,kodilog,umplog,extra):
     dialog = xbmcgui.Dialog()
     if(dialog.yesno(head,msg)):
-        content="SYS ARGV:%s\r\nLOCAL INFO:\r\n%s\r\nERROR LOG:\r\n%s\r\nKODI LOG:\r\n%s\r\nUMP LOG:\r\n%s\r\n%s"%(str(sys.argv)+"\r\n",locals,errlog,kodilog,umplog,extra)
+        content="UMP VER:%s\r\nSYS ARGV:%s\r\nLOCAL INFO:\r\n%s\r\nERROR LOG:\r\n%s\r\nKODI LOG:\r\n%s\r\nUMP LOG:\r\n%s\r\n%s"%(addon.getAddonInfo('version'),str(sys.argv)+"\r\n",locals,errlog,kodilog,umplog,extra)
         upload(content,name)
     else:
         print errlog
-        
+
+def get_latest():
+	try:
+		dom=minidom.parseString(urllib2.urlopen(defs.addonsxmluri).read())
+		for tag in dom.getElementsByTagName("addon"):
+			xmlver=LooseVersion(tag.getAttribute("version"))
+			addver=LooseVersion(addon.getAddonInfo('version'))
+			if tag.getAttribute("id")=="plugin.program.ump" and xmlver>addver :
+				return xmlver
+	except:
+		return None
+    
 def collect_log(logtype,head,msg,umplog,e=None,more=True):
     errlog=""
     fname=logtype

@@ -9,13 +9,6 @@ from urlparse import urlparse
 import urllib
 
 noredirs=["/cdn-cgi/l/chk_jschl","/cdn-cgi/l/chk_captcha"]
-try:
-	import xbmc 
-	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
-except AttributeError:
-	#backwards compatability
-	language="en"
-
 max_sleep=30
 
 def solve_equation(equation):
@@ -118,7 +111,7 @@ def ddos_open(url,opener,req,data,timeout,cj,cfagents,cflocks,tunnel,tmode):
 		elif err.code == 403 and "/cdn-cgi/l/chk_captcha" in body:
 			hash=re.findall('data-sitekey="(.*?)"',body)[0]
 			solver=recaptcha.UnCaptchaReCaptcha()
-			token=solver.processCaptcha(hash, language, opener,ua,up.netloc+" requires Cloudfare Recaptcha")
+			token=solver.processCaptcha(hash, ump.backwards.getLanguage(0).lower(), opener,ua,up.netloc+" requires Cloudfare Recaptcha")
 			u=up.scheme+"://"+up.netloc+"/cdn-cgi/l/chk_captcha?g-recaptcha-response="+token
 			cflogin(u,ua,req,opener,tunnel,tmode,cj,cfagents,up)
 			response=opener.open(req,data,timeout)

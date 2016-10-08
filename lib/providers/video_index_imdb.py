@@ -7,20 +7,13 @@ import xbmc
 
 from ump import countries
 
-
-try:
-	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
-except AttributeError:
-	#backwards compatability
-	language="en"
-
 def get_localtitle(alts,original):
 	local=original
 	ww=original
 	for country in countries.all:
 		cntry=country[0].lower()
 		if cntry =="united states of america":cntry="usa"
-		if language == country[2] and cntry in alts.keys():
+		if ump.backwards.getLanguage(0).lower() == country[2] and cntry in alts.keys():
 			local=alts[cntry]
 	for key in alts.keys():
 		if ump.is_same("master",key):

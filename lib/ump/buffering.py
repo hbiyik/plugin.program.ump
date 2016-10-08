@@ -51,7 +51,10 @@ def get():
 		res=dom.read(setxml)
 		if not res:
 			#minidom weirdness
-			res.unlink()
+			try:
+				res.unlink()
+			except:
+				pass
 			return "0" 
 		adv=getchild(res,res,"advancedsettings")
 		nw=getchild(res,adv,"network")

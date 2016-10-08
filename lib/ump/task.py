@@ -76,14 +76,14 @@ class manager(object):
 		if noblock=="all":
 			noblock=q+a
 		i=0
-		while True and not self.m.abortRequested():
+		while not (self.m.abortRequested() or self.s.isSet()):
+			xbmc.sleep(800)
 			i+=1
 			q,a,p=self.stats(gid)
 			if cnt>0 and not q+a==0:
 				self.dialogpg.update(100-100*(q+a)/cnt,message="%d of %d"%(cnt-q-a,cnt))
 			if (self.s.isSet() or q==0) and a<=noblock:
 				break
-			xbmc.sleep(1000)
 		return q,a,p
 	
 	def	create_gid(self):

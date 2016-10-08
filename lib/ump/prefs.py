@@ -12,11 +12,18 @@ preffile=addon_preffile
 def prefs(mode,data=None):
 	if data is None and not path.exists(preffile):
 		return ""
-	with open(preffile, mode) as pref:
+	try:
+		fo=open(preffile, mode)
+	except:
+		pass
+	with fo as pref:
 		if data is None:
 			ret=pref.read()
 		else:
-			ret=pref.write(data)
+			try:
+				ret=pref.write(data)
+			except:
+				pass
 	return ret
 
 def get_skin_view(ctype):

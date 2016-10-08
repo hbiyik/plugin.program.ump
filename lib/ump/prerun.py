@@ -1,3 +1,6 @@
+import xbmc
+import sys
+
 def direct():
 	from sys import argv
 	query=argv[2][1:]
@@ -11,6 +14,15 @@ def direct():
 	
 def run(ump):
 	#runs on root page only
+	try:
+		kodimajor=int(xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0])
+	except:
+		konimajor=0
+	if kodimajor<13:
+		ump.dialog.ok("OLD XBMC/KODI VERSION","This addon requires Minimum XBMC/Kodi version 13,\n your current version is %d.\n You should upgrade your kodi version to use UMP."%kodimajor)
+		ump.shut()
+		ump._clean()
+		sys.exit()
 	if ump.module == "ump" and ump.page == "root":
 		from ump.providers import update_settings
 		# syncronize providers to settings.xml

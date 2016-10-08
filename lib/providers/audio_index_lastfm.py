@@ -12,7 +12,7 @@ apikey="ff9469649c8c7d2120758deca5ffa586"
 recnum=50
 
 def get_country():
-	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
+	language=ump.backwards.getLanguage(0).lower()
 	found=False
 	for country in countries.all:
 		if language == country[2]:

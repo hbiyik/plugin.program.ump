@@ -6,13 +6,7 @@ import xbmc
 
 
 mirror="http://thetvdb.com"
-try:
-	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
-except AttributeError:
-	#backwards compatability
-	language="en"
-if not language in ["en","sv","no","da","fi","nl","de","it","es","fr","pl","hu","el","tr","ru","he","ja","pt","zh","cs","sl","hr","ko"]:
-	language="en"
+
 encoding="utf-8"
 apikey="C738A0A57D46E2CC"
 recnum=50
@@ -237,6 +231,10 @@ def make_art(art,season=-1,banner_tables=["text","graphical","blank"]):
 
 def run(ump):
 	globals()['ump'] = ump
+	language=ump.backwards.getLanguage(0).lower()
+	if not language in ["en","sv","no","da","fi","nl","de","it","es","fr","pl","hu","el","tr","ru","he","ja","pt","zh","cs","sl","hr","ko"]:
+	language="en"
+	globals()["labguage"] = language
 	if ump.page == "root":
 		ump.index_item("Search","search",args={"search":True})
 		ump.set_content(ump.defs.CC_FILES)

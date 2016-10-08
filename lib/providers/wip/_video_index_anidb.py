@@ -23,7 +23,7 @@ domain="http://anidb.net"
 encoding="utf-8"
 
 try:
-	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
+	language=xbmc.getLanguage(0).lower()
 except AttributeError:
 	#backwards compatability
 	language="en"

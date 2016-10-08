@@ -10,12 +10,6 @@ from operator import itemgetter
 domain="http://www.animenewsnetwork.com"
 encoding="utf-8"
 
-try:
-	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
-except AttributeError:
-	#backwards compatability
-	language="en"
-
 def latinise(text):
 	# some roman chars are rare on daily usage, and everybody uses latin representatives. Dont know how romaji works in details.
 	chars={
@@ -126,7 +120,7 @@ def scrape_ann_search(animes):
 					continue
 				if l=="ja" and originaltitle is None:
 					originaltitle=a
-				if l==language and localtitle is None:
+				if l==ump.backwards.getLanguage(0).lower() and localtitle is None:
 					localtitle=a
 				if not a == localtitle and not a ==originaltitle:
 					alts.append(a)

@@ -2,26 +2,18 @@
 <window>
 	<!-- selectdialog -->
 	<defaultcontrol always="false">3</defaultcontrol>
-	<animation type="WindowOpen">
-		<effect type="zoom" start="70" end="100" center="auto" tween="back" easing="inout" time="300" />
-		<effect type="fade" start="0" end="100" time="300" />
-	</animation>
-	<animation type="WindowClose">
-		<effect type="zoom" start="100" end="70" center="auto" time="100" />
-		<effect type="fade" start="100" end="0" time="100" />
-	</animation>
 	<zorder>0</zorder>
+	<backgroundcolor>0xff00ff00</backgroundcolor>
 	<coordinates>
 		<posx>0</posx>
 	    <posy>0</posy>
 	</coordinates>
-
 	<controls>
 
 		<!-- Background -->
 		<control type="image" id="3">
-			<left>0</left>
-			<top>0</top>
+			<posx>0</posx>
+			<posy>0</posy>
 			<width>1280</width>
 			<height>720</height>
 			<texture border="5">black.png</texture>
@@ -29,8 +21,10 @@
 
 		<!-- Heading -->
 		<control type="label" id="1">
-			<left>20</left>
-			<top>40</top>
+			<posx>20</posx>
+			<posy>40</posy>
+			<align>top</align>
+	        <aligny>left</aligny>
 			<aligny>bottom</aligny>
 			<label>Universal Media Provider: SELECT SOURCE </label>
 			<width>1200</width>
@@ -38,8 +32,8 @@
 		</control>
 
 		<control type="progress" id="2">
-			<left>510</left>
-			<top>45</top>
+			<posx>510</posx>
+			<posy>45</posy>
 			<width>740</width>
 			<height>20</height>
 			<texturebg border="2">progressback.png</texturebg>
@@ -52,8 +46,8 @@
 
 		<!-- Image -->
 		<control type="image">
-			<left>50</left>
-			<top>50</top>
+			<posx>50</posx>
+			<posy>50</posy>
 			<width>405</width>
 			<height>600</height>
 			<texture>$INFO[Container(6).ListItem.Icon]</texture>
@@ -61,8 +55,8 @@
 			<visible>Control.IsVisible(6) + !SubString(Container(6).ListItem.Icon,Default)</visible>
 		</control>
 		<control type="image">
-			<left>50</left>
-			<top>50</top>
+			<posx>50</posx>
+			<posy>50</posy>
 			<width>405</width>
 			<height>600</height>
 			<texture>$INFO[Container(6).ListItem.Icon]</texture>
@@ -72,8 +66,8 @@
 		</control>
 		<!-- List -->
 		<control type="list" id="6">
-			<left>510</left>
-			<top>75</top>
+			<posx>510</posx>
+			<posy>75</posy>
 			<width>1230</width>
 			<height>460</height>
 			<onup>noop</onup>
@@ -85,16 +79,16 @@
 
 			<itemlayout width="1230" height="36">
 				<control type="image">
-					<left>0</left>
-					<top>0</top>
+					<posx>0</posx>
+					<posy>0</posy>
 					<width>60</width>
 					<height>36</height>
 					<texture>$INFO[ListItem.Property(lpimg)]</texture>
 					<aspectratio aligny="center">keep</aspectratio>
 				</control>
 				<control type="label">
-					<left>80</left>
-					<top>2</top>
+					<posx>80</posx>
+					<posy>2</posy>
 					<width>1030</width>
 					<height>26</height>
 					<textcolor>0xFFFFFFFF</textcolor>
@@ -104,23 +98,23 @@
 
 			<focusedlayout width="1230" height="36">
 				<control type="image">
-					<left>0</left>
-					<top>0</top>
+					<posx>0</posx>
+					<posy>0</posy>
 					<width>60</width>
 					<height>36</height>
 					<texture>$INFO[ListItem.Property(lpimg)]</texture>
 					<aspectratio aligny="center">keep</aspectratio>
 				</control>
 				<control type="image">
-					<left>60</left>
-					<top>0</top>
+					<posx>60</posx>
+					<posy>0</posy>
 					<width>680</width>
 					<height>36</height>
 					<texture>progressbar.png</texture>
 				</control>
 				<control type="label">
-					<left>80</left>
-					<top>2</top>
+					<posx>80</posx>
+					<posy>2</posy>
 					<width>1030</width>
 					<height>26</height>
 					<textcolor>black</textcolor>
@@ -132,16 +126,16 @@
 
 		<!-- Get more button -->
 		<control type="textbox" id="8">
-			<left>50</left>
-			<top>600</top>
+			<posx>50</posx>
+			<posy>600</posy>
 			<width>4200</width>
 			<height>100</height>
 			<font>font10</font>
 			<textcolor>0xCCCCCCCC</textcolor>
 		</control>
 		<control type="button" id="5">
-			<left>150</left>
-			<top>912</top>
+			<posx>150</posx>
+			<posy>912</posy>
 			<width>400</width>
 			<height>66</height>
 			<onleft>noop</onleft>

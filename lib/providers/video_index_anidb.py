@@ -24,12 +24,6 @@ cver="1" #httpsapi clientver
 pver="1"
 langmap={"x-jat":"ja","zh-Hans":"zh","pt-BR":"pt","x-unk":"ja","zh-Hant":"zh","es-LA":"es","x-other":"en","x-kot":"ko"}
 
-try:
-	language=xbmc.getLanguage(xbmc.ISO_639_1).lower()
-except AttributeError:
-	#backwards compatability
-	language="en"
-
 def command(request,args={}):
 	last=prefs.get("anidb","lasttime")
 	if last == {}:last=time.time()
@@ -155,7 +149,7 @@ def get_media(xml):
 				if otitle=="" and lan=="ja":
 					otitle=ttitle
 					isalternate=False
-				if lotitle=="" and lan==language:
+				if lotitle=="" and lan==ump.backwards.getLanguage(0).lower():
 					lotitle=ttitle
 					isalternate=False
 				if isalternate and ttitle not in alternates:
@@ -234,7 +228,7 @@ def get_media(xml):
 					if lan in langmap:lan=langmap[lan]
 					if emtitle=="" and lan=="en":emtitle=title.lastChild.data
 					if eotitle=="" and lan=="ja":eotitle=title.lastChild.data
-					if elotitle=="" and lan==language:elotitle=title.lastChild.data		
+					if elotitle=="" and lan==ump.backwards.getLanguage(0).lower():elotitle=title.lastChild.data		
 				if elotitle == "": elotitle=emtitle
 				if eotitle == "": eotitle=emtitle
 				

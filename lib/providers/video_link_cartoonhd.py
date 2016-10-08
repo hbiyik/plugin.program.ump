@@ -61,7 +61,7 @@ def run(ump):
     if found: 
         ump.add_log("cartoonhd has matched %s"%names[0])
     else:
-        ump.add_log("cartoonhd can't match %s"%naems[0])
+        ump.add_log("cartoonhd can't match %s"%names[0])
         return
     
     if is_serie:

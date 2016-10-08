@@ -14,7 +14,6 @@ def run(ump):
         ump.add_log("Fmovie.co is searching %s"%names[0])
         page=ump.get_page(domain+"/results",encoding,query={"q":name})
         for result in re.findall('<h3><a title=".*?" href="(.*?)">(.*?)</a></h3>\s*</div>\s*<div class="video_quality">\s*<b>Year</b>\:\s([0-9]{4})\s',page):
-            print result
             link,mname,myear=result
             if ump.is_same(name,mname) and ump.is_same(myear,str(i["year"])):
                 match=True
@@ -33,8 +32,5 @@ def run(ump):
             vidurl=urlparse.parse_qs(urlparse.urlparse(v).query).get("url",[None])[0]
             if vidurl:
                 parts.append({"url_provider_name":"google","url_provider_hash":{k:vidurl}})
-    print parts
-    print len(parts)
     if len(parts):
-        print 666666666
         ump.add_mirror(parts,i["title"])
