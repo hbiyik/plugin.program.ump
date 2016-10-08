@@ -13,6 +13,7 @@ import traceback
 from urllib import urlencode
 import urllib2
 from urlparse import parse_qs
+import gc
 
 import xbmc
 import xbmcaddon
@@ -81,10 +82,7 @@ class ump():
 		self.cflocks={}
 		self.mirrors=[]
 		self.terminate=False
-		self.dialog=xbmcgui.Dialog()
-		self.dialogpg=xbmcgui.DialogProgressBG()
-		self.dialogpg.create("UMP")
-		self.tm=task.manager(self.dialogpg,self.tm_conc)
+		
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
@@ -97,7 +95,8 @@ class ump():
 				self.cj.load()
 			except cookielib.LoadError:
 				pass
-		
+			except IOError:
+				pass
 		if addon.getSetting("verifyssl").lower()=="false":
 			self.opener = urllib2.build_opener(http.HTTPErrorProcessor,urllib2.HTTPCookieProcessor(self.cj),http.HTTPSHandler)
 		else:
@@ -132,16 +131,21 @@ class ump():
 		[self.content_type]= result.get('content_type', ["ump"])
 		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
-		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+
 		if prefs.get("play","flag"):
 			self.refreshing=True
 			prefs.set("play","flag",False)
 		else:
 			self.refreshing=False
+		self.dialog=xbmcgui.Dialog()
+		self.dialogpg=teamkodi.backwards.DialogProgressBG()
+		self.dialogpg.create("UMP")
+		self.tm=task.manager(self.dialogpg,self.tm_conc)
 		self.stat=clicky.clicky(self)
 		if not self.page=="urlselect":
 			self.stat.query()
-	 
+		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+
 	def get_keyboard(self,*args):
 		if self.refreshing:
 			return True,prefs.get("play","keyboard") 
@@ -196,7 +200,7 @@ class ump():
 		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
-		if not noicon:li.setArt(art)
+		if not noicon:self.backwards.setArt(li,art)
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if isFolder==False:
@@ -560,7 +564,7 @@ class ump():
 		if not lpname is None:
 			#art["thumb"]=defs.arturi+lpname+".png"
 			item.setProperty("lpimg",defs.arturi+lpname+".png")
-		item.setArt(art)
+		self.backwards.setArt(item,art)
 		#if there is no more mirrors and media does not require a provider directly play it.
 		if autoplay:
 			try:
@@ -641,19 +645,13 @@ class ump():
 	def shut(self,play=False,noblock=0):
 		self.terminate=True
 		prefs.set("cfagents",self.cfagents)
-		self.tm.s.set()
-		if hasattr(self,"dialogpg"):
-			self.dialogpg.close()
-			del(self.dialogpg)
+		self.tm.stop()
 		if self.backwards.abortRequested():
-			return None
+			if hasattr(self,"dialogpg"):
+				self.dialogpg.close()
+			return
 		if hasattr(self,"window"):
 			self.window.close()
-			if hasattr(self.window,"status"):
-				del(self.window.status)
-			del(self.window)
-		if hasattr(self,"dialog"):
-			del(self.dialog)
 		try:
 			self.cj.save()
 		except:
@@ -668,10 +666,32 @@ class ump():
 			cnt="all"	
 		if hasattr(self,"iwindow"):
 			self.iwindow.close()
+		if int(self.handle)==-1:
+			self.tm.join(noblock=noblock,cnt=cnt)
+		if hasattr(self,"dialogpg"):
+			self.dialogpg.close()
+
+	def _clean(self):
+		if hasattr(self,"dialogpg"):
+			del(self.dialogpg.bg)
+		if hasattr(self,"dialog"):
+			del(self.dialog)
+		if hasattr(self,"window"):
+			if hasattr(self.window,"status"):
+				del(self.window.status)
+			del(self.window.items)
+			del(self.window)
+		if hasattr(self,"iwindow"):
 			if hasattr(self.iwindow,"img"):
 				del(self.iwindow.img)
 			del(self.iwindow)
 		if hasattr(self,"player"):
 			del(self.player)
-		if self.handle=="-1":
-			self.tm.join(noblock=noblock,cnt=cnt)
+		if hasattr(self,"backwards"):
+			del(self.backwards.m)
+			del(self.backwards)
+		del self.index_items
+		if hasattr(self,"tm"):
+			del(self.tm.m)
+		del gc.garbage[:]
+		gc.collect()

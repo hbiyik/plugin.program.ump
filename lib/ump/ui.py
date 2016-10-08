@@ -51,6 +51,7 @@ class xplayer(xbmc.Player):
 				cook+=cookie.name+"="+cookie.value+";"
 		urlenc["Cookie"]=cook
 		return url+"|"+urllib.urlencode(urlenc),k
+		self.ump.stat.query("download",part["url_provider_name"],part["link_provider_name"])
 	
 	def create_list(self,it,auto=False):
 		dialog = xbmcgui.DialogProgress()
@@ -72,7 +73,7 @@ class xplayer(xbmc.Player):
 			if art is None:
 				art=self.ump.art
 			listitem.setInfo(self.ump.defs.LI_CTS[self.ump.content_type],info)
-			listitem.setArt(art)
+			self.ump.backwards.setArt(listitem,art)
 			if "partname" in parts[i].keys():
 				listitem.setLabel(parts[i]["partname"])
 			else:
@@ -86,7 +87,6 @@ class xplayer(xbmc.Player):
 			else:
 				#not sure even this is possible :) gotta clean this sometime
 				self.ump.add_log("Part Vanished!!!")
-		self.ump.stat.query("download",parts[0]["url_provider_name"],parts[0]["link_provider_name"])
 		dialog.close()
 		return True
 		
@@ -248,7 +248,6 @@ class listwindow(xbmcgui.WindowXMLDialog):
 			selectedid=int(selected.getProperty("sortid"))
 		else:
 			selectedid=0
-
 		k,w,h,s=self.ump.max_meta(json.loads(listItem.getProperty("parts")))
 		self.items.append((listItem,w*h,s))
 		self.items=sorted(self.items, key=itemgetter(2),reverse=True)

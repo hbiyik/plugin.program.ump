@@ -1,6 +1,5 @@
 ﻿try:
 	import sys
-	import gc
 	import os
 	
 	import xbmcgui
@@ -24,12 +23,11 @@
 	#bookmark.resolve()
 	ump=api.ump()
 	prerun.run(ump)
-	
 	from ump import cloud
 	ump.add_log("HANDLE       : %s"%str(ump.handle))
 	ump.add_log("MODULE       : %s"%str(ump.module))
 	ump.add_log("PAGE         : %s"%str(ump.page))
-	#print "ARGS         : " + str(ump.args)
+	#ump.add_log("ARGS         : " + str(ump.args))
 	ump.add_log("CONTENT_TYPE : %s"%str(ump.content_type))
 	#print "INFO         : " + str(ump.info)
 	#print "ART          : " + str(ump.art)
@@ -78,8 +76,7 @@
 	postrun.run(ump)		
 	ump.shut()
 	ump.add_log("CONTENT_CAT  : %s"%str(ump.content_cat))
-	del gc.garbage[:]
-	gc.collect()
+	ump._clean()
 	ump.add_log("UMP:EOF")
 except Exception,e:
 	import xbmcaddon,xbmc,sys,os
@@ -89,6 +86,14 @@ except Exception,e:
 	from ump import cloud
 	if "ump" in globals():
 		umplog=ump.log
+		ump.shut()
+		ump._clean()
 	else:
 		umplog="UMP has not initialized yet"
-	cloud.collect_log("UMPCRASH","OOPS!","It looks like UMP has crashed, do you want to send logs to developer?",umplog,e)
+	
+	newer=cloud.get_latest()
+	if newer and False:
+		dialog = xbmcgui.Dialog()
+		dialog.ok("UMPCRASH","You are currently running an OLD version of UMP (%s), latest is %s, please update UMP!"%(addon.getAddonInfo('version'),newer))
+	else:
+		cloud.collect_log("UMPCRASH","OOPS!","It looks like UMP has crashed, do you want to send logs to developer?",umplog,e)
