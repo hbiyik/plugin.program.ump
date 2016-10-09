@@ -1,3 +1,35 @@
+2016-10-09: tvdb: fix typo
+2016-10-09: youtube_dl: remove unused extractors
+2016-10-09: sezonlukdizi: fix gvideos, and languages
+2016-10-09: dizimag: fix langs
+2016-10-09: dizibox: add tune, dizigold: add openload, tune, fix langs
+2016-10-09: http: dont follow 301 on specifics
+2016-10-09: facebook: new url provider, dizibox: fixed, providers: use tabs indents
+2016-10-09: cloud: get addon version
+2016-10-09: backwards: raise dependency to XBMC 13, fix locks and memeory leaks,
+2016-10-08: clicky: fix for wrong commit
+2016-10-08: bump.
+2016-10-08: cartoonhd: new link provider, fmovie: new link provider, allmyvideos: new url provider, vidspot: new url provider
+2016-10-02: clicky: get addon version
+2016-10-02: settings: allow to disable stats
+2016-10-02: globaldb: replaced with stats, clicky: statics module
+2016-10-01: lastfm: fix latest api cahnges, imdb: iprove localisation, youtube: new audio link provider, countries: fix USA iso3166 name, useragents: remove tablets and mobiles, grooveshark: removed, may be when they improve their site
+2016-10-01: icon: fix typo at the logo :) seriously...
+2016-10-01: community: removed, boogipy: new indexer to follow up twitter,
+2016-09-30: openload: fix variables
+2016-09-30: unutulmazfilmler: fixed new design
+2016-09-29: pubfilm: new website, fixed
+2016-09-29: imdb: fix season info for series, rt: removed, later may be with api,
+2016-09-25: movshare:fixed, nowvideo: fixed, promptfile:fixed, vidup:fixed
+2016-09-25: movshare:fixed, videoweed:fixed, vidup: fixed, yourupload: fixed
+2016-09-25: sharerepo: removed, sharesix: removed, veterok:removed, vidag: removed, videomega: removed, nowvideo: fixed, promptfile: fixed, videonest: fixed, videoweed: fixed, vidme: fixed
+2016-09-25: filenuke:removed, kiwi: fixed, mp4upload: fixed, myvi:fixed
+2016-09-24: ishared: removed, mailru:removed, imdb: fiex year info scraping, moviesub: new web site design, clouyd:fixed, openload:fixed, thevideo:fixed,
+2016-08-20: api: warn if ump called incorrectly
+2016-08-20: anidb: new indexer for animes because ann updates their episodes too late, anidb uses extreeme caching, be batient at first, it will get super fast by time, vshare: new url provider, kissanime: match by releases date, api: index item force no icons,
+2016-08-08: ann: add title for custom episode number
+2016-08-08: ann: allow to enter custom episode number since ann is always slow to update theier episodes
+2016-08-07: 0.0.78 Version Release
 2016-08-07: api: enable exception handling, dont push errrors to log,
 2016-08-07: imdb: use keyboard from ump api, kissanime: fix search, api: workaround for unspported protocol warnings, workaorund for detection of container update after video playback, workaround for cache keyboard entry and use old one if container is refereshed,
 2016-08-07: api,bookmark: base64 encode args,info,art data, urlencoding does not comply with all stdio, specificly weird android versions
