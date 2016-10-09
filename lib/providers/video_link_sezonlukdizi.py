@@ -35,18 +35,21 @@ def run(ump):
 						parts=[]
 						prefix=""
 						link=links[0]
-						if "plussd.asp" in link:
+						if link.startswith("//"):link="http:"+link
+						if "plussd.asp" in link or "plussd2.asp" in link:
 							gpage=ump.get_page(link,encoding,referer=url)
 							gvids=re.findall('file:"(.*?)", label:"(.*?)",type:"mp4"',gpage)
 							mparts={}
 							for gvid in gvids:
-								mparts[gvid[1]]=gvid[0]
+								glink=gvid[0]
+								if glink.startswith("//"):glink="http:"+glink
+								mparts[gvid[1]]=glink
 							parts.append({"url_provider_name":"google", "url_provider_hash":mparts,"referer":url})
 						elif "openload.co" in link:
 							olink=link.split("embed/")
 							olink=olink[1].split("/")[0]
 							parts.append({"url_provider_name":"openload", "url_provider_hash":olink,"referer":url})
-							prefix="[HS:TR]"
+							prefix=""
 						if len(parts):
 							ump.add_mirror(parts,"%s%s %dx%d %s" % (prefix,i["tvshowtitle"],i["season"],i["episode"],i["title"]))
 				break
