@@ -8,7 +8,6 @@ import ssl
 import httplib
 import socket
 
-
 class HeadRequest(urllib2.Request):
 	def get_method(self):
 		return "HEAD"
@@ -28,6 +27,9 @@ class HTTPRedirectHandler(urllib2.HTTPRedirectHandler):
 			result=urllib2.HTTPRedirectHandler.http_error_302(self,req, fp, code, msg, headers)
 			result.status=code
 			return result
+	
+	def http_error_301(self, *args,**kwargs):
+		self.http_error_302(*args,**kwargs)
 		
 class HTTPErrorProcessor(urllib2.HTTPErrorProcessor):
 	"""Process HTTP error responses."""
