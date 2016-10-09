@@ -45,11 +45,13 @@ def run(ump):
 							continue
 						videos=json.loads(data)
 						vlink={}
+						if videos.get("player_type","")=="altyazili" and not videos.get("altyazitype","")=="noalt":prefix=""
+						else:prefix="[HS:TR]"
 						for k in range(1,7):
 							if isinstance(videos,dict) and "videolink%d"%k in videos.keys():
 								vlink[videos["videokalite%d"%k]]=videos["videolink%d"%k]
 						parts=[{"url_provider_name":"google", "url_provider_hash":vlink}]
-						ump.add_mirror(parts,"%s %dx%d %s" % (i["tvshowtitle"],i["season"],i["episode"],i["title"]))	
+						ump.add_mirror(parts,"%s%s %dx%d %s" % (prefix,i["tvshowtitle"],i["season"],i["episode"],i["title"]))	
 
 				#dizimag web site is on beta stage an subject to change, they keep below algo for videos but they dont use it. so lets keep below code for now
 				if version==1:
