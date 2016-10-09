@@ -18,7 +18,7 @@ def scrape_page_safe(*args,**kwargs):
 	try:
 		return scrape_page(*args,**kwargs)
 	except:
-		pass
+		ump.add_log("Dizibox faced an error scraping: %s"%args[1])
 
 def scrape_page(page,etype):
 	etype=etype.lower()
@@ -53,9 +53,14 @@ def scrape_page(page,etype):
 		else:
 			return
 		
-	openload=re.findall('"https?://openload.co/embed/(.*?)/?"',page)
+	openload=re.findall('openload.co/embed/(.*?)/?"',page)
 	if len(openload):
 		parts.append({"url_provider_name":"openload","url_provider_hash":openload[0]})
+	
+	tune=re.findall('<iframe.*?src="https?://tune.pk/.*?"',page)
+	if len(tune):
+		up,vid=parse(tune[0],"vid")
+		parts.append({"url_provider_name":"tune","url_provider_hash":vid})
 	
 	if len(parts):
 		ump.add_mirror(parts,"%s %s %dx%d %s" % (prefix,i["tvshowtitle"],i["season"],i["episode"],i["title"]))
@@ -92,8 +97,6 @@ def run(ump):
 			sname,slink=serie
 			if ump.is_same(sname,name): 
 				found=True
-				print sname
-				print name
 				break
 		salias=slink.split("/")[-2]
 	if not found: return

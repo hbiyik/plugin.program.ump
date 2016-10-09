@@ -2,10 +2,18 @@
 import json
 import re
 from urllib2 import HTTPError
-
+import urlparse
 
 encoding="utf-8"
 domain = 'http://www.dizigold.net'
+
+def parse(url,key=None):
+	up=urlparse.urlparse(url)
+	if key:
+		return up,urlparse.parse_qs(up.query).get(key,[None])[0]
+	else:
+		return up
+
 
 #note: i dont really care about the mirros on this site only care about gvideos, mirros are vk which are marked private now and mail.ru most of them rarely works randomly
 def run(ump):
@@ -36,22 +44,24 @@ def run(ump):
 				lselects=re.findall('<small class="realcuf">(.*?)<',epage)
 				langs=[]
 				for lselect in lselects:
-					if lselect[0]=="T":
+					lang=lselect.lower()
+					if lang==u"türkçe":
 						langs.append("tr")
-					elif lselect[0]=="A":
+					elif lang==u"altyazısız":
 						langs.append("or")
-					else:
+					elif lang==u"ingilizce":
 						langs.append("en")
+					else:
+						langs.append("tr")
 				if len(vid)>0:
-					for lang in langs:
+					for lang in set(langs):
 						data={"tip":"view","id":vid[0],"dil":lang}
 						jsdata1=json.loads(ump.get_page(domain+"/sistem/ajax.php",encoding,referer=url,header={"X-Requested-With":"XMLHttpRequest"},data=data))
 						alts=re.findall('trigger\="(.*?)"',jsdata1["alternative"])
+						if lang=="or":prefix=""
+						elif lang == "en":prefix="[HS:EN]"
+						else: prefix="[HS:TR]"
 						for alt in alts:
-							if lang=="tr":
-								prefix="[HS:TR]"
-							else:
-								prefix=""
 							data={"id":vid[0],"tip":"view","s":alt,"dil":lang}
 							jsdata2=json.loads(ump.get_page(domain+"/sistem/ajax.php",encoding,referer=url,header={"X-Requested-With":"XMLHttpRequest"},data=data))
 							player=re.findall('iframe src="(.*?)"',jsdata2["data"])
@@ -82,4 +92,18 @@ def run(ump):
 									for google in googles:
 										parts[google[1]]=google[0]
 									ump.add_mirror([{"url_provider_name":"google","url_provider_hash":parts}],mname)
-									continue	
+									continue
+								iframes=re.findall('<iframe.*src="(http.*?)"',pdata)
+								for iframe in iframes:
+									up=parse(iframe)
+									if "openload" in up.netloc:
+										paths=up.path.split("/")
+										for p in range(len(paths)):
+											if paths[p]=="embed":
+												ump.add_mirror([{"url_provider_name":"openload","url_provider_hash":paths[p+1]}],mname)
+												break
+									elif "tune.pk" in up.netloc:
+										up,tvid=parse(iframe,"vid")
+										ump.add_mirror([{"url_provider_name":"tune","url_provider_hash":tvid}],mname)
+									
+								
