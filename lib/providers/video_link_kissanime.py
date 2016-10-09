@@ -73,6 +73,7 @@ def run(ump):
 	jq_limit=False
 	found=False
 	ump.get_page(domain,encoding)
+	return
 	for name in names:
 		ump.add_log("kissanime is searching %s on %s"%(name,"sitesearch"))
 		u="%s/Search/Anime"%domain

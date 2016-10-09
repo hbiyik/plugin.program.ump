@@ -232,8 +232,7 @@ def make_art(art,season=-1,banner_tables=["text","graphical","blank"]):
 def run(ump):
 	globals()['ump'] = ump
 	language=ump.backwards.getLanguage(0).lower()
-	if not language in ["en","sv","no","da","fi","nl","de","it","es","fr","pl","hu","el","tr","ru","he","ja","pt","zh","cs","sl","hr","ko"]:
-	language="en"
+	if not language in ["en","sv","no","da","fi","nl","de","it","es","fr","pl","hu","el","tr","ru","he","ja","pt","zh","cs","sl","hr","ko"]:language="en"
 	globals()["labguage"] = language
 	if ump.page == "root":
 		ump.index_item("Search","search",args={"search":True})

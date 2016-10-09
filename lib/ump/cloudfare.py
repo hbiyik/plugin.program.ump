@@ -81,6 +81,7 @@ def ddos_open(url,opener,req,data,timeout,cj,cfagents,cflocks,tunnel,tmode):
 			password = pass_match.group(1)
 			varname = (init_dict, init_var)
 			result = int(solve_equation(init_equation.rstrip()))
+			print 'init: %s = %s' % (init_equation, result)
 			for equation in equations.split(';'):
 					equation = equation.rstrip()
 					if equation[:len('.'.join(varname))] != '.'.join(varname):
