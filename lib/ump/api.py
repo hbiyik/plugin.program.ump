@@ -432,6 +432,15 @@ class ump():
 			xbmc.log(line,defs.loglevel)
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
+		hs=re.match(".*\[HS\:(..)\]",name,re.IGNORECASE)
+		d=re.match(".*\[D\:(..)\]",name,re.IGNORECASE)
+		language=self.backwards.getLanguage(0).lower()
+		if addon.getSetting("dismiss_sub_other")=="true" and hs and not hs.group(1).lower() in [language,"en"]:
+			self.add_log("HARD SUBTITLE, Dismissing : %s , %s" % (str(self.content_type),str(upname)))
+			return
+		if addon.getSetting("dismiss_dub_other")=="true"and d and not d.group(1).lower() in [language,"en"]:
+			self.add_log("OVERDUB, Dismissing : %s , %s" % (str(self.content_type),str(upname)))
+			return
 		link_provider=inspect.getframeinfo(inspect.stack()[1][0]).filename.split(os.path.sep)[-1].split(".py")[0]
 		if not (self.terminate or self.backwards.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:

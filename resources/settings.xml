@@ -11,6 +11,8 @@
 	<category id="validation" label="Validation/Auto Selection">
 		<setting label="VIDEO VALIDATION AND AUTO SELECTION" type="lsep"/>
 		<setting default="Check if Alive + Quality" id="video_val_method" label="Video Validation Method" type="select" values="Disabled|Check if Alive Only|Check if Alive + Quality"/>
+		<setting default="true" id="dismiss_sub_other" label="Dismiss Video if it has HARD SUBTITLE rather than my language or ENGLISH"/>
+		<setting default="true" id="dismiss_dub_other" label="Dismiss Video if it has OVERDUB rather than my language or ENGLISH"/>
 		<setting default="false" id="auto_en_video" label="Enable Automatic Mirror Selection for Videos" type="bool" visible="!eq(-1,Disabled)"/>
 		<setting default="1080" id="min_vid_res" label="Minimum Video Resolation" type="select" values="240|360|480|576|720|1080|2160|4320" visible="eq(-1,true)+eq(-2,Check if Alive + Quality)"/>
 		<setting default="" id="require_tag" label="Require Tag" type="text" visible="eq(-2,true)+!eq(-3,Disabled)"/>
