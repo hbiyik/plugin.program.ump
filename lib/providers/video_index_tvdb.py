@@ -183,6 +183,7 @@ def get_tvdb_episodes(ids,arts):
 			epiart["poster"]=epiart["thumb"]
 			season=epiinfo["season"]
 			episode=epiinfo["episode"]
+			epiinfo["mediatype"]=ump.defs.MT_ANIMEEPISODE
 			epis[season]["episode"][episode]={"info":epiinfo,"art":epiart}
 		result[id]=epis
 	result={}

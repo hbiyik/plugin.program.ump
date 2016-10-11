@@ -141,9 +141,10 @@ def run(ump):
 			info={"code":result["mbid"],"title":result["name"],"artist":result["artist"]["name"],"album":""}
 			art={"icon":im, "thumb":im}
 			playlist.append({"info":info,"art":art})
-		ump.index_item("Play Top 10","urlselect",args={"playlist":playlist[:10]},info={"title":"Top Tracks","code":""})
-		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"title":"Top Tracks","code":""})
+		ump.index_item("Play Top 10","urlselect",args={"playlist":playlist[:10]},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
+		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
 		for item in playlist:
+			item["info"]["mediatype"]=ump.defs.MT_MUSIC
 			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"])
 		ump.set_content(ump.defs.CC_ARTISTS)
 
@@ -168,9 +169,10 @@ def run(ump):
 			info={"code":result["mbid"],"title":result["name"],"artist":result["artist"]["name"],"album":""}
 			art={"icon":im, "thumb":im}
 			playlist.append({"info":info,"art":art})
-		ump.index_item("Play Top 10","urlselect",args={"playlist":playlist[:10]},info={"title":"Top Tracks","code":""})
-		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"title":"Top Tracks","code":""})
+		ump.index_item("Play Top 10","urlselect",args={"playlist":playlist[:10]},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
+		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
 		for item in playlist:
+			item["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
 			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"])
 		ump.set_content(ump.defs.CC_ARTISTS)
 
@@ -209,9 +211,10 @@ def run(ump):
 			art={"icon":im, "thumb":im}
 			playlist.append({"info":info,"art":art})
 		
-		ump.index_item("Play Top 40","urlselect",args={"playlist":playlist[:40]},info={"title":"Top Tracks","code":""})
-		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"title":"Top Tracks","code":""})
+		ump.index_item("Play Top 40","urlselect",args={"playlist":playlist[:40]},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
+		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
 		for item in playlist:
+			item["info"]["mediatype"]=ump.defs.MT_MUSIC
 			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"])
 		ump.set_content(ump.defs.CC_ARTISTS)
 
@@ -262,6 +265,7 @@ def run(ump):
 				audio={}
 				audio["info"]={"year":"","tracknumber":-1,"duration":"","album":"","artist":artist,"title":title,"code":mbid}
 				audio["art"]={"thumb":im,"poster":im}
+				audio["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
 				ump.index_item(artist+ " - "+title,"urlselect",icon=im, thumb=im,art=audio["art"],info=audio["info"])
 			ump.set_content(ump.defs.CC_SONGS)
 		
@@ -291,6 +295,7 @@ def run(ump):
 			im=get_img(track.get("image",[]))
 			item["art"]={"thumb":im,"poster":im}
 			playlist.append(item)
+		audio["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
 		ump.index_item("Play Top Tracks from: %s"%name,"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"Top Tracks from: %s"%name})
 		
 		mbrgroups=get_mbrgroups(ambid)
@@ -360,8 +365,10 @@ def run(ump):
 				audio["info"]={"year":relyear,"tracknumber":i,"duration":int(result["duration"]),"album":ump.info["album"],"artist":ump.info["artist"],"title":result["name"],"code":result.get("mbid","")}
 				audio["art"]={"thumb":albumimage,"poster":albumimage}
 				playlist.append(audio)
+			audio["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
 			ump.index_item("Play Album: %s"%ump.info["album"],"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"%s - %s [ALBUM]"%(ump.info["artist"],ump.info["album"])})
 			for item in playlist:
+				item["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
 				ump.index_item(item["info"]["artist"]+" - "+item["info"]["title"],"urlselect",info=item["info"],art=item["art"])
 		else:
 			return None

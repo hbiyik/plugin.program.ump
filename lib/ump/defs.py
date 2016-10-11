@@ -24,11 +24,15 @@ arturi = "https://offshoregit.com/boogiepop/dataserver/ump/images/"
 #arturi = "http://boogie.us.to/dataserver/ump/images/"
 #arturi="D:/projects/git/dataserver/dataserver/ump/images/"
 addonsxmluri="http://boogie.us.to/repository.boogie.dist/addons.xml"
-CT_AUDIO, CT_IMAGE, CT_VIDEO, CT_UMP = "audio", "image","video","ump" ##content types
 LI_CTS={CT_AUDIO:"music",CT_IMAGE:"pictures",CT_VIDEO:"video",CT_UMP:"video"}
 LI_SIS={CT_AUDIO:"audio",CT_IMAGE:"video",CT_VIDEO:"video",CT_UMP:"video"}
 WID={CT_AUDIO:10502,CT_IMAGE:10002,CT_VIDEO:10025}
+#content types
+CT_AUDIO, CT_IMAGE, CT_VIDEO, CT_UMP = "audio", "image","video","ump" ##content types
+#content categories
 CC_FILES, CC_SONGS, CC_ARTISTS, CC_ALBUMS, CC_MOVIES, CC_TVSHOWS, CC_EPISODES, CC_MUSICVIDEOS = "files", "songs", "artists", "albums", "movies", "tvshows", "episodes", "musicvideos"  ##content categories
+#media types
+MT_MOVIE,MT_EPISODE,MT_MUSIC,MT_MUSICALBUM,MT_CHAPTER,MT_ANIMEMOVIE,MT_ANIMEEPISODE,MT_OTHER="movie","episode","song","musicalbum","chapter","animemovie","animeepisode","other"
 VIEW_MODES={
 	"list":{
         'skin.confluence': 50,

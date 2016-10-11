@@ -298,6 +298,7 @@ def listitems(aids):
 		c=command("anime",{"aid":aid})
 		type,info,art,epis=get_media(c)
 		if not len(epis):
+			info["mediatype"]=ump.defs.MT_ANIMEMOVIE
 			ump.index_item(info["localtitle"]+suffix,"urlselect",info=info,art=art)
 		else:
 			ump.index_item(info["localtitle"]+suffix,"episodes",info=info,art=art,args={"aid":aid})
@@ -365,6 +366,7 @@ def run(ump):
 		
 	elif ump.page=="episodes":
 		type,info,art,epis=get_media(command("anime",{"aid":ump.args["aid"]}))
+		info["mediatype"]=ump.defs.MT_ANIMEEPISODE
 		epinfo=info.copy()
 		for epno,epi in epis.iteritems():
 			epinfo.update(epi)

@@ -53,9 +53,9 @@ def return_links(name,type,upname,uphash,res,referer):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	is_serie,names=ump.get_vidnames()
-	if is_serie:
-		return
+	names=ump.getnames()
+	
+	if not i["mediatype"]==ump.defs.MT_MOVIE:return
 	match=False
 	for name in names:
 		if match:break

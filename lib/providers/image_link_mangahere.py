@@ -6,6 +6,7 @@ encoding="utf-8"
 
 def run(ump):
 	globals()['ump'] = ump
+	if not ump.defs.MT_CHAPTER==ump.info["mediatype"]: return
 	i=ump.info
 	ump.add_log("Mangahere is searching %s" % i["title"])
 	results=json.loads(ump.get_page(domain+"/ajax/search.php",encoding,query={"query":ump.info["title"]}))

@@ -252,6 +252,7 @@ def results_search(animes=None,filters=None):
 			if len(media["episodes"].keys())==0:
 				commands=[('Search on IMDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":info["title"],"title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},module="imdb"))]
 				commands.extend(commands2)
+				info["mediatype"]=ump.defs.MT_ANIMEMOVIE
 				ump.index_item(name,"urlselect",info=info,art=art,cmds=commands)
 			else:
 				commands=[('Search on IMDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":info["title"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS},module="imdb"))]
@@ -371,6 +372,7 @@ def run(ump):
 			#even though animes dont have season info force it so trakt will scrobble
 			info["season"]=1
 			info["absolute_number"]=epi
+			info["mediatype"]=ump.defs.MT_ANIMEEPISODE
 			ump.index_item("%d %s"%(epi,episodes[epi]["title"]),"urlselect",info=info)
 		ump.index_item("Custom Episode Number","customepi",info=info,isFolder=False)
 		ump.set_content(ump.defs.CC_EPISODES)
@@ -382,4 +384,5 @@ def run(ump):
 			ump.info["episode"]=int(what)
 			ump.info["absolute_number"]=int(what)
 			ump.info["season"]=1
+			ump.info["mediatype"]=ump.defs.MT_ANIMEEPISODE
 			xbmc.executebuiltin("Container.Update(%s)"%ump.link_to("urlselect"))

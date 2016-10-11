@@ -38,10 +38,14 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	
-	is_serie,names=ump.get_vidnames()
+	is_serie=ump.info["mediatype"] == ump.defs.MT_EPISODE
+	is_movie=ump.info["mediatype"] == ump.defs.MT_MOVIE
+	if not (is_serie or is_movie):return
+	
 	token=re.findall("var\s*tok\s*=\s*'(.*?)'",ump.get_page(domain,encoding))[0] 
 	found=False   
-	for name in names[:3]:
+	names=ump.getnames(3)
+	for name in names:
 		if found:break
 		ump.add_log("cartoonhd is searching %s"%names[0])
 		set="".join([random.choice(string.ascii_letters) for k in range(25)])

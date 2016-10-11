@@ -16,7 +16,7 @@ def run(ump):
 	old_artist=""
 	old_artalbum=""
 	old_tralbum=""
-	if "playlist" in ump.args:
+	if ump.defs.MT_MUSICALBUM==ump.info["mediatype"]:
 		playlist=ump.args["playlist"]
 		mname=ump.args.get("mname","Grooveshark Playlist")
 	else:

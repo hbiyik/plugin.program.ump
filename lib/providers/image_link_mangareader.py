@@ -5,6 +5,7 @@ encoding="utf-8"
 
 def run(ump):
 	globals()['ump'] = ump
+	if not ump.defs.MT_CHAPTER==ump.info["mediatype"]: return
 	i=ump.info
 	ump.add_log("Mangareader is searching %s" % i["title"])
 	for result in ump.get_page("%s/actions/search/"%domain,encoding,query={"q":ump.info["title"],"limit":100},referer=domain).split("\n"):

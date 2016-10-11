@@ -424,6 +424,7 @@ def run(ump):
 					ctype=ump.defs.CC_TVSHOWS
 				else:
 					commands.append(('Search on ANN : %s'%movie["info"]["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["info"]["title"]},module="ann")))
+					movie["info"]["mediatype"]=ump.defs.MT_MOVIE
 					ump.index_item(suggest+movie["info"]["localtitle"],"urlselect",info=movie["info"],art=movie["art"],cmds=commands)
 					ctype=ump.defs.CC_MOVIES
 
@@ -483,5 +484,6 @@ def run(ump):
 			for person in ump.info.get("cast",""):
 				if not person=="":
 					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
+			info["mediatype"]=ump.defs.MT_ANIMEEPISODE
 			ump.index_item("%d. %s"%(epi,title),"urlselect",info=info,art=art,cmds=commands)
 		ump.set_content(ump.defs.CC_EPISODES)

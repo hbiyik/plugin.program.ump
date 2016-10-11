@@ -39,6 +39,9 @@ from ump import clicky
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
+def findcaller():
+	return inspect.getframeinfo(inspect.stack()[1][0]).filename.split(os.path.sep)[-1].split(".py")[0]
+
 def humanint(size,precision=2):
 	suffixes=['B','KB','MB','GB','TB']
 	suffixIndex = 0
@@ -145,7 +148,7 @@ class ump():
 		if not self.page=="urlselect":
 			self.stat.query()
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
-
+	
 	def get_keyboard(self,*args):
 		if self.refreshing:
 			return True,prefs.get("play","keyboard") 
@@ -203,6 +206,9 @@ class ump():
 		if not noicon:self.backwards.setArt(li,art)
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
+		if page=="urlselect":
+			if not get(self.info("index",None)):self.info["index"]=findcaller()
+			if not get(self.info("mediatype",None)):self.info["mediatype"]=self.defs.MT_OTHER
 		if isFolder==False:
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
@@ -258,14 +264,14 @@ class ump():
 
 		return have
 
-	def get_vidnames(self,max=5,org_first=True):
-		is_serie="tvshowtitle" in self.info.keys() and not self.info["tvshowtitle"].replace(" ","") == ""
+	def getnames(self,max=5):
+		is_serie=self.info("mediatype") in [self.defs.MT_EPISODE,self.defs.MT_ANIMEEPISODE]
 		names=[]
 		if is_serie:
 			ww=self.info["tvshowtitle"]
 		else:
 			ww=self.info["title"]
-		if org_first:
+		if not self.info("mediatype") in [self.defs.MT_ANIMEMOVIE,self.defs.ANIMEEPISODE]:
 			names.append(self.info["originaltitle"])
 			names.append(ww)
 		else:
@@ -441,7 +447,7 @@ class ump():
 		if addon.getSetting("dismiss_dub_other")=="true"and d and not d.group(1).lower() in [language,"en"]:
 			self.add_log("OVERDUB, Dismissing : %s , %s" % (str(self.content_type),str(upname)))
 			return
-		link_provider=inspect.getframeinfo(inspect.stack()[1][0]).filename.split(os.path.sep)[-1].split(".py")[0]
+		link_provider=findcaller()
 		if not (self.terminate or self.backwards.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				part["link_provider_name"]=link_provider

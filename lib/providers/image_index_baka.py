@@ -317,6 +317,7 @@ def run(ump):
 				cache.append(chapter)
 				ump.info["season"]="-1"
 				ump.info["episode"]=chapter
+				ump.info["mediatype"]=ump.defs.MT_CHAPTER
 				ump.index_item("Chapter %s"%chapter,"urlselect")
 		cache=[]
 		pre=0
