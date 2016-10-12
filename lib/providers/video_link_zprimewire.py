@@ -58,7 +58,10 @@ def run(ump):
 	i=ump.info
 	exact=False
 	max_pages=3
-	is_serie,names=ump.get_vidnames(org_first = not ump.check_codes([3,4]))
+	is_serie=ump.info["mediatype"] == ump.defs.MT_EPISODE
+	is_movie=ump.info["mediatype"] == ump.defs.MT_MOVIE
+	if not (is_serie or is_movie):return
+	names=ump.getnames()
 	for name in names:
 		ump.add_log("Primewire is searching %s" % name)
 		keypage=ump.get_page(domain+"/index.php?search",encoding)

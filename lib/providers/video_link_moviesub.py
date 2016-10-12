@@ -83,11 +83,8 @@ def match_results(page,names,info):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	
-	is_serie,names=ump.get_vidnames()
-
-	if is_serie:
-		return None
+	if not i["mediatype"]==ump.defs.MT_MOVIE: return
+	names=ump.getnames()
 
 	for name in names:
 		ump.add_log("moviesub is searching %s" % unidecode.unidecode(name))

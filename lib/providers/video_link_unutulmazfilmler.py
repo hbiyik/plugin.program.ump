@@ -24,10 +24,8 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 
-	is_serie,names=ump.get_vidnames()
-
-	if is_serie:
-		return None
+	if not i["mediatype"]==ump.defs.MT_MOVIE: return
+	names=ump.getnames()
 
 	for name in names:
 		ump.add_log("UnutulmazFilmler is searching %s" % name)

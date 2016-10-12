@@ -19,9 +19,7 @@ def parse(url,key=None):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	is_serie,names=ump.get_vidnames()
-	if not is_serie:
-		return None
+	if not i["mediatype"]==ump.defs.MT_EPISODE: return
 
 	for name in names:
 		query={"page":"/dizi/aranan_%s"%name}

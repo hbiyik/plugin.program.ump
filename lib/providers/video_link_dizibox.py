@@ -82,11 +82,10 @@ def scrape_epi(page,elink):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
+	if not i["mediatype"]==ump.defs.MT_EPISODE: return
 	globals()['i'] = i
-	is_serie,names=ump.get_vidnames()
+	names=ump.getnames()
 	found=False
-	if not is_serie:
-		return None
 	page=ump.get_page(domain+"/arsiv",encoding,referer=domain)
 	series=re.findall('<li><a title="(.*?)" href="(.*?)"',page)
 	for name in names:

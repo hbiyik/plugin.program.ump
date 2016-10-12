@@ -41,11 +41,9 @@ def match_results(link,inf,names):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	is_serie,names=ump.get_vidnames()
-	match=False
-	if is_serie: return None
+	if not i["mediatype"]==ump.defs.MT_MOVIE: return
 	prefix=""
-
+	names=ump.getnames()
 	for name in names[:2]:
 		ump.add_log("pubfilm is searching %s" % name)
 		data={"options":"qtranslate_lang=0&set_intitle=None&customset%5B%5D=post","action":"ajaxsearchpro_search","aspp":name,"asid":"1","asp_inst_id":"1_1"}

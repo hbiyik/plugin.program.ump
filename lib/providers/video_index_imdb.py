@@ -484,6 +484,6 @@ def run(ump):
 			for person in ump.info.get("cast",""):
 				if not person=="":
 					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
-			info["mediatype"]=ump.defs.MT_ANIMEEPISODE
+			info["mediatype"]=ump.defs.MT_EPISODE
 			ump.index_item("%d. %s"%(epi,title),"urlselect",info=info,art=art,cmds=commands)
 		ump.set_content(ump.defs.CC_EPISODES)

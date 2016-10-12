@@ -37,10 +37,8 @@ def return_links(name,mp,h,referer):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	is_serie,names=ump.get_vidnames()
-	found=False
-	if not is_serie:
-		return
+	if not i["mediatype"]==ump.defs.MT_EPISODE: return
+	
 	ump.get_page(domain,encoding)
 	flink=None
 	for name in names:

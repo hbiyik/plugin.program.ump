@@ -41,7 +41,7 @@ def run(ump):
 	is_serie=ump.info["mediatype"] == ump.defs.MT_EPISODE
 	is_movie=ump.info["mediatype"] == ump.defs.MT_MOVIE
 	if not (is_serie or is_movie):return
-	
+
 	token=re.findall("var\s*tok\s*=\s*'(.*?)'",ump.get_page(domain,encoding))[0] 
 	found=False   
 	names=ump.getnames(3)

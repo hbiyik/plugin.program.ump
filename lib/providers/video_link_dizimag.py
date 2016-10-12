@@ -11,9 +11,7 @@ version = 2
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	is_serie,names=ump.get_vidnames()
-	if not is_serie:
-		return None
+	if not i["mediatype"]==ump.defs.MT_EPISODE: return
 
 	ump.add_log("dizimag is searching %s"%names[0])	
 	page=ump.get_page(domain+"/insert/d16.js",encoding)

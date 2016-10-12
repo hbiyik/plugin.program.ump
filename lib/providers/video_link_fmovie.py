@@ -7,9 +7,10 @@ domain="http://fmovie.co"
 encoding="utf-8"
 def run(ump):
 	i=ump.info
-	is_serie,names=ump.get_vidnames(org_first = not ump.check_codes([3,4]))
+	if not i["mediatype"]==ump.defs.MT_MOVIE: return
 	match=False
-	for name in names[:3]:
+	names=ump.getnames(3)
+	for name in names:
 		if match:break
 		ump.add_log("Fmovie.co is searching %s"%names[0])
 		page=ump.get_page(domain+"/results",encoding,query={"q":name})

@@ -207,8 +207,8 @@ class ump():
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if page=="urlselect":
-			if not get(self.info("index",None)):self.info["index"]=findcaller()
-			if not get(self.info("mediatype",None)):self.info["mediatype"]=self.defs.MT_OTHER
+			if not self.info.get("index",None):self.info["index"]=findcaller()
+			if not self.info.get("mediatype",None):self.info["mediatype"]=self.defs.MT_OTHER
 		if isFolder==False:
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
@@ -265,13 +265,13 @@ class ump():
 		return have
 
 	def getnames(self,max=5):
-		is_serie=self.info("mediatype") in [self.defs.MT_EPISODE,self.defs.MT_ANIMEEPISODE]
+		is_serie=self.info["mediatype"] in [self.defs.MT_EPISODE,self.defs.MT_ANIMEEPISODE]
 		names=[]
 		if is_serie:
 			ww=self.info["tvshowtitle"]
 		else:
 			ww=self.info["title"]
-		if not self.info("mediatype") in [self.defs.MT_ANIMEMOVIE,self.defs.ANIMEEPISODE]:
+		if not self.info["mediatype"] in [self.defs.MT_ANIMEMOVIE,self.defs.MT_ANIMEEPISODE]:
 			names.append(self.info["originaltitle"])
 			names.append(ww)
 		else:
@@ -285,9 +285,9 @@ class ump():
 				names2.append(name)
 
 		if max==0:
-			return is_serie,names2
+			return names2
 		else:
-			return is_serie,names2[:max]
+			return names2[:max]
 
 	def set_content(self,content_cat="ump",enddir=True):
 		if content_cat=="N/A":
@@ -438,21 +438,21 @@ class ump():
 			xbmc.log(line,defs.loglevel)
 
 	def add_mirror(self,parts,name,wait=0,missing="drop"):
-		hs=re.match(".*\[HS\:(..)\]",name,re.IGNORECASE)
-		d=re.match(".*\[D\:(..)\]",name,re.IGNORECASE)
+		hs=re.match("\[HS\:(.*?)\]",name,re.IGNORECASE)
+		d=re.match("\[D\:(.*?)\]",name,re.IGNORECASE)
 		language=self.backwards.getLanguage(0).lower()
-		if addon.getSetting("dismiss_sub_other")=="true" and hs and not hs.group(1).lower() in [language,"en"]:
-			self.add_log("HARD SUBTITLE, Dismissing : %s , %s" % (str(self.content_type),str(upname)))
-			return
-		if addon.getSetting("dismiss_dub_other")=="true"and d and not d.group(1).lower() in [language,"en"]:
-			self.add_log("OVERDUB, Dismissing : %s , %s" % (str(self.content_type),str(upname)))
-			return
 		link_provider=findcaller()
 		if not (self.terminate or self.backwards.abortRequested()) and isinstance(parts,list) and len(parts)>0:
 			for part in parts:
 				part["link_provider_name"]=link_provider
 				upname=part.get("url_provider_name",None)
 				uphash=part.get("url_provider_hash",None)
+				if addon.getSetting("dismiss_sub_other")=="true" and hs and not hs.group(1).lower() in [language,"en"]:
+					self.add_log("HARD SUBTITLE, Dismissing : %s, %s , %s" % (str(self.content_type),name,str(upname)))
+					return
+				if addon.getSetting("dismiss_dub_other")=="true"and d and not d.group(1).lower() in [language,"en"]:
+					self.add_log("OVERDUB, Dismissing : %s, %s , %s" % (str(self.content_type),name,str(upname)))
+					return
 				#sanity check
 				if upname is None or uphash is None:
 					return False

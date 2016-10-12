@@ -33,7 +33,7 @@ def match_uri(results,refnames):
 
 def run(ump):
 	globals()['ump'] = ump
-	if not ump.info["mediatype"] in [ump.defs.MT_ANIMEMOVIE,ump.defs.ANIMEEPISODE]: return
+	if not ump.info["mediatype"] in [ump.defs.MT_ANIMEMOVIE,ump.defs.MT_ANIMEEPISODE]: return
 	i=ump.info
 	names=ump.get_vidnames()
 

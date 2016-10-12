@@ -7,11 +7,8 @@ domain = 'http://sezonlukdizi.com'
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	is_serie,names=ump.get_vidnames()
-
-	if not is_serie:
-		return None
-
+	if not i["mediatype"]==ump.defs.MT_EPISODE: return
+	names=ump.getnames()
 	for name in names:
 		ump.add_log("sezonlukdizi is searching %s"%name)
 		page=ump.get_page(domain+"/diziler.asp",encoding,query={"adi":name,"tur":"","ulke":"","tv":"","minYil":"","maxYil":"","minImdb":"","siralama_tipi":"imdb","siralama=turu":"desc","ps":"25"})

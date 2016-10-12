@@ -9,9 +9,8 @@ domain = 'http://dizilab.com'
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	is_serie,names=ump.get_vidnames()
-	if not is_serie:
-		return None
+	if not i["mediatype"]==ump.defs.MT_EPISODE: return
+	
 	ump.add_log("dizilab is searching %s"%names[0])
 	found=False
 	for name in names:
