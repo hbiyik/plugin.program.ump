@@ -251,7 +251,7 @@ def get_media(xml):
 		type=ump.defs.CC_MOVIES
 	
 	info={
-		"code6":code,
+		"code":code,
 		"year":year,
 		"startdate":startdate,
 		"localtitle":lotitle,

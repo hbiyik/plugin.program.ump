@@ -129,7 +129,7 @@ def get_tvdb_info(ids,force_lang=False):
 		genre=get_child_data(serie,"Genre","")
 		genre=genre.replace("|"," ")
 		info["genre"]=genre
-		info["code2"]=id
+		info["code"]=id
 		
 		result[id]={"info":info,"art":art}
 

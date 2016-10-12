@@ -64,18 +64,20 @@
 	elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==1:
 		try:
 			providers.load(ump.content_type,"index",ump.module).run(ump)
+			ump._do_container()
 		except Exception,e:
 			ump.notify_error(e)
 			
 	elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==2:
 		try:
 			providers.load("ump","index",ump.module).run(ump)
+			ump._do_container()
 		except Exception,e:
 			ump.notify_error(e)
 	
 	postrun.run(ump)		
 	ump.shut()
-	ump.add_log("CONTENT_CAT  : %s"%str(ump.content_cat))
+	ump.add_log("MEDIA_TYPE: %s"%str(ump.info["media_type"]))
 	ump._clean()
 	ump.add_log("UMP:EOF")
 except Exception,e:

@@ -11,6 +11,7 @@ addon_bdir = path.join(addon_dir,"resources","backup")
 addon_setxml = path.join(addon_dir,"resources","settings.xml")
 addon_bsetxml = path.join(addon_bdir,"settings.xml")
 addon_ddir = xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump')
+addon_stdir = xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump/stats')
 addon_preffile= path.join(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'),"prefs.json")
 addon_cookfile= path.join(xbmc.translatePath('special://home/userdata/addon_data/plugin.program.ump'),"cookie")
 kodi_ddir = xbmc.translatePath('special://home/userdata/')
@@ -29,13 +30,45 @@ CT_AUDIO, CT_IMAGE, CT_VIDEO, CT_UMP = "audio", "image","video","ump" ##content 
 LI_CTS={CT_AUDIO:"music",CT_IMAGE:"pictures",CT_VIDEO:"video",CT_UMP:"video"}
 LI_SIS={CT_AUDIO:"audio",CT_IMAGE:"video",CT_VIDEO:"video",CT_UMP:"video"}
 WID={CT_AUDIO:10502,CT_IMAGE:10002,CT_VIDEO:10025}
-#content categories
-CC_FILES, CC_SONGS, CC_ARTISTS, CC_ALBUMS, CC_MOVIES, CC_TVSHOWS, CC_EPISODES, CC_MUSICVIDEOS = "files", "songs", "artists", "albums", "movies", "tvshows", "episodes", "musicvideos"  ##content categories
 #media types
 MT_MOVIE,MT_EPISODE,MT_ANIMEMOVIE,MT_ANIMEEPISODE="movie","episode","animemovie","animeepisode"
 MT_MUSIC,MT_MUSICALBUM="song","musicalbum"
 MT_ANIMECHAPTER="animechapter"
 MT_OTHER="other"
+
+mediapointer={
+         defs.MT_MOVIE:["code"],
+         defs.MT_SERIE:["code"],
+         defs.MT_SEASON:["code","season"],
+         defs.MT_EPISODE:["code","season","episode"],
+         defs.MT_ANIMEMOVIE:["code"],
+         defs.MT_ANIMESERIE:["code"],
+         defs.MT_ANIMEEPISODE:["code","epsiode"],
+         defs.MT_ARTIST:["code"],
+         defs.MT_MUSICALBUM:["code","album"],
+         defs.MT_MUSIC:["code","album","title"],
+         defs.MT_MANGA:["code"],
+         defs.MT_MANGACHAPTER:["code","episode"],
+         defs.MT_OTHER:["code"]
+         }
+
+#media type to kodi content categories
+media_to_cc={
+         defs.MT_MOVIE:"movies",
+         defs.MT_SERIE:"tvshows",
+         defs.MT_SEASON:"albums",
+         defs.MT_EPISODE:"episodes",
+         defs.MT_ANIMEMOVIE:"movies",
+         defs.MT_ANIMESERIE:"tvshows",
+         defs.MT_ANIMEEPISODE:"episodes",
+         defs.MT_ARTIST:"albums",
+         defs.MT_MUSICALBUM:"albums",
+         defs.MT_MUSIC:"albums",
+         defs.MT_MANGA:"albums",
+         defs.MT_MANGACHAPTER:"albums",
+         defs.MT_OTHER:"files"      
+             }
+
 VIEW_MODES={
 	"list":{
         'skin.confluence': 50,

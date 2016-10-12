@@ -179,7 +179,7 @@ def scrape_ann_search(animes):
 			"write":"",
 			"premiered":"",
 			"status":"",
-			"code3":id,
+			"code":id,
 			"aired":"",
 			"credits":"",
 			"lastplayed":"",
@@ -352,7 +352,7 @@ def run(ump):
 		results_search()
 
 	elif ump.page== "show_episodes":
-		annid=ump.info.get("code3",None)
+		annid=ump.info.get("code",None)
 		if annid is None:
 			return None
 		medias=scrape_ann_search([annid])

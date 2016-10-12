@@ -35,6 +35,7 @@ from ump import prefs
 from ump import http
 from ump import teamkodi
 from ump import clicky
+from ump import identifier
 #from ump import throttle
 
 addon = xbmcaddon.Addon('plugin.program.ump')
@@ -132,7 +133,6 @@ class ump():
 					self.shut()
 					sys.exit()
 		[self.content_type]= result.get('content_type', ["ump"])
-		[self.content_cat]= result.get('content_cat', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 
 		if prefs.get("play","flag"):
@@ -147,6 +147,7 @@ class ump():
 		self.stat=clicky.clicky(self)
 		if not self.page=="urlselect":
 			self.stat.query()
+		self.identifier=identifier.identifier()
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
 	
 	def get_keyboard(self,*args):
@@ -180,7 +181,8 @@ class ump():
 			return pre+post
 
 		
-	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False):
+	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False,mediatype=None):
+		if not mediatype: mediatype=self.defs.MT_OTHER
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
 		if info is None:info={} 
@@ -199,6 +201,7 @@ class ump():
 		#if thumb == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":thumb=art["thumb"]
 		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
 		self.info=info
+		self.info["mediatype"]=mediatype
 		u=self.link_to(page,args,module)
 		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
 		li.setIconImage(icon)
@@ -208,17 +211,18 @@ class ump():
 		coms=[]
 		if page=="urlselect":
 			if not self.info.get("index",None):self.info["index"]=findcaller()
-			if not self.info.get("mediatype",None):self.info["mediatype"]=self.defs.MT_OTHER
 		if isFolder==False:
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
+			if not mediatype==self.defs.MT_OTHER:
+				coms.append(('Mark Watched',"RunScript(%s,markwatched,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.info)))
 			coms.append(('Detailed Info',"Action(Info)"))
 			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
 		coms.extend(cmds)
 		if adddefault:
 			coms.append(("Addon Settings","Addon.OpenSettings(plugin.program.ump)"))
 		li.addContextMenuItems(coms,removeold)
-		self.index_items.append((u,li,isFolder,adddefault,coms,removeold))
+		self.index_items.append((u,li,isFolder,adddefault,coms,removeold,mediatype))
 		return li
 
 	def view_text(self,label,text):
@@ -255,15 +259,6 @@ class ump():
 				match_cast=True
 		return match_cast
 
-	def check_codes(self,codes):
-		have=False
-		for cnum in codes:
-			if "code%d"%cnum in self.info.keys() and not (self.info["code%d"%cnum ] == "" or self.info["code%d"%cnum ]== " " ):
-				have=True
-				break
-
-		return have
-
 	def getnames(self,max=5):
 		is_serie=self.info["mediatype"] in [self.defs.MT_EPISODE,self.defs.MT_ANIMEEPISODE]
 		names=[]
@@ -289,21 +284,24 @@ class ump():
 		else:
 			return names2[:max]
 
-	def set_content(self,content_cat="ump",enddir=True):
-		if content_cat=="N/A":
-			content_cat=self.content_cat
-		else:
-			self.content_cat=content_cat
-		xbmcplugin.setContent(self.handle, content_cat)
+	def _do_container(self):
 		items=[]
+		mediatypes={}
 		if len(self.index_items):
-			for u,li,isfolder,adddef,coms,remold in self.index_items:
+			for u,li,isfolder,adddef,coms,remold,mediatype in self.index_items:
+				if not mediatype in mediatypes: mediatypes[mediatype]=1
+				else: mediatypes[mediatype]+=1
 				items.append((u,li,isfolder))
 				if adddef:
-					coms.append(('Set current view \"default\" for %s'%content_cat,"RunScript(%s,setview,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.content_type,content_cat)))
+					mcc=self.defs.media_to_cc[mediatype]
+					coms.append(('Set current view \"default\" for %s'%mcc,"RunScript(%s,setview,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.content_type,mcc)))
 					li.addContextMenuItems(coms,remold)
 			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
-		if enddir:xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
+		v=list(mediatypes.values())
+	 	k=list(mediatypes.keys())
+	 	content_cat= self.defs.media_to_cc[k[v.index(max(v))]]
+	 	xbmcplugin.setContent(self.handle, content_cat)
+	 	xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
 		wmode=addon.getSetting("view_"+content_cat).lower()
 		if wmode=="":wmode="default"
 		if not wmode == "default":
