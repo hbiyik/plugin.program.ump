@@ -10,7 +10,7 @@ import sys
 import time
 import datetime
 import traceback
-from urllib import urlencode
+import urllib
 import urllib2
 from urlparse import parse_qs
 import gc
@@ -36,12 +36,13 @@ from ump import http
 from ump import teamkodi
 from ump import clicky
 from ump import identifier
+from ump import stats
 #from ump import throttle
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
-def findcaller():
-	return inspect.getframeinfo(inspect.stack()[1][0]).filename.split(os.path.sep)[-1].split(".py")[0]
+def findcaller(index=1):
+	return inspect.getframeinfo(inspect.stack()[index][0]).filename.split(os.path.sep)[-1].split(".py")[0]
 
 def humanint(size,precision=2):
 	suffixes=['B','KB','MB','GB','TB']
@@ -60,6 +61,9 @@ def humanres(w,h):
 		if h>=height*height/w:
 			res=str(height)+"p"
 	return res
+
+def uniurlenc(d):
+	return urllib.urlencode(dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in d.items()))
 
 class ump():
 	def __init__(self,pt=False):
@@ -134,6 +138,7 @@ class ump():
 					sys.exit()
 		[self.content_type]= result.get('content_type', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
+		self.stats=stats.stats()
 
 		if prefs.get("play","flag"):
 			self.refreshing=True
@@ -148,6 +153,7 @@ class ump():
 		if not self.page=="urlselect":
 			self.stat.query()
 		self.identifier=identifier.identifier()
+		self.container_mediatype=defs.MT_OTHER
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
 	
 	def get_keyboard(self,*args):
@@ -200,22 +206,26 @@ class ump():
 			self.art=art
 		#if thumb == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":thumb=art["thumb"]
 		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
+		info["index"]=findcaller(2)
 		self.info=info
-		self.info["mediatype"]=mediatype
 		u=self.link_to(page,args,module)
 		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
 		if not noicon:self.backwards.setArt(li,art)
+		if not mediatype==self.defs.MT_OTHER:
+			info["mediatype"]=mediatype
+			iswatched=self.stats.iswatched(info)
+			if iswatched:
+				info["playcount"]=iswatched
+				info["watched"]=iswatched
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
-		if page=="urlselect":
-			if not self.info.get("index",None):self.info["index"]=findcaller()
 		if isFolder==False:
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
 			if not mediatype==self.defs.MT_OTHER:
-				coms.append(('Mark Watched',"RunScript(%s,markwatched,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.info)))
+				coms.append(('Mark Watched',"RunScript(%s,markwatched,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),urllib.quote(json.dumps(info)))))
 			coms.append(('Detailed Info',"Action(Info)"))
 			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
 		coms.extend(cmds)
@@ -297,9 +307,17 @@ class ump():
 					coms.append(('Set current view \"default\" for %s'%mcc,"RunScript(%s,setview,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.content_type,mcc)))
 					li.addContextMenuItems(coms,remold)
 			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
+		print 7
+		print mediatypes
+		print 8
 		v=list(mediatypes.values())
 	 	k=list(mediatypes.keys())
-	 	content_cat= self.defs.media_to_cc[k[v.index(max(v))]]
+	 	self.container_mediatype=k[v.index(max(v))]
+	 	print 5
+	 	print self.container_mediatype
+	 	print 6
+	 	content_cat= self.defs.media_to_cc[self.container_mediatype]
+	 	print content_cat
 	 	xbmcplugin.setContent(self.handle, content_cat)
 	 	xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
 		wmode=addon.getSetting("view_"+content_cat).lower()
@@ -343,7 +361,7 @@ class ump():
 		query["content_type"]=[content_type,self.content_type][content_type is None]
 		for keep in ["info","art"]:
 			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
-		return sys.argv[0] + '?' + urlencode(query)
+		return sys.argv[0] + '?' + urllib.urlencode(query)
 
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None):
 		
@@ -358,10 +376,10 @@ class ump():
 			
 		#python cant handle unicode urlencoding so needs to get dirty below.
 		if not query is None:
-			query=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in query.items())) 
+			query=uniurlenc(query) 
 			url=url+"?"+query
 		if not data is None and isinstance(data,dict):
-				data=urlencode (dict ([k, v.encode('utf-8') if isinstance (v, unicode) else v] for k, v in data.items()))
+			data=uniurlenc(data)
 		#change timeout
 		if tout is None:
 			tout=int(float(addon.getSetting("tout")))

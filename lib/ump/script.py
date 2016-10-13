@@ -1,4 +1,8 @@
 from sys import argv
+import urllib
+
+for i in range(len(argv)):
+	argv[i]=urllib.unquote(argv[i])
 
 if len(argv)>1:
 	if argv[1]=="addfav":
@@ -17,4 +21,9 @@ if len(argv)>1:
 		from prefs import set_view
 		#print get_skin_view(argv[2])
 		set_view(argv[2],argv[3])
+	elif argv[1]=="markwatched":
+		from stats import stats
+		import json
+		st=stats()
+		st.markwatched(json.loads(argv[2]))
 		

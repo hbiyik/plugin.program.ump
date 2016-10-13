@@ -1,27 +1,26 @@
-from ump import defs
+import defs
 import json
 import md5
 
 class identifier():
-    def __init__(self,ump):
-        self.ump=ump
-        
-    def create(self,info=None):
-        if not info: info=ump.info
-        ptr=[self.ump.content_type,info.get("index","index")]
-        mediatype=info.get("mediatype","mediatype")
-        ptr.append(mediatype)
-        for key in defs.mediapointer.get(mediatype,defs.MT_OTHER):
-            ptr.append(info.get(key,key))
+    def create(self,info,mediapointer=None):
+        ptr=[info.get("index","index")]
+        mediatype=info.get("mediatype",defs.MT_OTHER)
+        if not mediapointer:
+            mediapointer=defs.mediapointer.get(mediatype,["code"])
+        for key in mediapointer:
+            ptr.append(unicode(info.get(key,key)))
+        print "Created Pointer: %s"%str(ptr)
         return json.dumps(ptr)
     
     def mediacode(self,id):
         id=json.loads(id)
-        contentype=id[0]
-        indexer=id[1]
-        mediatype=id[2]
-        code=id[3]
-        return contenttype,indexer,mediatype,code
+        indexer=id[0]
+        mediatype=id[1]
+        code=id[2]
+        return indexer,mediatype,code
     
-    def createmd5(self,info):
-        return md5.new(self.create(info)).hexdigest()
+    def createmd5(self,*args,**kwargs):
+        hashed=md5.new(self.create(*args,**kwargs)).hexdigest()
+        print "hashed id %s" % hashed 
+        return hashed

@@ -260,14 +260,11 @@ def run(ump):
 		ump.index_item("Genres","genres")
 		ump.index_item("Awards","awards")
 		ump.index_item("World Cinema","languages")
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page == "genres":
 		genres=("Action","Adventure","Animation","Biography","Comedy","Crime","Drama","Family","Fantasy","Film-Noir","Game-Show","History","Horror","Music","Musical","Mystery","News","Reality-TV","Romance","Sci-Fi","Sport","Talk-Show","Thriller","War","Western")
 		for genre in genres:
 			ump.index_item(genre,"select_year",args={"at":"0","sort":"moviemeter,asc","num_votes":"1000,","genres":genre.lower().replace("-","_")})
-
-		ump.set_content(ump.defs.CC_ALBUMS)
 
 	elif ump.page == "awards":
 		awards=(("oscar_best_picture_winners","OSCARS: Best Picture Winning Movies",0),
@@ -301,15 +298,13 @@ def run(ump):
 				ump.index_item(val,"results_title",args={"at":"0","sort":"release_date_us,desc","groups":key,"title_type":"tv_series,mini_series"})
 			elif tt == 2:
 				ump.index_item(val,"results_name",args={"groups":key})
-		ump.set_content(ump.defs.CC_FILES)
-	
+
 	elif ump.page == "languages":		
 		langs=("ar","Arabic"),("bg","Bulgarian"),("zh","Chinese"),("hr","Croatian"),("nl","Dutch"),("fi","Finnish"),("fr","French"),("de","German"),("el","Greek"),("he","Hebrew"),("hi","Hindi"),("hu","Hungarian"),("is","Icelandic"),("it","Italian"),("ja","Japanese"),("ko","Korean"),("no","Norwegian"),("fa","Persian"),("pl","Polish"),("pt","Portuguese"),("pa","Punjabi"),("ro","Romanian"),("ru","Russian"),("es","Spanish"),("sv","Swedish"),("tr","Turkish"),("uk","Ukrainian")
 
 		for lang in langs:
 			key,val=lang
 			ump.index_item(val,"select_year",{"at":"0","sort":"moviemeter,asc","num_votes":"1000,","languages":key})
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page == "select_year":
 		ump.args["year"]=""
@@ -322,7 +317,6 @@ def run(ump):
 		for year in reversed(range(date.today().year-100,date.today().year+1)):
 			ump.args["year"]=year
 			ump.index_item(str(year),next_page,args=ump.args)
-		ump.set_content(ump.defs.CC_FILES)
 	
 	elif ump.page == "search":
 		title=ump.args.get("title","")
@@ -331,19 +325,15 @@ def run(ump):
 		
 		mquery=ump.args.copy()
 		mquery["title_type"]="feature,tv_movie,short"
-		mquery["content_cat"]=ump.defs.CC_MOVIES
 		ump.index_item("Show Only Movies","results_title",args=mquery,art=None)
 
 		squery=ump.args.copy()
 		squery["title_type"]="tv_series,mini_series"
-		squery["content_cat"]=ump.defs.CC_TVSHOWS
 		ump.index_item("Show Only Series","results_title",args=squery,art=None)
 
 		dquery=ump.args.copy()
 		dquery["title_type"]="documentary"
-		dquery["content_cat"]=ump.defs.CC_MOVIES
 		ump.index_item("Show Only Documentaries","results_title",args=dquery,art=None)
-		ump.set_content(ump.defs.CC_ALBUMS)
 	
 	elif ump.page == "results_name":
 		name=ump.args.get("name","")
@@ -364,12 +354,9 @@ def run(ump):
 
 		for person in people:
 			ump.index_item(person["name"],"search",args={"role":person["id"],"sort":"release_date_us,desc",},art={"thumb":person["poster"], "thumb":person["poster"]})
-
-		ump.set_content(ump.defs.CC_ALBUMS)
 	
 	elif ump.page == "results_title":
 		title=ump.args.get("title","")
-		ctype=ump.defs.CC_MOVIES
 		if title=="?":
 			conf,title=ump.get_keyboard("default","Title",True)
 			ump.args["title"]=title
@@ -407,26 +394,24 @@ def run(ump):
 				if role_t in ["director","writer","actor"]:
 					allowed.append(role_id)
 		if not len(movies) < 1: 
-			for movie in movies:
+			for movie in movies[:1]:
 				if len(allowed) and not movie["info"]["code"] in allowed and "role" in ump.args.keys():
 					continue
 				commands=[]
 				for person in movie["info"].get("director","").split(","):
 					if not person=="":
 						commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
-				for person in movie["info"].get("cast",""):
+				for person in movie["info"].get("cast",[""])[:3]:
 					if not person=="":
 						commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
 				if "tv_series" in ump.args["title_type"]:
 					commands.append(('Search on TVDB : %s'%movie["info"]["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["info"]["title"]},module="tvdb")))
 					commands.append(('Search on ANN : %s'%movie["info"]["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["info"]["title"]},module="ann")))
-					ump.index_item(suggest+movie["info"]["localtitle"],"show_seasons",args={"imdbid":movie["info"]["code"]},info=movie["info"],art=movie["art"],cmds=commands)
-					ctype=ump.defs.CC_TVSHOWS
+					ump.index_item(suggest+movie["info"]["localtitle"],"show_seasons",args={"imdbid":movie["info"]["code"]},info=movie["info"],art=movie["art"],cmds=commands,mediatype=ump.defs.MT_TVSHOW)
 				else:
 					commands.append(('Search on ANN : %s'%movie["info"]["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["info"]["title"]},module="ann")))
 					movie["info"]["mediatype"]=ump.defs.MT_MOVIE
-					ump.index_item(suggest+movie["info"]["localtitle"],"urlselect",info=movie["info"],art=movie["art"],cmds=commands)
-					ctype=ump.defs.CC_MOVIES
+					ump.index_item(suggest+movie["info"]["localtitle"],"urlselect",info=movie["info"],art=movie["art"],cmds=commands,mediatype=ump.defs.MT_MOVIE)
 
 			if total>end:
 				ump.index_item("Results %d-%d"%(end+1,end+51),"results_title",args=ump.args)
@@ -434,7 +419,6 @@ def run(ump):
 			if not ump.args.get("google",False) and "title" in ump.args.keys():
 				ump.args["google"]=True
 				ump.index_item("Search \"%s\" in Google"%ump.args["title"],"results_title",args=ump.args)
-		ump.set_content(ump.args.get("content_cat",ctype))
 
 	elif ump.page=="show_seasons":
 		imdbid=ump.args.get("imdbid",None)
@@ -445,8 +429,7 @@ def run(ump):
 		if not len(seasons)>0:
 			return None
 		for season in sorted([int(x) for x in seasons if x.isdecimal()],reverse=True):
-			ump.index_item("Season %d"%season,"show_episodes",args={"imdbid":imdbid,"season":season})
-		ump.set_content(ump.defs.CC_ALBUMS)
+			ump.index_item("Season %d"%season,"show_episodes",args={"imdbid":imdbid,"season":season},mediatype=ump.defs.MT_SEASON)
 	
 	elif ump.page=="show_episodes":
 		imdbid=ump.args.get("imdbid",None)
@@ -484,6 +467,4 @@ def run(ump):
 			for person in ump.info.get("cast",""):
 				if not person=="":
 					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
-			info["mediatype"]=ump.defs.MT_EPISODE
-			ump.index_item("%d. %s"%(epi,title),"urlselect",info=info,art=art,cmds=commands)
-		ump.set_content(ump.defs.CC_EPISODES)
+			ump.index_item("%d. %s"%(epi,title),"urlselect",info=info,art=art,cmds=commands,mediatype=ump.defs.MT_EPISODE)

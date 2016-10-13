@@ -14,8 +14,7 @@
 	prerun.direct()
 	from ump.defs import addon_ldir
 	from ump.defs import arturi
-	from ump.defs import CC_ALBUMS
-	
+
 	from ump import api
 	from ump import postrun
 	from ump import providers
@@ -37,15 +36,10 @@
 	if ump.module == "ump":
 		if ump.page == "root":
 			for provider in indexers:
-				provider_cat,provider_type,provider_name=provider
+				provider_type,provider_cat,provider_name=provider
 				img=arturi+provider_name+".png"
-				li=xbmcgui.ListItem(provider_name.title(), iconImage=img, thumbnailImage=img)
-				if ump.content_type == "ump":
-					content_type=provider_cat
-				else:
-					content_type=ump.content_type
-				xbmcplugin.addDirectoryItem(ump.handle,ump.link_to(content_type=content_type,module=provider_name),li,True)
-			ump.set_content(CC_ALBUMS)
+				ump.index_item(provider_name.title(),module=provider_name,icon=img,thumb=img)
+			ump._do_container()
 	elif ump.page== "urlselect":
 		if not addon.getSetting("tn_chk_url_en").lower()=="false":
 			from ump import webtunnel
@@ -77,7 +71,10 @@
 	
 	postrun.run(ump)		
 	ump.shut()
-	ump.add_log("MEDIA_TYPE: %s"%str(ump.info["media_type"]))
+	if int(ump.handle)==-1:
+		ump.add_log("INFO MEDIA_TYPE: %s"%ump.info.get("mediatype","other"))
+	else:
+		ump.add_log("CONTAINER MEDIA_TYPE: %s"%ump.container_mediatype)
 	ump._clean()
 	ump.add_log("UMP:EOF")
 except Exception,e:

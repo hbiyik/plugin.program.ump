@@ -31,42 +31,45 @@ LI_CTS={CT_AUDIO:"music",CT_IMAGE:"pictures",CT_VIDEO:"video",CT_UMP:"video"}
 LI_SIS={CT_AUDIO:"audio",CT_IMAGE:"video",CT_VIDEO:"video",CT_UMP:"video"}
 WID={CT_AUDIO:10502,CT_IMAGE:10002,CT_VIDEO:10025}
 #media types
-MT_MOVIE,MT_EPISODE,MT_ANIMEMOVIE,MT_ANIMEEPISODE="movie","episode","animemovie","animeepisode"
-MT_MUSIC,MT_MUSICALBUM="song","musicalbum"
-MT_ANIMECHAPTER="animechapter"
+MT_MOVIE="movie"
+MT_TVSHOW,MT_SEASON,MT_EPISODE="tvshow","season","episode",
+MT_ANIMEMOVIE="animemovie"
+MT_ANIMESHOW,MT_ANIMEEPISODE="animeshow","animeepisode"
+MT_ARTIST,MT_MUSICALBUM,MT_MUSIC="artist","musicalbum","song"
+MT_MANGA,MT_MANGACHAPTER="mang","mangachapter"
 MT_OTHER="other"
 
 mediapointer={
-         defs.MT_MOVIE:["code"],
-         defs.MT_SERIE:["code"],
-         defs.MT_SEASON:["code","season"],
-         defs.MT_EPISODE:["code","season","episode"],
-         defs.MT_ANIMEMOVIE:["code"],
-         defs.MT_ANIMESERIE:["code"],
-         defs.MT_ANIMEEPISODE:["code","epsiode"],
-         defs.MT_ARTIST:["code"],
-         defs.MT_MUSICALBUM:["code","album"],
-         defs.MT_MUSIC:["code","album","title"],
-         defs.MT_MANGA:["code"],
-         defs.MT_MANGACHAPTER:["code","episode"],
-         defs.MT_OTHER:["code"]
+         MT_MOVIE:["code"],
+         MT_TVSHOW:["code"],
+         MT_SEASON:["code","season"],
+         MT_EPISODE:["code","season","episode"],
+         MT_ANIMEMOVIE:["code"],
+         MT_ANIMESHOW:["code"],
+         MT_ANIMEEPISODE:["code","epsiode"],
+         MT_ARTIST:["code"],
+         MT_MUSICALBUM:["code","album"],
+         MT_MUSIC:["code","album","title"],
+         MT_MANGA:["code"],
+         MT_MANGACHAPTER:["code","episode"],
+         MT_OTHER:["code"]
          }
 
 #media type to kodi content categories
 media_to_cc={
-         defs.MT_MOVIE:"movies",
-         defs.MT_SERIE:"tvshows",
-         defs.MT_SEASON:"albums",
-         defs.MT_EPISODE:"episodes",
-         defs.MT_ANIMEMOVIE:"movies",
-         defs.MT_ANIMESERIE:"tvshows",
-         defs.MT_ANIMEEPISODE:"episodes",
-         defs.MT_ARTIST:"albums",
-         defs.MT_MUSICALBUM:"albums",
-         defs.MT_MUSIC:"albums",
-         defs.MT_MANGA:"albums",
-         defs.MT_MANGACHAPTER:"albums",
-         defs.MT_OTHER:"files"      
+         MT_MOVIE:"movies",
+         MT_TVSHOW:"tvshows",
+         MT_SEASON:"albums",
+         MT_EPISODE:"episodes",
+         MT_ANIMEMOVIE:"movies",
+         MT_ANIMESHOW:"tvshows",
+         MT_ANIMEEPISODE:"episodes",
+         MT_ARTIST:"albums",
+         MT_MUSICALBUM:"albums",
+         MT_MUSIC:"albums",
+         MT_MANGA:"albums",
+         MT_MANGACHAPTER:"albums",
+         MT_OTHER:"files"      
              }
 
 VIEW_MODES={
