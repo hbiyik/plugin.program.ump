@@ -225,6 +225,9 @@ class ump():
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
 			if not mediatype==self.defs.MT_OTHER:
+				ptr=self.indentifier.getpointer(info)
+				for k in range(len(ptr)):
+					pass
 				coms.append(('Mark Watched',"RunScript(%s,markwatched,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),urllib.quote(json.dumps(info)))))
 			coms.append(('Detailed Info',"Action(Info)"))
 			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))

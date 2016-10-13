@@ -25,16 +25,18 @@ class stats():
         f.close()
         self.watchedids.append(id)
         
-    def iswatched(self,info):
-        print 1
-        mediatype=info.get("mediatype",defs.MT_OTHER)
-        print 2
-        if mediatype==defs.MT_OTHER:return 0
-        print 3
-        mediapointer=defs.mediapointer.get(mediatype,["code"])
-        for i in range(len(mediapointer)):
-            nestedid=self.identifier.createmd5(info,mediapointer=mediapointer[:i+1])
-            if self._checkid(nestedid):
-                print "nestedid: %s, %s"%(str(mediapointer[:i+1]),nestedid)
-                self.watchedids.append(nestedid)
-                return 1
+    def iswatched(self,info,mediapointer=None):
+        if mediapointer:
+            id=self.identifier.createmd5(info,mediapointer)
+            if self._checkid(id):
+                    print "directid: %s, %s"%(str(mediapointer[:i+1]),id)
+                    self.watchedids.append(id)
+                    return 1
+        else:
+            mediapointer=self.identifier.getpointer(info)
+            for i in range(len(mediapointer)):
+                nestedid=self.identifier.createmd5(info,mediapointer=mediapointer[:i+1])
+                if self._checkid(nestedid):
+                    print "nestedid: %s, %s"%(str(mediapointer[:i+1]),nestedid)
+                    self.watchedids.append(nestedid)
+                    return 1

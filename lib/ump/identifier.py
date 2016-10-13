@@ -5,11 +5,8 @@ import md5
 class identifier():
     def create(self,info,mediapointer=None):
         ptr=[info.get("index","index")]
-        mediatype=info.get("mediatype",defs.MT_OTHER)
-        if not mediapointer:
-            mediapointer=defs.mediapointer.get(mediatype,["code"])
-        for key in mediapointer:
-            ptr.append(unicode(info.get(key,key)))
+        if not mediapointer:mediapointer=self.getpointer(info)
+        for key in mediapointer:ptr.append(unicode(info.get(key,key)))
         print "Created Pointer: %s"%str(ptr)
         return json.dumps(ptr)
     
@@ -24,3 +21,7 @@ class identifier():
         hashed=md5.new(self.create(*args,**kwargs)).hexdigest()
         print "hashed id %s" % hashed 
         return hashed
+    
+    def getpointer(self,info):
+        mediatype=info.get("mediatype",defs.MT_OTHER)
+        return defs.mediapointer.get(mediatype,["code"])
