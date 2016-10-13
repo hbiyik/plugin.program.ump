@@ -216,19 +216,39 @@ class ump():
 		if not mediatype==self.defs.MT_OTHER:
 			info["mediatype"]=mediatype
 			iswatched=self.stats.iswatched(info)
-			if iswatched:
-				info["playcount"]=iswatched
-				info["watched"]=iswatched
+			print 9999999999
+			print iswatched
+			info["playcount"]=info["watched"]=iswatched
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if isFolder==False:
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
 			if not mediatype==self.defs.MT_OTHER:
-				ptr=self.indentifier.getpointer(info)
+				ptr=self.identifier.getpointer(info)
 				for k in range(len(ptr)):
-					pass
-				coms.append(('Mark Watched',"RunScript(%s,markwatched,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),urllib.quote(json.dumps(info)))))
+					key=ptr[k]
+					nestedptr=ptr[:k+1]
+					if self.stats.iswatched(info,nestedptr):
+						cmd="unwatched"
+					elif not iswatched:
+						cmd="watched"
+					if key=="code":
+						txt=self.getnames()[0]
+					else:
+						txt="%s:%s"%(key,info.get(key,key))
+					if not len(ptr)==k+1:
+						txt="All %s"%txt
+					txt="Mark %s %s"%(cmd,txt)
+					txt=txt.title()
+					coms.append((txt,
+								"RunScript(%s,mark%s,%s,%s)"%(
+															os.path.join(defs.addon_dir,"lib","ump","script.py"),
+															cmd,
+															urllib.quote(json.dumps(info)),
+															urllib.quote(json.dumps(nestedptr))
+															)
+								))
 			coms.append(('Detailed Info',"Action(Info)"))
 			coms.append(('Bookmark',"RunScript(%s,addfav,%s,%s,%s,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),str(isFolder),self.content_type,json.dumps(name),thumb,u)))
 		coms.extend(cmds)

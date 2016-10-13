@@ -99,7 +99,7 @@ def scrape_imdb_search(page):
 		#duration
 		runtime=re.findall('class="runtime">([0-9].*?)\s',tr)
 		if len(runtime):
-			runtime=int(runtime[0])*60
+			runtime=float(runtime[0])*60
 		else:
 			runtime=0
 
@@ -394,7 +394,7 @@ def run(ump):
 				if role_t in ["director","writer","actor"]:
 					allowed.append(role_id)
 		if not len(movies) < 1: 
-			for movie in movies[:1]:
+			for movie in movies:
 				if len(allowed) and not movie["info"]["code"] in allowed and "role" in ump.args.keys():
 					continue
 				commands=[]
@@ -429,7 +429,9 @@ def run(ump):
 		if not len(seasons)>0:
 			return None
 		for season in sorted([int(x) for x in seasons if x.isdecimal()],reverse=True):
-			ump.index_item("Season %d"%season,"show_episodes",args={"imdbid":imdbid,"season":season},mediatype=ump.defs.MT_SEASON)
+			info=ump.info.copy()
+			info["season"]=season
+			ump.index_item("Season %d"%season,"show_episodes",args={"imdbid":imdbid,"season":season},info=info,mediatype=ump.defs.MT_SEASON)
 	
 	elif ump.page=="show_episodes":
 		imdbid=ump.args.get("imdbid",None)
@@ -450,6 +452,7 @@ def run(ump):
 		info["season"]=season
 		art=ump.art
 		for episode in episodes:
+			print episode
 			epi,dat,plot,title,img=list(episode)
 			info["title"]=title
 			info["episode"]=epi
@@ -464,7 +467,6 @@ def run(ump):
 			for person in ump.info.get("director","").split(","):
 				if not person=="":
 					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
-			for person in ump.info.get("cast",""):
-				if not person=="":
-					commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
+			for person in ump.info.get("cast",[""])[:2]:
+				commands.append(('Search Actor: %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person})))
 			ump.index_item("%d. %s"%(epi,title),"urlselect",info=info,art=art,cmds=commands,mediatype=ump.defs.MT_EPISODE)

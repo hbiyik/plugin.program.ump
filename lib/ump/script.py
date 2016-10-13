@@ -1,5 +1,6 @@
 from sys import argv
 import urllib
+import xbmc
 
 for i in range(len(argv)):
 	argv[i]=urllib.unquote(argv[i])
@@ -25,5 +26,12 @@ if len(argv)>1:
 		from stats import stats
 		import json
 		st=stats()
-		st.markwatched(json.loads(argv[2]))
+		st.markwatched(json.loads(argv[2]),json.loads(argv[3]))
+		xbmc.executebuiltin("Container.Refresh")
+	elif argv[1]=="markunwatched":
+		from stats import stats
+		import json
+		st=stats()
+		st.markunwatched(json.loads(argv[2]),json.loads(argv[3]))
+		xbmc.executebuiltin("Container.Refresh")
 		

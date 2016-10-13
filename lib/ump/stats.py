@@ -1,12 +1,19 @@
+import xbmcvfs
 import os
 import md5
 import time
 import defs
 import identifier
+import shutil
 
 def mkdir(*paths):
+    paths=list(paths)
+    paths.append("")
     path=os.path.join(*paths)
-    if not os.path.exists(path):os.makedirs(path)
+    if not xbmcvfs.exists(path):xbmcvfs.mkdirs(path)
+    
+def rmdir(path):
+    return shutil.rmtree(path)
 
 class stats():
     def __init__(self):
@@ -15,21 +22,28 @@ class stats():
         self.identifier=identifier.identifier()
         
     def _checkid(self,id):
-        return id in self.watchedids or os.path.exists(os.path.join(defs.addon_stdir,id))
+        path=os.path.join(defs.addon_stdir,id,"")
+        return id in self.watchedids or xbmcvfs.exists(path)
         
-    def markwatched(self,info):
-        id=self.identifier.createmd5(info)
+    def markwatched(self,info,mediapointer=None):
+        id=self.identifier.createmd5(info,mediapointer)
         mkdir(defs.addon_stdir,id)
-        f = open(os.path.join(defs.addon_stdir,id,"timestamp"),'w')
+        f = xbmcvfs.File(os.path.join(defs.addon_stdir,id,"timestamp"),'w')
         f.write(str(time.time()))
         f.close()
         self.watchedids.append(id)
+        
+    def markunwatched(self,info,mediapointer=None):
+        id=self.identifier.createmd5(info,mediapointer)
+        path=os.path.join(defs.addon_stdir,id,"")
+        if xbmcvfs.exists(path):
+            rmdir(path)
         
     def iswatched(self,info,mediapointer=None):
         if mediapointer:
             id=self.identifier.createmd5(info,mediapointer)
             if self._checkid(id):
-                    print "directid: %s, %s"%(str(mediapointer[:i+1]),id)
+                    print "directid: %s, %s"%(mediapointer,id)
                     self.watchedids.append(id)
                     return 1
         else:
@@ -40,3 +54,4 @@ class stats():
                     print "nestedid: %s, %s"%(str(mediapointer[:i+1]),nestedid)
                     self.watchedids.append(nestedid)
                     return 1
+        return 0
