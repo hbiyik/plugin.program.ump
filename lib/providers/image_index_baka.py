@@ -144,6 +144,7 @@ def get_details(matches):
 
 def run(ump):
 	globals()['ump'] = ump
+	ump.publish("manga")
 	if ump.page == "root":
 		ump.index_item("Search","select_type",args={"stype":"title","perpage":perpage,"page":1})
 		ump.index_item("Genres","genres")

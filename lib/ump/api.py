@@ -69,6 +69,7 @@ class ump():
 	def __init__(self,pt=False):
 		if not os.path.exists(defs.addon_ddir):
 			os.makedirs(defs.addon_ddir)
+		self.publish=[]
 		self.index_items=[]
 		self.backwards=teamkodi.backwards()
 		self.settings={}
@@ -125,7 +126,7 @@ class ump():
 			self.args=json.loads(args.decode("base64"))
 		except:
 			self.args=json.loads(args) # old url formatting
-		for keep in ["info","art"]:
+		for keep in ["info","art","publish"]:
 			[lst]=result.get(keep, ["e30="])
 			try:
 				setattr(self,keep,json.loads(lst.decode("base64")))
@@ -155,6 +156,17 @@ class ump():
 		self.identifier=identifier.identifier()
 		self.container_mediatype=defs.MT_OTHER
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+	
+	def publish(self,*args):
+		for arg in args:
+			if not arg in self.publish:
+				publish.append(txt)
+		
+	def subscribe(self,*args):
+		for arg in args:
+			if not arg in self.publish:
+				return False
+		return True
 	
 	def get_keyboard(self,*args):
 		if self.refreshing:
@@ -216,8 +228,6 @@ class ump():
 		if not mediatype==self.defs.MT_OTHER:
 			info["mediatype"]=mediatype
 			iswatched=self.stats.iswatched(info)
-			print 9999999999
-			print iswatched
 			info["playcount"]=info["watched"]=iswatched
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
@@ -382,7 +392,7 @@ class ump():
 		query["page"]=[page,self.page][page is None]
 		query["args"]=json.dumps(args).encode("base64")
 		query["content_type"]=[content_type,self.content_type][content_type is None]
-		for keep in ["info","art"]:
+		for keep in ["info","art","publish"]:
 			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 

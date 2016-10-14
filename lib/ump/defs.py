@@ -33,26 +33,21 @@ WID={CT_AUDIO:10502,CT_IMAGE:10002,CT_VIDEO:10025}
 #media types
 MT_MOVIE="movie"
 MT_TVSHOW,MT_SEASON,MT_EPISODE="tvshow","season","episode",
-MT_ANIMEMOVIE="animemovie"
-MT_ANIMESHOW,MT_ANIMEEPISODE="animeshow","animeepisode"
-MT_ARTIST,MT_MUSICALBUM,MT_MUSIC="artist","musicalbum","song"
-MT_MANGA,MT_MANGACHAPTER="mang","mangachapter"
-MT_OTHER="other"
-
+MT_ARTIST,MT_ALBUM,MT_SONG,MT_MUSIC="artist","musicalbum","song","music"
+MT_MUSICVIDEO="musicvideo"
+MT_SET,MT_NONE="set",""
 mediapointer={
          MT_MOVIE:["code"],
          MT_TVSHOW:["code"],
          MT_SEASON:["code","season"],
          MT_EPISODE:["code","season","episode"],
-         MT_ANIMEMOVIE:["code"],
-         MT_ANIMESHOW:["code"],
-         MT_ANIMEEPISODE:["code","epsiode"],
          MT_ARTIST:["code"],
-         MT_MUSICALBUM:["code","album"],
-         MT_MUSIC:["code","album","title"],
-         MT_MANGA:["code"],
-         MT_MANGACHAPTER:["code","episode"],
-         MT_OTHER:["code"]
+         MT_ALBUM:["code","album"],
+         MT_SONG:["code","album","title"],
+         MT_MUSIC:["code"],
+         MT_MUSICVIDEO:["code","title"],
+         MT_SET:["code"],
+         MT_NONE:["code"]
          }
 
 #media type to kodi content categories
@@ -61,14 +56,12 @@ media_to_cc={
          MT_TVSHOW:"tvshows",
          MT_SEASON:"albums",
          MT_EPISODE:"episodes",
-         MT_ANIMEMOVIE:"movies",
-         MT_ANIMESHOW:"tvshows",
-         MT_ANIMEEPISODE:"episodes",
          MT_ARTIST:"albums",
-         MT_MUSICALBUM:"albums",
+         MT_ALBUM:"albums",
+         MT_SONG:"albums",
          MT_MUSIC:"albums",
-         MT_MANGA:"albums",
-         MT_MANGACHAPTER:"albums",
+         MT_MUSICVIDEO:"movies",
+         MT_SET:"files",
          MT_OTHER:"files"      
              }
 

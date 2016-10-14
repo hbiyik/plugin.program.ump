@@ -55,11 +55,11 @@ def match_results(results,names):
 
 def run(ump):
 	globals()['ump'] = ump
+	if not (ump.subscribe("movie") or ump.subscribe("tvshow")): return
 	i=ump.info
 	exact=False
 	max_pages=3
 	is_serie=ump.info["mediatype"] == ump.defs.MT_EPISODE
-	is_movie=ump.info["mediatype"] == ump.defs.MT_MOVIE
 	if not (is_serie or is_movie):return
 	names=ump.getnames()
 	for name in names:

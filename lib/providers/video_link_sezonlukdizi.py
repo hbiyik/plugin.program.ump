@@ -7,7 +7,7 @@ domain = 'http://sezonlukdizi.com'
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["mediatype"]==ump.defs.MT_EPISODE: return
+	if not ump.subscribe("tvshow"): return
 	names=ump.getnames()
 	for name in names:
 		ump.add_log("sezonlukdizi is searching %s"%name)

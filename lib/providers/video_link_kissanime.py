@@ -65,8 +65,8 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 
-	is_serie=i["mediatype"]==ump.defs.MT_ANIMEEPISODE
-	is_movie=i["mediatype"]==ump.defs.MT_ANIMEMOVIE
+	if not ump.subscribe("anime"): return
+	is_serie=i["mediatype"]==ump.defs.MT_EPISODE
 	if not (is_serie or is_movie): return
 	names=ump.get_vidnames()
 	urls=[]	

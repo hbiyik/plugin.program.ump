@@ -265,6 +265,7 @@ def results_search(animes=None,filters=None):
 
 def run(ump):
 	globals()['ump'] = ump
+	ump.publish("anime")
 	if ump.page == "root":
 		ump.index_item("Search","search")
 		ump.index_item("Top Rated Animes","select_year")

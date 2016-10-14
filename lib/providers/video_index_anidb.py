@@ -23,6 +23,7 @@ cid="umpanidb" #httpapi cliend id
 cver="1" #httpsapi clientver
 pver="1"
 langmap={"x-jat":"ja","zh-Hans":"zh","pt-BR":"pt","x-unk":"ja","zh-Hant":"zh","es-LA":"es","x-other":"en","x-kot":"ko"}
+publish="anime"
 
 def command(request,args={}):
 	last=prefs.get("anidb","lasttime")

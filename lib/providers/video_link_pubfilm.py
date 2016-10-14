@@ -41,7 +41,7 @@ def match_results(link,inf,names):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["mediatype"]==ump.defs.MT_MOVIE: return
+	if not ump.subscribe("movie"): return
 	prefix=""
 	names=ump.getnames()
 	for name in names[:2]:

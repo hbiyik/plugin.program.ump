@@ -9,7 +9,7 @@ domain = 'http://dizilab.com'
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["mediatype"]==ump.defs.MT_EPISODE: return
+	if not ump.subscribe("tvshow"): return
 	
 	ump.add_log("dizilab is searching %s"%names[0])
 	found=False

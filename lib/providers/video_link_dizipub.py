@@ -37,7 +37,7 @@ def return_links(name,mp,h,referer):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["mediatype"]==ump.defs.MT_EPISODE: return
+	if not ump.subscribe("tvshow"): return
 	
 	ump.get_page(domain,encoding)
 	flink=None

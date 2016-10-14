@@ -232,6 +232,7 @@ def make_art(art,season=-1,banner_tables=["text","graphical","blank"]):
 
 def run(ump):
 	globals()['ump'] = ump
+	ump.publish("tvshow")
 	language=ump.backwards.getLanguage(0).lower()
 	if not language in ["en","sv","no","da","fi","nl","de","it","es","fr","pl","hu","el","tr","ru","he","ja","pt","zh","cs","sl","hr","ko"]:language="en"
 	globals()["language"] = language

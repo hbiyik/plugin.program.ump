@@ -24,7 +24,7 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 
-	if not i["mediatype"]==ump.defs.MT_MOVIE: return
+	if not ump.subscribe("movie"): return
 	names=ump.getnames()
 
 	for name in names:

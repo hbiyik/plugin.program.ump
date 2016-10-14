@@ -82,7 +82,7 @@ def scrape_epi(page,elink):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-	if not i["mediatype"]==ump.defs.MT_EPISODE: return
+	if not ump.subscribe("tvshow"): return
 	globals()['i'] = i
 	names=ump.getnames()
 	found=False

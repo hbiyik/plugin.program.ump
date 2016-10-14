@@ -84,6 +84,7 @@ def get_mbtracks(almbid):
 
 def run(ump):
 	globals()['ump'] = ump
+	ump.publish("music")
 	if ump.page == "root":
 		ump.index_item("Search","search",args={"search":True})
 		ump.index_item("Top Artists","topartist")

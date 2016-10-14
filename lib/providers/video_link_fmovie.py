@@ -7,7 +7,7 @@ domain="http://fmovie.co"
 encoding="utf-8"
 def run(ump):
 	i=ump.info
-	if not i["mediatype"]==ump.defs.MT_MOVIE: return
+	if not ump.subscribe("movie"): return
 	match=False
 	names=ump.getnames(3)
 	for name in names:

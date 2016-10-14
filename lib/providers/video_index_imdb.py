@@ -245,6 +245,7 @@ def scrape_name(id,lean=False):
 
 def run(ump):
 	globals()['ump'] = ump
+	ump.publish("movie","tvshow")
 	if ump.page == "root":
 		ump.index_item("Search Movies","results_title",args={"title":"?","title_type":"feature,tv_movie,short","sort":"moviemeter,asc"})
 		ump.index_item("Search Series","results_title",args={"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc"})		

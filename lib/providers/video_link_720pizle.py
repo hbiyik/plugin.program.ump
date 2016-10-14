@@ -55,7 +55,7 @@ def run(ump):
 	i=ump.info
 	names=ump.getnames()
 	
-	if not i["mediatype"]==ump.defs.MT_MOVIE:return
+	if not ump.subscribe("movie"):return
 	match=False
 	for name in names:
 		if match:break

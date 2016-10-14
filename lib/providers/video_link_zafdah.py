@@ -74,7 +74,7 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	exact=False
-	if not i["mediatype"]==ump.defs.MT_MOVIE: return
+	if not ump.subscribe("movie"): return
 	names=ump.getnames()
 
 	ump.get_page(domain,encoding)
