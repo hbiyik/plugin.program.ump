@@ -1,6 +1,6 @@
 import defs
 import json
-import md5
+import urllib
 
 class identifier():
     def create(self,info,mediapointer=None):
@@ -17,11 +17,11 @@ class identifier():
         code=id[2]
         return indexer,mediatype,code
     
-    def createmd5(self,*args,**kwargs):
-        hashed=md5.new(self.create(*args,**kwargs)).hexdigest()
+    def createhash(self,*args,**kwargs):
+        hashed=urllib.quote(self.create(*args,**kwargs))
         print "hashed id %s" % hashed 
         return hashed
     
     def getpointer(self,info):
-        mediatype=info.get("mediatype",defs.MT_OTHER)
+        mediatype=info.get("mediatype",defs.MT_NONE)
         return defs.mediapointer.get(mediatype,["code"])

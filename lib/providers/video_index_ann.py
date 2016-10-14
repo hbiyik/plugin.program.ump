@@ -252,16 +252,14 @@ def results_search(animes=None,filters=None):
 			if len(media["episodes"].keys())==0:
 				commands=[('Search on IMDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":info["title"],"title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},module="imdb"))]
 				commands.extend(commands2)
-				info["mediatype"]=ump.defs.MT_ANIMEMOVIE
-				ump.index_item(name,"urlselect",info=info,art=art,cmds=commands)
+				ump.index_item(name,"urlselect",info=info,art=art,cmds=commands,mediatype=ump.defs.MT_MOVIE)
 			else:
-				commands=[('Search on IMDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":info["title"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc","content_cat":ump.defs.CC_TVSHOWS},module="imdb"))]
+				commands=[('Search on IMDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("results_title",{"title":info["title"],"title_type":"tv_series,mini_series","sort":"moviemeter,asc"},module="imdb"))]
 				commands.append(('Search on TVDB : %s'%info["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":info["title"]},module="tvdb")))
 				commands.extend(commands2)
-				ump.index_item(name,"show_episodes",info=info,art=art,cmds=commands)
+				ump.index_item(name,"show_episodes",info=info,art=art,cmds=commands,mediatype=ump.defs.MT_TVSHOW)
 		if (index+1)*50 < len(animes) and not itemcount==0:
 			ump.index_item("Results %d-%d"%((index+1)*50+1,(index+2)*50),"results_search",args={"anime":animes,"filters":filters,"index":index+1})
-	ump.set_content(ump.defs.CC_TVSHOWS)
 
 def run(ump):
 	globals()['ump'] = ump
@@ -272,7 +270,6 @@ def run(ump):
 		ump.index_item("Newest Animes","newest")
 		ump.index_item("Animes by Genre","bygenre")
 		ump.index_item("Animes by Themes","bytheme")
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page == "bygenre":
 		genres={
@@ -296,7 +293,6 @@ def run(ump):
 		for genre in sorted(genres.keys()):
 			args={"anime":"getgenres('%s')"%urlencode({"g":genres[genre]}),"filters":["numvotes"]}
 			ump.index_item(genre, results_search, args=args)
-		ump.set_content(ump.defs.CC_ALBUMS)
 
 	elif ump.page == "bytheme":
 		themes=re.findall('name="th" type="checkbox" value="(.*?)".*?\(([0-9]*?)\)',ump.get_page("%s/encyclopedia/search/genre"%domain,None))
@@ -306,7 +302,7 @@ def run(ump):
 				addthemes.append(theme)
 				args={"anime":"getgenres('%s')"%urlencode({"th":theme}),"filters":[]}
 				ump.index_item("%s (%d)"%(theme.split("|")[0].title(),count),"results_search",args=args)
-		ump.set_content(ump.defs.CC_ALBUMS)
+
 	elif ump.page == "newest":
 		ids=[]
 		dates=[]
@@ -326,13 +322,11 @@ def run(ump):
 
 		ump.index_item("Last 15 Days","results_search",args={"anime":months,"filters":[]})
 		ump.index_item("This Year","results_search",args={"anime":ids,"filters":[]})
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page == "select_year":
 		ump.index_item("All Time","results_search",args={"anime":"getgenres('')","filters":["numvotes"]})
 		for year in reversed(range(datetime.date.today().year-50,datetime.date.today().year+1)):
-			ump.index_item(str(year),results_search,args={"anime":"getgenres('%s')"%urlencode({"from":year,"to":year}),"filters":["numvotes"]})
-		ump.set_content(ump.defs.CC_FILES)
+			ump.index_item(str(year),"results_search",args={"anime":"getgenres('%s')"%urlencode({"from":year,"to":year}),"filters":["numvotes"]})
 
 	elif ump.page == "search":
 		what=ump.args.get("title",None)
@@ -373,10 +367,8 @@ def run(ump):
 			#even though animes dont have season info force it so trakt will scrobble
 			info["season"]=1
 			info["absolute_number"]=epi
-			info["mediatype"]=ump.defs.MT_ANIMEEPISODE
-			ump.index_item("%d %s"%(epi,episodes[epi]["title"]),"urlselect",info=info)
+			ump.index_item("%d %s"%(epi,episodes[epi]["title"]),"urlselect",info=info,mediatype=ump.defs.MT_EPISODE)
 		ump.index_item("Custom Episode Number","customepi",info=info,isFolder=False)
-		ump.set_content(ump.defs.CC_EPISODES)
 
 	elif ump.page=="customepi":
 		conf,what=ump.get_keyboard('default', 'Episode Number', True)
@@ -385,5 +377,5 @@ def run(ump):
 			ump.info["episode"]=int(what)
 			ump.info["absolute_number"]=int(what)
 			ump.info["season"]=1
-			ump.info["mediatype"]=ump.defs.MT_ANIMEEPISODE
+			ump.info["mediatype"]=ump.defs.MT_EPISODE
 			xbmc.executebuiltin("Container.Update(%s)"%ump.link_to("urlselect"))

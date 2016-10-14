@@ -10,7 +10,7 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	if not ump.subscribe("tvshow"): return
-	
+	names=ump.getnames()
 	ump.add_log("dizilab is searching %s"%names[0])
 	found=False
 	for name in names:

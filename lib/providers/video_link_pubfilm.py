@@ -43,8 +43,8 @@ def run(ump):
 	i=ump.info
 	if not ump.subscribe("movie"): return
 	prefix=""
-	names=ump.getnames()
-	for name in names[:2]:
+	names=ump.getnames(2)
+	for name in names:
 		ump.add_log("pubfilm is searching %s" % name)
 		data={"options":"qtranslate_lang=0&set_intitle=None&customset%5B%5D=post","action":"ajaxsearchpro_search","aspp":name,"asid":"1","asp_inst_id":"1_1"}
 		page=ump.get_page(domain+"/wp-admin/admin-ajax.php",encoding,data=data,referer=domain)

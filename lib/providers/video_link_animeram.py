@@ -100,8 +100,8 @@ def run(ump):
 	globals()['ump'] = ump
 	if not ump.subscribe("anime"): return
 	i=ump.info
-	names=ump.get_vidnames()
-	
+	names=ump.getnames(orgfirst=False)
+	is_serie=i["mediatype"]==ump.defs.MT_EPISODE
 
 	#page=(searchsite(names) or google(names))
 	#google has not cached enough

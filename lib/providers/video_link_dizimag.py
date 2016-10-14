@@ -12,11 +12,11 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	if not ump.subscribe("tvshow"): return
-
+	names=ump.getnames()
 	ump.add_log("dizimag is searching %s"%names[0])	
 	page=ump.get_page(domain+"/insert/d16.js",encoding)
 	series=json.loads(page[9:-1].replace('{d:"','{"d":"').replace('",s:"','","s":"'))
-	
+
 	for name in names:
 		for serie in series:
 			l=serie["s"]+"/"

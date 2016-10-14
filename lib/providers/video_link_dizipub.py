@@ -41,6 +41,7 @@ def run(ump):
 	
 	ump.get_page(domain,encoding)
 	flink=None
+	names=ump.getnames()
 	for name in names:
 		ump.add_log("dizipub is searching %s" % name)
 		page=ump.get_page(domain,encoding,query={"s":name})

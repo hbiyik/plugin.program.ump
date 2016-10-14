@@ -69,7 +69,7 @@ class ump():
 	def __init__(self,pt=False):
 		if not os.path.exists(defs.addon_ddir):
 			os.makedirs(defs.addon_ddir)
-		self.publish=[]
+		self.pub=[]
 		self.index_items=[]
 		self.backwards=teamkodi.backwards()
 		self.settings={}
@@ -91,7 +91,6 @@ class ump():
 		self.cflocks={}
 		self.mirrors=[]
 		self.terminate=False
-		
 		self.loaded_uprv={}
 		self.checked_uids={"video":{},"audio":{},"image":{}}
 		self.pt=pt
@@ -99,6 +98,7 @@ class ump():
 		policy=cookielib.DefaultCookiePolicy(rfc2965=True, rfc2109_as_netscape=True, strict_rfc2965_unverifiable=False)
 		self.cj=cookielib.LWPCookieJar(os.path.join(defs.addon_ddir, "cookie"))
 		self.cj.set_policy(policy)
+		self.dialog=xbmcgui.Dialog()
 		if os.path.exists(defs.addon_cookfile):
 			try:
 				self.cj.load()
@@ -126,15 +126,17 @@ class ump():
 			self.args=json.loads(args.decode("base64"))
 		except:
 			self.args=json.loads(args) # old url formatting
-		for keep in ["info","art","publish"]:
-			[lst]=result.get(keep, ["e30="])
+		for keep in ["info","art","pub"]:
+			if keep in ["pub"]:default="W10="
+			else: default= "e30="
+			[lst]=result.get(keep, [default])
 			try:
 				setattr(self,keep,json.loads(lst.decode("base64")))
 			except:
 				try:
 					setattr(self,keep,json.loads(lst))
 				except:
-					self.dialog.ok("Address Error","UMP can not translate the navigation URL you have provided\n\n This is mainly because you are trying to access with old favorites. To fix it delete your bookmark and add again.\n\n Another cause is because you are calling UMP from another third party addonn with wrong syntax. If so please fix your it in the addon you are calling from.")
+					self.dialog.ok("Address Error","UMP can not translate the navigation URL you have provided\n\n This is mainly because you are trying to access with old favorites. To fix it delete your bookmark and add again.\n\n Another cause is because you are calling UMP from another third party addonn with wrong syntax. If so please fix your it in the addonn you are calling from.")
 					self.shut()
 					sys.exit()
 		[self.content_type]= result.get('content_type', ["ump"])
@@ -146,7 +148,6 @@ class ump():
 			prefs.set("play","flag",False)
 		else:
 			self.refreshing=False
-		self.dialog=xbmcgui.Dialog()
 		self.dialogpg=teamkodi.backwards.DialogProgressBG()
 		self.dialogpg.create("UMP")
 		self.tm=task.manager(self.dialogpg,self.tm_conc)
@@ -154,17 +155,17 @@ class ump():
 		if not self.page=="urlselect":
 			self.stat.query()
 		self.identifier=identifier.identifier()
-		self.container_mediatype=defs.MT_OTHER
+		self.container_mediatype=defs.MT_NONE
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
 	
 	def publish(self,*args):
 		for arg in args:
-			if not arg in self.publish:
-				publish.append(txt)
+			if not arg in self.pub:
+				self.pub.append(arg)
 		
 	def subscribe(self,*args):
 		for arg in args:
-			if not arg in self.publish:
+			if not arg in self.pub:
 				return False
 		return True
 	
@@ -200,10 +201,16 @@ class ump():
 
 		
 	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False,mediatype=None):
-		if not mediatype: mediatype=self.defs.MT_OTHER
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
-		if info is None:info={} 
+		if info is None:info={}
+		if mediatype is None:
+			print 5555555555511 
+			info["mediatype"]=self.defs.MT_NONE
+		else: 
+			print 666666666633
+			print mediatype
+			info["mediatype"]=mediatype
 		if art == {}:art=self.art
 		if art is None: art={}
 		if thumb == "DefaultFolder.png":
@@ -225,8 +232,8 @@ class ump():
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
 		if not noicon:self.backwards.setArt(li,art)
-		if not mediatype==self.defs.MT_OTHER:
-			info["mediatype"]=mediatype
+		if not info["mediatype"]==self.defs.MT_NONE:
+			print mediatype
 			iswatched=self.stats.iswatched(info)
 			info["playcount"]=info["watched"]=iswatched
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
@@ -234,17 +241,24 @@ class ump():
 		if isFolder==False:
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
-			if not mediatype==self.defs.MT_OTHER:
+			if not info["mediatype"]==self.defs.MT_NONE:
+				print 8888888888888
 				ptr=self.identifier.getpointer(info)
 				for k in range(len(ptr)):
 					key=ptr[k]
 					nestedptr=ptr[:k+1]
-					if self.stats.iswatched(info,nestedptr):
+					amiwatched=self.stats.iswatched(info,nestedptr)
+					if amiwatched:
 						cmd="unwatched"
 					elif not iswatched:
 						cmd="watched"
+					else:
+						continue
 					if key=="code":
-						txt=self.getnames()[0]
+						try:
+							txt=self.getnames(1,False)[0]
+						except:
+							txt=name
 					else:
 						txt="%s:%s"%(key,info.get(key,key))
 					if not len(ptr)==k+1:
@@ -265,7 +279,7 @@ class ump():
 		if adddefault:
 			coms.append(("Addon Settings","Addon.OpenSettings(plugin.program.ump)"))
 		li.addContextMenuItems(coms,removeold)
-		self.index_items.append((u,li,isFolder,adddefault,coms,removeold,mediatype))
+		self.index_items.append((u,li,isFolder,adddefault,coms,removeold,info["mediatype"]))
 		return li
 
 	def view_text(self,label,text):
@@ -302,14 +316,14 @@ class ump():
 				match_cast=True
 		return match_cast
 
-	def getnames(self,max=5):
-		is_serie=self.info["mediatype"] in [self.defs.MT_EPISODE,self.defs.MT_ANIMEEPISODE]
+	def getnames(self,max=5,orgfirst=True):
+		is_serie=self.info["mediatype"] in [self.defs.MT_EPISODE]
 		names=[]
 		if is_serie:
 			ww=self.info["tvshowtitle"]
 		else:
 			ww=self.info["title"]
-		if not self.info["mediatype"] in [self.defs.MT_ANIMEMOVIE,self.defs.MT_ANIMEEPISODE]:
+		if orgfirst:
 			names.append(self.info["originaltitle"])
 			names.append(ww)
 		else:
@@ -340,6 +354,8 @@ class ump():
 					coms.append(('Set current view \"default\" for %s'%mcc,"RunScript(%s,setview,%s,%s)"%(os.path.join(defs.addon_dir,"lib","ump","script.py"),self.content_type,mcc)))
 					li.addContextMenuItems(coms,remold)
 			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
+		else:
+			return
 		print 7
 		print mediatypes
 		print 8
@@ -392,7 +408,7 @@ class ump():
 		query["page"]=[page,self.page][page is None]
 		query["args"]=json.dumps(args).encode("base64")
 		query["content_type"]=[content_type,self.content_type][content_type is None]
-		for keep in ["info","art","publish"]:
+		for keep in ["info","art","pub"]:
 			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 
@@ -725,6 +741,8 @@ class ump():
 				pass
 		if play:
 			self.player.xplay()
+			self.stats.markwatched(self.info)
+			print self.info
 			cnt=0
 		else:
 			cnt="all"	

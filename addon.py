@@ -71,6 +71,7 @@
 	
 	postrun.run(ump)		
 	ump.shut()
+	ump.add_log("PUBLISH      : %s"%str(ump.pub))
 	if int(ump.handle)==-1:
 		ump.add_log("INFO MEDIA_TYPE: %s"%ump.info.get("mediatype","other"))
 	else:

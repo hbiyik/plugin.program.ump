@@ -94,9 +94,8 @@ def run(ump):
 	i=ump.info
 	if not ump.subscribe("anime"): return
 	is_serie=i["mediatype"]==ump.defs.MT_EPISODE
-	if not (is_serie or is_movie): return
 
-	names=ump.getnames(0)
+	names=ump.getnames(0,False)
 
 	page=None
 	animes=re.findall('<a href="(.*?)" class="btn".*?title="(.*?)">',ump.get_page(domain+"/icerik/tamliste",encoding))

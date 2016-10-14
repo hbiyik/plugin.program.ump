@@ -1,6 +1,5 @@
 import xbmcvfs
 import os
-import md5
 import time
 import defs
 import identifier
@@ -26,7 +25,7 @@ class stats():
         return id in self.watchedids or xbmcvfs.exists(path)
         
     def markwatched(self,info,mediapointer=None):
-        id=self.identifier.createmd5(info,mediapointer)
+        id=self.identifier.createhash(info,mediapointer)
         mkdir(defs.addon_stdir,id)
         f = xbmcvfs.File(os.path.join(defs.addon_stdir,id,"timestamp"),'w')
         f.write(str(time.time()))
@@ -34,14 +33,14 @@ class stats():
         self.watchedids.append(id)
         
     def markunwatched(self,info,mediapointer=None):
-        id=self.identifier.createmd5(info,mediapointer)
+        id=self.identifier.createhash(info,mediapointer)
         path=os.path.join(defs.addon_stdir,id,"")
         if xbmcvfs.exists(path):
             rmdir(path)
         
     def iswatched(self,info,mediapointer=None):
         if mediapointer:
-            id=self.identifier.createmd5(info,mediapointer)
+            id=self.identifier.createhash(info,mediapointer)
             if self._checkid(id):
                     print "directid: %s, %s"%(mediapointer,id)
                     self.watchedids.append(id)
@@ -49,7 +48,7 @@ class stats():
         else:
             mediapointer=self.identifier.getpointer(info)
             for i in range(len(mediapointer)):
-                nestedid=self.identifier.createmd5(info,mediapointer=mediapointer[:i+1])
+                nestedid=self.identifier.createhash(info,mediapointer=mediapointer[:i+1])
                 if self._checkid(nestedid):
                     print "nestedid: %s, %s"%(str(mediapointer[:i+1]),nestedid)
                     self.watchedids.append(nestedid)

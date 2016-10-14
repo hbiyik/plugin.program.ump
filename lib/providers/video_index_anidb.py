@@ -9,6 +9,9 @@ import re
 import md5
 from ump import prefs
 from third.dateutil import parser
+import HTMLParser
+
+html=HTMLParser.HTMLParser()
 
 lt=2.1 # query limit in seconds for api
 ul=60*60*24 #cache refresh limit in seconds (1 day) for api
@@ -89,7 +92,7 @@ def get_page(*args,**kwargs):
 	return res
 
 def get_media(xml):
-	mtypes={"TV Series":ump.defs.CC_TVSHOWS,"Movie":ump.defs.CC_MOVIES,"Music Video":ump.defs.CC_MUSICVIDEOS,"Other":ump.defs.CC_MOVIES}
+	mtypes={"TV Series":ump.defs.MT_TVSHOW,"Movie":ump.defs.MT_MOVIE,"Music Video":ump.defs.MT_MUSICVIDEO,"Other":ump.defs.MT_NONE}
 	type="TV Series"
 	startdate=""
 	year=0
@@ -154,7 +157,7 @@ def get_media(xml):
 					lotitle=ttitle
 					isalternate=False
 				if isalternate and ttitle not in alternates:
-					alternates.append(ttitle)
+					alternates.append(html.unescape(ttitle))
 		if not etitle == "" and not mlang == "en": mtitle=etitle
 		if lotitle == "": lotitle=mtitle
 		if otitle == "": otitle=mtitle
@@ -192,10 +195,13 @@ def get_media(xml):
 		
 		#cast
 		for c in anime.getElementsByTagName("character"):
-			cast.append(c.getElementsByTagName("name")[0].lastChild.data)
+			cast.append(html.unescape(c.getElementsByTagName("name")[0].lastChild.data))
 		#epis
+		ismovie=False
 		for eps in anime.getElementsByTagName("episodes"):
+			if ismovie: break
 			for ep in eps.getElementsByTagName("episode"):
+				if ismovie:break
 				if not ep.getElementsByTagName("epno")[0].getAttribute("type")=="1":continue
 				#epno
 				epno=int(ep.getElementsByTagName("epno")[0].lastChild.data)
@@ -233,42 +239,43 @@ def get_media(xml):
 				if elotitle == "": elotitle=emtitle
 				if eotitle == "": eotitle=emtitle
 				
-							
+				if ump.is_same(emtitle, "complete movie") and epno==1:ismovie=True			
 				epis[epno]={"duration":duration,
 						"aired":aired,
 						"rating":erating,
 						"votes":evotes,
-						"eoriginaltitle":eotitle,
-						"elocaltitle":elotitle,
-						"etitle":emtitle,
+						"eoriginaltitle":html.unescape(eotitle),
+						"elocaltitle":html.unescape(elotitle),
+						"title":html.unescape(emtitle),
 						"episode":epno,
 						"absolute_number":epno,
 						"season":1}
 	if type in mtypes:
 		type=mtypes[type]
 	elif len(epis):
-		type=ump.defs.CC_TVSHOWS
+		type=ump.defs.MT_TVSHOW
 	else:
-		type=ump.defs.CC_MOVIES
+		type=ump.defs.MT_MOVIE
 	
 	info={
 		"code":code,
 		"year":year,
 		"startdate":startdate,
-		"localtitle":lotitle,
-		"originaltitle":otitle,
+		"localtitle":html.unescape(lotitle),
+		"originaltitle":html.unescape(otitle),
 		"alternates":alternates,
-		"title":mtitle,
-		"director":director,
-		"plot":plot,
-		"plotoutline":plotoutline,
+		"tvshowtitle":html.unescape(mtitle),
+		"title":html.unescape(mtitle),
+		"director":html.unescape(director),
+		"plot":html.unescape(plot),
+		"plotoutline":html.unescape(plotoutline),
 		"rating":rating,
 		"votes":votes,
-		"genre":genre,
+		"genre":html.unescape(genre),
 		"cast":cast,
 		}
 	
-	if type==ump.defs.CC_TVSHOWS:
+	if type==ump.defs.MT_TVSHOW:
 		info["tvshowtitle"]=mtitle
 		
 	art={
@@ -280,7 +287,14 @@ def get_media(xml):
 		"clearlogo":"",
 		"landscape":""
 		}
-	
+	if ismovie:
+		info.update(epis[1])
+		info["title"]=info["tvshowtitle"]
+		info["tvshowtitle"]=""
+		info["episode"]=1
+		info["season"]=1
+		info["absolute_number"]=1
+		epis=[]
 	return type,info,art,epis
 
 def listitems(aids):
@@ -299,14 +313,14 @@ def listitems(aids):
 		c=command("anime",{"aid":aid})
 		type,info,art,epis=get_media(c)
 		if not len(epis):
-			info["mediatype"]=ump.defs.MT_ANIMEMOVIE
-			ump.index_item(info["localtitle"]+suffix,"urlselect",info=info,art=art)
+			ump.index_item(info["localtitle"]+suffix,"urlselect",info=info,art=art,mediatype=ump.defs.MT_MOVIE)
 		else:
-			ump.index_item(info["localtitle"]+suffix,"episodes",info=info,art=art,args={"aid":aid})
+			ump.index_item(info["localtitle"]+suffix,"episodes",info=info,art=art,args={"aid":aid},mediatype=ump.defs.MT_TVSHOW)
 			
 def run(ump):
 
 	globals()['ump'] = ump
+	ump.publish("anime")
 	if not os.path.exists(os.path.join(ump.defs.addon_ddir,cd)):os.makedirs(os.path.join(ump.defs.addon_ddir,cd))
 	
 	if ump.page=="root":
@@ -344,12 +358,10 @@ def run(ump):
 			"Shounen":{"show":"animelist","tag.922":"0","do.search":"Search","orderby.ucnt":"0.2","regex":regex,"rmode":re.DOTALL},
 			}
 		ump.index_item("Animes by Target Audience","keylist",args=args)
-		ump.set_content(ump.defs.CC_FILES)
 		
 	if ump.page=="keylist":
 		for k,v in ump.args.iteritems():
 			ump.index_item(k,"animedb",args=v)
-		ump.set_content(ump.defs.CC_FILES)
 		
 	elif ump.page=="search":
 		what=ump.args.get("title",None)
@@ -363,16 +375,13 @@ def run(ump):
 			res=minidom.parseString(res.encode(encoding))
 			results.extend(res.getElementsByTagName("anime"))
 		listitems([x.getAttribute("aid") for x in results[:24]])
-		ump.set_content(ump.defs.CC_MOVIES)
 		
 	elif ump.page=="episodes":
 		type,info,art,epis=get_media(command("anime",{"aid":ump.args["aid"]}))
-		info["mediatype"]=ump.defs.MT_ANIMEEPISODE
 		epinfo=info.copy()
 		for epno,epi in epis.iteritems():
 			epinfo.update(epi)
-			ump.index_item(str(epno)+". "+epinfo["elocaltitle"],"urlselect",info=epinfo,art=art)
-		ump.set_content(ump.defs.CC_EPISODES)
+			ump.index_item(str(epno)+". "+epinfo["elocaltitle"],"urlselect",info=epinfo,art=art,mediatype=ump.defs.MT_EPISODE)
 		
 	elif ump.page=="animedb":
 		oldargs=ump.args.copy()
@@ -422,5 +431,4 @@ def run(ump):
 		if not len(results)<perpage or True:
 			oldargs["pagenum"]=pagenum+1
 			ump.index_item("Results %d - %d"%(pagenum*perpage+1,(pagenum+1)*perpage),"animedb",args=oldargs,noicon=True)
-		ump.set_content(ump.defs.CC_MOVIES)
 			

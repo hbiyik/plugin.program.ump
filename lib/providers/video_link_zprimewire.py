@@ -60,7 +60,6 @@ def run(ump):
 	exact=False
 	max_pages=3
 	is_serie=ump.info["mediatype"] == ump.defs.MT_EPISODE
-	if not (is_serie or is_movie):return
 	names=ump.getnames()
 	for name in names:
 		ump.add_log("Primewire is searching %s" % name)

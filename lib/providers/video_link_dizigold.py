@@ -20,7 +20,7 @@ def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
 	if not ump.subscribe("tvshow"): return
-
+	names=ump.getnames()
 	for name in names:
 		query={"page":"/dizi/aranan_%s"%name}
 		page=ump.get_page(domain+"/sistem/arsiv.php",encoding,query=query,referer=domain+"/arsiv",header={"X-Requested-With":"XMLHttpRequest"})

@@ -35,7 +35,7 @@ MT_MOVIE="movie"
 MT_TVSHOW,MT_SEASON,MT_EPISODE="tvshow","season","episode",
 MT_ARTIST,MT_ALBUM,MT_SONG,MT_MUSIC="artist","musicalbum","song","music"
 MT_MUSICVIDEO="musicvideo"
-MT_SET,MT_NONE="set",""
+MT_SET,MT_NONE="set","none"
 mediapointer={
          MT_MOVIE:["code"],
          MT_TVSHOW:["code"],
@@ -62,7 +62,7 @@ media_to_cc={
          MT_MUSIC:"albums",
          MT_MUSICVIDEO:"movies",
          MT_SET:"files",
-         MT_OTHER:"files"      
+         MT_NONE:"files"      
              }
 
 VIEW_MODES={

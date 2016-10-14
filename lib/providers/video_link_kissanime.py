@@ -64,16 +64,13 @@ def match_uri(results,refnames):
 def run(ump):
 	globals()['ump'] = ump
 	i=ump.info
-
 	if not ump.subscribe("anime"): return
 	is_serie=i["mediatype"]==ump.defs.MT_EPISODE
-	if not (is_serie or is_movie): return
-	names=ump.get_vidnames()
+	names=ump.getnames(orgfirst=False)
 	urls=[]	
 	jq_limit=False
 	found=False
 	ump.get_page(domain,encoding)
-	return
 	for name in names:
 		ump.add_log("kissanime is searching %s on %s"%(name,"sitesearch"))
 		u="%s/Search/Anime"%domain
@@ -124,17 +121,19 @@ def run(ump):
 			epinames=re.findall('title="Watch anime (.*?)">',table[0])
 			epis={}
 			epinums=[]
-			for epilink,epirow in zip(epilinks,epinames):
+			epidata=zip(epilinks,epinames)
+			for epilink,epirow in epidata:
 				if "_" in epirow.lower():
 					continue
 				epinum=re.findall("([0-9]*?) online",epirow)
-				if is_serie:
+				if is_serie and len(epidata)>1:
 					if (not len(epinum) or epinum=="" or not epinum[0].isdigit()):
 						continue
 					epinum=int(epinum[0])
 					epinums.append(epinum)
 					ekey=epinum
-				else:
+				elif not is_serie or len(epidata)==1:
+					is_serie=False
 					ekey=epirow
 					epinum=-1
 				fs=None

@@ -245,7 +245,6 @@ def scrape_name(id,lean=False):
 
 def run(ump):
 	globals()['ump'] = ump
-	ump.publish("movie","tvshow")
 	if ump.page == "root":
 		ump.index_item("Search Movies","results_title",args={"title":"?","title_type":"feature,tv_movie,short","sort":"moviemeter,asc"})
 		ump.index_item("Search Series","results_title",args={"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc"})		
@@ -410,6 +409,7 @@ def run(ump):
 					commands.append(('Search on ANN : %s'%movie["info"]["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["info"]["title"]},module="ann")))
 					ump.index_item(suggest+movie["info"]["localtitle"],"show_seasons",args={"imdbid":movie["info"]["code"]},info=movie["info"],art=movie["art"],cmds=commands,mediatype=ump.defs.MT_TVSHOW)
 				else:
+					ump.publish("movie")
 					commands.append(('Search on ANN : %s'%movie["info"]["title"], 'XBMC.Container.Update(%s)'%ump.link_to("search",{"title":movie["info"]["title"]},module="ann")))
 					movie["info"]["mediatype"]=ump.defs.MT_MOVIE
 					ump.index_item(suggest+movie["info"]["localtitle"],"urlselect",info=movie["info"],art=movie["art"],cmds=commands,mediatype=ump.defs.MT_MOVIE)
@@ -435,6 +435,7 @@ def run(ump):
 			ump.index_item("Season %d"%season,"show_episodes",args={"imdbid":imdbid,"season":season},info=info,mediatype=ump.defs.MT_SEASON)
 	
 	elif ump.page=="show_episodes":
+		ump.publish("tvshow")
 		imdbid=ump.args.get("imdbid",None)
 		season=ump.args.get("season",None)
 		if not imdbid or not season:
