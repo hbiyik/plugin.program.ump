@@ -18,7 +18,7 @@ class identifier():
         return indexer,mediatype,code
     
     def createhash(self,*args,**kwargs):
-        hashed=urllib.quote(self.create(*args,**kwargs))
+        hashed=urllib.quote_plus(self.create(*args,**kwargs))
         print "hashed id %s" % hashed 
         return hashed
     

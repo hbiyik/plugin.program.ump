@@ -37,7 +37,7 @@ from ump import teamkodi
 from ump import clicky
 from ump import identifier
 from ump import stats
-#from ump import throttle
+from ump import throttle
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
@@ -142,6 +142,7 @@ class ump():
 		[self.content_type]= result.get('content_type', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 		self.stats=stats.stats()
+		self.throttle=throttle.throttle(self.defs.addon_tdir)
 
 		if prefs.get("play","flag"):
 			self.refreshing=True
@@ -241,6 +242,9 @@ class ump():
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
 		if not noicon:self.backwards.setArt(li,art)
+		print 66
+		print info
+		print 77
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if isFolder==False:
@@ -274,8 +278,8 @@ class ump():
 								"RunScript(%s,mark%s,%s,%s)"%(
 															os.path.join(defs.addon_dir,"lib","ump","script.py"),
 															cmd,
-															urllib.quote(json.dumps(info)),
-															urllib.quote(json.dumps(nestedptr))
+															urllib.quote_plus(json.dumps(info)),
+															urllib.quote_plus(json.dumps(nestedptr))
 															)
 								))
 			coms.append(('Detailed Info',"Action(Info)"))
@@ -418,47 +422,46 @@ class ump():
 			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 
-	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None):
+	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None,throttle=False):
 		
 		if self.terminate:
 			raise task.killbill
-		
-		#tid=None
-		#if cache and not head and not range:
-		#	tid=throttle.id(encoding,query,referer,header)
-		#	if not throttle.check(tid,cache):
-		#		return throttle.get(tid)
+		tid=self.throttle.id(url,query,referer,header,data)
+		if throttle and not head and not range and self.throttle.check(tid):
+			stream=self.throttle.get(tid)
+		else:	
+			#python cant handle unicode urlencoding so needs to get dirty below.
+			if not query is None:
+				query=uniurlenc(query) 
+				url=url+"?"+query
+			if not data is None and isinstance(data,dict):
+				data=uniurlenc(data)
+			#change timeout
+			if tout is None:
+				tout=int(float(addon.getSetting("tout")))
 			
-		#python cant handle unicode urlencoding so needs to get dirty below.
-		if not query is None:
-			query=uniurlenc(query) 
-			url=url+"?"+query
-		if not data is None and isinstance(data,dict):
-			data=uniurlenc(data)
-		#change timeout
-		if tout is None:
-			tout=int(float(addon.getSetting("tout")))
-		
-		headers={'Accept-encoding':'gzip'}
-		if not referer is None : headers["Referer"]=referer
-		if not header is None :
-			for k,v in header.iteritems():
-				headers[k]=v
-		tmode="disabled"
-		if head==True:
-			req=http.HeadRequest(url,headers=headers)
-		else:
-			if not range is None : headers["Range"]="bytes=%d-%d"%(range)
-			req=urllib2.Request(url,headers=headers)
-		if not head:
-			tmode=self.tunnel.set_tunnel(tunnel,force=forcetunnel)
-			req=self.tunnel.pre(req,tmode,self.cj)
-		response = cloudfare.ddos_open(url,self.opener, req, data,tout,self.cj,self.cfagents,self.cflocks,self.tunnel,tmode)
-		self.tunnel.cook(self.cj,self.cj.make_cookies(response,req),tmode)
+			headers={'Accept-encoding':'gzip'}
+			if not referer is None : headers["Referer"]=referer
+			if not header is None :
+				for k,v in header.iteritems():
+					headers[k]=v
+			tmode="disabled"
+			if head==True:
+				req=http.HeadRequest(url,headers=headers)
+			else:
+				if not range is None : headers["Range"]="bytes=%d-%d"%(range)
+				req=urllib2.Request(url,headers=headers)
+			if not head:
+				tmode=self.tunnel.set_tunnel(tunnel,force=forcetunnel)
+				req=self.tunnel.pre(req,tmode,self.cj)
+			response = cloudfare.ddos_open(url,self.opener, req, data,tout,self.cj,self.cfagents,self.cflocks,self.tunnel,tmode)
+			self.tunnel.cook(self.cj,self.cj.make_cookies(response,req),tmode)
 			
-		if head :return response
-		stream=cloudfare.readzip(response)
-		stream=self.tunnel.post(stream,tmode)
+			if head :return response
+			stream=cloudfare.readzip(response)
+			stream=self.tunnel.post(stream,tmode)
+			if throttle and not head and not range:
+				self.throttle.do(tid,stream)
 
 		if encoding is None:
 			#binary data

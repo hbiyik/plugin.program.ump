@@ -3,7 +3,7 @@ import urllib
 import xbmc
 
 for i in range(len(argv)):
-	argv[i]=urllib.unquote(argv[i])
+	argv[i]=urllib.unquote_plus(argv[i])
 
 if len(argv)>1:
 	if argv[1]=="addfav":

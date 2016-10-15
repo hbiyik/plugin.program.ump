@@ -18,11 +18,11 @@ def duration(info):
 	try:
 		try:
 			q={"query":'artist:"%s" AND recording:"%s" primarytype:album'%(info["artist"],info["title"]),"type":"recording","limit":1,"method":"advanced"}
-			page=ump.get_page("https://musicbrainz.org/search",encoding,query=q)
+			page=ump.get_page("https://musicbrainz.org/search",encoding,query=q,throttle=True)
 			row=re.findall("<tr>.*?(<tr.*?</tr>)",page,re.DOTALL)
 		except:
 			q={"query":'artist:"%s" AND recording:"%s"'%(info["artist"],info["title"]),"type":"recording","limit":1,"method":"advanced"}
-			page=ump.get_page("https://musicbrainz.org/search",encoding,query=q)
+			page=ump.get_page("https://musicbrainz.org/search",encoding,query=q,throttle=True)
 			row=re.findall("<tr>.*?(<tr.*?</tr>)",page,re.DOTALL)
 		cols=re.findall("<td>(.*?)</td>",row[0],re.DOTALL)
 		if cols[0].isdigit():
@@ -299,7 +299,7 @@ def run(ump):
 				playlist.append(audio)
 			durations(playlist)
 			for audio in playlist:
-				ump.index_item(audio["artist"]+ " - "+audio["title"],"urlselect",icon=im, thumb=im,art=audio["art"],info=audio["info"],mediatype=ump.defs.MT_SONG)
+				ump.index_item(audio["info"]["artist"]+ " - "+audio["info"]["title"],"urlselect",icon=im, thumb=im,art=audio["art"],info=audio["info"],mediatype=ump.defs.MT_SONG)
 		
 	elif ump.page == "artist":
 		ambid=ump.args["mbid"]
@@ -366,14 +366,14 @@ def run(ump):
 		elif not ump.info["code"] == "":
 			# not sure this will ever hit :/
 			q={"method":"album.getinfo","mbid":ump.info["code"],"api_key":apikey,"format":"json"}
-			js=json.loads(ump.get_page(mirror,None,query=q))
+			js=json.loads(ump.get_page(mirror,None,query=q,throttle=True))
 			alb=js.get("album",None)
 			albumimage=get_img(alb.get("image",[]))
 			results=get_mbtracks(ump.info["code"])
 			ambid=ump.info["code"]
 		else:
 			q={"method":"album.getinfo","artist":ump.args["artist"],"album":ump.args["album"],"api_key":apikey,"format":"json"}
-			js=json.loads(ump.get_page(mirror,None,query=q))
+			js=json.loads(ump.get_page(mirror,None,query=q,throttle=True))
 			alb=js.get("album",None)
 			albumimage=get_img(alb.get("image",[]))
 			results=alb.get("tracks",{"track":[]})["track"]
@@ -399,6 +399,7 @@ def run(ump):
 			durations(playlist)
 			ump.index_item("Play Album: %s"%ump.info["album"],"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"%s - %s [ALBUM]"%(ump.info["artist"],ump.info["album"])},mediatype=ump.defs.MT_ALBUM)
 			for item in playlist:
+				print item["info"]
 				ump.index_item(item["info"]["artist"]+" - "+item["info"]["title"],"urlselect",info=item["info"],art=item["art"],mediatype=ump.defs.MT_SONG)
 		else:
 			return None

@@ -7,7 +7,7 @@ import urlparse
 domain="http://www.youtube.com/"
 encoding="utf-8"
 tunnel=["cookie"]
-timetol=5
+timetol=3
 
 def run(ump):
 	globals()['ump'] = ump
@@ -33,7 +33,6 @@ def run(ump):
 			try:
 				idur=int(i.get("duration",0))
 				dur=int(times[0][0])*60+int(times[0][1])
-				print dur
 			except:
 				idur=0
 				dur=0
@@ -43,13 +42,10 @@ def run(ump):
 			hash=urlparse.parse_qs(urlparse.urlparse(link).query).get("v",[None])[0]
 			if not hash or hash in ids: continue
 			ids.append(hash)
-			print title.encode("ascii","replace")
-			print artist.encode("ascii","replace")
 			if dur>0 and idur>0:
 				match=artist.strip() in i["artist"].strip() or i["artist"].strip() in artist.strip()
 				match=match and (title.strip() in i["title"].strip() or i["title"].strip() in title.strip())
 				match=match and abs(dur-idur)<=timetol
-				print "!!!!!!!!!!!!! TIME MATCH"
 			else:
 				match=ump.is_same(artist,i["artist"]) and ump.is_same(title,i["title"]) 
 			if match:
