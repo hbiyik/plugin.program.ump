@@ -206,11 +206,8 @@ class ump():
 		if info == {}:info=self.info
 		if info is None:info={}
 		if mediatype is None:
-			print 5555555555511 
 			info["mediatype"]=self.defs.MT_NONE
 		else: 
-			print 666666666633
-			print mediatype
 			info["mediatype"]=mediatype
 		if art == {}:art=self.art
 		if art is None: art={}
@@ -264,6 +261,7 @@ class ump():
 					else:
 						continue
 					if key=="code":
+						txt=self.getnames(1,False)[0]
 						try:
 							txt=self.getnames(1,False)[0]
 						except:
@@ -338,8 +336,10 @@ class ump():
 		else:
 			names.append(ww)
 			names.append(self.info["originaltitle"])
-		names.append(self.info["localtitle"])
-		names.extend(self.info["alternates"])
+		if "localtitle" in self.info:
+			names.append(self.info["localtitle"])
+		if "alternates" in self.info:
+			names.extend(self.info["alternates"])
 		names2=[]
 		for name in names:
 			if not name in names2:
@@ -389,13 +389,12 @@ class ump():
 			for i in range(0, 10*20):
 				if self.terminate or self.backwards.abortRequested():
 					break
-				#if False or self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
-				if False:
+				if self.content_type==self.defs.CT_AUDIO and content_cat in ["songs","movies","artists","albums"]:
 					#issue #38
 					xbmc.sleep(300)
 					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
 					break
-				elif xbmc.getCondVisibility('Container.Content(%s)' % content_cat) or True:
+				elif xbmc.getCondVisibility('Container.Content(%s)' % content_cat):
 					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
 					break
 				xbmc.sleep(100)

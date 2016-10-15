@@ -37,6 +37,7 @@ MT_TVSHOW,MT_SEASON,MT_EPISODE="tvshow","season","episode",
 MT_ARTIST,MT_ALBUM,MT_SONG,MT_MUSIC="artist","musicalbum","song","music"
 MT_MUSICVIDEO="musicvideo"
 MT_SET,MT_NONE="set","none"
+MT_MANGA,MT_CHAPTER="musicalbum","song"
 mediapointer={
          MT_MOVIE:["code"],
          MT_TVSHOW:["code"],
@@ -48,7 +49,9 @@ mediapointer={
          MT_MUSIC:["code"],
          MT_MUSICVIDEO:["code","title"],
          MT_SET:["code"],
-         MT_NONE:["code"]
+         MT_NONE:["code"],
+         MT_MANGA:["code"],
+         MT_CHAPTER:["code","episode"],
          }
 
 #media type to kodi content categories
@@ -64,7 +67,9 @@ media_to_cc={
          MT_MUSIC:"songs",
          MT_MUSICVIDEO:"movies",
          MT_SET:"files",
-         MT_NONE:"files"      
+         MT_NONE:"files",
+         MT_MANGA:"tvshows",
+         MT_CHAPTER:"episodes",
              }
 
 VIEW_MODES={

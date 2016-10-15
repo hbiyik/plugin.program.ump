@@ -152,7 +152,6 @@ def run(ump):
 		ump.index_item("Mangakas","search_mangaka",args={"orderby":"series","perpage":perpage,"page":1})
 		ump.index_item("Latest Releases","releases",args={"page":1})
 		ump.index_item("Charts","charts",args={"page":1})
-		ump.set_content(ump.defs.CC_FILES)
 	
 	elif ump.page=="genres":
 		page=ump.get_page("%s/genres.html"%domain,encoding)
@@ -161,7 +160,6 @@ def run(ump):
 			name=genre.replace("+"," ")
 			args={"genre":genre.lower(),"orderby":"rating","filter":"somereleases","search":None,"stype":"title","perpage":perpage,"page":1}
 			ump.index_item(name,"select_type",args=args)
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="categories":
 		page=ump.get_page("%s/categories.html?perpage=100&orderby=agree"%domain,encoding)
@@ -171,7 +169,6 @@ def run(ump):
 			name=c.replace("/s","").replace("/ies","")
 			args={"category":v,"orderby":"rating","filter":"somereleases","search":None,"stype":"title","perpage":perpage,"page":1}
 			ump.index_item(name,"select_type",args=args)
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="charts":
 		charts=(
@@ -189,7 +186,6 @@ def run(ump):
 			name,args=chart
 			ump.args.update(args)
 			ump.index_item(name,"stats",ump.args)
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="select_type":
 		if not "search" in ump.args:
@@ -205,7 +201,6 @@ def run(ump):
 			else:
 				ump.args["type"]=v
 				ump.index_item(t,"search",ump.args)
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="stats":
 		page=ump.get_page("%s/stats.html"%domain,encoding,query=ump.args)
@@ -225,8 +220,6 @@ def run(ump):
 			page=ump.args["page"]+1
 			ump.args["page"]=page
 			ump.index_item("Page %d"%page,"stats",ump.args)
-		ump.set_content(ump.defs.CC_ALBUMS)
-
 
 	elif ump.page=="releases":
 		page=ump.get_page("%s/releases.html"%domain,encoding,query=ump.args)
@@ -244,12 +237,11 @@ def run(ump):
 		for k in sorted(matches.keys()):
 			name="%s , %s, %s"% (releases[k][1],releases[k][2],releases[k][3])
 			cmd=('Search Mangaka: %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
-			ump.index_item(name,"show_chapters",args=matches[k],info=matches[k]["info"],art=matches[k]["art"],cmds=[cmd])
+			ump.index_item(name,"show_chapters",args=matches[k],info=matches[k]["info"],art=matches[k]["art"],cmds=[cmd],mediatype=ump.defs.MT_MANGA)
 		if len(pagination):
 			page=ump.args["page"]+1
 			ump.args["page"]=page
 			ump.index_item("Page %d"%page,"releases",ump.args)
-		ump.set_content(ump.defs.CC_ALBUMS)
 
 	elif ump.page=="search_mangaka":
 		page=ump.get_page("%s/authors.html"%domain,encoding,query=ump.args)
@@ -272,7 +264,6 @@ def run(ump):
 			page=ump.args["page"]+1
 			ump.args["page"]=page
 			ump.index_item("Page %d"%page,"search_mangaka",ump.args)
-		ump.set_content(ump.defs.CC_ARTISTS)
 
 	elif ump.page == "search":
 		if "names" in ump.args:
@@ -298,12 +289,11 @@ def run(ump):
 		for k in sorted(matches.keys()):
 			cmd=('Search Mangaka: %s' % matches[k]["info"]["writer"], 'XBMC.Container.Update(%s)'%ump.link_to("search_mangaka",{"search":matches[k]["info"]["writer"]}))
 			name="%s , %s"% (matches[k]["info"]["title"],matches[k]["info"]["writer"])
-			ump.index_item(name,"show_chapters",args={"names":matches[k]},info=matches[k]["info"],art=matches[k]["art"],cmds=[cmd])
+			ump.index_item(name,"show_chapters",args={"names":matches[k]},info=matches[k]["info"],art=matches[k]["art"],cmds=[cmd],mediatype=ump.defs.MT_MANGA)
 		if len(pagination):
 			page=ump.args["page"]+1
 			ump.args["page"]=page
 			ump.index_item("Page %d"%page,"search",ump.args)
-		ump.set_content(ump.defs.CC_ALBUMS)
 
 	elif ump.page== "show_chapters":
 		id=ump.info["code"]
@@ -319,7 +309,7 @@ def run(ump):
 				ump.info["season"]="-1"
 				ump.info["episode"]=chapter
 				ump.info["mediatype"]=ump.defs.MT_CHAPTER
-				ump.index_item("Chapter %s"%chapter,"urlselect")
+				ump.index_item("Chapter %s"%chapter,"urlselect",mediatype=ump.defs.MT_CHAPTER)
 		cache=[]
 		pre=0
 		suffixes=["end"]
@@ -358,4 +348,3 @@ def run(ump):
 
 		for p in range(pre-1):
 			create_li(pre-p-1)
-		ump.set_content(ump.defs.CC_SONGS)
