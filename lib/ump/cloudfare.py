@@ -109,7 +109,7 @@ def ddos_open(url,opener,req,data,timeout,cj,cfagents,cflocks,tunnel,tmode):
 			new_url = '%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s&pass=%s' % (scheme, domain, vc, result, urllib.quote(password))
 			cflogin(new_url,ua,req,opener,tunnel,tmode,cj,cfagents,up)
 			response=opener.open(req,data,timeout)
-		elif err.code == 403 and "/cdn-cgi/l/chk_captcha" in body:
+		elif err.code == 403 and "/cdn-cgi/l/chk_captcha" in body and False:
 			hash=re.findall('data-sitekey="(.*?)"',body)[0]
 			solver=recaptcha.UnCaptchaReCaptcha()
 			token=solver.processCaptcha(hash, ump.backwards.getLanguage(0).lower(), opener,ua,up.netloc+" requires Cloudfare Recaptcha")

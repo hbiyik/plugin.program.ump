@@ -17,7 +17,7 @@ def run(ump):
 	a_old=""
 	t_old=""
 	parts=[]
-	if ump.defs.MT_MUSICALBUM==ump.info["mediatype"]:
+	if ump.defs.MT_ALBUM==ump.info["mediatype"]:
 		playlist=ump.args["playlist"]
 		mname=ump.args.get("mname","Musicmp3 Playlist")
 	else:

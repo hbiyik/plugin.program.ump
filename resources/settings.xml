@@ -30,10 +30,10 @@
 		<setting default="Thumb" id="view_movies" label="Movies View" type="select" values="List|Thumb|Default"/>
 		<setting default="Thumb" id="view_tvshows" label="TV Shows View" type="select" values="List|Thumb|Default"/>
 		<setting default="Thumb" id="view_episodes" label="Episodes View" type="select" values="List|Thumb|Default"/>
-		<setting default="Default" id="view_artists" label="Artists View" type="select" values="List|Thumb|Default"/>
+		<setting default="Thumb" id="view_artists" label="Artists View" type="select" values="List|Thumb|Default"/>
 		<setting default="Thumb" id="view_albums" label="Albums View" type="select" values="List|Thumb|Default"/>
-		<setting default="Default" id="view_songs" label="Songs View" type="select" values="List|Thumb|Default"/>
-		<setting default="Default" id="view_musicvideos" label="Music Videos View" type="select" values="List|Thumb|Default"/>
+		<setting default="Thumb" id="view_songs" label="Songs View" type="select" values="List|Thumb|Default"/>
+		<setting default="Thumbt" id="view_musicvideos" label="Music Videos View" type="select" values="List|Thumb|Default"/>
 		<setting default="" id="pref_views" type="text" visible="false"/>
 	</category>
 	<category id="advanced" label="Advanced Settings">

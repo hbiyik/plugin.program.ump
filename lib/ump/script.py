@@ -22,16 +22,16 @@ if len(argv)>1:
 		from prefs import set_view
 		#print get_skin_view(argv[2])
 		set_view(argv[2],argv[3])
-	elif argv[1]=="markwatched":
+	elif argv[1]=="markseen":
 		from stats import stats
 		import json
 		st=stats()
-		st.markwatched(json.loads(argv[2]),json.loads(argv[3]))
+		st.markseen(json.loads(argv[2]),json.loads(argv[3]))
 		xbmc.executebuiltin("Container.Refresh")
-	elif argv[1]=="markunwatched":
+	elif argv[1]=="markunseen":
 		from stats import stats
 		import json
 		st=stats()
-		st.markunwatched(json.loads(argv[2]),json.loads(argv[3]))
+		st.markunseen(json.loads(argv[2]),json.loads(argv[3]))
 		xbmc.executebuiltin("Container.Refresh")
 		

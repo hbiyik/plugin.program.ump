@@ -29,7 +29,7 @@ def crawl_search(query):
 def run(ump):
 	globals()['ump'] = ump
 	parts=[]
-	if ump.defs.MT_MUSICALBUM==ump.info["mediatype"]:
+	if ump.defs.MT_ALBUM==ump.info["mediatype"]:
 		playlist=ump.args["playlist"]
 		mname=ump.args.get("mname","Redmp3 Playlist")
 	else:

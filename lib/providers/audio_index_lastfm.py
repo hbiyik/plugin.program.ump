@@ -2,14 +2,48 @@ import json
 
 import xbmc
 import re
-
+import time
 from ump import countries
 
 
 mirror="http://ws.audioscrobbler.com/2.0/"
 encoding="utf-8"
 apikey="ff9469649c8c7d2120758deca5ffa586"
-recnum=50
+recnum=30
+
+def duration(info):
+	#http://musicbrainz.org/ws/2/recording/?query=artist:%22twenty%20one%20pilots%22%20AND%20recording:heathens%20AND%20primarytype:%22album%22&limit=5&fmt=json
+	#https://musicbrainz.org/search?query=artist%3A%22twenty+one+pilots%22+AND+recording%3A%22heathens%22+AND+primarytype%3A%22album%22&type=recording&limit=25&method=advanced
+	#AND primarytype:album
+	try:
+		try:
+			q={"query":'artist:"%s" AND recording:"%s" primarytype:album'%(info["artist"],info["title"]),"type":"recording","limit":1,"method":"advanced"}
+			page=ump.get_page("https://musicbrainz.org/search",encoding,query=q)
+			row=re.findall("<tr>.*?(<tr.*?</tr>)",page,re.DOTALL)
+		except:
+			q={"query":'artist:"%s" AND recording:"%s"'%(info["artist"],info["title"]),"type":"recording","limit":1,"method":"advanced"}
+			page=ump.get_page("https://musicbrainz.org/search",encoding,query=q)
+			row=re.findall("<tr>.*?(<tr.*?</tr>)",page,re.DOTALL)
+		cols=re.findall("<td>(.*?)</td>",row[0],re.DOTALL)
+		if cols[0].isdigit():
+			title=re.findall("<bdi>(.*?)</bdi>",cols[1])[0]
+			times=cols[2].split(":")
+			duration=int(times[0])*60+int(times[1])
+			artist=re.findall("<bdi>(.*?)</bdi>",cols[3])[0]
+			album=re.findall("<bdi>(.*?)</bdi>",cols[5])[0]
+			if ump.is_same(info["artist"],artist) and ump.is_same(info["title"],title):
+				info["album"]=album
+				info["duration"]=duration
+	except:
+		pass
+	return info
+
+def durations(playlist):
+	gid=ump.tm.create_gid()
+	for item in playlist:
+		ump.tm.add_queue(duration,[item["info"]],gid=gid)
+	ump.tm.join(gid=gid,cnt="all")
+
 
 def get_country():
 	language=ump.backwards.getLanguage(0).lower()
@@ -100,14 +134,12 @@ def run(ump):
 		ump.index_item("Styles by Artists","tags",args={"where":"artists"})
 		ump.index_item("Styles by Albums","tags",args={"where":"albums"})
 		ump.index_item("Styles by Tracks","tags",args={"where":"tracks"})
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="tags":
 		q={"method":"tag.getTopTags","api_key":apikey,"format":"json"}
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		for result in js["toptags"]["tag"]:
 			ump.index_item(result["name"].title(),"tags_%s"%ump.args["where"],args={"tag":result["name"]})
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="tags_artists":
 		q={"method":"tag.getTopArtists","api_key":apikey,"format":"json","limit":100,"tag":ump.args["tag"]}
@@ -117,8 +149,8 @@ def run(ump):
 			im=get_img(result.get("image",[]))
 			if im=="":
 				continue
-			ump.index_item(result["name"],"artist",args={"mbid":result["mbid"],"name":result["name"],"artim":im},icon=im, thumb=im)
-		ump.set_content(ump.defs.CC_ARTISTS)
+			info={"artist":result["name"]}
+			ump.index_item(result["name"],"artist",args={"mbid":result["mbid"],"name":result["name"],"artim":im},info=info,icon=im, thumb=im,mediatype=ump.defs.MT_ARTIST)
 
 	elif ump.page=="tags_albums":
 		q={"method":"tag.getTopAlbums","api_key":apikey,"format":"json","limit":100,"tag":ump.args["tag"]}
@@ -128,26 +160,24 @@ def run(ump):
 			im=get_img(result.get("image",[]))
 			if im == "":
 				continue
-			ump.index_item(name,"album",info={"code":result["mbid"],"title":name},icon=im, thumb=im,args={"artist":result["artist"]["name"],"album":result["name"]})
-		ump.set_content(ump.defs.CC_ALBUMS)
+			ump.index_item(name,"album",info={"code":result["mbid"],"title":name,"album":name,"artist":result["artist"]["name"]},icon=im, thumb=im,args={"artist":result["artist"]["name"],"album":result["name"]}, mediatype=ump.defs.MT_ALBUM)
 
 	elif ump.page=="tags_tracks":
 		q={"method":"tag.getTopTracks","api_key":apikey,"format":"json","tag":ump.args["tag"]}
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		playlist=[]
-		for result in js["tracks"]["track"]:
+		for result in js["tracks"]["track"][:recnum]:
 			im=get_img(result.get("image",[]))
 			if im=="":
 				continue
 			info={"code":result["mbid"],"title":result["name"],"artist":result["artist"]["name"],"album":""}
 			art={"icon":im, "thumb":im}
 			playlist.append({"info":info,"art":art})
-		ump.index_item("Play Top 10","urlselect",args={"playlist":playlist[:10]},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
-		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
+		durations(playlist)
+		ump.index_item("Play Top 10","urlselect",args={"playlist":playlist[:10]},info={"title":"Top Tracks","code":""},mediatype=ump.defs.MT_ALBUM)
+		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"title":"Top Tracks","code":""},mediatype=ump.defs.MT_ALBUM)
 		for item in playlist:
-			item["info"]["mediatype"]=ump.defs.MT_MUSIC
-			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"])
-		ump.set_content(ump.defs.CC_ARTISTS)
+			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"],mediatype=ump.defs.MT_SONG)
 
 	elif ump.page=="topartist":
 		q={"method":"chart.getTopArtists","api_key":apikey,"format":"json","limit":100}
@@ -156,26 +186,26 @@ def run(ump):
 			im=get_img(result.get("image",[]))
 			if im=="":
 				continue
-			ump.index_item(result["name"],"artist",args={"mbid":result["mbid"],"name":result["name"],"artim":im},icon=im, thumb=im)
-		ump.set_content(ump.defs.CC_ARTISTS)
+			ump.index_item(result["name"],"artist",args={"mbid":result["mbid"],"name":result["name"],"artim":im},info={"artist":result["name"]},icon=im, thumb=im,mediatype=ump.defs.MT_ARTIST)
 	
 	elif ump.page=="toptrack":
 		q={"method":"chart.getTopTracks","api_key":apikey,"format":"json"}
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		playlist=[]
-		for result in js["tracks"]["track"]:
+		for result in js["tracks"]["track"][:recnum]:
 			im=get_img(result.get("image",[]))
 			if im=="":
 				continue
 			info={"code":result["mbid"],"title":result["name"],"artist":result["artist"]["name"],"album":""}
 			art={"icon":im, "thumb":im}
 			playlist.append({"info":info,"art":art})
-		ump.index_item("Play Top 10","urlselect",args={"playlist":playlist[:10]},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
-		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
+		durations(playlist)
+		lname="Play Top 10"
+		ump.index_item(lname,"urlselect",args={"playlist":playlist[:10]},info={"title":"Top Tracks","code":"","album":lname,"artist":"Toptracks"},mediatype=ump.defs.MT_ALBUM)
+		lname="Play All %d"%len(playlist)
+		ump.index_item(lname,"urlselect",args={"playlist":playlist},info={"title":"Top Tracks","code":"","album":lname,"artist":"Toptracks"},mediatype=ump.defs.MT_ALBUM)
 		for item in playlist:
-			item["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
-			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"])
-		ump.set_content(ump.defs.CC_ARTISTS)
+			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"],mediatype=ump.defs.MT_SONG)
 
 	elif ump.page=="country":
 		page=ump.args["page"]
@@ -188,7 +218,6 @@ def run(ump):
 				ump.args["country"]=country[0]
 				ump.index_item(country[0],page,args=ump.args,info=ump.info,art=ump.art)
 				processed.append(country[0])
-		ump.set_content(ump.defs.CC_FILES)
 
 	elif ump.page=="geoartist":
 		q={"method":"geo.getTopArtists","country":ump.args["country"],"api_key":apikey,"format":"json","limit":100}
@@ -197,35 +226,33 @@ def run(ump):
 			im=get_img(result.get("image",[]))
 			if im=="":
 				continue
-			ump.index_item(result["name"],"artist",args={"mbid":result["mbid"],"name":result["name"],"artim":im},icon=im, thumb=im)
-		ump.set_content(ump.defs.CC_ARTISTS)
+			info={"artist":result["name"]}
+			ump.index_item(result["name"],"artist",args={"mbid":result["mbid"],"name":result["name"],"artim":im},info=info,icon=im, thumb=im,mediatype=ump.defs.MT_ARTIST)
 
 	elif ump.page=="geotrack":
 		q={"method":"geo.getTopTracks","country":ump.args["country"],"api_key":apikey,"format":"json","limit":100}
 		js=json.loads(ump.get_page(mirror,None,query=q))
 		playlist=[]
-		for result in js["tracks"]["track"]:
+		for result in js["tracks"]["track"][:recnum]:
 			im=get_img(result.get("image",[]))
 			if im=="":
 				continue
 			info={"code":result["mbid"],"title":result["name"],"artist":result["artist"]["name"],"album":""}
 			art={"icon":im, "thumb":im}
 			playlist.append({"info":info,"art":art})
-		
-		ump.index_item("Play Top 40","urlselect",args={"playlist":playlist[:40]},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
-		ump.index_item("Play All %d"%len(playlist),"urlselect",args={"playlist":playlist},info={"mediatype":ump.defs.MT_MUSICALBUM,"title":"Top Tracks","code":""})
+		durations(playlist)
+		lname="Play Top 40"
+		ump.index_item(lname,"urlselect",args={"playlist":playlist[:40]},info={"title":"Top Tracks","code":"","album":lname,"artist":"geo_%s"%ump.args["country"]},mediatype=ump.defs.MT_ALBUM)
+		lname="Play All %d"%len(playlist)
+		ump.index_item(lname,"urlselect",args={"playlist":playlist},info={"title":"Top Tracks","code":"","album":lname,"artist":"geo_%s"%ump.args["country"]},mediatype=ump.defs.MT_ALBUM)
 		for item in playlist:
-			item["info"]["mediatype"]=ump.defs.MT_MUSIC
-			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"])
-		ump.set_content(ump.defs.CC_ARTISTS)
-
+			ump.index_item("%s - %s"%(item["info"]["artist"],item["info"]["title"]),"urlselect",info=item["info"],art=item["art"],mediatype=ump.defs.MT_SONG)
 
 	elif ump.page == "search":
 		conf,what=ump.get_keyboard('default', 'Search Audio', True)
 		ump.index_item("Search %s in Artists" % what,"searchresult",args={"what":what,"where":"artist"})
 		ump.index_item("Search %s in Albums" % what,"searchresult",args={"what":what,"where":"album"})
 		ump.index_item("Search %s in Tracks" % what,"searchresult",args={"what":what,"where":"track"})
-		ump.set_content(ump.defs.CC_ALBUMS)
 		
 	elif ump.page == "searchresult":
 		what=ump.args["what"]
@@ -245,18 +272,21 @@ def run(ump):
 				im=get_img(result.get("image",[]))
 				if im=="":
 					continue
-				ump.index_item(result["name"],where,args={"mbid":result["mbid"],"name":result["name"],"artim":im},icon=im, thumb=im)
-			ump.set_content(ump.defs.CC_ARTISTS)
+				info={"artist":result["name"]}
+				ump.index_item(result["name"],where,args={"mbid":result["mbid"],"name":result["name"],"artim":im},info=info,icon=im, thumb=im, mediatype=ump.defs.MT_ARTIST)
+
 		if where=="album":
 			for result in results:
 				name="%s - %s"%(result["artist"],result["name"])
 				im=get_img(result.get("image",[]))
 				if im == "":
 					continue
-				ump.index_item(name,where,info={"code":result["mbid"],"title":name},icon=im, thumb=im)
-			ump.set_content(ump.defs.CC_ALBUMS)
+				info={"code":result["mbid"],"title":name,"artist":result["artist"],"album":result["name"]}
+				ump.index_item(name,where,info=info,icon=im, thumb=im,mediatype=ump.defs.MT_ALBUM)
+
 		if where=="track":
-			for result in results:
+			playlist=[]
+			for result in results[:recnum]:
 				mbid=result["mbid"]
 				title=result["name"]
 				artist=result["artist"]
@@ -264,11 +294,12 @@ def run(ump):
 				if im == "":
 					continue
 				audio={}
-				audio["info"]={"year":"","tracknumber":-1,"duration":"","album":"","artist":artist,"title":title,"code":mbid}
+				audio["info"]=duration({"year":"","tracknumber":-1,"duration":"","album":"","artist":artist,"title":title,"code":mbid})
 				audio["art"]={"thumb":im,"poster":im}
-				audio["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
-				ump.index_item(artist+ " - "+title,"urlselect",icon=im, thumb=im,art=audio["art"],info=audio["info"])
-			ump.set_content(ump.defs.CC_SONGS)
+				playlist.append(audio)
+			durations(playlist)
+			for audio in playlist:
+				ump.index_item(audio["artist"]+ " - "+audio["title"],"urlselect",icon=im, thumb=im,art=audio["art"],info=audio["info"],mediatype=ump.defs.MT_SONG)
 		
 	elif ump.page == "artist":
 		ambid=ump.args["mbid"]
@@ -282,7 +313,8 @@ def run(ump):
 			js=json.loads(ump.get_page(mirror,None,query=q))
 			results=js.get("topalbums",{"album":[]})["album"]
 		audio={}
-		audio["info"]={"year":"","duration":"","album":"","artist":name,"title":"","code":ambid}
+		lname="Play Top Tracks from: %s"%name
+		audio["info"]={"year":"","duration":"","album":lname,"artist":name,"title":"","code":ambid}
 		audio["art"]={"thumb":artim,"poster":artim}
 		playlist=[]
 		q={"method":"artist.getTopTracks","mbid":ambid,"api_key":apikey,"format":"json"}
@@ -290,14 +322,14 @@ def run(ump):
 		if not len(toptracks):
 			q={"method":"artist.getTopTracks","artist":name,"api_key":apikey,"format":"json"}
 			toptracks=json.loads(ump.get_page(mirror,None,query=q)).get("toptracks",{"track":[]})["track"]
-		for track in toptracks:
+		for track in toptracks[:recnum]:
 			item={}
 			item["info"]={"year":"","duration":"",	"album":"",	"artist":track["artist"]["name"],"title":track["name"],	"code":track.get("mbid","-1")}
 			im=get_img(track.get("image",[]))
 			item["art"]={"thumb":im,"poster":im}
 			playlist.append(item)
-		audio["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
-		ump.index_item("Play Top Tracks from: %s"%name,"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"Top Tracks from: %s"%name})
+		durations(playlist)
+		ump.index_item(lname,"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"Top Tracks from: %s"%name},mediatype=ump.defs.MT_ALBUM)
 		
 		mbrgroups=get_mbrgroups(ambid)
 
@@ -322,13 +354,11 @@ def run(ump):
 				continue
 			audio["info"]={"year":"","duration":"","album":result["name"],"artist":name,"title":"","code":mbid,"mbgid":result.get("mbgid","")}
 			audio["art"]={"thumb":im,"poster":im}
-			ump.index_item(name + " - " +result["name"],"album",args={"artist":name,"album":result["name"]},icon=im,thumb=im,info=audio["info"],art=audio["art"])
+			ump.index_item(name + " - " +result["name"],"album",args={"artist":name,"album":result["name"]},icon=im,thumb=im,info=audio["info"],art=audio["art"],mediatype=ump.defs.MT_ALBUM)
 			#todo also list albums which in mb but not on last fm
-		ump.set_content(ump.defs.CC_ALBUMS)		
-
 
 	elif ump.page == "album":
-		if not ump.info["mbgid"]=="":
+		if not ump.info.get("mbgid","")=="":
 			release=get_mbrelease(ump.info["mbgid"])
 			results=get_mbtracks(release["mbid"])
 			albumimage=release["image"]
@@ -359,18 +389,16 @@ def run(ump):
 			audio["info"]={"year":relyear,"tracknumber":-1,	"duration":"","album":ump.info["album"],"artist":ump.info["artist"],"title":"","code":ambid,"tracks":tracks}
 			audio["art"]={"thumb":albumimage,"poster":albumimage}
 			playlist=[]
-			for result in results:
+			for result in results[:recnum]:
 				i+=1
 				audio={}
 				mbid=result.get("mbid","")
 				audio["info"]={"year":relyear,"tracknumber":i,"duration":int(result["duration"]),"album":ump.info["album"],"artist":ump.info["artist"],"title":result["name"],"code":result.get("mbid","")}
 				audio["art"]={"thumb":albumimage,"poster":albumimage}
 				playlist.append(audio)
-			audio["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
-			ump.index_item("Play Album: %s"%ump.info["album"],"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"%s - %s [ALBUM]"%(ump.info["artist"],ump.info["album"])})
+			durations(playlist)
+			ump.index_item("Play Album: %s"%ump.info["album"],"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"%s - %s [ALBUM]"%(ump.info["artist"],ump.info["album"])},mediatype=ump.defs.MT_ALBUM)
 			for item in playlist:
-				item["info"]["mediatype"]=ump.defs.MT_MUSICALBUM
-				ump.index_item(item["info"]["artist"]+" - "+item["info"]["title"],"urlselect",info=item["info"],art=item["art"])
+				ump.index_item(item["info"]["artist"]+" - "+item["info"]["title"],"urlselect",info=item["info"],art=item["art"],mediatype=ump.defs.MT_SONG)
 		else:
 			return None
-		ump.set_content(ump.defs.CC_ALBUMS)

@@ -228,14 +228,19 @@ class ump():
 		info["index"]=findcaller(2)
 		self.info=info
 		u=self.link_to(page,args,module)
-		li=xbmcgui.ListItem(name, iconImage=icon, thumbnailImage=thumb)
+		lname=name
+		if not info["mediatype"]==self.defs.MT_NONE:
+			print mediatype
+			isseen=self.stats.isseen(info)
+			info["playcount"]=info["watched"]=isseen
+			if isseen:
+				lname="[COLOR gray]%s[/COLOR]"%name
+			else:
+				lname="[COLOR white]%s[/COLOR]"%name
+		li=xbmcgui.ListItem(lname, iconImage=icon, thumbnailImage=thumb)
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
 		if not noicon:self.backwards.setArt(li,art)
-		if not info["mediatype"]==self.defs.MT_NONE:
-			print mediatype
-			iswatched=self.stats.iswatched(info)
-			info["playcount"]=info["watched"]=iswatched
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if isFolder==False:
@@ -247,11 +252,11 @@ class ump():
 				for k in range(len(ptr)):
 					key=ptr[k]
 					nestedptr=ptr[:k+1]
-					amiwatched=self.stats.iswatched(info,nestedptr)
-					if amiwatched:
-						cmd="unwatched"
-					elif not iswatched:
-						cmd="watched"
+					amiseen=self.stats.isseen(info,nestedptr)
+					if amiseen:
+						cmd="unseen"
+					elif not isseen:
+						cmd="seen"
 					else:
 						continue
 					if key=="code":
@@ -380,7 +385,8 @@ class ump():
 			for i in range(0, 10*20):
 				if self.terminate or self.backwards.abortRequested():
 					break
-				if self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
+				#if False or self.content_type==self.defs.CT_AUDIO and content_cat in [self.defs.CC_MOVIES,self.defs.CC_SONGS,self.defs.CC_ARTISTS,self.defs.CC_ALBUMS]:
+				if False:
 					#issue #38
 					xbmc.sleep(300)
 					xbmc.executebuiltin('Container.SetViewMode(%d)' % mode)
@@ -741,7 +747,7 @@ class ump():
 				pass
 		if play:
 			self.player.xplay()
-			self.stats.markwatched(self.info)
+			self.stats.markseen(self.info)
 			print self.info
 			cnt=0
 		else:

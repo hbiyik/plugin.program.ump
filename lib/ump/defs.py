@@ -41,9 +41,9 @@ mediapointer={
          MT_TVSHOW:["code"],
          MT_SEASON:["code","season"],
          MT_EPISODE:["code","season","episode"],
-         MT_ARTIST:["code"],
-         MT_ALBUM:["code","album"],
-         MT_SONG:["code","album","title"],
+         MT_ARTIST:["artist"],
+         MT_ALBUM:["artist","album"],
+         MT_SONG:["artist","album","title"],
          MT_MUSIC:["code"],
          MT_MUSICVIDEO:["code","title"],
          MT_SET:["code"],
@@ -51,15 +51,16 @@ mediapointer={
          }
 
 #media type to kodi content categories
+#files, songs, artists, albums, movies, tvshows, episodes, musicvideos
 media_to_cc={
          MT_MOVIE:"movies",
          MT_TVSHOW:"tvshows",
          MT_SEASON:"albums",
          MT_EPISODE:"episodes",
-         MT_ARTIST:"albums",
+         MT_ARTIST:"artists",
          MT_ALBUM:"albums",
-         MT_SONG:"albums",
-         MT_MUSIC:"albums",
+         MT_SONG:"songs",
+         MT_MUSIC:"songs",
          MT_MUSICVIDEO:"movies",
          MT_SET:"files",
          MT_NONE:"files"      
