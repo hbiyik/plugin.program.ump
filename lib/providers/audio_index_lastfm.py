@@ -9,7 +9,7 @@ from ump import countries
 mirror="http://ws.audioscrobbler.com/2.0/"
 encoding="utf-8"
 apikey="ff9469649c8c7d2120758deca5ffa586"
-recnum=30
+recnum=40
 
 def duration(info):
 	#http://musicbrainz.org/ws/2/recording/?query=artist:%22twenty%20one%20pilots%22%20AND%20recording:heathens%20AND%20primarytype:%22album%22&limit=5&fmt=json
@@ -17,7 +17,7 @@ def duration(info):
 	#AND primarytype:album
 	try:
 		try:
-			q={"query":'artist:"%s" AND recording:"%s" primarytype:album'%(info["artist"],info["title"]),"type":"recording","limit":1,"method":"advanced"}
+			q={"query":'artist:"%s" AND recording:"%s" type:album'%(info["artist"],info["title"]),"type":"recording","limit":1,"method":"advanced"}
 			page=ump.get_page("https://musicbrainz.org/search",encoding,query=q,throttle=True)
 			row=re.findall("<tr>.*?(<tr.*?</tr>)",page,re.DOTALL)
 		except:
@@ -32,8 +32,10 @@ def duration(info):
 			artist=re.findall("<bdi>(.*?)</bdi>",cols[3])[0]
 			album=re.findall("<bdi>(.*?)</bdi>",cols[5])[0]
 			if ump.is_same(info["artist"],artist) and ump.is_same(info["title"],title):
-				info["album"]=album
-				info["duration"]=duration
+				if duration<900:
+					info["duration"]=duration
+				if info["duration"]>900:
+					info["duration"]=""
 	except:
 		pass
 	return info
@@ -124,13 +126,12 @@ def run(ump):
 		ump.index_item("Top Artists","topartist")
 		ump.index_item("Top Tracks","toptrack")
 		ump.index_item("Top Artists in %s"%get_country(),"geoartist",args={"country":get_country()})
-		if not get_country() == "United Kingdom":
-			ump.index_item("Top Artists in UK","geoartist",args={"country":"United Kingdom"})
-		ump.index_item("Top Artists in Countries","country",args={"page":"geoartist"})
 		ump.index_item("Top Tracks in %s"%get_country(),"geotrack",args={"country":get_country()})
 		if not get_country() == "United Kingdom":
-			ump.index_item("Top Artist in UK","geotrack",args={"country":"United Kingdom"})
-		ump.index_item("Top Artist in Countries","country",args={"page":"geotrack"})
+			ump.index_item("Top Artists in UK","geoartist",args={"country":"United Kingdom"})
+			ump.index_item("Top Tracks in UK","geotrack",args={"country":"United Kingdom"})
+		ump.index_item("Top Artists in Countries","country",args={"page":"geoartist"})
+		ump.index_item("Top Tracks in Countries","country",args={"page":"geotrack"})
 		ump.index_item("Styles by Artists","tags",args={"where":"artists"})
 		ump.index_item("Styles by Albums","tags",args={"where":"albums"})
 		ump.index_item("Styles by Tracks","tags",args={"where":"tracks"})
@@ -241,8 +242,8 @@ def run(ump):
 			art={"icon":im, "thumb":im}
 			playlist.append({"info":info,"art":art})
 		durations(playlist)
-		lname="Play Top 40"
-		ump.index_item(lname,"urlselect",args={"playlist":playlist[:40]},info={"title":"Top Tracks","code":"","album":lname,"artist":"geo_%s"%ump.args["country"]},mediatype=ump.defs.MT_ALBUM)
+		lname="Play Top 10"
+		ump.index_item(lname,"urlselect",args={"playlist":playlist[:10]},info={"title":"Top Tracks","code":"","album":lname,"artist":"geo_%s"%ump.args["country"]},mediatype=ump.defs.MT_ALBUM)
 		lname="Play All %d"%len(playlist)
 		ump.index_item(lname,"urlselect",args={"playlist":playlist},info={"title":"Top Tracks","code":"","album":lname,"artist":"geo_%s"%ump.args["country"]},mediatype=ump.defs.MT_ALBUM)
 		for item in playlist:
@@ -294,7 +295,7 @@ def run(ump):
 				if im == "":
 					continue
 				audio={}
-				audio["info"]=duration({"year":"","tracknumber":-1,"duration":"","album":"","artist":artist,"title":title,"code":mbid})
+				audio["info"]={"year":"","tracknumber":-1,"duration":"","album":"","artist":artist,"title":title,"code":mbid}
 				audio["art"]={"thumb":im,"poster":im}
 				playlist.append(audio)
 			durations(playlist)

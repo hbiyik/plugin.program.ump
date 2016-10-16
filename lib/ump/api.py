@@ -201,12 +201,12 @@ class ump():
 			return pre+post
 
 		
-	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False,mediatype=None):
+	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False,mediatype=None,content_type=None):
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
 		if info is None:info={}
 		if mediatype is None:
-			info["mediatype"]=self.defs.MT_NONE
+			info["mediatype"]=self.info.get("mediatype",self.defs.MT_NONE)
 		else: 
 			info["mediatype"]=mediatype
 		if art == {}:art=self.art
@@ -225,7 +225,7 @@ class ump():
 		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
 		info["index"]=findcaller(2)
 		self.info=info
-		u=self.link_to(page,args,module)
+		u=self.link_to(page,args,module,content_type)
 		lname=name
 		if not info["mediatype"]==self.defs.MT_NONE:
 			print mediatype
@@ -261,7 +261,6 @@ class ump():
 					else:
 						continue
 					if key=="code":
-						txt=self.getnames(1,False)[0]
 						try:
 							txt=self.getnames(1,False)[0]
 						except:
@@ -330,10 +329,10 @@ class ump():
 			ww=self.info["tvshowtitle"]
 		else:
 			ww=self.info["title"]
-		if orgfirst:
+		if orgfirst and "originaltitle" in self.info:
 			names.append(self.info["originaltitle"])
 			names.append(ww)
-		else:
+		elif not orgfirst and "originaltitle" in self.info:
 			names.append(ww)
 			names.append(self.info["originaltitle"])
 		if "localtitle" in self.info:

@@ -29,7 +29,7 @@ def get_child_data(p,c,defval,func=None):
 
 def get_tvdb_art(ids):
 	def get_id(id):
-		p=ump.get_page("%s/api/%s/series/%s/banners.xml"%(mirror,apikey,str(id)),None)
+		p=ump.get_page("%s/api/%s/series/%s/banners.xml"%(mirror,apikey,str(id)),None,throttle=True)
 		x=minidom.parseString(p)
 		banners=x.getElementsByTagName("Banner")
 		result[id]={

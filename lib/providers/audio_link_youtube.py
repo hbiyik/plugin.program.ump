@@ -2,12 +2,22 @@
 import json
 import re
 import urlparse
-
+from third import unidecode
 
 domain="http://www.youtube.com/"
 encoding="utf-8"
 tunnel=["cookie"]
-timetol=3
+timetol=5
+maxttol=15
+filters=["sheetmusic","canli","live","karaoke","cover","concert","konser","remix","reaction","parody","meet","version"]
+
+def add(hash,i,artist,title,mname,parts):
+	ump.add_log("youtube found track: %s - %s"%(i["artist"],i["title"]))
+	part={"url_provider_name":"youtube", "url_provider_hash":hash,"referer":domain,"partname":"%s - %s" %(artist,title),"info":i}
+	if "playlist" in ump.args:
+		parts.append(part)
+	else:
+		ump.add_mirror([part],mname,wait=0.2,missing="ignore")
 
 def run(ump):
 	globals()['ump'] = ump
@@ -25,10 +35,16 @@ def run(ump):
 		mname="%s - %s" %(ump.info["artist"],ump.info["title"])
 	for item in playlist:
 		i=item["info"]
-		page=ump.get_page(domain+"results",encoding,query={"search_query":"%s - %s"%(i["artist"],i["title"])})
+		candidates={}
+		q='%s %s'%(i["artist"],i["title"])
+		print q.encode("ascii","replace")
+		page=ump.get_page(domain+"results",encoding,query={"search_query":q})
 		ump.add_log("youtube is searching track: %s - %s"%(i["artist"],i["title"]))
-		for res in re.findall('<h3 class="yt-lockup-title "><a href="(.*?)".*?title="(.*?)".*?</a><span class="accessible-description".*?>(.*?)</span></h3>',page):
-			link,title,times=res
+		match=False
+		for res in re.findall('<h3 class="yt-lockup-title "><a href="(.*?)".*?title="(.*?)".*?</a><span class="accessible-description".*?>(.*?)</span></h3>(.*?)</div></li>',page):
+			print 77
+			print res
+			link,ftitle,times,rest=res
 			times=re.findall("([0-9]*?)\:([0-9]*?)\.",times)
 			try:
 				idur=int(i.get("duration",0))
@@ -36,26 +52,53 @@ def run(ump):
 			except:
 				idur=0
 				dur=0
-			title=title.split("-")
-			if not len(title)==2:continue
-			artist,title=title
 			hash=urlparse.parse_qs(urlparse.urlparse(link).query).get("v",[None])[0]
 			if not hash or hash in ids: continue
-			ids.append(hash)
+			print dur
+			print idur
 			if dur>0 and idur>0:
-				match=artist.strip() in i["artist"].strip() or i["artist"].strip() in artist.strip()
-				match=match and (title.strip() in i["title"].strip() or i["title"].strip() in title.strip())
-				match=match and abs(dur-idur)<=timetol
+				fmtitle=unidecode.unidecode(ftitle).lower().replace(" ","")
+				filtered=False
+				artist=unidecode.unidecode(i["artist"]).lower().replace(" ","")
+				title=unidecode.unidecode(i["title"]).lower().replace(" ","")
+				for filter in filters:
+					if filter in fmtitle and not filter in title:
+						filtered=True
+						break
+				if filtered: continue
+				print "info : %s,%s"%(artist.encode("ascii","replace"),title.encode("ascii","replace"))
+				print "ytbe : %s"%fmtitle
+				print "match:%s"%(artist in fmtitle and title in fmtitle)
+				print "idur: %d"%idur
+				print "dur: %d"%dur
+				print "tt:%s"%abs(dur-idur)
+				print i
+				frest=unidecode.unidecode(rest).lower().replace(" ","")
+				if (artist in fmtitle or artist in frest) and title in fmtitle:
+					print 77777777777777777
+					if abs(dur-idur)<=timetol:
+						match=True
+					elif abs(dur-idur)<=maxttol:
+						print 88888888888
+						candidates[abs(dur-idur)]=hash
 			else:
+				title=ftitle.split("-")
+				if not len(title)==2:continue
+				artist,title=title
 				match=ump.is_same(artist,i["artist"]) and ump.is_same(title,i["title"]) 
 			if match:
-				ump.add_log("youtube found track: %s - %s"%(i["artist"],i["title"]))
-				part={"url_provider_name":"youtube", "url_provider_hash":hash,"referer":domain,"partname":"%s - %s" %(artist,title),"info":i}
+				ids.append(hash)
+				add(hash,i,artist,title,ftitle,parts)
 				if "playlist" in ump.args:
-					parts.append(part)
 					break
-				else:
-					ump.add_mirror([part],mname,wait=0.2,missing="ignore")
+		if not match and len(candidates):
+			print 9999999999999
+			print str(candidates).encode("ascii","replace")
+			hash=candidates[sorted(candidates)[0]]
+			print hash
+			ids.append(hash)
+			add(hash,i,artist,title,mname,parts)
+		
 	if len(parts):
 		if len(parts)==1:
 			ump.add_mirror(parts,mname)

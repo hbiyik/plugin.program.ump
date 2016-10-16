@@ -205,7 +205,7 @@ def scrape_imdb_search(page):
 def scrape_name(id,lean=False):
 	m1={"info":{},"art":{}}
 	m1["info"]["originaltitle"]=""
-	res=ump.get_page("http://www.imdb.com/title/%s/releaseinfo"%id,"utf-8")
+	res=ump.get_page("http://www.imdb.com/title/%s/releaseinfo"%id,"utf-8",throttle=True)
 	namediv=re.findall('<h3 itemprop="name">.*?itemprop=\'url\'>(.*?)</a>.*?<span class="nobr">(.*?)</span>',res,re.DOTALL)
 	namestr,datestr=namediv[0]
 	alts={"master":namestr}

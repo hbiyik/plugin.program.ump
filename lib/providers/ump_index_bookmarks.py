@@ -21,16 +21,10 @@ def run(ump):
 			ump.content_type=cat
 			ump.info=info
 			ump.art=art
-			u=ump.link_to(page,args,module)
-			li=xbmcgui.ListItem(name, iconImage=thumb, thumbnailImage=thumb)
-			ump.backwards.setArt(li,art)
-			li.setInfo(ump.defs.LI_CTS[cat],info)
 			commands=[
 			('Detailed Info', 'Action(Info)'),
 			('Rename Bookmark',"RunScript(%s,renfav,%s,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),json.dumps(name),json.dumps(thumb),json.dumps(data))),
 			('Remove From Bookmarks',"RunScript(%s,delfav,%s,%s,%s)"%(os.path.join(addon_dir,"lib","ump","script.py"),json.dumps(name),json.dumps(thumb),json.dumps(data))),
 			("Addon Settings","Addon.OpenSettings(plugin.program.ump)")
 			]
-			li.addContextMenuItems(commands,True)
-			xbmcplugin.addDirectoryItem(ump.handle,u,li,not wid is None)
-	ump.set_content(ump.defs.CC_ALBUMS)
+			ump.index_item(name,page,args,module,thumb,thumb,info,art,commands,True,True,not wid is None)

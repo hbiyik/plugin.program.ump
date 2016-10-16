@@ -2,7 +2,6 @@ import os
 import xbmcvfs
 import urllib
 import json
-from third import portalocker
 import md5
 
 class throttle():

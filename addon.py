@@ -37,8 +37,10 @@
 		if ump.page == "root":
 			for provider in indexers:
 				provider_type,provider_cat,provider_name=provider
+				if ump.content_type == "ump":content_type=provider_type
+				else: content_type = ump.content_type
 				img=arturi+provider_name+".png"
-				ump.index_item(provider_name.title(),module=provider_name,icon=img,thumb=img)
+				ump.index_item(provider_name.title(),module=provider_name,icon=img,thumb=img,content_type=content_type)
 			ump._do_container()
 	elif ump.page== "urlselect":
 		if not addon.getSetting("tn_chk_url_en").lower()=="false":
@@ -61,14 +63,12 @@
 			ump._do_container()
 		except Exception,e:
 			ump.notify_error(e)
-			
 	elif providers.is_loadable(ump.content_type,"index",ump.module,indexers)==2:
 		try:
 			providers.load("ump","index",ump.module).run(ump)
 			ump._do_container()
 		except Exception,e:
 			ump.notify_error(e)
-	
 	postrun.run(ump)		
 	ump.shut()
 	ump.add_log("PUBLISH      : %s"%str(ump.pub))
