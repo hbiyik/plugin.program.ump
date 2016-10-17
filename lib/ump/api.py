@@ -39,7 +39,7 @@ from ump import clicky
 from ump import identifier
 from ump import stats
 from ump import throttle
-from third import dateutil
+from third.dateutil import parser
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
@@ -234,8 +234,12 @@ class ump():
 			timestamp=info.get("aired","")
 			if timestamp is None:
 				timestamp=info.get("date","")
-			timestamp=dateutil.parser.parse(timestamp,fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
-			timestamp=calendar.timegm(timestamp)
+			timestamp=parser.parse(timestamp,fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
+			try:
+				timestamp=calendar.timegm(timestamp)
+			except:
+				print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FAILED TO TS"
+				timestamp=0
 			isseen=self.stats.isseen(info,ts=timestamp)
 			info["playcount"]=info["watched"]=isseen
 			if isseen:
@@ -433,7 +437,7 @@ class ump():
 			raise task.killbill
 		tid=self.throttle.id(url,query,referer,header,data)
 		if throttle==True:throttle=0
-		if isinstance(throttle,[int,float]) and not head and not range and self.throttle.check(tid,throttle):
+		if isinstance(throttle,(int,float)) and not head and not range and self.throttle.check(tid,throttle):
 			stream=self.throttle.get(tid)
 		else:	
 			#python cant handle unicode urlencoding so needs to get dirty below.
@@ -466,7 +470,11 @@ class ump():
 			if head :return response
 			stream=cloudfare.readzip(response)
 			stream=self.tunnel.post(stream,tmode)
-			if isinstance(throttle,[int,float]) and not head and not range:
+			if isinstance(throttle,(int,float)) and not head and not range:
+				print url
+				print data
+				print query
+				print header
 				self.throttle.do(tid,stream)
 
 		if encoding is None:

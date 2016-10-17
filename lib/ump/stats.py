@@ -26,8 +26,8 @@ class stats():
         path=os.path.join(defs.addon_stdir,id,"")
         prechk=id in self.seenids or xbmcvfs.exists(path)
         if not ts:
-            return precheck
-        else:
+            return prechk
+        elif prechk:
             tfile=os.path.join(path,"timestamp.ascii")
             f = xbmcvfs.File(tfile,'r')
             timestamp=float(f.read())
@@ -36,6 +36,8 @@ class stats():
                 return True
             else:
                 return False
+        else:
+            return False
             
     def markseen(self,info,mediapointer=None):
         id=self.identifier.createhash(info,mediapointer)

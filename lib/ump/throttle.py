@@ -4,6 +4,7 @@ import urllib
 import json
 import md5
 import zlib
+import time
 
 class throttle():
     def __init__(self,path):
@@ -16,7 +17,7 @@ class throttle():
         tsname=os.path.join(self.path,tid,"timestamp.ascii")
         if lag==0:
             return xbmcvfs.exists(fname)
-        elif isinstance(lag,[float,int]) and xbmcvfs.exists(tsname):
+        elif isinstance(lag,(float,int)) and xbmcvfs.exists(tsname):
             f=xbmcvfs.File(tsname,"r")
             timestamp=float(f.read())
             f.close()
@@ -43,7 +44,7 @@ class throttle():
         f.close()
         fname=os.path.join(self.path,tid,"timestamp.ascii")
         f=xbmcvfs.File(fname,"w")
-        f.write(time.time())
+        f.write(str(time.time()))
         f.close()
         return True
     

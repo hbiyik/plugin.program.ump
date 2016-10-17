@@ -150,7 +150,7 @@ def get_tvdb_episodes(ids,arts):
 		seasons=set([x1.lastChild.data for x1 in seasons])
 		epis={}
 		for s in seasons:
-			epis[int(s)]={"info":{"title":"Season %s"%(str(s),)},"art":make_art(arts,int(s)),"episode":{}}
+			epis[int(s)]={"info":{"title":"Season %s"%(str(s),)},"art":make_art(arts[id],int(s)),"episode":{}}
 		episodes=x.getElementsByTagName("Episode")
 		infolabels={
 			"Combined_episodenumber":("episode",-1,str_int),
@@ -177,7 +177,7 @@ def get_tvdb_episodes(ids,arts):
 			epiinfo=ump.info.copy()
 			for i in infolabels.keys():
 				epiinfo[infolabels[i][0]]=get_child_data(e,i,infolabels[i][1],infolabels[i][2])
-			epiart=make_art(arts,-1)
+			epiart=make_art(arts[id],-1)
 			for a in artlabels.keys():
 				epiart[artlabels[a][0]]="%s/banners/%s"%(mirror,get_child_data(e,a,artlabels[a][1],artlabels[a][2]))
 			epiart["poster"]=epiart["thumb"]
@@ -238,6 +238,7 @@ def run(ump):
 	globals()["language"] = language
 	if ump.page == "root":
 		ump.index_item("Search","search",args={"search":True})
+		ump.index_item("Agenda","agenda")
 
 	elif ump.page == "search":
 		what=ump.args.get("title",None)
@@ -313,7 +314,7 @@ def run(ump):
 		id=ump.args.get("tvdbid",None)
 		if not id:
 			return None
-		arts=get_tvdb_art([id])[id]
+		arts=get_tvdb_art([id])
 		epis=get_tvdb_episodes([id],arts)[id]
 		#todo get names in all langs
 
@@ -342,3 +343,27 @@ def run(ump):
 				if not person=="":
 					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
 			ump.index_item("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]),"urlselect",info=epis["episode"][epno]["info"],art=epis["episode"][epno]["art"],cmds=commands,mediatype=ump.defs.MT_EPISODE)
+			
+	elif ump.page=="agenda":
+		from ump import bookmark
+		favs=bookmark.load()[1]
+		codes=[]
+		for fav in favs:
+			wid,name,thumb,data,cat,module,page,args,info,art=fav
+			indexer=info.get("index",None)
+			code=info.get("code",None)
+			if code and indexer=="video_index_tvdb":
+				codes.append(code)
+		tvdb=get_tvdb_info(codes)
+		for code,tvshow in get_tvdb_episodes(codes,get_tvdb_art(codes)).iteritems():
+			for season in sorted(tvshow.keys(),reverse=True):
+				print season
+				for episode in sorted(tvshow[season]["episode"].keys(),reverse=True):
+					print episode
+					data=tvshow[season]["episode"][episode]
+					info=data["info"]
+					art=data["art"]
+					isseen=ump.stats.isseen(info)
+					if not isseen:
+						ename="%s %dx%d %s"%(tvdb[code]["info"]["localtitle"],season,episode,info["title"])
+						ump.index_item(ename,"urlselect",mediatype=ump.defs.MT_EPISODE,info=info,art=art)
