@@ -5,6 +5,8 @@ import defs
 import identifier
 import shutil
 
+ttol=24*60*60
+
 def mkdir(*paths):
     paths=list(paths)
     paths.append("")
@@ -20,14 +22,25 @@ class stats():
         mkdir(defs.addon_stdir)
         self.identifier=identifier.identifier()
         
-    def _checkid(self,id):
+    def _checkid(self,id,ts=None):
         path=os.path.join(defs.addon_stdir,id,"")
-        return id in self.seenids or xbmcvfs.exists(path)
-        
+        prechk=id in self.seenids or xbmcvfs.exists(path)
+        if not ts:
+            return precheck
+        else:
+            tfile=os.path.join(path,"timestamp.ascii")
+            f = xbmcvfs.File(tfile,'r')
+            timestamp=float(f.read())
+            f.close()
+            if time.time()-ttol>timestamp:
+                return True
+            else:
+                return False
+            
     def markseen(self,info,mediapointer=None):
         id=self.identifier.createhash(info,mediapointer)
         mkdir(defs.addon_stdir,id)
-        f = xbmcvfs.File(os.path.join(defs.addon_stdir,id,"timestamp"),'w')
+        f = xbmcvfs.File(os.path.join(defs.addon_stdir,id,"timestamp.ascii"),'w')
         f.write(str(time.time()))
         f.close()
         self.seenids.append(id)
@@ -38,10 +51,10 @@ class stats():
         if xbmcvfs.exists(path):
             rmdir(path)
         
-    def isseen(self,info,mediapointer=None):
+    def isseen(self,info,mediapointer=None,ts=None):
         if mediapointer:
             id=self.identifier.createhash(info,mediapointer)
-            if self._checkid(id):
+            if self._checkid(id,ts):
                     print "directid: %s, %s"%(mediapointer,id)
                     self.seenids.append(id)
                     return 1

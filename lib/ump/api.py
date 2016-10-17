@@ -14,6 +14,7 @@ import urllib
 import urllib2
 from urlparse import parse_qs
 import gc
+import calendar
 
 import xbmc
 import xbmcaddon
@@ -38,6 +39,7 @@ from ump import clicky
 from ump import identifier
 from ump import stats
 from ump import throttle
+from third import dateutil
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
@@ -229,7 +231,12 @@ class ump():
 		lname=name
 		if not info["mediatype"]==self.defs.MT_NONE:
 			print mediatype
-			isseen=self.stats.isseen(info)
+			timestamp=info.get("aired","")
+			if timestamp is None:
+				timestamp=info.get("date","")
+			timestamp=dateutil.parser.parse(timestamp,fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
+			timestamp=calendar.timegm(timestamp)
+			isseen=self.stats.isseen(info,ts=timestamp)
 			info["playcount"]=info["watched"]=isseen
 			if isseen:
 				lname="[COLOR gray]%s[/COLOR]"%name
@@ -420,12 +427,13 @@ class ump():
 			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 
-	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None,throttle=False):
+	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None,throttle=2):
 		
 		if self.terminate:
 			raise task.killbill
 		tid=self.throttle.id(url,query,referer,header,data)
-		if throttle and not head and not range and self.throttle.check(tid):
+		if throttle==True:throttle=0
+		if isinstance(throttle,[int,float]) and not head and not range and self.throttle.check(tid,throttle):
 			stream=self.throttle.get(tid)
 		else:	
 			#python cant handle unicode urlencoding so needs to get dirty below.
@@ -458,7 +466,7 @@ class ump():
 			if head :return response
 			stream=cloudfare.readzip(response)
 			stream=self.tunnel.post(stream,tmode)
-			if throttle and not head and not range:
+			if isinstance(throttle,[int,float]) and not head and not range:
 				self.throttle.do(tid,stream)
 
 		if encoding is None:
