@@ -150,6 +150,8 @@ def get_tvdb_episodes(ids,arts):
 		seasons=set([x1.lastChild.data for x1 in seasons])
 		epis={}
 		for s in seasons:
+			print arts
+			print id
 			epis[int(s)]={"info":{"title":"Season %s"%(str(s),)},"art":make_art(arts[id],int(s)),"episode":{}}
 		episodes=x.getElementsByTagName("Episode")
 		infolabels={
@@ -329,7 +331,7 @@ def run(ump):
 		season=ump.args.get("season",None)
 		if not id or not season:
 			return None
-		arts=get_tvdb_art([id])[id]
+		arts=get_tvdb_art([id])
 		epis=get_tvdb_episodes([id],arts)[id][season]
 		for epno in sorted([int(x) for  x in epis["episode"].keys()],reverse=True):
 			#json keys are strings :(

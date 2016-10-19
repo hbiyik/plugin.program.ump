@@ -230,17 +230,7 @@ class ump():
 		u=self.link_to(page,args,module,content_type)
 		lname=name
 		if not info["mediatype"]==self.defs.MT_NONE:
-			print mediatype
-			timestamp=info.get("aired","")
-			if timestamp is None:
-				timestamp=info.get("date","")
-			timestamp=parser.parse(timestamp,fuzzy=True,default=datetime.datetime(1970, 1, 1, 0, 0))
-			try:
-				timestamp=calendar.timegm(timestamp)
-			except:
-				print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FAILED TO TS"
-				timestamp=0
-			isseen=self.stats.isseen(info,ts=timestamp)
+			isseen=self.stats.isseen(info)
 			info["playcount"]=info["watched"]=isseen
 			if isseen:
 				lname="[COLOR gray]%s[/COLOR]"%name
@@ -250,32 +240,23 @@ class ump():
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
 		if not noicon:self.backwards.setArt(li,art)
-		print 66
-		print info
-		print 77
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]
 		if isFolder==False:
 			li.addStreamInfo(self.defs.LI_SIS[self.content_type],{}) #workaround for unsupport protocol warning
 		if adddefault:
 			if not info["mediatype"]==self.defs.MT_NONE:
-				print 8888888888888
 				ptr=self.identifier.getpointer(info)
 				for k in range(len(ptr)):
 					key=ptr[k]
 					nestedptr=ptr[:k+1]
 					amiseen=self.stats.isseen(info,nestedptr)
-					if amiseen:
-						cmd="unseen"
-					elif not isseen:
-						cmd="seen"
-					else:
-						continue
+					if amiseen:cmd="unseen"
+					elif not isseen:cmd="seen"
+					else:continue
 					if key=="code":
-						try:
-							txt=self.getnames(1,False)[0]
-						except:
-							txt=name
+						try:txt=self.getnames(1,False)[0]
+						except:txt=name
 					else:
 						txt="%s:%s"%(key,info.get(key,key))
 					if not len(ptr)==k+1:
@@ -375,17 +356,10 @@ class ump():
 			xbmcplugin.addDirectoryItems(self.handle,items,len(items))
 		else:
 			return
-		print 7
-		print mediatypes
-		print 8
 		v=list(mediatypes.values())
 	 	k=list(mediatypes.keys())
 	 	self.container_mediatype=k[v.index(max(v))]
-	 	print 5
-	 	print self.container_mediatype
-	 	print 6
 	 	content_cat= self.defs.media_to_cc[self.container_mediatype]
-	 	print content_cat
 	 	xbmcplugin.setContent(self.handle, content_cat)
 	 	xbmcplugin.endOfDirectory(self.handle,cacheToDisc=False,updateListing=False,succeeded=True)
 		wmode=addon.getSetting("view_"+content_cat).lower()
@@ -471,10 +445,6 @@ class ump():
 			stream=cloudfare.readzip(response)
 			stream=self.tunnel.post(stream,tmode)
 			if isinstance(throttle,(int,float)) and not head and not range:
-				print url
-				print data
-				print query
-				print header
 				self.throttle.do(tid,stream)
 
 		if encoding is None:
@@ -765,7 +735,6 @@ class ump():
 		if play:
 			self.player.xplay()
 			self.stats.markseen(self.info)
-			print self.info
 			cnt=0
 		else:
 			cnt="all"	
