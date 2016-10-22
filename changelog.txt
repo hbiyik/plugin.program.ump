@@ -1,3 +1,23 @@
+2016-10-22: api: try tyo workaround for dialogpg
+2016-10-22: ump: code clean up
+2016-10-22: meditypes: refactoring ended, finally :) yay
+2016-10-19: mediatypes:refactoring
+2016-10-17: mediatypes: refactoring
+2016-10-17: mediatypes: refactoring
+2016-10-16: mediatyps: refactoring
+2016-10-16: mediatypes: refactoring for mangas
+2016-10-16: throttling: basic throttling for web, meditypes: refactoring, youtube: improve matching algo with song duration
+2016-10-15: mediatypes: refactoring
+2016-10-15: mediatypes: refactoring almost done..
+2016-10-14: mediatypes:refactoring
+2016-10-13: mediatypes: refactoring
+2016-10-13: mediatypes: refactoring
+2016-10-13: mediatypes:refactoring
+2016-10-12: mediatype: refactoring
+2016-10-12: mediatypes: refactoring
+2016-10-11: mediatpyes: refactoring started
+2016-10-10: api, settings.xml: allow to filter out hard subtitles and overdubs,
+2016-10-09: 0.0.88 Version Release
 2016-10-09: tvdb: fix typo
 2016-10-09: youtube_dl: remove unused extractors
 2016-10-09: sezonlukdizi: fix gvideos, and languages
