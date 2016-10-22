@@ -714,11 +714,12 @@ class ump():
 		return part
 
 	def shut(self,play=False,noblock=0):
-		self.dialogpg.close()
-		del(self.dialogpg)
 		self.terminate=True
 		prefs.set("cfagents",self.cfagents)
 		self.tm.stop()
+		if hasattr(self,"dialogpg"):
+			self.dialogpg.close()
+			del(self.dialogpg)
 		if self.backwards.abortRequested():
 			return
 		if hasattr(self,"window"):
