@@ -399,14 +399,13 @@ class ump():
 		query={}
 		query["module"]=[module,self.module][module is None]
 		query["page"]=[page,self.page][page is None]
-		query["args"]=json.dumps(args).encode("base64")
+		query["args"]=json.dumps(args).encode("base64")[:-1]
 		query["content_type"]=[content_type,self.content_type][content_type is None]
 		for keep in ["info","art","pub"]:
-			query[keep]=json.dumps(getattr(self,keep)).encode("base64")
+			query[keep]=json.dumps(getattr(self,keep)).encode("base64")[:-1]
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 
 	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None,throttle=2):
-		
 		if self.terminate:
 			raise task.killbill
 		tid=self.throttle.id(url,query,referer,header,data)
@@ -446,7 +445,6 @@ class ump():
 			stream=self.tunnel.post(stream,tmode)
 			if isinstance(throttle,(int,float)) and not head and not range:
 				self.throttle.do(tid,stream)
-
 		if encoding is None:
 			#binary data
 			src=stream
@@ -649,7 +647,7 @@ class ump():
 				self.notify_error(e)
 
 		self.window.addListItem(item)
-		self.stat._query("click",parts[0]["url_provider_name"],parts[0]["link_provider_name"])
+		#self.stat._query("click",parts[0]["url_provider_name"],parts[0]["link_provider_name"])
 		
 	def _validateparts(self,parts,wait):
 		gid=self.tm.create_gid()

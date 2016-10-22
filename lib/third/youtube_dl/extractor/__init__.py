@@ -1,39 +1,33 @@
 from __future__ import unicode_literals
 
-#from .generic import GenericIE
-from .youtube import (
-    YoutubeIE,
-    YoutubeChannelIE,
-    YoutubeFavouritesIE,
-    YoutubeHistoryIE,
-    YoutubeLiveIE,
-    YoutubePlaylistIE,
-    YoutubePlaylistsIE,
-    YoutubeRecommendedIE,
-    YoutubeSearchDateIE,
-    YoutubeSearchIE,
-    YoutubeSearchURLIE,
-    YoutubeShowIE,
-    YoutubeSubscriptionsIE,
-    YoutubeTruncatedIDIE,
-    YoutubeTruncatedURLIE,
-    YoutubeUserIE,
-    YoutubeWatchLaterIE,
-)
+try:
+    from .lazy_extractors import *
+    from .lazy_extractors import _ALL_CLASSES
+    _LAZY_LOADER = True
+except ImportError:
+    _LAZY_LOADER = False
+    from .extractors import *
 
-_ALL_CLASSES = [
-    klass
-    for name, klass in globals().items()
-    if name.endswith('IE') and name != 'GenericIE'
-]
-#_ALL_CLASSES.append(GenericIE)
+    _ALL_CLASSES = [
+        klass
+        for name, klass in globals().items()
+        if name.endswith('IE') and name != 'GenericIE'
+    ]
+    _ALL_CLASSES.append(GenericIE)
+
+
+def gen_extractor_classes():
+    """ Return a list of supported extractors.
+    The order does matter; the first extractor matched is the one handling the URL.
+    """
+    return _ALL_CLASSES
 
 
 def gen_extractors():
     """ Return a list of an instance of every supported extractor.
     The order does matter; the first extractor matched is the one handling the URL.
     """
-    return [klass() for klass in _ALL_CLASSES]
+    return [klass() for klass in gen_extractor_classes()]
 
 
 def list_extractors(age_limit):

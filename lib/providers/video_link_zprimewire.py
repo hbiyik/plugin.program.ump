@@ -117,8 +117,8 @@ def run(ump):
 		prv=uri.hostname.split(".")[-2]
 		prv,hash=codify(prv,uri.path, uri.query)
 		if hash is None: 
-			ump.add_log("Primewire cant codify %s" % external[1])
-			continue
+			hash=l["url"].decode("base-64")
+			prv="youtubedl"
 		ump.add_log("Primewire decoded %s %s" % (mname,prv))
 		parts=[{"url_provider_name":prv, "url_provider_hash":hash}]
 		ump.add_mirror(parts,mname)

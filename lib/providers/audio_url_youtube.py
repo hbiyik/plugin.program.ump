@@ -3,7 +3,7 @@ from third import youtube_dl
 
 timeout=60*60*24
 def run(hash,ump,referer=""):
-	ydl = youtube_dl.YoutubeDL({'format': 'bestaudio/best',"quiet":True,"nocheckcertificate":True})
+	ydl = youtube_dl.YoutubeDL({'format': 'bestaudio[acodec!=opus]/best',"audioformat":"vorbis","quiet":True,"nocheckcertificate":True})
 
 	with ydl:
 		result = ydl.extract_info('http://www.youtube.com/watch?v=%s'%hash,	download=False)

@@ -6,6 +6,7 @@ import identifier
 import shutil
 import datetime
 import xbmcgui
+import calendar
 
 ttol=12*60*60
 
@@ -32,12 +33,10 @@ class stats():
         formats=["%Y-%m-%d"]
         for format in formats:
             try:
-                print "trying format format : %s"%format
-                timestamp=time.mktime(time.strptime(timestamp,format))
+                timestamp=calendar.timegm(time.strptime(timestamp,format))
             except:
+                timestamp=None
                 continue
-            print "using format : %s"%format
-            print timestamp
             break
         return timestamp
         
@@ -86,7 +85,6 @@ class stats():
         if mediapointer:
             id=self.identifier.createhash(info,mediapointer)
             if self._checkid(id):
-                    print "directid: %s, %s"%(mediapointer,id)
                     self.seenids.append(id)
                     return 1
         else:
@@ -95,7 +93,6 @@ class stats():
             for i in range(len(mediapointer)):
                 nestedid=self.identifier.createhash(info,mediapointer=mediapointer[:i+1])
                 if self._checkid(nestedid,ts):
-                    print "nestedid: %s, %s"%(str(mediapointer[:i+1]),nestedid)
                     self.seenids.append(nestedid)
                     return 1
         return 0

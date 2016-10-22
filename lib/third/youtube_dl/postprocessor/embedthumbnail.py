@@ -1,8 +1,11 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 from __future__ import unicode_literals
+
 
 import os
 import subprocess
+
+from .ffmpeg import FFmpegPostProcessor
 
 from ..utils import (
     check_executable,
@@ -12,7 +15,6 @@ from ..utils import (
     prepend_extension,
     shell_quote
 )
-from .ffmpeg import FFmpegPostProcessor
 
 
 class EmbedThumbnailPPError(PostProcessingError):
@@ -38,7 +40,7 @@ class EmbedThumbnailPP(FFmpegPostProcessor):
                 'Skipping embedding the thumbnail because the file is missing.')
             return [], info
 
-        if info['ext'] in ('mp3', 'mkv'):
+        if info['ext'] == 'mp3':
             options = [
                 '-c', 'copy', '-map', '0', '-map', '1',
                 '-metadata:s:v', 'title="Album cover"', '-metadata:s:v', 'comment="Cover (Front)"']

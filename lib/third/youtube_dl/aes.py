@@ -5,7 +5,6 @@ from math import ceil
 
 from .utils import bytes_to_intlist, intlist_to_bytes
 
-
 BLOCK_SIZE_BYTES = 16
 
 

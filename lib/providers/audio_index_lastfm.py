@@ -354,6 +354,7 @@ def run(ump):
 			if im == "":
 				continue
 			audio["info"]={"year":"","duration":"","album":result["name"],"artist":name,"title":"","code":mbid,"mbgid":result.get("mbgid","")}
+			print audio["info"]
 			audio["art"]={"thumb":im,"poster":im}
 			ump.index_item(name + " - " +result["name"],"album",args={"artist":name,"album":result["name"]},icon=im,thumb=im,info=audio["info"],art=audio["art"],mediatype=ump.defs.MT_ALBUM)
 			#todo also list albums which in mb but not on last fm

@@ -2,9 +2,6 @@ from sys import argv
 import urllib
 import xbmc
 
-for i in range(len(argv)):
-	argv[i]=urllib.unquote_plus(argv[i])
-
 if len(argv)>1:
 	if argv[1]=="addfav":
 		from bookmark import add
@@ -26,12 +23,12 @@ if len(argv)>1:
 		from stats import stats
 		import json
 		st=stats()
-		st.markseen(json.loads(argv[2]),json.loads(argv[3]))
+		st.markseen(json.loads(urllib.unquote_plus(argv[2])),json.loads(urllib.unquote_plus(argv[3])))
 		xbmc.executebuiltin("Container.Refresh")
 	elif argv[1]=="markunseen":
 		from stats import stats
 		import json
 		st=stats()
-		st.markunseen(json.loads(argv[2]),json.loads(argv[3]))
+		st.markunseen(json.loads(urllib.unquote_plus(argv[2])),json.loads(urllib.unquote_plus(argv[3])))
 		xbmc.executebuiltin("Container.Refresh")
 		

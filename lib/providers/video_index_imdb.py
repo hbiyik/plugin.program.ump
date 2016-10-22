@@ -1,4 +1,5 @@
 from datetime import date
+import time
 import json
 import operator
 import re
@@ -6,6 +7,12 @@ import re
 import xbmc
 
 from ump import countries
+
+def _match_list(ref,match,default=""):
+	for i in range(len(ref)):
+		if i+1>len(match):
+			match.append(default)
+	return match
 
 def get_localtitle(alts,original):
 	local=original
@@ -442,22 +449,28 @@ def run(ump):
 			return None
 		res=ump.get_page("http://www.imdb.com/title/%s/episodes?season=%d"%(imdbid,season),"utf-8")
 		#episodes=re.findall('<div class="list_item(.*?)<div class="wtw-option-standalone"',res,re.DOTALL)
-		title_img=re.findall('class="zero-z-index" alt="(.*?)" src="(.*?)"',res)
 		episodes=re.findall('<meta itemprop="episodeNumber" content="([0-9]*?)"/>',res)
+		img=re.findall('class="zero-z-index".*?src="(.*?)"',res)
+		title=re.findall('title="(.*?)" itemprop="url"',res)
 		episodes=[int(x) for x in episodes]
 		plots=re.findall('<div class="item_description" itemprop="description">(.*?)</div>',res,re.DOTALL)
-		dates=re.findall('<div class="airdate">\n\s*(.*?)\n',res)
-		episodes=zip(episodes,dates,plots,*zip(*title_img))
+		airdates=re.findall('<div class="airdate">\n\s*(.*?)\n\s*</div',res)
+		airdates=[time.strftime("%Y-%m-%d",time.strptime(airdate.strip().replace(".",""),"%d %b %Y")) for airdate in airdates]
+		airdates=_match_list(episodes,airdates)
+		plots=_match_list(episodes,plots)
+		title=_match_list(episodes,title,"Unknown Title")
+		img=_match_list(episodes,img,"DefaultFolder.png")
+		episodes=zip(episodes,airdates,plots,title,img)
 		episodes.sort(key=operator.itemgetter(0), reverse=True)
 		info=ump.info
 		info["tvshowtitle"]=info["title"]
 		info["season"]=season
 		art=ump.art
 		for episode in episodes:
-			print episode
-			epi,dat,plot,title,img=list(episode)
+			epi,airdate,plot,title,img=list(episode)
 			info["title"]=title
 			info["episode"]=epi
+			info["aired"]=airdate
 			plot=plot.replace("\n","")
 			if not 'href="/updates' in plot:
 				info["plot"]=plot

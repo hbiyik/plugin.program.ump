@@ -5,6 +5,7 @@ import re
 import subprocess
 import time
 
+from .common import FileDownloader
 from ..compat import compat_str
 from ..utils import (
     check_executable,
@@ -12,7 +13,6 @@ from ..utils import (
     encodeArgument,
     get_exe_version,
 )
-from .common import FileDownloader
 
 
 def rtmpdump_version():

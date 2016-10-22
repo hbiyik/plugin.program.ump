@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 from __future__ import unicode_literals
+
+__license__ = 'Public Domain'
 
 import codecs
 import io
@@ -9,22 +11,16 @@ import os
 import random
 import sys
 
-from .YoutubeDL import YoutubeDL
-from .compat import (
-    compat_expanduser,
-    compat_getpass,
-    compat_print,
-    compat_shlex_split,
-    workaround_optparse_bug9161,
-)
-from .downloader import (
-    FileDownloader,
-)
-from .extractor import gen_extractors, list_extractors
+
 from .options import (
     parseOpts,
 )
-from .update import update_self
+from .compat import (
+    compat_expanduser,
+    compat_getpass,
+    compat_shlex_split,
+    workaround_optparse_bug9161,
+)
 from .utils import (
     DateRange,
     decodeOption,
@@ -38,13 +34,15 @@ from .utils import (
     setproctitle,
     std_headers,
     write_string,
+    render_table,
 )
-
-
-__license__ = 'Public Domain'
-
-
-
+from .update import update_self
+from .downloader import (
+    FileDownloader,
+)
+from .extractor import gen_extractors, list_extractors
+from .extractor.adobepass import MSO_INFO
+from .YoutubeDL import YoutubeDL
 
 
 def _real_main(argv=None):
@@ -70,16 +68,16 @@ def _real_main(argv=None):
     # Custom HTTP headers
     if opts.headers is not None:
         for h in opts.headers:
-            if h.find(':', 1) < 0:
+            if ':' not in h:
                 parser.error('wrong header formatting, it should be key:value, not "%s"' % h)
-            key, value = h.split(':', 2)
+            key, value = h.split(':', 1)
             if opts.verbose:
                 write_string('[debug] Adding header from command line option %s:%s\n' % (key, value))
             std_headers[key] = value
 
     # Dump user agent
     if opts.dump_user_agent:
-        compat_print(std_headers['User-Agent'])
+        write_string(std_headers['User-Agent'] + '\n', out=sys.stdout)
         sys.exit(0)
 
     # Batch file verification
@@ -89,7 +87,9 @@ def _real_main(argv=None):
             if opts.batchfile == '-':
                 batchfd = sys.stdin
             else:
-                batchfd = io.open(opts.batchfile, 'r', encoding='utf-8', errors='ignore')
+                batchfd = io.open(
+                    compat_expanduser(opts.batchfile),
+                    'r', encoding='utf-8', errors='ignore')
             batch_urls = read_batch_urls(batchfd)
             if opts.verbose:
                 write_string('[debug] Batch file urls: ' + repr(batch_urls) + '\n')
@@ -102,10 +102,10 @@ def _real_main(argv=None):
 
     if opts.list_extractors:
         for ie in list_extractors(opts.age_limit):
-            compat_print(ie.IE_NAME + (' (CURRENTLY BROKEN)' if not ie._WORKING else ''))
+            write_string(ie.IE_NAME + (' (CURRENTLY BROKEN)' if not ie._WORKING else '') + '\n', out=sys.stdout)
             matchedUrls = [url for url in all_urls if ie.suitable(url)]
             for mu in matchedUrls:
-                compat_print('  ' + mu)
+                write_string('  ' + mu + '\n', out=sys.stdout)
         sys.exit(0)
     if opts.list_extractor_descriptions:
         for ie in list_extractors(opts.age_limit):
@@ -118,7 +118,11 @@ def _real_main(argv=None):
                 _SEARCHES = ('cute kittens', 'slithering pythons', 'falling cat', 'angry poodle', 'purple fish', 'running tortoise', 'sleeping bunny', 'burping cow')
                 _COUNTS = ('', '5', '10', 'all')
                 desc += ' (Example: "%s%s:%s" )' % (ie.SEARCH_KEY, random.choice(_COUNTS), random.choice(_SEARCHES))
-            compat_print(desc)
+            write_string(desc + '\n', out=sys.stdout)
+        sys.exit(0)
+    if opts.ap_list_mso:
+        table = [[mso_id, mso_info['name']] for mso_id, mso_info in MSO_INFO.items()]
+        write_string('Supported TV Providers:\n' + render_table(['mso', 'mso name'], table) + '\n', out=sys.stdout)
         sys.exit(0)
 
     # Conflicting, missing and erroneous options
@@ -126,12 +130,16 @@ def _real_main(argv=None):
         parser.error('using .netrc conflicts with giving username/password')
     if opts.password is not None and opts.username is None:
         parser.error('account username missing\n')
+    if opts.ap_password is not None and opts.ap_username is None:
+        parser.error('TV Provider account username missing\n')
     if opts.outtmpl is not None and (opts.usetitle or opts.autonumber or opts.useid):
         parser.error('using output template conflicts with using title, video ID or auto number')
     if opts.usetitle and opts.useid:
         parser.error('using title conflicts with using video ID')
     if opts.username is not None and opts.password is None:
         opts.password = compat_getpass('Type account password and press [Return]: ')
+    if opts.ap_username is not None and opts.ap_password is None:
+        opts.ap_password = compat_getpass('Type TV provider account password and press [Return]: ')
     if opts.ratelimit is not None:
         numeric_limit = FileDownloader.parse_bytes(opts.ratelimit)
         if numeric_limit is None:
@@ -147,6 +155,18 @@ def _real_main(argv=None):
         if numeric_limit is None:
             parser.error('invalid max_filesize specified')
         opts.max_filesize = numeric_limit
+    if opts.sleep_interval is not None:
+        if opts.sleep_interval < 0:
+            parser.error('sleep interval must be positive or 0')
+    if opts.max_sleep_interval is not None:
+        if opts.max_sleep_interval < 0:
+            parser.error('max sleep interval must be positive or 0')
+        if opts.max_sleep_interval < opts.sleep_interval:
+            parser.error('max sleep interval must be greater than or equal to min sleep interval')
+    else:
+        opts.max_sleep_interval = opts.sleep_interval
+    if opts.ap_mso and opts.ap_mso not in MSO_INFO:
+        parser.error('Unsupported TV Provider, use --ap-list-mso to get a list of supported TV Providers')
 
     def parse_retries(retries):
         if retries in ('inf', 'infinite'):
@@ -246,8 +266,6 @@ def _real_main(argv=None):
         postprocessors.append({
             'key': 'FFmpegEmbedSubtitle',
         })
-    if opts.xattrs:
-        postprocessors.append({'key': 'XAttrMetadata'})
     if opts.embedthumbnail:
         already_have_thumbnail = opts.writethumbnail or opts.write_all_thumbnails
         postprocessors.append({
@@ -256,6 +274,10 @@ def _real_main(argv=None):
         })
         if not already_have_thumbnail:
             opts.writethumbnail = True
+    # XAttrMetadataPP should be run after post-processors that may change file
+    # contents
+    if opts.xattrs:
+        postprocessors.append({'key': 'XAttrMetadata'})
     # Please keep ExecAfterDownload towards the bottom as it allows the user to modify the final file in any way.
     # So if the user is able to remove the file before your postprocessor runs it might cause a few problems.
     if opts.exec_cmd:
@@ -263,12 +285,6 @@ def _real_main(argv=None):
             'key': 'ExecAfterDownload',
             'exec_cmd': opts.exec_cmd,
         })
-    if opts.xattr_set_filesize:
-        try:
-            import xattr
-            xattr  # Confuse flake8
-        except ImportError:
-            parser.error('setting filesize xattr requested but python-xattr is not available')
     external_downloader_args = None
     if opts.external_downloader_args:
         external_downloader_args = compat_shlex_split(opts.external_downloader_args)
@@ -285,6 +301,9 @@ def _real_main(argv=None):
         'password': opts.password,
         'twofactor': opts.twofactor,
         'videopassword': opts.videopassword,
+        'ap_mso': opts.ap_mso,
+        'ap_username': opts.ap_username,
+        'ap_password': opts.ap_password,
         'quiet': (opts.quiet or any_getting or any_printing),
         'no_warnings': opts.no_warnings,
         'forceurl': opts.geturl,
@@ -310,6 +329,7 @@ def _real_main(argv=None):
         'nooverwrites': opts.nooverwrites,
         'retries': opts.retries,
         'fragment_retries': opts.fragment_retries,
+        'skip_unavailable_fragments': opts.skip_unavailable_fragments,
         'buffersize': opts.buffersize,
         'noresizebuffer': opts.noresizebuffer,
         'continuedl': opts.continue_dl,
@@ -372,6 +392,7 @@ def _real_main(argv=None):
         'source_address': opts.source_address,
         'call_home': opts.call_home,
         'sleep_interval': opts.sleep_interval,
+        'max_sleep_interval': opts.max_sleep_interval,
         'external_downloader': opts.external_downloader,
         'list_thumbnails': opts.list_thumbnails,
         'playlist_items': opts.playlist_items,
@@ -384,6 +405,8 @@ def _real_main(argv=None):
         'external_downloader_args': external_downloader_args,
         'postprocessor_args': postprocessor_args,
         'cn_verification_proxy': opts.cn_verification_proxy,
+        'geo_verification_proxy': opts.geo_verification_proxy,
+
     }
 
     with YoutubeDL(ydl_opts) as ydl:
@@ -407,7 +430,7 @@ def _real_main(argv=None):
 
         try:
             if opts.load_info_filename is not None:
-                retcode = ydl.download_with_info_file(opts.load_info_filename)
+                retcode = ydl.download_with_info_file(compat_expanduser(opts.load_info_filename))
             else:
                 retcode = ydl.download(all_urls)
         except MaxDownloadsReached:

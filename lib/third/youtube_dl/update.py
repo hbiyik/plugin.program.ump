@@ -1,15 +1,16 @@
 from __future__ import unicode_literals
 
-import hashlib
 import io
 import json
+import traceback
+import hashlib
 import os
 import subprocess
 import sys
-import traceback
 from zipimport import zipimporter
 
 from .utils import encode_compat_str
+
 from .version import __version__
 
 
@@ -82,11 +83,8 @@ def update_self(to_screen, verbose, opener):
 
     print_notes(to_screen, versions_info['versions'])
 
-    filename = sys.argv[0]
-    # Py2EXE: Filename could be different
-    if hasattr(sys, 'frozen') and not os.path.isfile(filename):
-        if os.path.isfile(filename + '.exe'):
-            filename += '.exe'
+    # sys.executable is set to the full pathname of the exe-file for py2exe
+    filename = sys.executable if hasattr(sys, 'frozen') else sys.argv[0]
 
     if not os.access(filename, os.W_OK):
         to_screen('ERROR: no write permissions on %s' % filename)
@@ -94,7 +92,7 @@ def update_self(to_screen, verbose, opener):
 
     # Py2EXE
     if hasattr(sys, 'frozen'):
-        exe = os.path.abspath(filename)
+        exe = filename
         directory = os.path.dirname(exe)
         if not os.access(directory, os.W_OK):
             to_screen('ERROR: no write permissions on %s' % directory)

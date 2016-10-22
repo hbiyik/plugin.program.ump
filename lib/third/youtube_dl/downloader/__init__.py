@@ -1,20 +1,20 @@
 from __future__ import unicode_literals
 
-from ..utils import (
-    determine_protocol,
-)
 from .common import FileDownloader
-from .dash import DashSegmentsFD
-from .external import (
-    get_external_downloader,
-    FFmpegFD,
-)
 from .f4m import F4mFD
 from .hls import HlsFD
 from .http import HttpFD
 from .rtmp import RtmpFD
+from .dash import DashSegmentsFD
 from .rtsp import RtspFD
+from .external import (
+    get_external_downloader,
+    FFmpegFD,
+)
 
+from ..utils import (
+    determine_protocol,
+)
 
 PROTOCOL_MAP = {
     'rtmp': RtmpFD,
@@ -41,8 +41,11 @@ def get_suitable_downloader(info_dict, params={}):
         if ed.can_download(info_dict):
             return ed
 
-    if protocol == 'm3u8' and params.get('hls_prefer_native'):
+    if protocol == 'm3u8' and params.get('hls_prefer_native') is True:
         return HlsFD
+
+    if protocol == 'm3u8_native' and params.get('hls_prefer_native') is False:
+        return FFmpegFD
 
     return PROTOCOL_MAP.get(protocol, HttpFD)
 

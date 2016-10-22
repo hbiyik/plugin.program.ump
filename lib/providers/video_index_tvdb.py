@@ -1,8 +1,12 @@
 import random
 import urlparse
 from xml.dom import minidom
-
+from operator import itemgetter
+from datetime import date,datetime,timedelta
+import calendar
+import time
 import xbmc
+from third import humanize
 
 
 mirror="http://thetvdb.com"
@@ -240,7 +244,7 @@ def run(ump):
 	globals()["language"] = language
 	if ump.page == "root":
 		ump.index_item("Search","search",args={"search":True})
-		ump.index_item("Agenda","agenda")
+		ump.index_item("My Episodes","myepisodes")
 
 	elif ump.page == "search":
 		what=ump.args.get("title",None)
@@ -345,9 +349,33 @@ def run(ump):
 				if not person=="":
 					commands.append(('Search Director : %s'%person, 'XBMC.Container.Update(%s)'%ump.link_to("results_name",{"name":person},module="imdb")))
 			ump.index_item("%dx%d %s"%(season,epno,epis["episode"][epno]["info"]["title"]),"urlselect",info=epis["episode"][epno]["info"],art=epis["episode"][epno]["art"],cmds=commands,mediatype=ump.defs.MT_EPISODE)
-			
+	
+	elif ump.page=="myepisodes":
+		dt = date.today()
+		ws=time.strftime("%Y-%m-%d",(dt+timedelta(days=-3)).timetuple())
+		we=time.strftime("%Y-%m-%d",(dt+timedelta(days=+4)).timetuple())
+		ump.index_item("This Week","agenda",args={"seen":True,"start":ws,"end":we,"human":True})
+		for i in range(8):
+			day=dt+timedelta(days=i-1)
+			if i== 0: dayname="Yesterday"
+			elif i== 1: dayname="Today"
+			elif i==2: dayname="Tomorrow"
+			else:dayname=calendar.day_name[day.weekday()]
+			filter=time.strftime("%Y-%m-%d",day.timetuple())
+			ump.index_item(dayname,"agenda",args={"seen":True,"start":filter,"end":filter})
+		ump.index_item("All Unseen","agenda",args={"seen":True,"human":True})
+		ump.index_item("All Seen","agenda",args={"seen":False,"human":True,"reverse":True})
 	elif ump.page=="agenda":
 		from ump import bookmark
+		seenfilter=ump.args.get("seen",True)
+		startfilter=ump.args.get("start",None)
+		human=ump.args.get("human",False)
+		rev=ump.args.get("reverse",False)
+		if startfilter:
+			startfilter=calendar.timegm(time.strptime(startfilter,"%Y-%m-%d"))
+		endfilter=ump.args.get("end",None)
+		if endfilter:
+			endfilter=calendar.timegm(time.strptime(endfilter,"%Y-%m-%d"))
 		favs=bookmark.load()[1]
 		codes=[]
 		for fav in favs:
@@ -356,16 +384,35 @@ def run(ump):
 			code=info.get("code",None)
 			if code and indexer=="video_index_tvdb":
 				codes.append(code)
+		if not len(codes):
+			ump.dialog.ok("No Bookmark","There is no bookmark that created from TVDB. Please bookmark a serie to track. [COLOR orange]WARNING: This function only works with bookmarks created UMP 0.0.89 or later. If you have older bookmarks you have to recreate your bookmarks to track releases.[/COLOR]")
+			return
 		tvdb=get_tvdb_info(codes)
+		episodes=[]
 		for code,tvshow in get_tvdb_episodes(codes,get_tvdb_art(codes)).iteritems():
 			for season in sorted(tvshow.keys(),reverse=True):
 				print season
-				for episode in sorted(tvshow[season]["episode"].keys(),reverse=True):
+				if season==0:continue
+				for episode in tvshow[season]["episode"].keys():
 					print episode
 					data=tvshow[season]["episode"][episode]
 					info=data["info"]
 					art=data["art"]
-					isseen=ump.stats.isseen(info)
-					if not isseen:
-						ename="%s %dx%d %s"%(tvdb[code]["info"]["localtitle"],season,episode,info["title"])
-						ump.index_item(ename,"urlselect",mediatype=ump.defs.MT_EPISODE,info=info,art=art)
+					airtime=ump.stats.gettime(info)
+					if airtime:
+						print airtime
+						if startfilter and airtime<startfilter:continue
+						if endfilter and airtime>endfilter:continue
+						isseen=ump.stats.isseen(info)
+						if not isseen==seenfilter:
+							episodes.append([code,season,episode,info,art,airtime])
+		if not len(episodes):
+			ump.dialog.notification("No Episode","TVDB cant find any episode to track in this view")
+			return
+		for episode in  sorted(episodes,key=itemgetter(5),reverse=rev):
+			code,season,epi,info,art,airtime=episode
+			ename="%s %dx%d %s"%(tvdb[code]["info"]["localtitle"],season,epi,info["title"])
+			if human:
+				airdt=datetime.utcfromtimestamp(airtime)
+				ename="[COLOR blue][%s][/COLOR] %s"%(humanize.naturaltime(airdt),ename)
+			ump.index_item(ename,"urlselect",mediatype=ump.defs.MT_EPISODE,info=info,art=art)

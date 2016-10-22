@@ -9,7 +9,7 @@ encoding="utf-8"
 tunnel=["cookie"]
 timetol=5
 maxttol=15
-filters=["sheetmusic","canli","live","karaoke","cover","concert","konser","remix","reaction","parody","meet","version"]
+filters=["sheetmusic","canli","live","karaoke","cover","concert","konser","remix","reaction","parody","meet","version","tutorial"]
 
 def add(hash,i,artist,title,mname,parts):
 	ump.add_log("youtube found track: %s - %s"%(i["artist"],i["title"]))
@@ -37,13 +37,10 @@ def run(ump):
 		i=item["info"]
 		candidates={}
 		q='%s %s'%(i["artist"],i["title"])
-		print q.encode("ascii","replace")
 		page=ump.get_page(domain+"results",encoding,query={"search_query":q})
 		ump.add_log("youtube is searching track: %s - %s"%(i["artist"],i["title"]))
 		match=False
 		for res in re.findall('<h3 class="yt-lockup-title "><a href="(.*?)".*?title="(.*?)".*?</a><span class="accessible-description".*?>(.*?)</span></h3>(.*?)</div></li>',page):
-			print 77
-			print res
 			link,ftitle,times,rest=res
 			times=re.findall("([0-9]*?)\:([0-9]*?)\.",times)
 			try:
@@ -54,8 +51,6 @@ def run(ump):
 				dur=0
 			hash=urlparse.parse_qs(urlparse.urlparse(link).query).get("v",[None])[0]
 			if not hash or hash in ids: continue
-			print dur
-			print idur
 			if dur>0 and idur>0:
 				fmtitle=unidecode.unidecode(ftitle).lower().replace(" ","")
 				filtered=False
@@ -66,20 +61,11 @@ def run(ump):
 						filtered=True
 						break
 				if filtered: continue
-				print "info : %s,%s"%(artist.encode("ascii","replace"),title.encode("ascii","replace"))
-				print "ytbe : %s"%fmtitle
-				print "match:%s"%(artist in fmtitle and title in fmtitle)
-				print "idur: %d"%idur
-				print "dur: %d"%dur
-				print "tt:%s"%abs(dur-idur)
-				print i
 				frest=unidecode.unidecode(rest).lower().replace(" ","")
 				if (artist in fmtitle or artist in frest) and title in fmtitle:
-					print 77777777777777777
 					if abs(dur-idur)<=timetol:
 						match=True
 					elif abs(dur-idur)<=maxttol:
-						print 88888888888
 						candidates[abs(dur-idur)]=hash
 			else:
 				title=ftitle.split("-")
@@ -92,10 +78,7 @@ def run(ump):
 				if "playlist" in ump.args:
 					break
 		if not match and len(candidates):
-			print 9999999999999
-			print str(candidates).encode("ascii","replace")
 			hash=candidates[sorted(candidates)[0]]
-			print hash
 			ids.append(hash)
 			add(hash,i,artist,title,mname,parts)
 		

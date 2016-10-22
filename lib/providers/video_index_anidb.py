@@ -45,7 +45,7 @@ def command(request,args={}):
 			if since>lt:
 				query={"request":request,"client":cid,"clientver":cver,"protover":pver}
 				query.update(args)
-				res=ump.get_page(apiu,encoding,query=query)
+				res=ump.get_page(apiu,encoding,query=query,throttle=False)
 				prefs.set("anidb","lasttime",time.time())
 				xmlstr=minidom.parseString(res.encode(encoding))
 				#check if anime ended, if ended store permanently
@@ -327,7 +327,7 @@ def run(ump):
 		ump.index_item("Search Anime","search")
 		regex='<div class="name"><a class="name-colored" href=".*?aid\=([0-9]*?)">.*?<div class="data">\s*?<div class="date">(.*?)\n\s*?</div>'
 		args={"show":"calendar","do":"schedule","regex":regex,"rflag":re.DOTALL}
-		ump.index_item("Calendar","animedb",args=args)
+		#ump.index_item("Calendar","animedb",args=args)
 
 		regex='</a></td><td class="name anime">\s*?<a href=".*?aid\=(.*?)"'
 		args={"show":"latest2","do":"hotanime","regex":regex,"rflag":re.DOTALL}

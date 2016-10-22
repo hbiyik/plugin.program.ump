@@ -62,6 +62,7 @@ def match_results(page,names,info):
 	match_name,match_year,subpage,qual=False,False,"",""
 	results=re.findall('<p class="title"><a href="(.*?)" title="(.*?)">.*?</a></p>\s*?</div>\s*?<div class="quality">(.*?)</div>',page,re.DOTALL)
 	for result in results:
+		match_name=False
 		if match_year:
 			break
 		link,title,qual=result

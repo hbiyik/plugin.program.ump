@@ -142,8 +142,8 @@ def run(ump):
 			prv=uri.hostname.split(".")[-2]
 			prv,hash=codify(prv,uri.path,uri.query)
 			if hash is None: 
-				ump.add_log("afdah cant codify %s"%iframe[0][:20])
-				continue
+				hash=iframe[0]
+				prv="youtubedl"
 			ump.add_log("afdah decoded %s %s" % (mname,prv))
 			parts=[{"url_provider_name":prv, "url_provider_hash":hash}]
 			ump.add_mirror(parts,mname)
@@ -153,8 +153,8 @@ def run(ump):
 		prv=uri.hostname.split(".")[-2]
 		prv,hash=codify(prv,uri.path)
 		if hash is None: 
-			ump.add_log("afdah cant codify %s"%mirror[:20])
-			continue
+			hash=mirror
+			prv="youtubedl"
 		ump.add_log("afdah decoded %s %s" % (mname,prv))
 		parts=[{"url_provider_name":prv, "url_provider_hash":hash}]
 		ump.add_mirror(parts,mname)

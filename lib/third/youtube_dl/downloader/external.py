@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
 
 import os.path
-import re
 import subprocess
 import sys
+import re
 
+from .common import FileDownloader
+from ..compat import compat_setenv
 from ..postprocessor.ffmpeg import FFmpegPostProcessor, EXT_TO_OUT_FORMATS
 from ..utils import (
     cli_option,
@@ -16,7 +18,6 @@ from ..utils import (
     handle_youtubedl_headers,
     check_executable,
 )
-from .common import FileDownloader
 
 
 class ExternalFD(FileDownloader):
@@ -84,7 +85,7 @@ class ExternalFD(FileDownloader):
             cmd, stderr=subprocess.PIPE)
         _, stderr = p.communicate()
         if p.returncode != 0:
-            self.to_stderr(stderr)
+            self.to_stderr(stderr.decode('utf-8', 'replace'))
         return p.returncode
 
 
@@ -95,12 +96,28 @@ class CurlFD(ExternalFD):
         cmd = [self.exe, '--location', '-o', tmpfilename]
         for key, val in info_dict['http_headers'].items():
             cmd += ['--header', '%s: %s' % (key, val)]
+        cmd += self._bool_option('--continue-at', 'continuedl', '-', '0')
+        cmd += self._valueless_option('--silent', 'noprogress')
+        cmd += self._valueless_option('--verbose', 'verbose')
+        cmd += self._option('--limit-rate', 'ratelimit')
+        cmd += self._option('--retry', 'retries')
+        cmd += self._option('--max-filesize', 'max_filesize')
         cmd += self._option('--interface', 'source_address')
         cmd += self._option('--proxy', 'proxy')
         cmd += self._valueless_option('--insecure', 'nocheckcertificate')
         cmd += self._configuration_args()
         cmd += ['--', info_dict['url']]
         return cmd
+
+    def _call_downloader(self, tmpfilename, info_dict):
+        cmd = [encodeArgument(a) for a in self._make_cmd(tmpfilename, info_dict)]
+
+        self._debug_cmd(cmd)
+
+        # curl writes the progress to stderr so don't capture it.
+        p = subprocess.Popen(cmd)
+        p.communicate()
+        return p.returncode
 
 
 class AxelFD(ExternalFD):
@@ -198,6 +215,25 @@ class FFmpegFD(ExternalFD):
                 '-headers',
                 ''.join('%s: %s\r\n' % (key, val) for key, val in headers.items())]
 
+        env = None
+        proxy = self.params.get('proxy')
+        if proxy:
+            if not re.match(r'^[\da-zA-Z]+://', proxy):
+                proxy = 'http://%s' % proxy
+
+            if proxy.startswith('socks'):
+                self.report_warning(
+                    '%s does not support SOCKS proxies. Downloading is likely to fail. '
+                    'Consider adding --hls-prefer-native to your command.' % self.get_basename())
+
+            # Since December 2015 ffmpeg supports -http_proxy option (see
+            # http://git.videolan.org/?p=ffmpeg.git;a=commit;h=b4eb1f29ebddd60c41a2eb39f5af701e38e0d3fd)
+            # We could switch to the following code if we are able to detect version properly
+            # args += ['-http_proxy', proxy]
+            env = os.environ.copy()
+            compat_setenv('HTTP_PROXY', proxy, env=env)
+            compat_setenv('http_proxy', proxy, env=env)
+
         protocol = info_dict.get('protocol')
 
         if protocol == 'rtmp':
@@ -224,8 +260,8 @@ class FFmpegFD(ExternalFD):
                 args += ['-rtmp_live', 'live']
 
         args += ['-i', url, '-c', 'copy']
-        if protocol == 'm3u8':
-            if self.params.get('hls_use_mpegts', False):
+        if protocol in ('m3u8', 'm3u8_native'):
+            if self.params.get('hls_use_mpegts', False) or tmpfilename == '-':
                 args += ['-f', 'mpegts']
             else:
                 args += ['-f', 'mp4', '-bsf:a', 'aac_adtstoasc']
@@ -239,7 +275,7 @@ class FFmpegFD(ExternalFD):
 
         self._debug_cmd(args)
 
-        proc = subprocess.Popen(args, stdin=subprocess.PIPE)
+        proc = subprocess.Popen(args, stdin=subprocess.PIPE, env=env)
         try:
             retval = proc.wait()
         except KeyboardInterrupt:

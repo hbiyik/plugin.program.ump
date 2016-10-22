@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 import os
 import subprocess
 
+from .common import FileDownloader
 from ..utils import (
     check_executable,
     encodeFilename,
 )
-from .common import FileDownloader
 
 
 class RtspFD(FileDownloader):
@@ -26,6 +26,8 @@ class RtspFD(FileDownloader):
         else:
             self.report_error('MMS or RTSP download detected but neither "mplayer" nor "mpv" could be run. Please install any.')
             return False
+
+        self._debug_cmd(args)
 
         retval = subprocess.call(args)
         if retval == 0:

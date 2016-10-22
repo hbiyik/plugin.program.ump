@@ -2,18 +2,21 @@ from __future__ import unicode_literals
 
 import errno
 import os
-import re
 import socket
 import time
+import re
 
+from .common import FileDownloader
 from ..compat import compat_urllib_error
 from ..utils import (
     ContentTooShortError,
     encodeFilename,
     sanitize_open,
     sanitized_Request,
+    write_xattr,
+    XAttrMetadataError,
+    XAttrUnavailableError,
 )
-from .common import FileDownloader
 
 
 class HttpFD(FileDownloader):
@@ -179,9 +182,8 @@ class HttpFD(FileDownloader):
 
                 if self.params.get('xattr_set_filesize', False) and data_len is not None:
                     try:
-                        import xattr
-                        xattr.setxattr(tmpfilename, 'user.ytdl.filesize', str(data_len))
-                    except(OSError, IOError, ImportError) as err:
+                        write_xattr(tmpfilename, 'user.ytdl.filesize', str(data_len).encode('utf-8'))
+                    except (XAttrUnavailableError, XAttrMetadataError) as err:
                         self.report_error('unable to set filesize xattr: %s' % str(err))
 
             try:

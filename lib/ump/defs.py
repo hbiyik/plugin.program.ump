@@ -37,7 +37,7 @@ MT_TVSHOW,MT_SEASON,MT_EPISODE="tvshow","season","episode",
 MT_ARTIST,MT_ALBUM,MT_SONG,MT_MUSIC="artist","musicalbum","song","music"
 MT_MUSICVIDEO="musicvideo"
 MT_SET,MT_NONE="set","none"
-MT_MANGA,MT_CHAPTER="musicalbum","song"
+MT_MANGA,MT_CHAPTER="manga","chapter"
 mediapointer={
          MT_MOVIE:["code"],
          MT_TVSHOW:["code"],
@@ -67,7 +67,7 @@ media_to_cc={
          MT_MUSIC:"songs",
          MT_MUSICVIDEO:"movies",
          MT_SET:"files",
-         MT_NONE:"files",
+         MT_NONE:"albums",
          MT_MANGA:"tvshows",
          MT_CHAPTER:"episodes",
              }
@@ -86,6 +86,8 @@ VIEW_MODES={
         'skin.touched': 50,
         'skin.transparency': 50,
         'skin.xeebo': 50,
+        'skin.estuary': 55,
+        'skin.estouchy':500,
 		},
 	"thumb":{
         'skin.confluence': 500,
@@ -100,5 +102,7 @@ VIEW_MODES={
         'skin.touched': 500,
         'skin.transparency': 53,
         'skin.xeebo': 55,
+        'skin.estuary': 500,
+        'skin.estouchy':50,
 		},
 	}

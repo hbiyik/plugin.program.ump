@@ -129,7 +129,7 @@ class clicky():
 		ua=")".join(ua)
 		ua="Mozilla/5.0 ("+ua
 		
-		d=self.ump.get_page("http://in.getclicky.com/in.php",None,query=query,referer=sitedomain,header={"User-Agent":ua})
+		d=self.ump.get_page("http://in.getclicky.com/in.php",None,query=query,referer=sitedomain,header={"User-Agent":ua},throttle=False)
 
 	def query(self,mode="pageview",urlprovider=None,linkprovider=None,search=None):
 		if not addon.getSetting("allowstats").lower()=="true":return
