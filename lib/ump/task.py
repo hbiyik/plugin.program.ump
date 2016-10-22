@@ -62,6 +62,7 @@ class manager(object):
 			return None
 
 	def stop(self):
+		self.dialogpg.close()
 		self.s.set()
 		self.q=[]
 		while True:
