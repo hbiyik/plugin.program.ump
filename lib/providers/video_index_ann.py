@@ -142,7 +142,6 @@ def scrape_ann_search(animes):
 			m= datetime.datetime.now().month
 			y= datetime.datetime.now().year
 			if dates[0].year > y or dates[0].year == y and dates[0].month > m:
-				#print "TOO SOON FOR : " + tvshowtitle.encode("ascii","ignore")
 				continue
 			year=int(dates[0].year)
 
@@ -239,7 +238,6 @@ def results_search(animes=None,filters=None):
 			ump.index_item("Results %d-%d"%((index-1)*50+1,index*50),"results_search",args={"anime":animes,"filters":filters,"index":index-1})
 		for media in medias:
 			if "numvotes" in filters and int(media["info"]["votes"])<100:
-				#print "TOO FEW VOTES FOR : "+ media["info"]["tvshowtitle"].encode("ascii","ignore")
 				continue
 			name="%s (%s)"%(media["info"]["localtitle"],media["info"]["type"])
 			itemcount+=1

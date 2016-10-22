@@ -354,7 +354,6 @@ def run(ump):
 			if im == "":
 				continue
 			audio["info"]={"year":"","duration":"","album":result["name"],"artist":name,"title":"","code":mbid,"mbgid":result.get("mbgid","")}
-			print audio["info"]
 			audio["art"]={"thumb":im,"poster":im}
 			ump.index_item(name + " - " +result["name"],"album",args={"artist":name,"album":result["name"]},icon=im,thumb=im,info=audio["info"],art=audio["art"],mediatype=ump.defs.MT_ALBUM)
 			#todo also list albums which in mb but not on last fm
@@ -401,7 +400,6 @@ def run(ump):
 			durations(playlist)
 			ump.index_item("Play Album: %s"%ump.info["album"],"urlselect",info=audio["info"],art=audio["art"],args={"playlist":playlist,"mname":"%s - %s [ALBUM]"%(ump.info["artist"],ump.info["album"])},mediatype=ump.defs.MT_ALBUM)
 			for item in playlist:
-				print item["info"]
 				ump.index_item(item["info"]["artist"]+" - "+item["info"]["title"],"urlselect",info=item["info"],art=item["art"],mediatype=ump.defs.MT_SONG)
 		else:
 			return None

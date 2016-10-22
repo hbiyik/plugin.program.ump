@@ -17,7 +17,6 @@ if len(argv)>1:
 		force(argv[2])
 	elif argv[1]=="setview":
 		from prefs import set_view
-		#print get_skin_view(argv[2])
 		set_view(argv[2],argv[3])
 	elif argv[1]=="markseen":
 		from stats import stats

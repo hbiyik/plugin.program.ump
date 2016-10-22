@@ -98,7 +98,6 @@ def ren(name,thumb,data):
 		fname=fav.getAttribute("name").encode("utf-8")
 		fthumb=fav.getAttribute("thumb").encode("utf-8")
 		fdata=fav.lastChild.data.replace("&quot;",'"')
-		print data
 		if name==fname and fthumb==thumb and fdata==data:
 			kb = xbmc.Keyboard('default', 'Rename Bookmark', True)
 			kb.setDefault(name)

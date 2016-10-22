@@ -78,7 +78,6 @@ def scrape_moviepage(url,fansub,name):
 				ump.add_log("turkanime: Unknown URL Provider: %s, cant scrape"%up)
 				continue
 		except IndexError:
-			print "Turkanimetv changed regex for : %s, skipping"%up
 			continue
 
 		fansub2=re.findall("fansub\=(.*?)\&",u)
