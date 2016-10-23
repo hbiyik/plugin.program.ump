@@ -362,9 +362,9 @@ def run(ump):
 	
 	elif ump.page=="myepisodes":
 		dt = date.today()
-		ws=time.strftime("%Y-%m-%d",(dt+timedelta(days=-3)).timetuple())
-		we=time.strftime("%Y-%m-%d",(dt+timedelta(days=+4)).timetuple())
-		ump.index_item("This Week","agenda",args={"seen":True,"start":ws,"end":we,"human":True})
+		ws=time.strftime("%Y-%m-%d",(dt+timedelta(days=-7)).timetuple())
+		we=time.strftime("%Y-%m-%d",(dt+timedelta(days=+7)).timetuple())
+		ump.index_item("Last 2 Weeks","agenda",args={"seen":True,"start":ws,"end":we,"human":True})
 		for i in range(8):
 			day=dt+timedelta(days=i-1)
 			if i== 0: dayname="Yesterday"
