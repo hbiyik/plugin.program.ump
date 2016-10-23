@@ -2,6 +2,7 @@ import xbmc
 import sys
 
 def direct():
+	xbmc.executebuiltin('Dialog.Close(all,true)')
 	from sys import argv
 	query=argv[2][1:]
 	#run only on root
