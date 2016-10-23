@@ -716,7 +716,8 @@ class ump():
 	def shut(self,play=False,noblock=0):
 		self.terminate=True
 		prefs.set("cfagents",self.cfagents)
-		self.tm.stop()
+		if hasattr(self,"tm"):
+			self.tm.stop()
 		if hasattr(self,"dialogpg"):
 			self.dialogpg.close()
 			del(self.dialogpg)
