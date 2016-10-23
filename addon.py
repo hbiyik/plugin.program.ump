@@ -1,7 +1,6 @@
 ﻿try:
 	import sys
 	import os
-	
 	import xbmcgui
 	import xbmcplugin
 	import xbmcaddon
@@ -92,7 +91,8 @@ except Exception,e:
 		umplog="UMP has not initialized yet"
 	
 	newer=cloud.get_latest()
-	if newer and False:
+	if newer:
+		import xbmcgui
 		dialog = xbmcgui.Dialog()
 		dialog.ok("UMPCRASH","You are currently running an OLD version of UMP (%s), latest is %s, please update UMP!"%(addon.getAddonInfo('version'),newer))
 	else:
