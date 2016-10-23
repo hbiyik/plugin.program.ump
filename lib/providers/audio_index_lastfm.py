@@ -362,7 +362,10 @@ def run(ump):
 		if not ump.info.get("mbgid","")=="":
 			release=get_mbrelease(ump.info["mbgid"])
 			results=get_mbtracks(release["mbid"])
-			albumimage=release["image"]
+			if "poster" in ump.art and not ump.art["poster"]=="":
+				albumimage=ump.art["poster"]
+			else:
+				albumimage=release["image"]
 			ambid=release["mbid"]
 		elif not ump.info["code"] == "":
 			# not sure this will ever hit :/
