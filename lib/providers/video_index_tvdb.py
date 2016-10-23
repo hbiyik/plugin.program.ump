@@ -410,19 +410,21 @@ def run(ump):
 					if airtime:
 						if startfilter and airtime<startfilter:continue
 						if endfilter and airtime>endfilter:continue
-						isseen=ump.stats.isseen(info)
+						einfo=tvdb[code]["info"].copy()
+						einfo.update(info)
+						einfo["tvshowtitle"]=einfo["localtitle"]
+						info["mediatype"]==ump.defs.MT_EPISODE
+						isseen=bool(ump.stats.isseen(einfo))
 						if not isseen==seenfilter:
-							episodes.append([code,season,episode,info,art,airtime])
+							episodes.append([code,season,episode,einfo,art,airtime])
 		if not len(episodes):
 			ump.dialog.notification("No Episode","TVDB cant find any episode to track in this view")
 			return
 		for episode in  sorted(episodes,key=itemgetter(5),reverse=rev):
 			code,season,epi,info,art,airtime=episode
-			einfo=tvdb[code]["info"].copy()
-			einfo.update(info)
-			einfo["tvshowtitle"]=einfo["localtitle"]
-			ename="%s %dx%d %s"%(einfo["localtitle"],season,epi,einfo["title"])
+			
+			ename="%s %dx%d %s"%(info["localtitle"],season,epi,info["title"])
 			if human:
 				airdt=datetime.utcfromtimestamp(airtime)
 				ename="[COLOR blue][%s][/COLOR] %s"%(humanize.naturaltime(airdt),ename)
-			ump.index_item(ename,"urlselect",mediatype=ump.defs.MT_EPISODE,info=einfo,art=art)
+			ump.index_item(ename,"urlselect",mediatype=ump.defs.MT_EPISODE,info=info,art=art)
