@@ -37,7 +37,7 @@ def run(ump):
 		i=item["info"]
 		candidates={}
 		q='%s %s'%(i["artist"],i["title"])
-		page=ump.get_page(domain+"results",encoding,query={"search_query":q})
+		page=ump.get_page(domain+"results",encoding,query={"search_query":q},header={"User-Agent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"})
 		ump.add_log("youtube is searching track: %s - %s"%(i["artist"],i["title"]))
 		match=False
 		for res in re.findall('<h3 class="yt-lockup-title "><a href="(.*?)".*?title="(.*?)".*?</a><span class="accessible-description".*?>(.*?)</span></h3>(.*?)</div></li>',page):
