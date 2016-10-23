@@ -418,8 +418,11 @@ def run(ump):
 			return
 		for episode in  sorted(episodes,key=itemgetter(5),reverse=rev):
 			code,season,epi,info,art,airtime=episode
-			ename="%s %dx%d %s"%(tvdb[code]["info"]["localtitle"],season,epi,info["title"])
+			einfo=tvdb[code]["info"].copy()
+			einfo.update(info)
+			einfo["tvshowtitle"]=einfo["localtitle"]
+			ename="%s %dx%d %s"%(einfo["localtitle"],season,epi,einfo["title"])
 			if human:
 				airdt=datetime.utcfromtimestamp(airtime)
 				ename="[COLOR blue][%s][/COLOR] %s"%(humanize.naturaltime(airdt),ename)
-			ump.index_item(ename,"urlselect",mediatype=ump.defs.MT_EPISODE,info=info,art=art)
+			ump.index_item(ename,"urlselect",mediatype=ump.defs.MT_EPISODE,info=einfo,art=art)
