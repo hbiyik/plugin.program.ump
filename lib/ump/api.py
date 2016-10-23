@@ -233,7 +233,7 @@ class ump():
 			isseen=self.stats.isseen(info)
 			info["playcount"]=info["watched"]=isseen
 			if isseen:
-				lname="[COLOR gray]%s[/COLOR]"%name
+				lname="[COLOR dimgray]%s[/COLOR]"%name
 			else:
 				lname="[COLOR white]%s[/COLOR]"%name
 		li=xbmcgui.ListItem(lname, iconImage=icon, thumbnailImage=thumb)
