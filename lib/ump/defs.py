@@ -25,7 +25,7 @@ kodi_guixml = xbmc.translatePath('special://home/userdata/guisettings.xml')
 arturi = "https://offshoregit.com/boogiepop/dataserver/ump/images/"
 #arturi = "http://boogie.us.to/dataserver/ump/images/"
 #arturi="D:/projects/git/dataserver/dataserver/ump/images/"
-addonsxmluri="http://boogie.us.to/repository.boogie.dist/addons.xml"
+addonsxmluri="https://offshoregit.com/boogiepop/repository.boogie.dist/addons.xml"
 #content types
 CT_AUDIO, CT_IMAGE, CT_VIDEO, CT_UMP = "audio", "image","video","ump" ##content types
 LI_CTS={CT_AUDIO:"music",CT_IMAGE:"pictures",CT_VIDEO:"video",CT_UMP:"video"}
