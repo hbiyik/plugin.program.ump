@@ -15,11 +15,23 @@ encoding="utf-8"
 apikey="C738A0A57D46E2CC"
 recnum=50
 
+timeformat="%Y-%m-%d"
+timegap=60*60*24
+
 def str_int(x):
 	return int(float(x))
 
 def str_trim(x):
 	return x.split(" (")[0]
+
+def fix_airdate(x):
+	try:
+		t=time.strptime(x,timeformat)
+		c=calendar.timegm(t)+timegap
+		x=time.strftime(timeformat,time.gmtime(c))
+	except:
+		pass
+	return x
 
 def get_child_data(p,c,defval,func=None):
 	i=p.getElementsByTagName(c)
@@ -98,7 +110,7 @@ def get_tvdb_info(ids,force_lang=False):
 		art={}
 		infolabels={
 			"ContentRating":("mpaa","",None),
-			"FirstAired":("aired","",None),
+			"FirstAired":("aired","",fix_airdate),
 			"IMDB_ID":("code","",None),
 			"id":("code2","",None),
 			"zap2it_id":("code10","",None),
@@ -154,8 +166,6 @@ def get_tvdb_episodes(ids,arts):
 		seasons=set([x1.lastChild.data for x1 in seasons])
 		epis={}
 		for s in seasons:
-			print arts
-			print id
 			epis[int(s)]={"info":{"title":"Season %s"%(str(s),)},"art":make_art(arts[id],int(s)),"episode":{}}
 		episodes=x.getElementsByTagName("Episode")
 		infolabels={
@@ -165,7 +175,7 @@ def get_tvdb_episodes(ids,arts):
 			"EpImgFlag":("EpImgFlag",-1,str_int),
 			"EpisodeName":("title","",None),
 			"EpisodeNumber":("EpisodeNumber",-1,str_int),
-			"FirstAired":("aired","",None),
+			"FirstAired":("aired","",fix_airdate),
 			"GuestStars":("GuestStars","",None),
 			"Language":("Language","",None),
 			"Overview":("plot","",None),
@@ -391,16 +401,13 @@ def run(ump):
 		episodes=[]
 		for code,tvshow in get_tvdb_episodes(codes,get_tvdb_art(codes)).iteritems():
 			for season in sorted(tvshow.keys(),reverse=True):
-				print season
 				if season==0:continue
 				for episode in tvshow[season]["episode"].keys():
-					print episode
 					data=tvshow[season]["episode"][episode]
 					info=data["info"]
 					art=data["art"]
 					airtime=ump.stats.gettime(info)
 					if airtime:
-						print airtime
 						if startfilter and airtime<startfilter:continue
 						if endfilter and airtime>endfilter:continue
 						isseen=ump.stats.isseen(info)
