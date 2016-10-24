@@ -364,7 +364,7 @@ def run(ump):
 		dt = date.today()
 		ws=time.strftime("%Y-%m-%d",(dt+timedelta(days=-7)).timetuple())
 		we=time.strftime("%Y-%m-%d",(dt+timedelta(days=+7)).timetuple())
-		ump.index_item("Last 2 Weeks","agenda",args={"seen":True,"start":ws,"end":we,"human":True})
+		ump.index_item("Last + This Week","agenda",args={"seen":True,"start":ws,"end":we,"human":True})
 		for i in range(8):
 			day=dt+timedelta(days=i-1)
 			if i== 0: dayname="Yesterday"

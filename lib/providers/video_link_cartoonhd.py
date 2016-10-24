@@ -58,15 +58,16 @@ def run(ump):
 			"sl":md5.new(slk.encode("base-64")[:-1]+search).hexdigest()
 			}
 		for result in json.loads(ump.get_page(domain+"/api/v2/cautare/"+search,encoding,data=d).encode("ascii","replace")):
-			if ump.is_same(name,result["title"]) and (is_serie or ump.is_same(str(i["year"]),str(result["year"]))):
-				found=True
-				break
+			meta=result["meta"].lower()
+			if ump.is_same(name,result["title"]):
+				if (is_serie and "show" in meta) or (not is_serie and "movie" in meta and ump.is_same(str(i["year"]),str(result["year"]))):
+					found=True
+					break
 	if found: 
 		ump.add_log("cartoonhd has matched %s"%names[0])
 	else:
 		ump.add_log("cartoonhd can't match %s"%names[0])
 		return
-	
 	if is_serie:
 		sourcepage=domain+result["permalink"]+"/season/%01d/episode/%01d"%(int(i["season"]),int(i["episode"]))
 	else:
