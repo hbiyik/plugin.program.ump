@@ -2,7 +2,7 @@
 import json
 import re
 import urlparse
-from third import unidecode
+import unidecode
 
 domain="http://www.youtube.com/"
 encoding="utf-8"

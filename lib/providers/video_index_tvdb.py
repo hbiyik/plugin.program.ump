@@ -6,8 +6,11 @@ from datetime import date,datetime,timedelta
 import calendar
 import time
 import xbmc
-from third import humanize
-
+from ump import install
+install.sideloadlib("humanize","jmoiron")
+import sys
+print sys.path
+import humanize
 
 mirror="http://thetvdb.com"
 

@@ -3,7 +3,7 @@ import re
 import string
 import urlparse
 
-from third import unidecode
+import unidecode
 
 
 domain="http://moviesub.org"

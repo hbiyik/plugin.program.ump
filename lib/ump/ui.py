@@ -21,9 +21,7 @@ class xplayer(xbmc.Player):
 		if not self.ump.content_type==self.ump.defs.CT_IMAGE:
 			try:
 				xbmc.Player.__init__(self,xbmc.PLAYER_CORE_MPLAYER )
-				#sorry team kodi, u are just so moronic to software decode mp3 files so we need to manually select player for beckwards compatiblity
 			except:
-				# i have no ide what kind of exception you guys will throw. congrats
 				xbmc.Player.__init__(self)
 			self.playlist=xbmc.PlayList(self.ump.content_type==self.ump.defs.CT_VIDEO)
 		else:

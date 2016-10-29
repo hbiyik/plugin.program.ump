@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from ump import install
+install.sideloadlib("youtube-dl","rg3")
+import youtube_dl
 
-# -*- coding: utf-8 -*-
-from third import youtube_dl
 domain="https://openload.co/"
 timeout=60*60*24
 def run(hash,ump,referer=""):

@@ -1,8 +1,9 @@
 from socket import socket
 from defs import kodi_guixml
 import dom
-
-from third.socksipy import socks
+import sys
+print sys.path
+import socks
 
 
 def get_set(genset,n):

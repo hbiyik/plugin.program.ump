@@ -1,19 +1,34 @@
-﻿try:
-	import sys
-	import os
-	import xbmcgui
-	import xbmcplugin
-	import xbmcaddon
-	import xbmc
-
-	addon = xbmcaddon.Addon('plugin.program.ump')
-	addon_ldir = xbmc.translatePath( os.path.join(addon.getAddonInfo('path'),"lib") )
-	sys.path.append(addon_ldir)
+﻿import sys
+import os
+import xbmcgui
+import xbmcplugin
+import xbmcaddon
+import xbmc
+addon = xbmcaddon.Addon('plugin.program.ump')
+sys.path.append(xbmc.translatePath(os.path.join(addon.getAddonInfo('path'),"lib")))
+from ump import install
+externals=[
+		["urllib3","shazow"],
+		["dateutil","dateutil"],
+		["SocksiPy","mikedougherty"],
+		["six","jgraham"],
+		["requests","kennethreitz"],
+		["typing","python","master","python2"],
+		["setuptools","pypa"],
+		["dropbox-sdk-python","dropbox"],
+		["unidecode","iki"],
+		]
+paths=[]
+for external in externals:
+	paths.append(install.sideloadlib(*external,init=False))
+for path in paths:
+	if not path in sys.path:sys.path.append(path)
+try:
 	from ump import prerun
 	prerun.direct()
 	from ump.defs import addon_ldir
 	from ump.defs import arturi
-
+	
 	from ump import api
 	from ump import postrun
 	from ump import providers
@@ -91,7 +106,7 @@ except Exception,e:
 		umplog="UMP has not initialized yet"
 	
 	newer=cloud.get_latest()
-	if newer:
+	if newer and False:
 		import xbmcgui
 		dialog = xbmcgui.Dialog()
 		dialog.ok("UMPCRASH","You are currently running an OLD version of UMP (%s), latest is %s, please update UMP!"%(addon.getAddonInfo('version'),newer))

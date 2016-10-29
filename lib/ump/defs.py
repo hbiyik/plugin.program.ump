@@ -6,6 +6,7 @@ loglevel=1
 addon = xbmcaddon.Addon('plugin.program.ump')
 addon_dir = xbmc.translatePath( addon.getAddonInfo('path') )
 addon_ldir = path.join(addon_dir,"lib")
+addon_xldir= xbmc.translatePath("special://home/userdata/addon_data/plugin.program.ump/site-packages/")
 addon_pdir = path.join(addon_ldir ,'providers')
 addon_bdir = path.join(addon_dir,"resources","backup")
 addon_setxml = path.join(addon_dir,"resources","settings.xml")

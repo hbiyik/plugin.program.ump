@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from third import youtube_dl
-
+from ump import install
+install.sideloadlib("youtube-dl","rg3")
+import youtube_dl
 timeout=60*60*24
 def run(hash,ump,referer=""):
 	ydl = youtube_dl.YoutubeDL({'format': 'bestaudio[acodec!=opus]/best',"audioformat":"vorbis","quiet":True,"nocheckcertificate":True})

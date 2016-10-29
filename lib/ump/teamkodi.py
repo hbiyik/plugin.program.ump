@@ -1,6 +1,8 @@
 import xbmc
 import xbmcgui
 
+skips=["xbmc.python"]
+
 class Mon(xbmc.Monitor):
 	def __init__(self):
 		self.ar=False

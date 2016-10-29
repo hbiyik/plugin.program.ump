@@ -13,6 +13,7 @@ import traceback
 import urllib
 import urllib2
 from urlparse import parse_qs
+from unidecode import unidecode
 import gc
 import calendar
 
@@ -23,7 +24,6 @@ import xbmcplugin
 
 from quality import meta
 from third.unescape import unescape
-from third.unidecode import unidecode
 from ump import buffering
 from ump import cloudfare
 from ump import defs
@@ -39,7 +39,6 @@ from ump import clicky
 from ump import identifier
 from ump import stats
 from ump import throttle
-from third.dateutil import parser
 
 addon = xbmcaddon.Addon('plugin.program.ump')
 
@@ -87,7 +86,8 @@ class ump():
 		self.urlval_tout=30
 		self.urlval_d_size={self.defs.CT_VIDEO:1000000,self.defs.CT_AUDIO:10000,self.defs.CT_IMAGE:200}
 		self.urlval_d_tout=1.5
-		self.tm_conc=int(float(addon.getSetting("conc")))
+		try:self.tm_conc=int(float(addon.getSetting("conc")))
+		except:self.tm_conc=10
 		self.player=None
 		self.cfagents=prefs.get("cfagents")
 		self.cflocks={}
@@ -127,7 +127,10 @@ class ump():
 		try:
 			self.args=json.loads(args.decode("base64"))
 		except:
-			self.args=json.loads(args) # old url formatting
+			try:
+				self.args=json.loads(args) # old url formatting
+			except:
+				self._wronguri()
 		for keep in ["info","art","pub"]:
 			if keep in ["pub"]:default="W10="
 			else: default= "e30="
@@ -138,9 +141,7 @@ class ump():
 				try:
 					setattr(self,keep,json.loads(lst))
 				except:
-					self.dialog.ok("Address Error","UMP can not translate the navigation URL you have provided\n\n This is mainly because you are trying to access with old favorites. To fix it delete your bookmark and add again.\n\n Another cause is because you are calling UMP from another third party addonn with wrong syntax. If so please fix your it in the addonn you are calling from.")
-					self.shut()
-					sys.exit()
+					self._wronguri()
 		[self.content_type]= result.get('content_type', ["ump"])
 		self.loadable_uprv=providers.find(self.content_type,"url")
 		self.stats=stats.stats()
@@ -160,6 +161,11 @@ class ump():
 		self.identifier=identifier.identifier()
 		self.container_mediatype=defs.MT_NONE
 		self.dialogpg.update(100,"UMP %s:%s:%s"%(self.content_type,self.module,self.page))
+		
+	def _wronguri(self):
+		self.dialog.ok("Address Error","UMP can not translate the navigation URL you have provided\n\n This is mainly because you are trying to access with old favorites. To fix it delete your bookmark and add again.\n\n Another cause is because you are calling UMP from another third party addonn with wrong syntax. If so please fix your it in the addonn you are calling from.")
+		self.shut()
+		sys.exit()
 	
 	def publish(self,*args):
 		for arg in args:
@@ -405,12 +411,13 @@ class ump():
 			query[keep]=json.dumps(getattr(self,keep)).encode("base64")[:-1]
 		return sys.argv[0] + '?' + urllib.urlencode(query)
 
-	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None,throttle=2):
+	def get_page(self,url,encoding,query=None,data=None,range=None,tout=None,head=False,referer=None,header=None,tunnel="disabled",forcetunnel=False,cache=None,throttle=2,title=None):
 		if self.terminate:
 			raise task.killbill
 		tid=self.throttle.id(url,query,referer,header,data)
+		if head or range:tunnel="disabled"
 		if throttle==True:throttle=0
-		if isinstance(throttle,(int,float)) and not head and not range and self.throttle.check(tid,throttle):
+		if not throttle==False and isinstance(throttle,(int,float)) and not head and not range and self.throttle.check(tid,throttle):
 			stream=self.throttle.get(tid)
 		else:	
 			#python cant handle unicode urlencoding so needs to get dirty below.
@@ -441,7 +448,7 @@ class ump():
 			self.tunnel.cook(self.cj,self.cj.make_cookies(response,req),tmode)
 			
 			if head :return response
-			stream=cloudfare.readzip(response)
+			stream=cloudfare.readzip(response,title)
 			stream=self.tunnel.post(stream,tmode)
 			if isinstance(throttle,(int,float)) and not head and not range:
 				self.throttle.do(tid,stream)

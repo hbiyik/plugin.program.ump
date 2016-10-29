@@ -11,6 +11,32 @@ import urllib
 noredirs=["/cdn-cgi/l/chk_jschl","/cdn-cgi/l/chk_captcha"]
 max_sleep=30
 
+import urllib2, sys
+import xbmcgui
+
+def read(response, chunk_size=8192,title=None):
+	if not title:
+		return response.read()
+	else:
+		prg=xbmcgui.DialogProgress()
+		prg.create(title,"Downloading")
+		total_size = response.info().get('Content-Length',"1").strip()
+		total_size = int(total_size)
+		bytes_so_far = 0
+		data=""
+		while 1:
+			chunk = response.read(chunk_size)
+			bytes_so_far += len(chunk)
+			data+=chunk
+			if not chunk:
+				break
+		
+			if title:
+				prg.update(bytes_so_far/total_size,response.geturl())
+		
+		prg.close()
+		return data
+
 def solve_equation(equation):
 	try:
 		offset = 1 if equation[0] == '+' else 0
@@ -18,13 +44,13 @@ def solve_equation(equation):
 	except:
 		pass
 	
-def readzip(err):
+def readzip(err,title=None):
 	if err.info().get('Content-Encoding') == 'gzip':
-		buf = StringIO(err.read())
+		buf = StringIO(read(err,title=title))
 		f = gzip.GzipFile(fileobj=buf)
 		stream = f.read()
 	else:
-		stream=err.read()
+		stream=read(err,title=title)
 	return stream
 
 def cflogin(new_url,ua,req,opener,tunnel,tmode,cj,cfagents,up):

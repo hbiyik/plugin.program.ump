@@ -1,6 +1,6 @@
 import json
 import re
-from third.dateutil import parser
+from dateutil import parser
 
 
 domain="http://kissanime.to"

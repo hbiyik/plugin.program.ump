@@ -1,4 +1,4 @@
-from third import dropbox
+import dropbox
 import xbmcgui
 import xbmcaddon
 import sys

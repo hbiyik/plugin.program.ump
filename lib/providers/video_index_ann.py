@@ -4,7 +4,7 @@ import re
 from urllib import urlencode
 from xml.dom import minidom
 import xbmc
-from third.dateutil import parser
+from dateutil import parser
 from operator import itemgetter
 
 domain="http://www.animenewsnetwork.com"

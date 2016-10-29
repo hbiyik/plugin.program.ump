@@ -24,6 +24,7 @@ tunnels={
 		}
 
 def check_health(ump,force=False):
+	return#disable it for now
 	if addon.getSetting("disabletunnels").lower()=="true":	return
 	if addon.getSetting("tn_chk_en").lower()=="false" and not force:	return
 	tout=1
@@ -36,7 +37,10 @@ def check_health(ump,force=False):
 		return 
 	
 	import prefs
-	interval=int(float(addon.getSetting("tn_chk_prd")))
+	try:
+		interval=int(float(addon.getSetting("tn_chk_prd")))
+	except:
+		interval=1
 	attrs=[]
 	for tunnel in tunnels.keys():
 		lasttime=prefs.get("tunnelstates",tunnel,"lastcheck")
@@ -48,7 +52,7 @@ def check_health(ump,force=False):
 		t1=time()
 		ping=tout*1000
 		try:
-			page=ump.get_page(testpage,"utf-8",tunnel=tunnel,tout=tout,forcetunnel=True)
+			page=ump.get_page(testpage,"utf-8",tunnel=tunnel,tout=tout,forcetunnel=True,throttle=False)
 			ping=int((time()-t1-basetime)*1000)
 			reason=str(ping)
 		except Exception,e:

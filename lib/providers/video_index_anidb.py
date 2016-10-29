@@ -8,7 +8,7 @@ import datetime
 import re
 import md5
 from ump import prefs
-from third.dateutil import parser
+from dateutil import parser
 import HTMLParser
 
 html=HTMLParser.HTMLParser()
