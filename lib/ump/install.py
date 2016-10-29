@@ -10,6 +10,7 @@ from distutils.version import LooseVersion
 
 from . import defs
 from . import dom
+from . import throttle
 
 import xbmcgui
 import xbmcvfs
@@ -17,9 +18,18 @@ import xbmc
 
 ua="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
 skips=["xbmc.python"]
+trtl=throttle.throttle(defs.addon_tdir)
 def get_page(url,throttle=0):
-    request = urllib2.Request(url,headers={"User-Agent":ua})
-    return urllib2.urlopen(request).read()
+    tid=trtl.id(url)
+    entrtl=not throttle==False and isinstance(throttle,(int,float))
+    if entrtl and trtl.check(tid,throttle):
+        data=trtl.get(tid)
+    else:
+        request = urllib2.Request(url,headers={"User-Agent":ua})
+        data=urllib2.urlopen(request).read()
+        if entrtl:
+            trtl.do(tid,data)
+    return data
 
 def is_installed(id,version=None,strict=False):
     xml=xbmc.translatePath("special://home/addons/%s/addon.xml"%id)
@@ -35,7 +45,7 @@ def is_installed(id,version=None,strict=False):
     return False
 
 def push_zip(zipball,path=None):
-    zip=zipfile.ZipFile(StringIO.StringIO(get_page(zipball)))
+    zip=zipfile.ZipFile(StringIO.StringIO(get_page(zipball,throttle=False)))
     if not path:
         path=xbmc.translatePath("special://home/addons/")
     zip.extractall(path)
