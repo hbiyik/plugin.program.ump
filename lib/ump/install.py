@@ -13,9 +13,13 @@ from . import dom
 
 import xbmcgui
 import xbmcvfs
+import xbmc
 
+ua="Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36"
+skips=["xbmc.python"]
 def get_page(url,throttle=0):
-    return urllib2.urlopen(url).read()
+    request = urllib2.Request(url,headers={"User-Agent":ua})
+    return urllib2.urlopen(request).read()
 
 def is_installed(id,version=None,strict=False):
     xml=xbmc.translatePath("special://home/addons/%s/addon.xml"%id)
