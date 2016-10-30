@@ -324,7 +324,7 @@ def run(ump):
 	if not os.path.exists(os.path.join(ump.defs.addon_ddir,cd)):os.makedirs(os.path.join(ump.defs.addon_ddir,cd))
 	
 	if ump.page=="root":
-		ump.index_item("Search Anime","search")
+		ump.index_item("Search Anime","search",icon="search")
 		regex='<div class="name"><a class="name-colored" href=".*?aid\=([0-9]*?)">.*?<div class="data">\s*?<div class="date">(.*?)\n\s*?</div>'
 		args={"show":"calendar","do":"schedule","regex":regex,"rflag":re.DOTALL}
 		#ump.index_item("Calendar","animedb",args=args)
@@ -430,5 +430,5 @@ def run(ump):
 		listitems(results)
 		if not len(results)<perpage or True:
 			oldargs["pagenum"]=pagenum+1
-			ump.index_item("Results %d - %d"%(pagenum*perpage+1,(pagenum+1)*perpage),"animedb",args=oldargs,noicon=True)
+			ump.index_item("Results %d - %d"%(pagenum*perpage+1,(pagenum+1)*perpage),"animedb",args=oldargs,icon="next")
 			

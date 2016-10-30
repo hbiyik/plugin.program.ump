@@ -256,7 +256,7 @@ def run(ump):
 	if not language in ["en","sv","no","da","fi","nl","de","it","es","fr","pl","hu","el","tr","ru","he","ja","pt","zh","cs","sl","hr","ko"]:language="en"
 	globals()["language"] = language
 	if ump.page == "root":
-		ump.index_item("Search","search",args={"search":True})
+		ump.index_item("Search","search",args={"search":True},icon="search")
 		ump.index_item("My Episodes","myepisodes")
 
 	elif ump.page == "search":

@@ -253,10 +253,10 @@ def scrape_name(id,lean=False):
 def run(ump):
 	globals()['ump'] = ump
 	if ump.page == "root":
-		ump.index_item("Search Movies","results_title",args={"title":"?","title_type":"feature,tv_movie,short","sort":"moviemeter,asc"})
-		ump.index_item("Search Series","results_title",args={"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc"})		
-		ump.index_item("Search Documentaries","results_title",args={"title":"?","title_type":"documentary","sort":"moviemeter,asc"})
-		ump.index_item("Search People","results_name",args={"name":"?"})
+		ump.index_item("Search Movies","results_title",args={"title":"?","title_type":"feature,tv_movie,short","sort":"moviemeter,asc"},icon="search")
+		ump.index_item("Search Series","results_title",args={"title":"?","title_type":"tv_series,mini_series","sort":"moviemeter,asc"},icon="search")		
+		ump.index_item("Search Documentaries","results_title",args={"title":"?","title_type":"documentary","sort":"moviemeter,asc"},icon="search")
+		ump.index_item("Search People","results_name",args={"name":"?"},icon="search")
 		ump.index_item("Top Rated Movies","select_year",args={"at":"0","num_votes":"60000,","sort":"user_rating","title_type":"feature,tv_movie,short","next_page":"results_title"})
 		ump.index_item("Top Voted Movies","select_year",args={"at":"0","sort":"num_votes,desc","title_type":"feature,tv_movie,short","next_page":"results_title"})
 		ump.index_item("Top Box Office Movies","select_year",args={"at":"0","sort":"boxoffice_gross_us,desc","title_type":"feature,tv_movie,short","next_page":"results_title"})
@@ -332,15 +332,15 @@ def run(ump):
 		
 		mquery=ump.args.copy()
 		mquery["title_type"]="feature,tv_movie,short"
-		ump.index_item("Show Only Movies","results_title",args=mquery,art=None)
+		ump.index_item("Show Only Movies","results_title",args=mquery,art=None,icon="search")
 
 		squery=ump.args.copy()
 		squery["title_type"]="tv_series,mini_series"
-		ump.index_item("Show Only Series","results_title",args=squery,art=None)
+		ump.index_item("Show Only Series","results_title",args=squery,art=None,icon="search")
 
 		dquery=ump.args.copy()
 		dquery["title_type"]="documentary"
-		ump.index_item("Show Only Documentaries","results_title",args=dquery,art=None)
+		ump.index_item("Show Only Documentaries","results_title",args=dquery,art=None,icon="search")
 	
 	elif ump.page == "results_name":
 		name=ump.args.get("name","")

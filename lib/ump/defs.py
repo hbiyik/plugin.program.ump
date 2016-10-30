@@ -23,8 +23,8 @@ kodi_bsetxml = path.join(addon_bdir,"advancedsettings.xml")
 kodi_favxml = xbmc.translatePath('special://home/userdata/favourites.xml')
 kodi_bfavxml = path.join(addon_bdir,"favourites.xml")
 kodi_guixml = xbmc.translatePath('special://home/userdata/guisettings.xml')
-arturi = "https://offshoregit.com/boogiepop/dataserver/ump/images/"
-#arturi = "http://boogie.us.to/dataserver/ump/images/"
+#arturi = "https://offshoregit.com/boogiepop/dataserver/ump/images/"
+arturi = "http://boogie.us.to/dataserver/ump/images/"
 #arturi="D:/projects/git/dataserver/dataserver/ump/images/"
 addonsxmluri="https://offshoregit.com/boogiepop/repository.boogie.dist/addons.xml"
 #content types

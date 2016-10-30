@@ -263,7 +263,7 @@ def run(ump):
 	globals()['ump'] = ump
 	ump.publish("anime")
 	if ump.page == "root":
-		ump.index_item("Search","search")
+		ump.index_item("Search","search",icon="search")
 		ump.index_item("Top Rated Animes","select_year")
 		ump.index_item("Newest Animes","newest")
 		ump.index_item("Animes by Genre","bygenre")

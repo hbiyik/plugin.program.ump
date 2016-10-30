@@ -17,6 +17,8 @@ externals=[
 		["setuptools","pypa"],
 		["dropbox-sdk-python","dropbox"],
 		["unidecode","iki"],
+		["unidecode","iki"],
+		["js-beautify","boogiekodi","master","python"],
 		]
 paths=[]
 for external in externals:

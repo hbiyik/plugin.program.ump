@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from ump import install
-install.sideloadlib("youtube-dl","rg3")
+install.sideloadlib("youtube-dl","boogiekodi")
 import youtube_dl
 timeout=60*60*24
 def run(hash,ump,referer=""):

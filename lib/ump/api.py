@@ -209,7 +209,7 @@ class ump():
 			return pre+post
 
 		
-	def index_item(self,name,page=None,args={},module=None,thumb="DefaultFolder.png",icon="DefaultFolder.png",info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False,mediatype=None,content_type=None):
+	def index_item(self,name,page=None,args={},module=None,thumb=None,icon=None,info={},art={},cmds=[],adddefault=True,removeold=True,isFolder=True,noicon=False,mediatype=None,content_type=None):
 		if page=="urlselect":isFolder=False
 		if info == {}:info=self.info
 		if info is None:info={}
@@ -218,19 +218,43 @@ class ump():
 		else: 
 			info["mediatype"]=mediatype
 		if art == {}:art=self.art
+		print art
 		if art is None: art={}
-		if thumb == "DefaultFolder.png":
-			if "thumb" in art:thumb=art["thumb"]
-			elif "poster" in art:thumb=art["poster"]
-		if icon == "DefaultFolder.png":
-			if "poster" in art:icon=art["poster"]
-			elif "thumb" in art:icon=art["thumb"]
-		if noicon:
-			icon=thumb="DefaultFolder.png"
+		noart=False
+		if icon=="search" or thumb=="search":
+			icon=self.defs.arturi+"common/search.png"
+			thumb=self.defs.arturi+"common/search.png"
+			noart=True
+		if icon=="pre" or thumb=="pre":
+			icon=self.defs.arturi+"common/pre.png"
+			thumb=self.defs.arturi+"common/pre.png"
+			noart=True
+		if icon=="next" or thumb=="next":
+			icon=self.defs.arturi+"common/next.png"
+			thumb=self.defs.arturi+"common/next.png"
+			noart=True
+		if not thumb:
+			thumb=self.defs.arturi+"common/folder.png"
+			if not "thumb" in art or art["thumb"]=="" or art["thumb"]=="DefaultFolder.png":
+				art["thumb"]=self.defs.arturi+"common/folder.png"
 		else:
-			self.art=art
-		#if thumb == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":thumb=art["thumb"]
-		#if icon == "DefaultFolder.png" and "thumb" in art and not art["thumb"] == "":icon=art["thumb"]
+			art.pop("thumb",art)
+		if not icon:
+			icon=self.defs.arturi+"common/folder.png"
+			if not "icon" in art or art["icon"]=="" or art["icon"]=="DefaultFolder.png":
+				art["icon"]=self.defs.arturi+"common/folder.png"
+		else:
+			art.pop("icon",art)
+		if noicon:icon=thumb=self.defs.arturi+"common/folder.png"
+		else:self.art=art
+		if not "fanart" in art or art["fanart"]=="":art["fanart"]=self.defs.arturi+"common/fanart.png"
+		if thumb == "DefaultFolder.png":thumb=self.defs.arturi+"common/folder.png"
+		if icon == "DefaultFolder.png":icon=self.defs.arturi+"common/folder.png"
+		for k,v in art.iteritems():
+			if art[k]=="DefaultFolder.png":art[k]=self.defs.arturi+"common/folder.png"
+		print art
+		print icon
+		print thumb
 		info["index"]=findcaller(2)
 		self.info=info
 		u=self.link_to(page,args,module,content_type)
@@ -245,6 +269,8 @@ class ump():
 		li=xbmcgui.ListItem(lname, iconImage=icon, thumbnailImage=thumb)
 		li.setIconImage(icon)
 		li.setThumbnailImage(thumb)
+		if noart:
+			art={"fanart":art["fanart"]}
 		if not noicon:self.backwards.setArt(li,art)
 		li.setInfo(self.defs.LI_CTS[self.content_type],info)
 		coms=[]

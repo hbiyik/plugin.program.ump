@@ -122,7 +122,7 @@ def run(ump):
 	globals()['ump'] = ump
 	ump.publish("music")
 	if ump.page == "root":
-		ump.index_item("Search","search",args={"search":True})
+		ump.index_item("Search","search",args={"search":True},icon="search")
 		ump.index_item("Top Artists","topartist")
 		ump.index_item("Top Tracks","toptrack")
 		ump.index_item("Top Artists in %s"%get_country(),"geoartist",args={"country":get_country()})

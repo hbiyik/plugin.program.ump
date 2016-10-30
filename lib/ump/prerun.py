@@ -15,16 +15,6 @@ def direct():
 	
 def run(ump):
 	#runs on root page only
-	'''
-	ump.addon.sideloadlib("urllib3","shazow")
-	ump.addon.sideloadlib("dateutil","dateutil")
-	ump.addon.sideloadlib("SocksiPy","mikedougherty")
-	ump.addon.sideloadlib("six","jgraham")
-	ump.addon.sideloadlib("requests","kennethreitz")
-	ump.addon.sideloadlib("typing","python",path="python2")
-	ump.addon.sideloadlib("setuptools","pypa")
-	ump.addon.sideloadlib("dropbox-sdk-python","dropbox")
-	'''
 	try:
 		kodimajor=int(xbmc.getInfoLabel( "System.BuildVersion" ).split(".")[0])
 	except:

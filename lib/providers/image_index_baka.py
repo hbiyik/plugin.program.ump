@@ -146,7 +146,7 @@ def run(ump):
 	globals()['ump'] = ump
 	ump.publish("manga")
 	if ump.page == "root":
-		ump.index_item("Search","select_type",args={"stype":"title","perpage":perpage,"page":1})
+		ump.index_item("Search","select_type",args={"stype":"title","perpage":perpage,"page":1},icon="search")
 		ump.index_item("Genres","genres")
 		ump.index_item("Themes","categories")
 		ump.index_item("Mangakas","search_mangaka",args={"orderby":"series","perpage":perpage,"page":1})
@@ -192,15 +192,15 @@ def run(ump):
 			conf,ump.args["search"]=ump.get_keyboard('default', 'Search Baka', True)
 		elif ump.args["search"] is None:
 			ump.args.pop("search")
-		types=(("Search Manga (Japanese Comics)","manga"),("Search Mangaka (Author)","mangaka"),("Search Manhwa (Korean Comics)","manhwa"),("Search Manhua (Chinese Comics)","manhua"),("Search Novel","novel"),("Search Artbook","artbook"),("Search Doujinshi (Self Published)","doujinshi"),("Drama CD (Scripts)","drama_cd"),("Search OEL (Original English Language)","oel"),("Search All kinds of Puplications",""))
+		types=(("Search Manga (Japanese Comics)","manga"),("Search Mangaka (Author)","mangaka"),("Search Manhwa (Korean Comics)","manhwa"),("Search Manhua (Chinese Comics)","manhua"),("Search Novel","novel"),("Search Artbook","artbook"),("Search Doujinshi (Self Published)","doujinshi"),("Search Drama CD (Scripts)","drama_cd"),("Search OEL (Original English Language)","oel"),("Search All kinds of Puplications",""))
 		for type in types:
 			t,v=type
 			if v == "mangaka" :
 				if not "search" in ump.args: continue
-				ump.index_item(t,"search_mangaka",ump.args)
+				ump.index_item(t,"search_mangaka",ump.args,icon="search")
 			else:
 				ump.args["type"]=v
-				ump.index_item(t,"search",ump.args)
+				ump.index_item(t,"search",ump.args,icon="search")
 
 	elif ump.page=="stats":
 		page=ump.get_page("%s/stats.html"%domain,encoding,query=ump.args)
